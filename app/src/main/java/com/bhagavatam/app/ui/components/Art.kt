@@ -60,7 +60,7 @@ fun ArtBackdrop(art: String, colors: List<Color>, modifier: Modifier = Modifier,
 
 /** Reader chapter banner: shown only when that chapter has artwork. */
 @Composable
-fun ChapterBanner(s: Int, a: Int, height: Dp = 160.dp) {
+fun ChapterBanner(s: Int, a: Int, height: Dp = 230.dp) {
     val name = chArt(s, a)
     if (artRes(name) == 0) return
     Box(Modifier.fillMaxWidth().height(height).clip(RoundedCornerShape(20.dp))) {

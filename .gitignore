@@ -40,3 +40,4 @@ __pycache__/
 /content/_build/*_report.json
 /content/_build/*_cands.json
 /content/_build/*_issues.json
+/content/_bengali/held/

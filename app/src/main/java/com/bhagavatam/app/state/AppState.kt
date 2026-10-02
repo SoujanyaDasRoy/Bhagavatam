@@ -17,6 +17,11 @@ import com.bhagavatam.app.audio.Narrator
 import com.bhagavatam.app.audio.VersePlan
 import com.bhagavatam.app.audio.VoiceOption
 import com.bhagavatam.app.data.BENGALI_READY
+import com.bhagavatam.app.data.Annotation
+import com.bhagavatam.app.data.AnnDraft
+import com.bhagavatam.app.data.AnnotationStore
+import com.bhagavatam.app.data.SelBar
+import com.bhagavatam.app.data.WordLookup
 import com.bhagavatam.app.data.Lang
 import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.SanskritScript
@@ -60,6 +65,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
     var showIast by mutableStateOf(prefs.getBoolean("showIast", false))
         private set
+    /** Meanings of a tapped word are fetched from Wiktionary when this is on (only the word is sent). */
+    var onlineMeanings by mutableStateOf(prefs.getBoolean("onlineMeanings", true))
+        private set
+    /** The full word sheet (all places the word appears) on top of the compact meaning card. */
+    var showWordSheet by mutableStateOf(false)
+    /** When set, Google results for this text are shown inside the app (the web panel). */
+    var webQuery by mutableStateOf<String?>(null)
     var showHi by mutableStateOf(prefs.getBoolean("showHi", false))
         private set
     var showBn by mutableStateOf(prefs.getBoolean("showBn", false) && BENGALI_READY)
@@ -102,6 +114,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateScript(s: SanskritScript) { script = s; save { putString("script", s.name) } }
     fun updateShowSanskrit(on: Boolean) { showSanskrit = on; save { putBoolean("showSanskrit", on) } }
     fun updateShowIast(on: Boolean) { showIast = on; save { putBoolean("showIast", on) } }
+    fun updateOnlineMeanings(on: Boolean) { onlineMeanings = on; save { putBoolean("onlineMeanings", on) } }
     fun updateShowHi(on: Boolean) { showHi = on; save { putBoolean("showHi", on) } }
     fun updateShowBn(on: Boolean) { showBn = on; save { putBoolean("showBn", on) } }
     fun updateShowEn(on: Boolean) { showEn = on; save { putBoolean("showEn", on) } }
@@ -191,8 +204,35 @@ class AppState(app: Application) : AndroidViewModel(app) {
 
     fun toggleBookmark(ref: String) { if (ref in bookmarks) bookmarks.remove(ref) else bookmarks.add(0, ref); saveSaved() }
 
-    /** Removes every bookmark and highlight. */
-    fun clearSaved() { bookmarks.clear(); highlights.clear(); saveSaved() }
+    // ---------- notes, passage highlights and passage bookmarks (local only) ----------
+    private val annotationStore = AnnotationStore(app)
+    val annotations = mutableStateListOf<Annotation>().apply { addAll(runCatching { annotationStore.all() }.getOrDefault(emptyList())) }
+
+    /** The note sheet, the word sheet and the selection bar of the reader. */
+    var annDraft by mutableStateOf<AnnDraft?>(null)
+    var lookup by mutableStateOf<WordLookup?>(null)
+    var selBar by mutableStateOf<SelBar?>(null)
+
+    fun annotationsFor(ref: String, layer: String) = annotations.filter { it.ref == ref && it.layer == layer }
+
+    fun addAnnotation(a: Annotation) {
+        val id = annotationStore.insert(a)
+        annotations.add(0, a.copy(id = id))
+    }
+
+    fun updateAnnotation(a: Annotation) {
+        annotationStore.update(a)
+        val i = annotations.indexOfFirst { it.id == a.id }
+        if (i >= 0) annotations[i] = a
+    }
+
+    fun removeAnnotation(id: Long) {
+        annotationStore.delete(id)
+        annotations.removeAll { it.id == id }
+    }
+
+    /** Removes every bookmark, highlight and note. */
+    fun clearSaved() { bookmarks.clear(); highlights.clear(); saveSaved(); annotationStore.clear(); annotations.clear() }
 
     /** Forgets finished chapters and the reading position. Saved verses are not touched. */
     fun clearProgress() {

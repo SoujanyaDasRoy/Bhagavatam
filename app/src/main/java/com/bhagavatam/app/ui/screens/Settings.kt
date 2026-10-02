@@ -40,6 +40,7 @@ import com.bhagavatam.app.BuildConfig
 import com.bhagavatam.app.data.ContentDb
 import com.bhagavatam.app.data.Lang
 import com.bhagavatam.app.data.localDigits
+import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.data.playerTextFor
 import com.bhagavatam.app.data.settingsTextFor
 import com.bhagavatam.app.state.AppState
@@ -239,6 +240,13 @@ fun ReadingSettings(state: AppState, onBack: () -> Unit) {
             SectionLabel(s.reading)
             GroupCard { SwitchRow(s.showSanskrit, state.showSanskrit, state::updateShowSanskrit) }
             Note(s.showSanskritNote)
+        }
+        Column {
+            SectionLabel(tr(ui, "Word meanings", "शब्दों के अर्थ", "শব্দের অর্থ"))
+            GroupCard { SwitchRow(tr(ui, "Look up meanings online", "अर्थ ऑनलाइन खोजें", "অর্থ অনলাইনে খুঁজুন"), state.onlineMeanings, state::updateOnlineMeanings) }
+            Note(tr(ui, "When on, pressing and holding a word asks Wiktionary for its meaning. Only that one word is sent. Off keeps the app fully offline.",
+                "चालू होने पर किसी शब्द को दबाए रखने पर उसका अर्थ Wiktionary से मँगाया जाता है। केवल वही एक शब्द भेजा जाता है। बंद रखने पर ऐप पूरी तरह ऑफ़लाइन रहता है।",
+                "চালু থাকলে কোনো শব্দ চেপে ধরলে Wiktionary থেকে তার অর্থ আনা হয়। শুধু সেই একটি শব্দ পাঠানো হয়। বন্ধ রাখলে অ্যাপ পুরোপুরি অফলাইন থাকে।"))
         }
     }
 }

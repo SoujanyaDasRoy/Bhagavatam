@@ -147,11 +147,36 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
         2 -> state.highlights.keys.toList()
         else -> (state.bookmarks + state.highlights.keys).distinct()
     }
+    // Passage marks and notes made in the reader: all of them, passage bookmarks only, or highlights and notes.
+    val marks = state.annotations.filter { a ->
+        when (filter) { 1 -> a.kind == com.bhagavatam.app.data.AnnKind.BOOKMARK; 2 -> a.kind != com.bhagavatam.app.data.AnnKind.BOOKMARK; else -> true }
+    }
+    Box(Modifier.fillMaxSize()) {
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = BottomRoom), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { NavBar(s.tabMe, onBack) }
         item { Text(s.saved, Modifier.padding(horizontal = 20.dp), style = MaterialTheme.typography.displaySmall) }
         item { Segmented(listOf(s.all, s.bookmarks, s.highlights), filter, { filter = it }) }
-        if (refs.isEmpty()) item {
+        if (marks.isNotEmpty()) {
+            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Secondary) }
+            items(marks, key = { "m${it.id}" }) { a ->
+                val v = SampleData.verse(a.ref)
+                Column(
+                    Modifier.padding(horizontal = 16.dp).fillMaxWidth().animateItem().clip(Radius.group).background(Brand.Card)
+                        .clickable { state.annDraft = com.bhagavatam.app.data.AnnDraft(a, a.ref, a.layer, a.start, a.end, a.quote) }.padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(Modifier.size(10.dp).clip(CircleShape).background(if (a.colour == 0L) Brand.Gold else Color(a.colour)))
+                        Text(localDigits(a.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
+                        Box(Modifier.weight(1f))
+                        if (v != null) Text(tr(ui, "Open chapter", "अध्याय खोलें", "অধ্যায় খুলুন"), Modifier.clickable { onOpen(v.skandha, v.adhyaya) }.padding(8.dp), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Brand.Kesari)
+                    }
+                    Text(a.quote, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 15.sp, lineHeight = 22.sp, color = Brand.Ink, maxLines = 3)
+                    if (a.note.isNotBlank()) Text(a.note, fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary)
+                }
+            }
+        }
+        if (refs.isEmpty() && marks.isEmpty()) item {
             val t = com.bhagavatam.app.data.settingsTextFor(ui)
             Column(Modifier.fillMaxWidth().padding(horizontal = 40.dp, vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(painterResource(Ic.Bookmark), null, tint = Brand.Secondary, modifier = Modifier.size(32.dp))
@@ -195,6 +220,8 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
             }
             }
         }
+    }
+    AnnotationSheet(state)
     }
 }
 

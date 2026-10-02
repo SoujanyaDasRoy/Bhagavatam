@@ -26,7 +26,7 @@ BN = '০১২৩৪৫৬৭৮৯'
 
 
 def bn(n):
-    return ''.join(BN[int(c)] for c in str(n))
+    return ''.join(BN[int(c)] if c.isdigit() else c for c in str(n))
 
 
 def nums(s):
@@ -45,10 +45,12 @@ def apply_fixes(text, section, chapter, fixes):
         if f['section'] != section or f['chapter'] != chapter:
             continue
         head = '### শ্লোক ' + bn(f['printed'])
+        head_norm = re.sub(r'[–—\s]', '-', head)
         seen = 0
         out = []
         for line in text.split('\n'):
-            if line.strip() == head:
+            line_norm = re.sub(r'[–—\s]', '-', line.strip())
+            if line_norm == head_norm:
                 seen += 1
                 if seen == f['occurrence']:
                     out.append('### শ্লোক ' + bn(f['is']))

@@ -97,6 +97,8 @@ import com.bhagavatam.app.ui.components.AppSlider
 import com.bhagavatam.app.ui.components.BottomScrim
 import com.bhagavatam.app.ui.theme.Radius
 import com.bhagavatam.app.ui.components.MiniPlayer
+import com.bhagavatam.app.ui.components.MarkedText
+import androidx.compose.ui.text.TextStyle
 import com.bhagavatam.app.ui.components.SectionLabel
 import com.bhagavatam.app.ui.components.Segmented
 import com.bhagavatam.app.ui.components.ShlokaText
@@ -131,6 +133,13 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
 
     LaunchedEffect(skandha, adhyaya) {
         if (verses.isNotEmpty() && !(state.lastSkandha == skandha && state.lastAdhyaya == adhyaya)) state.markRead(skandha, adhyaya, 1)
+    }
+    // Reading carries on: scrolling puts the meaning card away.
+    LaunchedEffect(list.isScrollInProgress) {
+        if (list.isScrollInProgress && !state.showWordSheet) {
+            state.lookup = null
+            state.selBar?.let { it.clear(); state.selBar = null }
+        }
     }
     // Keep the playing shloka in view.
     val playingHere = state.hasSession && state.current.skandha == skandha && state.current.adhyaya == adhyaya
@@ -289,6 +298,14 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
         }
 
         if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 120.dp else 100.dp)
+        // Action bar while text is selected: sits just above the play controls.
+        Column(
+            Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (state.hasSession) 96.dp else 76.dp).padding(horizontal = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            MeaningCard(state)
+            SelectionBar(state)
+        }
         Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 10.dp)) {
             Crossfade(state.hasSession, animationSpec = tween(Motion.sheet), label = "playControl") { session ->
             if (session) {
@@ -311,6 +328,7 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
             }
             }
         }
+        WebPanel(state, Modifier.align(Alignment.BottomCenter))
     }
 
     if (showSheet) {
@@ -318,6 +336,8 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
             ReaderSettings(state)
         }
     }
+    AnnotationSheet(state)
+    WordSheet(state) { sk, a -> onNextChapter(sk, a) }
 }
 
 @Composable
@@ -359,9 +379,9 @@ private data class BookRow(val verse: Verse, val label: String)
 
 /** Shown in book mode when the chosen reading language has nothing for this chapter yet. */
 private fun translationMissing(ui: Lang, lang: Lang): String = when {
-    lang == Lang.BN && ui == Lang.HI -> "इस अध्याय का बंगाली अनुवाद अभी उपलब्ध नहीं है। अभी यह प्रथम और द्वितीय स्कन्ध तथा तृतीय स्कन्ध के अध्याय १ से ११ में है।"
-    lang == Lang.BN && ui == Lang.BN -> "এই অধ্যায়ের বাংলা অনুবাদ এখনও পাওয়া যায়নি। আপাতত প্রথম ও দ্বিতীয় স্কন্ধ এবং তৃতীয় স্কন্ধের ১ থেকে ১১ অধ্যায় আছে।"
-    lang == Lang.BN -> "The Bengali translation of this chapter is not available yet. For now it covers Skandha 1, Skandha 2 and Skandha 3 chapters 1 to 11."
+    lang == Lang.BN && ui == Lang.HI -> "इस अध्याय का बंगाली अनुवाद अभी उपलब्ध नहीं है। यह अध्याय-दर-अध्याय जोड़ा जा रहा है।"
+    lang == Lang.BN && ui == Lang.BN -> "এই অধ্যায়ের বাংলা অনুবাদ এখনও পাওয়া যায়নি। অধ্যায় ধরে ধরে যোগ করা হচ্ছে।"
+    lang == Lang.BN -> "The Bengali translation of this chapter is not available yet. It is being added chapter by chapter."
     else -> "This translation is not available for this chapter."
 }
 
@@ -407,8 +427,12 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 val big = l == Lang.HI || l == Lang.BN
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (layers.size > 1) Text(layerName(l), fontSize = 12.sp, fontWeight = FontWeight.Medium, color = c.secondary)
-                    Text(v.translation(l), Modifier.fillMaxWidth(), fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
+                    val body = v.translation(l)
+                    val style = TextStyle(fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
                         lineHeight = ((if (big) 32 else 27) * scale * state.lineScale).sp, color = c.ink)
+                    // Pointers such as "translated together with verse 5" are not text to mark.
+                    if (v.hasText(l)) MarkedText(state, v.ref, l, body, style, Modifier.fillMaxWidth())
+                    else Text(body, Modifier.fillMaxWidth(), style = style)
                 }
             }
         }
@@ -442,15 +466,17 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     val ui = state.uiLang
     val big = lang == Lang.HI || lang == Lang.BN
     Column(Modifier.animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            buildAnnotatedString {
+        // Tap a word for its meaning, tap the verse number for the shloka, press and hold to select and mark.
+        MarkedText(
+            state, v.ref, lang, v.translation(lang),
+            TextStyle(fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink),
+            Modifier.fillMaxWidth(),
+            prefix = buildAnnotatedString {
                 withStyle(SpanStyle(color = c.gold, fontWeight = FontWeight.Bold, fontSize = 12.sp, baselineShift = BaselineShift.Superscript)) {
                     append(localDigits(label, ui) + "  ")
                 }
-                append(v.translation(lang))
             },
-            modifier = Modifier.clickable(onClick = onToggle),
-            fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink,
+            onPrefixTap = onToggle,
         )
         if (peek) {
             Column(

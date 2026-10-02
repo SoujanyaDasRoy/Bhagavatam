@@ -59,6 +59,29 @@ SKANDHA_WORDS = {
 }
 SKANDHA_NAMES = ["", "প্রথম", "দ্বিতীয়", "তৃতীয়", "চতুর্থ", "পঞ্চম", "ষষ্ঠ", "সপ্তম", "অষ্টম", "নবম", "দশম", "একাদশ", "দ্বাদশ"]
 
+BENGALI_ORDINALS = {
+    "প্রথম": 1, "দ্বিতীয়": 2, "দ্বিতীয়": 2, "তৃতীয়": 3, "তৃতীয়": 3, "চতুর্থ": 4, "পঞ্চম": 5, "ষষ্ঠ": 6,
+    "সপ্তম": 7, "অষ্টম": 8, "নবম": 9, "দশম": 10, "একাদশ": 11, "দ্বাদশ": 12, "ত্রয়োদশ": 13, "ত্রয়োদশ": 13,
+    "চতুর্দশ": 14, "পঞ্চদশ": 15, "ষোড়শ": 16, "ষোড়শ": 16, "সপ্তদশ": 17, "অষ্টাদশ": 18, "ঊনবিংশ": 19,
+    "বিংশ": 20, "একবিংশ": 21, "দ্বাবিংশ": 22, "ত্রয়োবিংশ": 23, "ত্রয়োবিংশ": 23, "চতুর্বিংশ": 24,
+    "পঞ্চবিংশ": 25, "ষড়বিংশ": 26, "ষড়বিংশ": 26, "সপ্তবিংশ": 27, "অষ্টাবিংশ": 28, "ঊনত্রিংশ": 29,
+    "ত্রিংশ": 30, "একত্রিংশ": 31, "দ্বাত্রিংশ": 32, "ত্রয়স্ত্রিংশ": 33, "ত্রয়স্ত্রিংশ": 33,
+}
+
+def parse_chapter_num(val) -> int | None:
+    if val is None:
+        return None
+    if isinstance(val, int):
+        return val
+    s = str(val).strip()
+    n = bn2int(s)
+    if n is not None:
+        return n
+    for w, num in BENGALI_ORDINALS.items():
+        if w in s:
+            return num
+    return None
+
 # ----------------------------------------------------------------------------------------------------------------
 # config
 # ----------------------------------------------------------------------------------------------------------------
@@ -358,8 +381,8 @@ def agreement(text: str, sources: list[tuple[str, int]]) -> float | None:
 # assemble
 # ----------------------------------------------------------------------------------------------------------------
 
-MARKER = re.compile(r"॥['’\"”]?\s*([০-৯0-9]+)\s*(?:[-–—~]\s*([০-৯0-9]+))?\s*॥?\s*$")
-ANY_MARKER = re.compile(r"॥['’\"”]?\s*([০-৯0-9]+)\s*(?:[-–—~]\s*([০-৯0-9]+))?\s*(?:॥|$)")
+MARKER = re.compile(r"(?:[॥।।৷|।?!]+)['’\"”]?\s*([০-৯0-9]+)\s*(?:[-–—~]\s*([০-৯0-9]+))?\s*(?:[॥।।৷|।?!]+)?\s*$")
+ANY_MARKER = re.compile(r"(?:[॥।।৷|।?!]+)['’\"”]?\s*([০-৯0-9]+)\s*(?:[-–—~]\s*([০-৯0-9]+))?\s*(?:[॥।।৷|।?!]+)?")
 
 
 def load_pages(cfg: dict) -> list[dict]:
@@ -448,16 +471,24 @@ def build_chapters(cfg: dict, pages: list[dict]) -> tuple[list[Chapter], list[st
         sec_name, _sec = section_for(cfg, v, p)
         paras = [x for x in pg.get("paragraphs", [])]
         before = 0
-        # A run that starts in the middle of a Skandha never sees its heading page, so config.json can say which Skandha a page range is in.
+        matched_sk = None
         for v0, a0, b0, s0 in cfg.get("skandha_pages", []):
             if str(v0) == v and a0 <= p <= b0 and not sec_name:
-                skandha = int(s0)
-        if pg.get("skandha_heading") and not sec_name:
+                matched_sk = int(s0)
+        if matched_sk is not None:
+            skandha = matched_sk
+        elif pg.get("skandha_heading") and not sec_name:
             for w, n in SKANDHA_WORDS.items():
                 if w in pg["skandha_heading"]:
                     skandha = n
                     break
-        if pg.get("chapter_number"):
+        ch_num = parse_chapter_num(pg.get("chapter_number"))
+        is_new = False
+        if ch_num is not None:
+            if cur is None or ch_num != cur.number or (sec_name and cur.section != sec_name):
+                is_new = True
+
+        if is_new:
             before = max(0, int(pg.get("paragraphs_before_chapter_heading") or 0))
             if cur is not None:
                 if before:
@@ -470,7 +501,7 @@ def build_chapters(cfg: dict, pages: list[dict]) -> tuple[list[Chapter], list[st
                 if (v, p) not in cur.pages:
                     cur.pages.append((v, p))
             section, sk = (sec_name, 0) if sec_name else (f"skandha-{skandha:02d}", skandha)
-            cur = Chapter(section, sk, int(pg["chapter_number"]), (pg.get("chapter_title") or "").strip(), v, p)
+            cur = Chapter(section, sk, ch_num, (pg.get("chapter_title") or "").strip(), v, p)
             chapters.append(cur)
             continues = False
         else:
