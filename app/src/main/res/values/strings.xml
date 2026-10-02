@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Bhagavatam</string>
+    <string name="playback_channel">Playback</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="prev_shloka">Previous shloka</string>
+    <string name="next_shloka">Next shloka</string>
+</resources>

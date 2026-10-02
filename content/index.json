@@ -1,0 +1,4576 @@
+{
+ "source": "Gita Press Gorakhpur, Shrimad Bhagavat Mahapuran (Hindi/Sanskrit and English editions)",
+ "languages": [
+  "en",
+  "hi"
+ ],
+ "sections": [
+  {
+   "skandha": 0,
+   "dir": "mahatmya",
+   "name": "Mahatmya (Padma Purana version)",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/mahatmya/chapter-01.md",
+      "hi": "hi/mahatmya/chapter-01.md"
+     },
+     "title": "A Dialogue between Nārada and Bhakti (in a living form)",
+     "verses_en": 80,
+     "last_verse_en": 80,
+     "title_hi": "देवर्षि नारदकी भक्तिसे भेंट",
+     "verses_hi": 80,
+     "last_verse_hi": 80
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/mahatmya/chapter-02.md",
+      "hi": "hi/mahatmya/chapter-02.md"
+     },
+     "title": "A Dialogue between the Kumāras and Nārada",
+     "verses_en": 76,
+     "last_verse_en": 76,
+     "title_hi": "भक्तिका दुःख दूर करनेके लिये नारदजीका उद्योग",
+     "verses_hi": 76,
+     "last_verse_hi": 76
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/mahatmya/chapter-03.md",
+      "hi": "hi/mahatmya/chapter-03.md"
+     },
+     "title": "Cessation of Bhakti’s Suffering",
+     "verses_en": 74,
+     "last_verse_en": 74,
+     "title_hi": "भक्तिके कष्टकी निवृत्ति",
+     "verses_hi": 74,
+     "last_verse_hi": 74
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/mahatmya/chapter-04.md",
+      "hi": "hi/mahatmya/chapter-04.md"
+     },
+     "title": "Redemption of a Brāhmaṇa (Ātmadeva)",
+     "verses_en": 81,
+     "last_verse_en": 81,
+     "title_hi": "गोकर्णोपाख्यान प्रारम्भ",
+     "verses_hi": 81,
+     "last_verse_hi": 81
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/mahatmya/chapter-05.md",
+      "hi": "hi/mahatmya/chapter-05.md"
+     },
+     "title": "How Gokarṇa attained final beatitude (along with others)",
+     "verses_en": 90,
+     "last_verse_en": 90,
+     "title_hi": "धुन्धुकारीको प्रेतयोनिकी प्राप्ति और उससे उद्धार",
+     "verses_hi": 90,
+     "last_verse_hi": 90
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/mahatmya/chapter-06.md",
+      "hi": "hi/mahatmya/chapter-06.md"
+     },
+     "title": "The procedure of hearing Śrīmad Bhāgavata in a week detailed",
+     "verses_en": 103,
+     "last_verse_en": 103,
+     "title_hi": "सप्ताहयज्ञकी विधि",
+     "verses_hi": 103,
+     "last_verse_hi": 103
+    }
+   ]
+  },
+  {
+   "skandha": 1,
+   "dir": "skandha-01",
+   "name": "First",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-01/chapter-01.md",
+      "hi": "hi/skandha-01/chapter-01.md"
+     },
+     "title": "śaunaka and other sages enquire of the famous Sūta* (Ugraśravā)",
+     "verses_en": 23,
+     "last_verse_en": 23,
+     "title_hi": "श्रीसूतजीसे शौनकादि ऋषियोंका प्रश्न",
+     "verses_hi": 23,
+     "last_verse_hi": 23
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-01/chapter-02.md",
+      "hi": "hi/skandha-01/chapter-02.md"
+     },
+     "title": "Glory of the Lord’s narrative and of Devotion to Him",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "भगवत्कथा और भगवद्‌भक्तिका माहात्म्य",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-01/chapter-03.md",
+      "hi": "hi/skandha-01/chapter-03.md"
+     },
+     "title": "The Lord’s Avatāras or Descents into the world of matter",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "भगवान्‌के अवतारोंका वर्णन",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-01/chapter-04.md",
+      "hi": "hi/skandha-01/chapter-04.md"
+     },
+     "title": "A sense of frustration overtakes Vedavyāsa",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "महर्षि व्यासका असंतोष",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-01/chapter-05.md",
+      "hi": "hi/skandha-01/chapter-05.md"
+     },
+     "title": "Glory of singing the Lord’s praises and an account of Devarṣi Nārada’s previous life",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "भगवान्‌के यश-कीर्तनकी महिमा और देवर्षि नारदजीका पूर्वचरित्र",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-01/chapter-06.md",
+      "hi": "hi/skandha-01/chapter-06.md"
+     },
+     "title": "The rest of the story of Nārada’s previous birth",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "नारदजीके पूर्वचरित्रका शेष भाग",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-01/chapter-07.md",
+      "hi": "hi/skandha-01/chapter-07.md"
+     },
+     "title": "Aśwatthāmā assassinates Draupadī’s sons and Arjuna in his turn curbs his pride",
+     "verses_en": 58,
+     "last_verse_en": 58,
+     "title_hi": "अश्वत्थामाद्वारा द्रौपदीके पुत्रोंका मारा जाना और अर्जुनके द्वारा अश्वत्थामाका मानमर्दन",
+     "verses_hi": 58,
+     "last_verse_hi": 58
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-01/chapter-08.md",
+      "hi": "hi/skandha-01/chapter-08.md"
+     },
+     "title": "The Lord delivers Parīkṣit in the womb and is extolled by Kuntī; Yudhiṣṭhira gives way to grief",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "गर्भमें परीक्षित्‌की रक्षा, कुन्तीके द्वारा भगवान्‌की स्तुति और युधिष्ठिरका शोक",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-01/chapter-09.md",
+      "hi": "hi/skandha-01/chapter-09.md"
+     },
+     "title": "Yudhiṣṭhira and others call on Bhīṣma and the latter drops his mortal coil, extolling Śrī Kṛṣṇa",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "युधिष्ठिरादिका भीष्मजीके पास जाना और भगवान् श्रीकृष्णकी स्तुति करते हुए भीष्मजीका प्राणत्याग करना",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-01/chapter-10.md",
+      "hi": "hi/skandha-01/chapter-10.md"
+     },
+     "title": "Śrī Kṛṣṇa’s Departure to Dwārakā",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "श्रीकृष्णका द्वारका-गमन",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-01/chapter-11.md",
+      "hi": "hi/skandha-01/chapter-11.md"
+     },
+     "title": "Right royal reception of Śrī Kṛṣṇa at Dwārakā",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "द्वारकामें श्रीकृष्णका राजोचित स्वागत",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-01/chapter-12.md",
+      "hi": "hi/skandha-01/chapter-12.md"
+     },
+     "title": "Birth of Parīkṣit",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "परीक्षित्‌का जन्म",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-01/chapter-13.md",
+      "hi": "hi/skandha-01/chapter-13.md"
+     },
+     "title": "Departure of Dhṛtarāṣṭra and his wife Gāndhārī, for the forest at the instance of Vidura",
+     "verses_en": 59,
+     "last_verse_en": 59,
+     "title_hi": "विदुरजीके उपदेशसे धृतराष्ट्र और गान्धारीका वनमें जाना",
+     "verses_hi": 59,
+     "last_verse_hi": 59
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-01/chapter-14.md",
+      "hi": "hi/skandha-01/chapter-14.md"
+     },
+     "title": "King Yudhiṣṭhira grows apprehensive at the sight of evil omens and Arjuna returns from Dwārakā",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "अपशकुन देखकर महाराज युधिष्ठिरका शंका करना और अर्जुनका द्वारकासे लौटना",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-01/chapter-15.md",
+      "hi": "hi/skandha-01/chapter-15.md"
+     },
+     "title": "install Parīkṣit on the throne of Hastināpura and ascend to heaven Arjuna said : Arjuna said : Arjuna said : Arjuna said :",
+     "verses_en": 51,
+     "last_verse_en": 51,
+     "title_hi": "कृष्णविरहव्यथित पाण्डवोंका परीक्षित्‌को राज्य देकर स्वर्ग सिधारना",
+     "verses_hi": 51,
+     "last_verse_hi": 51
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-01/chapter-16.md",
+      "hi": "hi/skandha-01/chapter-16.md"
+     },
+     "title": "Conquest of the world by king Parīkṣit and the dialogue between Dharma (the god of piety) and Mother Earth",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "परीक्षित्‌की दिग्विजय तथा धर्म और पृथ्वीका संवाद",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-01/chapter-17.md",
+      "hi": "hi/skandha-01/chapter-17.md"
+     },
+     "title": "King Parīkṣit subdues Kali",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "महाराज परीक्षित्‌द्वारा कलियुगका दमन",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-01/chapter-18.md",
+      "hi": "hi/skandha-01/chapter-18.md"
+     },
+     "title": "The youthful sage śṛṅgī utters an imprecation against king Parīkṣit",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "राजा परीक्षित्‌को शृंगी ऋषिका शाप",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-01/chapter-19.md",
+      "hi": "hi/skandha-01/chapter-19.md"
+     },
+     "title": "Parīkṣit takes a vow of fasting till death and śuka pays a visit to him",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "परीक्षित्‌का अनशनव्रत और शुकदेवजीका आगमन",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    }
+   ]
+  },
+  {
+   "skandha": 2,
+   "dir": "skandha-02",
+   "name": "Second",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-02/chapter-01.md",
+      "hi": "hi/skandha-02/chapter-01.md"
+     },
+     "title": "",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "ध्यान-विधि और भगवान्‌के विराट्स्वरूपका वर्णन",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-02/chapter-02.md",
+      "hi": "hi/skandha-02/chapter-02.md"
+     },
+     "title": "types of Mukti (Liberation), viz., Kramamukti or gradual Liberation and Sadyomukti or immediate Liberation",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "भगवान्‌के स्थूल और सूक्ष्मरूपोंकी धारणा तथा क्रममुक्ति और सद्योमुक्तिका वर्णन",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-02/chapter-03.md",
+      "hi": "hi/skandha-02/chapter-03.md"
+     },
+     "title": "the superiority of Devotion to the Lord",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "कामनाओंके अनुसार विभिन्न देवताओंकी उपासना तथा भगवद्‌भक्तिके प्राधान्यका निरूपण",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-02/chapter-04.md",
+      "hi": "hi/skandha-02/chapter-04.md"
+     },
+     "title": "The king asks a question about the creation of the universe and the sage śuka commences his discourse",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "राजाका सृष्टिविषयक प्रश्न और शुकदेवजीका कथारम्भ",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-02/chapter-05.md",
+      "hi": "hi/skandha-02/chapter-05.md"
+     },
+     "title": "A description of the cosmos",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "सृष्टि-वर्णन",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-02/chapter-06.md",
+      "hi": "hi/skandha-02/chapter-06.md"
+     },
+     "title": "Glories of the Cosmic Being",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "विराट्स्वरूपकी विभूतियोंका वर्णन",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-02/chapter-07.md",
+      "hi": "hi/skandha-02/chapter-07.md"
+     },
+     "title": "The stories of the Lord’s sportful descents",
+     "verses_en": 53,
+     "last_verse_en": 53,
+     "title_hi": "भगवान्‌के लीलावतारोंकी कथा",
+     "verses_hi": 53,
+     "last_verse_hi": 53
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-02/chapter-08.md",
+      "hi": "hi/skandha-02/chapter-08.md"
+     },
+     "title": "King Parīkṣit asks various questions of the sage śuka",
+     "verses_en": 29,
+     "last_verse_en": 29,
+     "title_hi": "राजा परीक्षित्‌के विविध प्रश्न",
+     "verses_hi": 29,
+     "last_verse_hi": 29
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-02/chapter-09.md",
+      "hi": "hi/skandha-02/chapter-09.md"
+     },
+     "title": "text of the Bhāgavata, consisting of four couplets only",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "ब्रह्माजीका भगवद्धामदर्शन और भगवान्‌के द्वारा उन्हें चतुःश्लोकी भागवतका उपदेश",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-02/chapter-10.md",
+      "hi": "hi/skandha-02/chapter-10.md"
+     },
+     "title": "The ten characteristic features of the Bhāgavata",
+     "verses_en": 51,
+     "last_verse_en": 51,
+     "title_hi": "भागवतके दस लक्षण",
+     "verses_hi": 51,
+     "last_verse_hi": 51
+    }
+   ]
+  },
+  {
+   "skandha": 3,
+   "dir": "skandha-03",
+   "name": "Third",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-03/chapter-01.md",
+      "hi": "hi/skandha-03/chapter-01.md"
+     },
+     "title": "Meeting of Uddhava and Vidura",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "उद्धव और विदुरकी भेंट",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-03/chapter-02.md",
+      "hi": "hi/skandha-03/chapter-02.md"
+     },
+     "title": "Uddhava recounts the childish sports of the Lord",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "उद्धवजीद्वारा भगवान्‌की बाललीलाओंका वर्णन",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-03/chapter-03.md",
+      "hi": "hi/skandha-03/chapter-03.md"
+     },
+     "title": "A brief survey of the Lord’s other exploits",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "भगवान्‌के अन्य लीलाचरित्रोंका वर्णन",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-03/chapter-04.md",
+      "hi": "hi/skandha-03/chapter-04.md"
+     },
+     "title": "As directed by Uddhava, Vidura calls on the sage Maitreya by hurling abuses.",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "उद्धवजीसे विदा होकर विदुरजीका मैत्रेय ऋषिके पास जाना",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-03/chapter-05.md",
+      "hi": "hi/skandha-03/chapter-05.md"
+     },
+     "title": "The sage Maitreya describes the process of creation in reply to Vidura’s question",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "विदुरजीका प्रश्न और मैत्रेयजीका सृष्टिक्रम वर्णन",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-03/chapter-06.md",
+      "hi": "hi/skandha-03/chapter-06.md"
+     },
+     "title": "Appearance of the Cosmic Body",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "विराट् शरीरकी उत्पत्ति",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-03/chapter-07.md",
+      "hi": "hi/skandha-03/chapter-07.md"
+     },
+     "title": "Vidura’s questions",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "विदुरजीके प्रश्न",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-03/chapter-08.md",
+      "hi": "hi/skandha-03/chapter-08.md"
+     },
+     "title": "Brahmā’s manifestation",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "ब्रह्माजीकी उत्पत्ति",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-03/chapter-09.md",
+      "hi": "hi/skandha-03/chapter-09.md"
+     },
+     "title": "Brahmā extols the Lord",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "ब्रह्माजीद्वारा भगवान्‌की स्तुति",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-03/chapter-10.md",
+      "hi": "hi/skandha-03/chapter-10.md"
+     },
+     "title": "Description of the tenfold creation",
+     "verses_en": 29,
+     "last_verse_en": 29,
+     "title_hi": "दस प्रकारकी सृष्टिका वर्णन",
+     "verses_hi": 29,
+     "last_verse_hi": 29
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-03/chapter-11.md",
+      "hi": "hi/skandha-03/chapter-11.md"
+     },
+     "title": "Divisions of Time such as Manvantara and so on",
+     "verses_en": 41,
+     "last_verse_en": 41,
+     "title_hi": "मन्वन्तरादि कालविभागका वर्णन",
+     "verses_hi": 41,
+     "last_verse_hi": 41
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-03/chapter-12.md",
+      "hi": "hi/skandha-03/chapter-12.md"
+     },
+     "title": "The multiplication of creation",
+     "verses_en": 56,
+     "last_verse_en": 56,
+     "title_hi": "सृष्टिका विस्तार",
+     "verses_hi": 56,
+     "last_verse_hi": 56
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-03/chapter-13.md",
+      "hi": "hi/skandha-03/chapter-13.md"
+     },
+     "title": "The Lord’s Descent as the Divine Boar",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "वाराह-अवतारकी कथा",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-03/chapter-14.md",
+      "hi": "hi/skandha-03/chapter-14.md"
+     },
+     "title": "Diti’s conception",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "दितिका गर्भधारण",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-03/chapter-15.md",
+      "hi": "hi/skandha-03/chapter-15.md"
+     },
+     "title": "Sanaka and his three brothers pronounce a curse against Jaya and Vijaya",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "जय-विजयको सनकादिका शाप",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-03/chapter-16.md",
+      "hi": "hi/skandha-03/chapter-16.md"
+     },
+     "title": "The fall of Jaya and Vijaya from Vaikuṇṭha",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "जय-विजयका वैकुण्ठसे पतन",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-03/chapter-17.md",
+      "hi": "hi/skandha-03/chapter-17.md"
+     },
+     "title": "Birth of Hiraṇyakaśipu and Hiraṇyākṣa and the latter’s conquest of the four quarters",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "हिरण्यकशिपु और हिरण्याक्षका जन्म तथा हिरण्याक्षकी दिग्विजय",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-03/chapter-18.md",
+      "hi": "hi/skandha-03/chapter-18.md"
+     },
+     "title": "Encounter of the Divine Boar with Hiraṇyākṣa",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "हिरण्याक्षके साथ वराहभगवान्‌का युद्ध",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-03/chapter-19.md",
+      "hi": "hi/skandha-03/chapter-19.md"
+     },
+     "title": "Death of Hiraṇyākṣa",
+     "verses_en": 38,
+     "last_verse_en": 38,
+     "title_hi": "हिरण्याक्ष-वध",
+     "verses_hi": 38,
+     "last_verse_hi": 38
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-03/chapter-20.md",
+      "hi": "hi/skandha-03/chapter-20.md"
+     },
+     "title": "The various species of living beings created by Brahmā see the light?",
+     "verses_en": 53,
+     "last_verse_en": 53,
+     "title_hi": "ब्रह्माजीकी रची हुई अनेक प्रकारकी सृष्टिका वर्णन",
+     "verses_hi": 53,
+     "last_verse_hi": 53
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-03/chapter-21.md",
+      "hi": "hi/skandha-03/chapter-21.md"
+     },
+     "title": "The sage Kardama practises austere penance and the Lord confers a boon on him",
+     "verses_en": 56,
+     "last_verse_en": 56,
+     "title_hi": "कर्दमजीकी तपस्या और भगवान्‌का वरदान",
+     "verses_hi": 56,
+     "last_verse_hi": 56
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-03/chapter-22.md",
+      "hi": "hi/skandha-03/chapter-22.md"
+     },
+     "title": "The sage Kardama accepts the hand of Devahūti",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "देवहूतिके साथ कर्दम प्रजापतिका विवाह",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-03/chapter-23.md",
+      "hi": "hi/skandha-03/chapter-23.md"
+     },
+     "title": "Amorous pastimes of Kardama and Devahūti",
+     "verses_en": 57,
+     "last_verse_en": 57,
+     "title_hi": "कर्दम और देवहूतिका विहार",
+     "verses_hi": 57,
+     "last_verse_hi": 57
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-03/chapter-24.md",
+      "hi": "hi/skandha-03/chapter-24.md"
+     },
+     "title": "Descent of Lord Kapila",
+     "verses_en": 47,
+     "last_verse_en": 47,
+     "title_hi": "श्रीकपिलदेवजीका जन्म",
+     "verses_hi": 47,
+     "last_verse_hi": 47
+    },
+    {
+     "chapter": 25,
+     "files": {
+      "en": "en/skandha-03/chapter-25.md",
+      "hi": "hi/skandha-03/chapter-25.md"
+     },
+     "title": "Lord Kapila expatiates on the glory of Devotion in response to the query of mother Devahūti",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "देवहूतिका प्रश्न तथा भगवान् कपिलद्वारा भक्तियोगकी महिमाका वर्णन",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 26,
+     "files": {
+      "en": "en/skandha-03/chapter-26.md",
+      "hi": "hi/skandha-03/chapter-26.md"
+     },
+     "title": "The process of evolution of the Mahat-tattva and other fundamental principles",
+     "verses_en": 72,
+     "last_verse_en": 72,
+     "title_hi": "महदादि भिन्न-भिन्न तत्त्वोंकी उत्पत्तिका वर्णन",
+     "verses_hi": 72,
+     "last_verse_hi": 72
+    },
+    {
+     "chapter": 27,
+     "files": {
+      "en": "en/skandha-03/chapter-27.md",
+      "hi": "hi/skandha-03/chapter-27.md"
+     },
+     "title": "How to attain Liberation through the differentiation of Matter and Spirit?",
+     "verses_en": 30,
+     "last_verse_en": 30,
+     "title_hi": "प्रकृति-पुरुषके विवेकसे मोक्ष-प्राप्तिका वर्णन",
+     "verses_hi": 30,
+     "last_verse_hi": 30
+    },
+    {
+     "chapter": 28,
+     "files": {
+      "en": "en/skandha-03/chapter-28.md",
+      "hi": "hi/skandha-03/chapter-28.md"
+     },
+     "title": "The process of the eightfold Yoga",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "अष्टांगयोगकी विधि",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 29,
+     "files": {
+      "en": "en/skandha-03/chapter-29.md",
+      "hi": "hi/skandha-03/chapter-29.md"
+     },
+     "title": "True meaning of devotion and the glory of Time",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "भक्तिका मर्म और कालकी महिमा",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 30,
+     "files": {
+      "en": "en/skandha-03/chapter-30.md",
+      "hi": "hi/skandha-03/chapter-30.md"
+     },
+     "title": "Downfall of men attached to their body, home, etc.",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "देह-गेहमें आसक्त पुरुषोंकी अधोगतिका वर्णन",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 31,
+     "files": {
+      "en": "en/skandha-03/chapter-31.md",
+      "hi": "hi/skandha-03/chapter-31.md"
+     },
+     "title": "The stages of growth of a human embryo",
+     "verses_en": 48,
+     "last_verse_en": 48,
+     "title_hi": "मनुष्ययोनिको प्राप्त हुए जीवकी गतिका वर्णन",
+     "verses_hi": 48,
+     "last_verse_hi": 48
+    },
+    {
+     "chapter": 32,
+     "files": {
+      "en": "en/skandha-03/chapter-32.md",
+      "hi": "hi/skandha-03/chapter-32.md"
+     },
+     "title": "“Dark Path” and so on, and the superiority of Bhaktiyoga",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "धूममार्ग और अर्चिरादि मार्गसे जानेवालोंकी गतिका और भक्तियोगकी उत्कृष्टताका वर्णन",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 33,
+     "files": {
+      "en": "en/skandha-03/chapter-33.md",
+      "hi": "hi/skandha-03/chapter-33.md"
+     },
+     "title": "Devahūti receives the light of wisdom and attains final beatitude",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "देवहूतिको तत्त्वज्ञान एवं मोक्षपदकी प्राप्ति",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    }
+   ]
+  },
+  {
+   "skandha": 4,
+   "dir": "skandha-04",
+   "name": "Fourth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-04/chapter-01.md",
+      "hi": "hi/skandha-04/chapter-01.md"
+     },
+     "title": "The Progeny of Swāyambhuva Manu’s Daughters",
+     "verses_en": 66,
+     "last_verse_en": 66,
+     "title_hi": "स्वायम्भुव-मनुकी कन्याओंके वंशका वर्णन",
+     "verses_hi": 66,
+     "last_verse_hi": 66
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-04/chapter-02.md",
+      "hi": "hi/skandha-04/chapter-02.md"
+     },
+     "title": "Spiteful feeling between Lord śiva and Dakṣa",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "भगवान् शिव और दक्ष प्रजापतिका मनोमालिन्य",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-04/chapter-03.md",
+      "hi": "hi/skandha-04/chapter-03.md"
+     },
+     "title": "Satī insists on joining the sacrificial festival at her father’s",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "सतीका पिताके यहाँ यज्ञोत्सवमें जानेके लिये आग्रह करना",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-04/chapter-04.md",
+      "hi": "hi/skandha-04/chapter-04.md"
+     },
+     "title": "Satī burns herself with the fire of Yoga",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "सतीका अग्निप्रवेश",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-04/chapter-05.md",
+      "hi": "hi/skandha-04/chapter-05.md"
+     },
+     "title": "Vīrabhadra wrecks Dakṣa’s sacrifice and beheads him",
+     "verses_en": 26,
+     "last_verse_en": 26,
+     "title_hi": "वीरभद्रकृत दक्षयज्ञविध्वंस और दक्षवध",
+     "verses_hi": 26,
+     "last_verse_hi": 26
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-04/chapter-06.md",
+      "hi": "hi/skandha-04/chapter-06.md"
+     },
+     "title": "",
+     "verses_en": 53,
+     "last_verse_en": 53,
+     "title_hi": "ब्रह्मादि देवताओंका कैलास जाकर श्रीमहादेवजीको मनाना",
+     "verses_hi": 53,
+     "last_verse_hi": 53
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-04/chapter-07.md",
+      "hi": "hi/skandha-04/chapter-07.md"
+     },
+     "title": "Completion of Dakṣa’s Sacrifice",
+     "verses_en": 61,
+     "last_verse_en": 61,
+     "title_hi": "दक्षयज्ञकी पूर्ति",
+     "verses_hi": 61,
+     "last_verse_hi": 61
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-04/chapter-08.md",
+      "hi": "hi/skandha-04/chapter-08.md"
+     },
+     "title": "Dhruva’s departure for the woods",
+     "verses_en": 82,
+     "last_verse_en": 82,
+     "title_hi": "ध्रुवका वन-गमन",
+     "verses_hi": 82,
+     "last_verse_hi": 82
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-04/chapter-09.md",
+      "hi": "hi/skandha-04/chapter-09.md"
+     },
+     "title": "Dhruva returns home after receiving a boon from the Lord",
+     "verses_en": 67,
+     "last_verse_en": 67,
+     "title_hi": "ध्रुवका वर पाकर घर लौटना",
+     "verses_hi": 67,
+     "last_verse_hi": 67
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-04/chapter-10.md",
+      "hi": "hi/skandha-04/chapter-10.md"
+     },
+     "title": "Uttama’s death at the hands of the Yakṣas and Dhruva’s encounter with them",
+     "verses_en": 30,
+     "last_verse_en": 30,
+     "title_hi": "उत्तमका मारा जाना, ध्रुवका यक्षोंके साथ युद्ध",
+     "verses_hi": 30,
+     "last_verse_hi": 30
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-04/chapter-11.md",
+      "hi": "hi/skandha-04/chapter-11.md"
+     },
+     "title": "Swāyambhuva Manu intervenes and persuades Dhruva to cease fighting",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "स्वायम्भुव-मनुका ध्रुवजीको युद्ध बंद करनेके लिये समझाना",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-04/chapter-12.md",
+      "hi": "hi/skandha-04/chapter-12.md"
+     },
+     "title": "Kubera confers a boon on Dhruva, who ascends to the abode of Lord Viṣṇu",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "ध्रुवजीको कुबेरका वरदान और विष्णुलोककी प्राप्ति",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-04/chapter-13.md",
+      "hi": "hi/skandha-04/chapter-13.md"
+     },
+     "title": "Dhruva’s posterity and the narrative of king Aṅga",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "ध्रुववंशका वर्णन, राजा अंगका चरित्र",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-04/chapter-14.md",
+      "hi": "hi/skandha-04/chapter-14.md"
+     },
+     "title": "The story of king Vena",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "राजा वेनकी कथा",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-04/chapter-15.md",
+      "hi": "hi/skandha-04/chapter-15.md"
+     },
+     "title": "Descent and coronation of king Pṛthu Descent and coronation of king Pṛthu Descent and coronation of king Pṛthu Descent and coronation of king Pṛthu Descent and coronation of king Pṛthu",
+     "verses_en": 26,
+     "last_verse_en": 26,
+     "title_hi": "महाराज पृथुका आविर्भाव और राज्याभिषेक",
+     "verses_hi": 26,
+     "last_verse_hi": 26
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-04/chapter-16.md",
+      "hi": "hi/skandha-04/chapter-16.md"
+     },
+     "title": "Glorification of king Pṛthu by the bards",
+     "verses_en": 27,
+     "last_verse_en": 27,
+     "title_hi": "वंदीजनद्वारा महाराज पृथुकी स्तुति",
+     "verses_hi": 27,
+     "last_verse_hi": 27
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-04/chapter-17.md",
+      "hi": "hi/skandha-04/chapter-17.md"
+     },
+     "title": "King Pṛthu gets angry with Earth and the latter extols him",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "महाराज पृथुका पृथ्वीपर कुपित होना और पृथ्वीके द्वारा उनकी स्तुति करना",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-04/chapter-18.md",
+      "hi": "hi/skandha-04/chapter-18.md"
+     },
+     "title": "King Pṛthu milks goddess Earth in the form of a cow",
+     "verses_en": 32,
+     "last_verse_en": 32,
+     "title_hi": "पृथ्वी-दोहन",
+     "verses_hi": 32,
+     "last_verse_hi": 32
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-04/chapter-19.md",
+      "hi": "hi/skandha-04/chapter-19.md"
+     },
+     "title": "King Pṛthu performs a hundred horse-sacrifices",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "महाराज पृथुके सौ अश्वमेध यज्ञ",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-04/chapter-20.md",
+      "hi": "hi/skandha-04/chapter-20.md"
+     },
+     "title": "Lord Viṣṇu manifests Himself in the sacrificial hall of king Pṛthu their Self.",
+     "verses_en": 38,
+     "last_verse_en": 38,
+     "title_hi": "महाराज पृथुकी यज्ञशालामें श्रीविष्णुभगवान्‌का प्रादुर्भाव",
+     "verses_hi": 38,
+     "last_verse_hi": 38
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-04/chapter-21.md",
+      "hi": "hi/skandha-04/chapter-21.md"
+     },
+     "title": "King Pṛthu’s teaching to his subjects",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "महाराज पृथुका अपनी प्रजाको उपदेश",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-04/chapter-22.md",
+      "hi": "hi/skandha-04/chapter-22.md"
+     },
+     "title": "The sage Sanaka and his three brothers impart instruction to king Pṛthu",
+     "verses_en": 63,
+     "last_verse_en": 63,
+     "title_hi": "महाराज पृथुको सनकादिका उपदेश",
+     "verses_hi": 63,
+     "last_verse_hi": 63
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-04/chapter-23.md",
+      "hi": "hi/skandha-04/chapter-23.md"
+     },
+     "title": "King Pṛthu practises asceticism and departs for the other world",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "राजा पृथुकी तपस्या और परलोकगमन",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-04/chapter-24.md",
+      "hi": "hi/skandha-04/chapter-24.md"
+     },
+     "title": "The hymn sung by Lord śiva (and taught to the Pracetās)",
+     "verses_en": 79,
+     "last_verse_en": 79,
+     "title_hi": "पृथुकी वंशपरम्परा और प्रचेताओंको भगवान् रुद्रका उपदेश",
+     "verses_hi": 79,
+     "last_verse_hi": 79
+    },
+    {
+     "chapter": 25,
+     "files": {
+      "en": "en/skandha-04/chapter-25.md",
+      "hi": "hi/skandha-04/chapter-25.md"
+     },
+     "title": "Introductory part of the parable of Purañjana",
+     "verses_en": 62,
+     "last_verse_en": 62,
+     "title_hi": "पुरंजनोपाख्यानका प्रारम्भ",
+     "verses_hi": 62,
+     "last_verse_hi": 62
+    },
+    {
+     "chapter": 26,
+     "files": {
+      "en": "en/skandha-04/chapter-26.md",
+      "hi": "hi/skandha-04/chapter-26.md"
+     },
+     "title": "Purañjana goes a-hunting to the forest and the queen gets angry with him",
+     "verses_en": 26,
+     "last_verse_en": 26,
+     "title_hi": "राजा पुरंजनका शिकार खेलने वनमें जाना और रानीका कुपित होना",
+     "verses_hi": 26,
+     "last_verse_hi": 26
+    },
+    {
+     "chapter": 27,
+     "files": {
+      "en": "en/skandha-04/chapter-27.md",
+      "hi": "hi/skandha-04/chapter-27.md"
+     },
+     "title": "Raid of Caṇḍavega against the capital of Purañjana and the story of Kālakanyā",
+     "verses_en": 30,
+     "last_verse_en": 30,
+     "title_hi": "पुरंजनपुरीपर चण्डवेगकी चढ़ाई तथा कालकन्याका चरित्र",
+     "verses_hi": 30,
+     "last_verse_hi": 30
+    },
+    {
+     "chapter": 28,
+     "files": {
+      "en": "en/skandha-04/chapter-28.md",
+      "hi": "hi/skandha-04/chapter-28.md"
+     },
+     "title": "Purañjana is reborn as a woman and attains liberation through the teaching of his friend, Avijñāta",
+     "verses_en": 65,
+     "last_verse_en": 65,
+     "title_hi": "पुरंजनको स्त्रीयोनिकी प्राप्ति और अविज्ञातके उपदेशसे उसका मुक्त होना",
+     "verses_hi": 65,
+     "last_verse_hi": 65
+    },
+    {
+     "chapter": 29,
+     "files": {
+      "en": "en/skandha-04/chapter-29.md",
+      "hi": "hi/skandha-04/chapter-29.md"
+     },
+     "title": "The Dialogue between king Prācīnabarhi and the sage Nārada (continued)",
+     "verses_en": 85,
+     "last_verse_en": 85,
+     "title_hi": "पुरंजनोपाख्यानका तात्पर्य",
+     "verses_hi": 85,
+     "last_verse_hi": 85
+    },
+    {
+     "chapter": 30,
+     "files": {
+      "en": "en/skandha-04/chapter-30.md",
+      "hi": "hi/skandha-04/chapter-30.md"
+     },
+     "title": "their city and marry the foster-daughter of the trees",
+     "verses_en": 51,
+     "last_verse_en": 51,
+     "title_hi": "प्रचेताओंको श्रीविष्णुभगवान्‌का वरदान",
+     "verses_hi": 51,
+     "last_verse_hi": 51
+    },
+    {
+     "chapter": 31,
+     "files": {
+      "en": "en/skandha-04/chapter-31.md",
+      "hi": "hi/skandha-04/chapter-31.md"
+     },
+     "title": "The story of the Pracetās",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "प्रचेताओंको श्रीनारदजीका उपदेश और उनका परमपद-लाभ",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    }
+   ]
+  },
+  {
+   "skandha": 5,
+   "dir": "skandha-05",
+   "name": "Fifth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-05/chapter-01.md",
+      "hi": "hi/skandha-05/chapter-01.md"
+     },
+     "title": "The story of Priyavrata",
+     "verses_en": 41,
+     "last_verse_en": 41,
+     "title_hi": "प्रियव्रत-चरित्र",
+     "verses_hi": 41,
+     "last_verse_hi": 41
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-05/chapter-02.md",
+      "hi": "hi/skandha-05/chapter-02.md"
+     },
+     "title": "An account of Āgnīdhra",
+     "verses_en": 23,
+     "last_verse_en": 23,
+     "title_hi": "आग्नीध्र-चरित्र",
+     "verses_hi": 23,
+     "last_verse_hi": 23
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-05/chapter-03.md",
+      "hi": "hi/skandha-05/chapter-03.md"
+     },
+     "title": "The descent of Lord Ṛṣabha",
+     "verses_en": 20,
+     "last_verse_en": 20,
+     "title_hi": "राजा नाभिका चरित्र",
+     "verses_hi": 20,
+     "last_verse_hi": 20
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-05/chapter-04.md",
+      "hi": "hi/skandha-05/chapter-04.md"
+     },
+     "title": "The sovereignty of Ṛṣabha",
+     "verses_en": 19,
+     "last_verse_en": 19,
+     "title_hi": "ऋषभदेवजीका राज्यशासन",
+     "verses_hi": 19,
+     "last_verse_hi": 19
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-05/chapter-05.md",
+      "hi": "hi/skandha-05/chapter-05.md"
+     },
+     "title": "ascetic who has shaken off worldly feelings and obligations",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "ऋषभजीका अपने पुत्रोंको उपदेश देना और स्वयं अवधूतवृत्ति ग्रहण करना",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-05/chapter-06.md",
+      "hi": "hi/skandha-05/chapter-06.md"
+     },
+     "title": "Lord Ṛṣabha quits His body",
+     "verses_en": 19,
+     "last_verse_en": 19,
+     "title_hi": "ऋषभदेवजीका देहत्याग",
+     "verses_hi": 19,
+     "last_verse_hi": 19
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-05/chapter-07.md",
+      "hi": "hi/skandha-05/chapter-07.md"
+     },
+     "title": "The story of Bharata",
+     "verses_en": 14,
+     "last_verse_en": 14,
+     "title_hi": "भरत-चरित्र",
+     "verses_hi": 14,
+     "last_verse_hi": 14
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-05/chapter-08.md",
+      "hi": "hi/skandha-05/chapter-08.md"
+     },
+     "title": "Bharata conceives an infatuation for a fawn and is reborn as a deer",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "भरतजीका मृगके मोहमें फँसकर मृगयोनिमें जन्म लेना",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-05/chapter-09.md",
+      "hi": "hi/skandha-05/chapter-09.md"
+     },
+     "title": "Bharata reborn for a second time in a Brāhmaṇa family",
+     "verses_en": 20,
+     "last_verse_en": 20,
+     "title_hi": "भरतजीका ब्राह्मणकुलमें जन्म",
+     "verses_hi": 20,
+     "last_verse_hi": 20
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-05/chapter-10.md",
+      "hi": "hi/skandha-05/chapter-10.md"
+     },
+     "title": "The meeting of Jaḍabharata with king Rahūgaṇa",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "जडभरत और राजा रहूगणकी भेंट",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-05/chapter-11.md",
+      "hi": "hi/skandha-05/chapter-11.md"
+     },
+     "title": "Bharata’s teaching to king Rahūgaṇa",
+     "verses_en": 17,
+     "last_verse_en": 17,
+     "title_hi": "राजा रहूगणको भरतजीका उपदेश",
+     "verses_hi": 17,
+     "last_verse_hi": 17
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-05/chapter-12.md",
+      "hi": "hi/skandha-05/chapter-12.md"
+     },
+     "title": "Bharata answers the query of Rahūgaṇa",
+     "verses_en": 16,
+     "last_verse_en": 16,
+     "title_hi": "रहूगणका प्रश्न और भरतजीका समाधान",
+     "verses_hi": 16,
+     "last_verse_hi": 16
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-05/chapter-13.md",
+      "hi": "hi/skandha-05/chapter-13.md"
+     },
+     "title": "Bharata allegorically represents this state of worldly existence as a forest and the doubts of Rahūgaṇa get resolved",
+     "verses_en": 26,
+     "last_verse_en": 26,
+     "title_hi": "भवाटवीका वर्णन और रहूगणका संशयनाश",
+     "verses_hi": 26,
+     "last_verse_hi": 26
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-05/chapter-14.md",
+      "hi": "hi/skandha-05/chapter-14.md"
+     },
+     "title": "Jaḍabharata elucidated the meaning of the allegory",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "भवाटवीका स्पष्टीकरण",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-05/chapter-15.md",
+      "hi": "hi/skandha-05/chapter-15.md"
+     },
+     "title": "An account of Priyavrata’s posterity continued",
+     "verses_en": 16,
+     "last_verse_en": 16,
+     "title_hi": "भरतके वंशका वर्णन",
+     "verses_hi": 16,
+     "last_verse_hi": 16
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-05/chapter-16.md",
+      "hi": "hi/skandha-05/chapter-16.md"
+     },
+     "title": "A description of the terrestrial world",
+     "verses_en": 29,
+     "last_verse_en": 29,
+     "title_hi": "भुवनकोशका वर्णन",
+     "verses_hi": 29,
+     "last_verse_hi": 29
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-05/chapter-17.md",
+      "hi": "hi/skandha-05/chapter-17.md"
+     },
+     "title": "Lord Saṅkarṣaṇa by the divine śaṅkara",
+     "verses_en": 24,
+     "last_verse_en": 24,
+     "title_hi": "गंगाजीका विवरण और भगवान् शंकरकृत संकर्षणदेवकी स्तुति",
+     "verses_hi": 24,
+     "last_verse_hi": 24
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-05/chapter-18.md",
+      "hi": "hi/skandha-05/chapter-18.md"
+     },
+     "title": "A description of (the various Varṣas) of the terrestrial globe continued",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "भिन्न-भिन्न वर्षोंका वर्णन",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-05/chapter-19.md",
+      "hi": "hi/skandha-05/chapter-19.md"
+     },
+     "title": "The description of Jambūdwīpa concluded",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "किम्पुरुष और भारतवर्षका वर्णन",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-05/chapter-20.md",
+      "hi": "hi/skandha-05/chapter-20.md"
+     },
+     "title": "A description of the other six Dwīpas and the mountain-range called Lokāloka",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "अन्य छः द्वीपों तथा लोकालोक-पर्वतका वर्णन",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-05/chapter-21.md",
+      "hi": "hi/skandha-05/chapter-21.md"
+     },
+     "title": "A description of the stellar sphere as well as of the chariot of the sun-god and his entourage",
+     "verses_en": 19,
+     "last_verse_en": 19,
+     "title_hi": "सूर्यके रथ और उसकी गतिका वर्णन",
+     "verses_hi": 19,
+     "last_verse_hi": 19
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-05/chapter-22.md",
+      "hi": "hi/skandha-05/chapter-22.md"
+     },
+     "title": "The relative position of the planets and their movements",
+     "verses_en": 17,
+     "last_verse_en": 17,
+     "title_hi": "भिन्न-भिन्न ग्रहोंकी स्थिति और गतिका वर्णन",
+     "verses_hi": 17,
+     "last_verse_hi": 17
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-05/chapter-23.md",
+      "hi": "hi/skandha-05/chapter-23.md"
+     },
+     "title": "The disposition of the stellar sphere represented in the form of a dolphin",
+     "verses_en": 9,
+     "last_verse_en": 9,
+     "title_hi": "शिशुमारचक्रका वर्णन",
+     "verses_hi": 9,
+     "last_verse_hi": 9
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-05/chapter-24.md",
+      "hi": "hi/skandha-05/chapter-24.md"
+     },
+     "title": "The position of Rāhu etc., and the limits of the heaven like subterranean regions",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "राहु आदिकी स्थिति, अतलादि नीचेके लोकोंका वर्णन",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 25,
+     "files": {
+      "en": "en/skandha-05/chapter-25.md",
+      "hi": "hi/skandha-05/chapter-25.md"
+     },
+     "title": "A supplement to the description of the subterranean system",
+     "verses_en": 15,
+     "last_verse_en": 15,
+     "title_hi": "श्रीसङ्कर्षणदेवका विवरण और स्तुति",
+     "verses_hi": 15,
+     "last_verse_hi": 15
+    },
+    {
+     "chapter": 26,
+     "files": {
+      "en": "en/skandha-05/chapter-26.md",
+      "hi": "hi/skandha-05/chapter-26.md"
+     },
+     "title": "A description of the infernal regions",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "नरकोंकी विभिन्न गतियोंका वर्णन",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    }
+   ]
+  },
+  {
+   "skandha": 6,
+   "dir": "skandha-06",
+   "name": "Sixth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-06/chapter-01.md",
+      "hi": "hi/skandha-06/chapter-01.md"
+     },
+     "title": "The Introductory part of the story of Ajāmila",
+     "verses_en": 68,
+     "last_verse_en": 68,
+     "title_hi": "अजामिलोपाख्यानका प्रारम्भ",
+     "verses_hi": 68,
+     "last_verse_hi": 68
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-06/chapter-02.md",
+      "hi": "hi/skandha-06/chapter-02.md"
+     },
+     "title": "",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "विष्णुदूतोंद्वारा भागवतधर्म-निरूपण और अजामिलका परमधामगमन",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-06/chapter-03.md",
+      "hi": "hi/skandha-06/chapter-03.md"
+     },
+     "title": "",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "यम और यमदूतोंका संवाद",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-06/chapter-04.md",
+      "hi": "hi/skandha-06/chapter-04.md"
+     },
+     "title": "Dakṣa extols the Lord who appears in person before him",
+     "verses_en": 54,
+     "last_verse_en": 54,
+     "title_hi": "दक्षके द्वारा भगवान्‌की स्तुति और भगवान्‌का प्रादुर्भाव",
+     "verses_hi": 54,
+     "last_verse_hi": 54
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-06/chapter-05.md",
+      "hi": "hi/skandha-06/chapter-05.md"
+     },
+     "title": "Nārada subjected to an execration (by Dakṣa)",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "श्रीनारदजीके उपदेशसे दक्षपुत्रोंकी विरक्ति तथा नारदजीको दक्षका शाप",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-06/chapter-06.md",
+      "hi": "hi/skandha-06/chapter-06.md"
+     },
+     "title": "The posterity of Dakṣa through his sixty daughters",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "दक्षप्रजापतिकी साठ कन्याओंके वंशका विवरण",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-06/chapter-07.md",
+      "hi": "hi/skandha-06/chapter-07.md"
+     },
+     "title": "Deserted by the sage Bṛhaspati, the god choose Viśwarūpa for their preceptor",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "बृहस्पतिजीके द्वारा देवताओंका त्याग और विश्वरूपका देवगुरुके रूपमें वरण",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-06/chapter-08.md",
+      "hi": "hi/skandha-06/chapter-08.md"
+     },
+     "title": "The text of the holy Nārāyaṇa-Kavaca (a prayer invoking the protection of Lord Nārāyaṇa) taught to Indra",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "नारायणकवचका उपदेश",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-06/chapter-09.md",
+      "hi": "hi/skandha-06/chapter-09.md"
+     },
+     "title": "brother of Viśwarūpa), the gods call on the sage Dadhīci at the instance of the Lord",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "विश्वरूपका वध, वृत्रासुरद्वारा देवताओंकी हार और भगवान्‌की प्रेरणासे देवताओंका दधीचि ऋषिके पास जाना",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-06/chapter-10.md",
+      "hi": "hi/skandha-06/chapter-10.md"
+     },
+     "title": "An account of the conflict between Indra and Vṛtra",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "देवताओंद्वारा दधीचि ऋषिकी अस्थियोंसे वज्रनिर्माण और वृत्रासुरकी सेनापर आक्रमण",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-06/chapter-11.md",
+      "hi": "hi/skandha-06/chapter-11.md"
+     },
+     "title": "Vṛtra’s teaching to Indra",
+     "verses_en": 27,
+     "last_verse_en": 27,
+     "title_hi": "वृत्रासुरकी वीरवाणी और भगवत्प्राप्ति",
+     "verses_hi": 27,
+     "last_verse_hi": 27
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-06/chapter-12.md",
+      "hi": "hi/skandha-06/chapter-12.md"
+     },
+     "title": "The demon Vṛtra slain",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "वृत्रासुरका वध",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-06/chapter-13.md",
+      "hi": "hi/skandha-06/chapter-13.md"
+     },
+     "title": "Indra’s Victory",
+     "verses_en": 23,
+     "last_verse_en": 23,
+     "title_hi": "इन्द्रपर ब्रह्महत्याका आक्रमण",
+     "verses_hi": 23,
+     "last_verse_hi": 23
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-06/chapter-14.md",
+      "hi": "hi/skandha-06/chapter-14.md"
+     },
+     "title": "The Lament of Citraketu",
+     "verses_en": 61,
+     "last_verse_en": 61,
+     "title_hi": "वृत्रासुरका पूर्वचरित्र",
+     "verses_hi": 61,
+     "last_verse_hi": 61
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-06/chapter-15.md",
+      "hi": "hi/skandha-06/chapter-15.md"
+     },
+     "title": "Citraketu consoled",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "चित्रकेतुको अंगिरा और नारदजीका उपदेश",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-06/chapter-16.md",
+      "hi": "hi/skandha-06/chapter-16.md"
+     },
+     "title": "Citraketu realizes his oneness with the Supreme Spirit",
+     "verses_en": 65,
+     "last_verse_en": 65,
+     "title_hi": "चित्रकेतुका वैराग्य तथा संकर्षणदेवके दर्शन",
+     "verses_hi": 65,
+     "last_verse_hi": 65
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-06/chapter-17.md",
+      "hi": "hi/skandha-06/chapter-17.md"
+     },
+     "title": "Citraketu cursed (by Goddess Pārvatī)",
+     "verses_en": 41,
+     "last_verse_en": 41,
+     "title_hi": "चित्रकेतुको पार्वतीजीका शाप",
+     "verses_hi": 41,
+     "last_verse_hi": 41
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-06/chapter-18.md",
+      "hi": "hi/skandha-06/chapter-18.md"
+     },
+     "title": "An account of the birth of the Maruts (the forty-nine wind-gods)",
+     "verses_en": 78,
+     "last_verse_en": 78,
+     "title_hi": "अदिति और दितिकी सन्तानोंकी तथा मरुद्‌गणोंकी उत्पत्तिका वर्णन",
+     "verses_hi": 78,
+     "last_verse_hi": 78
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-06/chapter-19.md",
+      "hi": "hi/skandha-06/chapter-19.md"
+     },
+     "title": "The procedure of observing the sacred vow of Puṃsavana",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "पुंसवन-व्रतकी विधि",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    }
+   ]
+  },
+  {
+   "skandha": 7,
+   "dir": "skandha-07",
+   "name": "Seventh",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-07/chapter-01.md",
+      "hi": "hi/skandha-07/chapter-01.md"
+     },
+     "title": "A dialogue between Nārada and Yudhiṣṭhira: the story of Jaya and Vijaya",
+     "verses_en": 47,
+     "last_verse_en": 47,
+     "title_hi": "नारद-युधिष्ठिर-संवाद और जय-विजयकी कथा",
+     "verses_hi": 47,
+     "last_verse_hi": 47
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-07/chapter-02.md",
+      "hi": "hi/skandha-07/chapter-02.md"
+     },
+     "title": "Hiraṇyakaśipu rids his mother (Diti) of her grief (caused by the death of his younger brother, Hiraṇyākṣa)",
+     "verses_en": 61,
+     "last_verse_en": 61,
+     "title_hi": "हिरण्याक्षका वध होनेपर हिरण्यकशिपुका अपनी माता और कुटुम्बियोंको समझाना",
+     "verses_hi": 61,
+     "last_verse_hi": 61
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-07/chapter-03.md",
+      "hi": "hi/skandha-07/chapter-03.md"
+     },
+     "title": "Hiraṇyakaśipu asks a number of boons (of Brahmā, who is pleased with his austerities)",
+     "verses_en": 38,
+     "last_verse_en": 38,
+     "title_hi": "हिरण्यकशिपुकी तपस्या और वरप्राप्ति",
+     "verses_hi": 38,
+     "last_verse_hi": 38
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-07/chapter-04.md",
+      "hi": "hi/skandha-07/chapter-04.md"
+     },
+     "title": "Hiraṇyakaśipu’s atrocities and Prahrāda’s virtues recounted",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "हिरण्यकशिपुके अत्याचार और प्रह्लादके गुणोंका वर्णन",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-07/chapter-05.md",
+      "hi": "hi/skandha-07/chapter-05.md"
+     },
+     "title": "Hiraṇyakaśipu attempts the life of Prahrāda",
+     "verses_en": 57,
+     "last_verse_en": 57,
+     "title_hi": "हिरण्यकशिपुके द्वारा प्रह्लादजीके वधका प्रयत्न",
+     "verses_hi": 57,
+     "last_verse_hi": 57
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-07/chapter-06.md",
+      "hi": "hi/skandha-07/chapter-06.md"
+     },
+     "title": "Prahrāda’s teaching to the demon boys",
+     "verses_en": 30,
+     "last_verse_en": 30,
+     "title_hi": "प्रह्लादजीका असुर-बालकोंको उपदेश",
+     "verses_hi": 30,
+     "last_verse_hi": 30
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-07/chapter-07.md",
+      "hi": "hi/skandha-07/chapter-07.md"
+     },
+     "title": "(Prahrāda’s) teaching to the Daityas’ sons",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "प्रह्लादजीद्वारा माताके गर्भमें प्राप्त हुए नारदजीके उपदेशका वर्णन",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-07/chapter-08.md",
+      "hi": "hi/skandha-07/chapter-08.md"
+     },
+     "title": "",
+     "verses_en": 56,
+     "last_verse_en": 56,
+     "title_hi": "नृसिंहभगवान्‌का प्रादुर्भाव, हिरण्यकशिपुका वध एवं ब्रह्मादि देवताओंद्वारा भगवान्‌की स्तुति",
+     "verses_hi": 56,
+     "last_verse_hi": 56
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-07/chapter-09.md",
+      "hi": "hi/skandha-07/chapter-09.md"
+     },
+     "title": "A Eulogy of the Lord (by Prahrāda)",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "प्रह्लादजीके द्वारा नृसिंहभगवान्‌की स्तुति",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-07/chapter-10.md",
+      "hi": "hi/skandha-07/chapter-10.md"
+     },
+     "title": "The story of the conquest of Tripura",
+     "verses_en": 71,
+     "last_verse_en": 71,
+     "title_hi": "प्रह्लादजीके राज्याभिषेक और त्रिपुरदहनकी कथा",
+     "verses_hi": 71,
+     "last_verse_hi": 71
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-07/chapter-11.md",
+      "hi": "hi/skandha-07/chapter-11.md"
+     },
+     "title": "An inquiry into right conduct",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "मानवधर्म, वर्णधर्म और स्त्रीधर्मका निरूपण",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-07/chapter-12.md",
+      "hi": "hi/skandha-07/chapter-12.md"
+     },
+     "title": "An inquiry into right conduct (continued)",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "ब्रह्मचर्य और वानप्रस्थआश्रमोंके नियम",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-07/chapter-13.md",
+      "hi": "hi/skandha-07/chapter-13.md"
+     },
+     "title": "The course of conduct prescribed for a Saṃnyāsī and a dialogue between an Avadhūta and Prahrāda",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "यतिधर्मका निरूपण और अवधूत-प्रह्लाद-संवाद",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-07/chapter-14.md",
+      "hi": "hi/skandha-07/chapter-14.md"
+     },
+     "title": "An inquiry into right conduct (continued)",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "गृहस्थसम्बन्धी सदाचार",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-07/chapter-15.md",
+      "hi": "hi/skandha-07/chapter-15.md"
+     },
+     "title": "An inquiry into right conduct (concluded)",
+     "verses_en": 80,
+     "last_verse_en": 80,
+     "title_hi": "गृहस्थोंके लिये मोक्षधर्मका वर्णन",
+     "verses_hi": 80,
+     "last_verse_hi": 80
+    }
+   ]
+  },
+  {
+   "skandha": 8,
+   "dir": "skandha-08",
+   "name": "Eighth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-08/chapter-01.md",
+      "hi": "hi/skandha-08/chapter-01.md"
+     },
+     "title": "The Manvantaras described",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "मन्वन्तरोंका वर्णन",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-08/chapter-02.md",
+      "hi": "hi/skandha-08/chapter-02.md"
+     },
+     "title": "The lord of elephants is caught in the grip of an alligator",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "ग्राहके द्वारा गजेन्द्रका पकड़ा जाना",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-08/chapter-03.md",
+      "hi": "hi/skandha-08/chapter-03.md"
+     },
+     "title": "The leader of the elephants extols the Lord and is rescued from the dangerous situation",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "गजेन्द्रके द्वारा भगवान्‌की स्तुति और उसका संकटसे मुक्त होना",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-08/chapter-04.md",
+      "hi": "hi/skandha-08/chapter-04.md"
+     },
+     "title": "Deliverance of the lord of the elephants",
+     "verses_en": 26,
+     "last_verse_en": 26,
+     "title_hi": "गज और ग्राहका पूर्वचरित्र तथा उनका उद्धार",
+     "verses_hi": 26,
+     "last_verse_hi": 26
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-08/chapter-05.md",
+      "hi": "hi/skandha-08/chapter-05.md"
+     },
+     "title": "The gods resort to Brahmā and the latter glorifies the Lord",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "देवताओंका ब्रह्माजीके पास जाना और ब्रह्माकृत भगवान्‌की स्तुति",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-08/chapter-06.md",
+      "hi": "hi/skandha-08/chapter-06.md"
+     },
+     "title": "Transportation of Mount Mandara (to serve as a churn-staff for stirring the ocean of milk)",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "देवताओं और दैत्योंका मिलकर समुद्रमन्थनके लिये उद्योग करना",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-08/chapter-07.md",
+      "hi": "hi/skandha-08/chapter-07.md"
+     },
+     "title": "The gods and demons proceed to churn the ocean and Lord śiva drinks the poison appearing out of it",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "समुद्रमन्थनका आरम्भ और भगवान् शंकरका विषपान",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-08/chapter-08.md",
+      "hi": "hi/skandha-08/chapter-08.md"
+     },
+     "title": "The manifestation (in a personal form) of the Lord’s (own) enchanting potency",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "समुद्रसे अमृतका प्रकट होना और भगवान्‌का मोहिनी-अवतार ग्रहण करना",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-08/chapter-09.md",
+      "hi": "hi/skandha-08/chapter-09.md"
+     },
+     "title": "Appearing in the form of Mohinī (an enchanting damsel), the Lord deals out nectar among the gods",
+     "verses_en": 29,
+     "last_verse_en": 29,
+     "title_hi": "मोहिनी-रूपसे भगवान्‌के द्वारा अमृत बाँटा जाना",
+     "verses_hi": 29,
+     "last_verse_hi": 29
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-08/chapter-10.md",
+      "hi": "hi/skandha-08/chapter-10.md"
+     },
+     "title": "Outbreak of hostilities between the gods and the Asuras",
+     "verses_en": 57,
+     "last_verse_en": 57,
+     "title_hi": "देवासुर-संग्राम",
+     "verses_hi": 57,
+     "last_verse_hi": 57
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-08/chapter-11.md",
+      "hi": "hi/skandha-08/chapter-11.md"
+     },
+     "title": "Conclusion of the conflict between the gods and the demons",
+     "verses_en": 48,
+     "last_verse_en": 48,
+     "title_hi": "देवासुर-संग्रामकी समाप्ति",
+     "verses_hi": 48,
+     "last_verse_hi": 48
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-08/chapter-12.md",
+      "hi": "hi/skandha-08/chapter-12.md"
+     },
+     "title": "Infatuation of Lord śaṅkara",
+     "verses_en": 47,
+     "last_verse_en": 47,
+     "title_hi": "मोहिनीरूपको देखकर महादेवजीका मोहित होना",
+     "verses_hi": 47,
+     "last_verse_hi": 47
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-08/chapter-13.md",
+      "hi": "hi/skandha-08/chapter-13.md"
+     },
+     "title": "An account of the (concluding eight) Manvantaras",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "आगामी सात मन्वन्तरोंका वर्णन",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-08/chapter-14.md",
+      "hi": "hi/skandha-08/chapter-14.md"
+     },
+     "title": "Functions of a Manu and other functionaries holding office in his administration",
+     "verses_en": 11,
+     "last_verse_en": 11,
+     "title_hi": "मनु आदिके पृथक्-पृथक् कर्मोंका निरूपण",
+     "verses_hi": 11,
+     "last_verse_hi": 11
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-08/chapter-15.md",
+      "hi": "hi/skandha-08/chapter-15.md"
+     },
+     "title": "Conquest of heaven by Bali",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "राजा बलिकी स्वर्गपर विजय",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-08/chapter-16.md",
+      "hi": "hi/skandha-08/chapter-16.md"
+     },
+     "title": "The procedure of observing the vow of Payovrata disclosed by sage Kaśyapa to Aditi",
+     "verses_en": 62,
+     "last_verse_en": 62,
+     "title_hi": "कश्यपजीके द्वारा अदितिको पयोव्रतका उपदेश",
+     "verses_hi": 62,
+     "last_verse_hi": 62
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-08/chapter-17.md",
+      "hi": "hi/skandha-08/chapter-17.md"
+     },
+     "title": "",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "भगवान्‌का प्रकट होकर अदितिको वर देना",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-08/chapter-18.md",
+      "hi": "hi/skandha-08/chapter-18.md"
+     },
+     "title": "The Lord appears as the divine Dwarf and visits the sacrificial performance of Bali",
+     "verses_en": 32,
+     "last_verse_en": 32,
+     "title_hi": "वामनभगवान्‌का प्रकट होकर राजा बलिकी यज्ञशालामें पधारना",
+     "verses_hi": 32,
+     "last_verse_hi": 32
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-08/chapter-19.md",
+      "hi": "hi/skandha-08/chapter-19.md"
+     },
+     "title": "The Lord asks three paces of land of Bali, who gives his word; while śukra remonstrates with him against this course",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "भगवान् वामनका बलिसे तीन पग पृथ्वी माँगना, बलिका वचन देना और शुक्राचार्यजीका उन्हें रोकना",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-08/chapter-20.md",
+      "hi": "hi/skandha-08/chapter-20.md"
+     },
+     "title": "A vision of the Cosmic Body of the Lord",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "भगवान् वामनजीका विराट्‌रूप होकर दो ही पगसे पृथ्वी और स्वर्गको नाप लेना",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-08/chapter-21.md",
+      "hi": "hi/skandha-08/chapter-21.md"
+     },
+     "title": "Bali put in bonds",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "बलिका बाँधा जाना",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-08/chapter-22.md",
+      "hi": "hi/skandha-08/chapter-22.md"
+     },
+     "title": "A dialogue between king Bali and Lord Vāmana",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "बलिके द्वारा भगवान्‌की स्तुति और भगवान्‌का उसपर प्रसन्न होना",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-08/chapter-23.md",
+      "hi": "hi/skandha-08/chapter-23.md"
+     },
+     "title": "Freed from bondage, Bali enters the region of Sutala",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "बलिका बन्धनसे छूटकर सुतललोकको जाना",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-08/chapter-24.md",
+      "hi": "hi/skandha-08/chapter-24.md"
+     },
+     "title": "The story of the descent of the divine Fish recounted",
+     "verses_en": 61,
+     "last_verse_en": 61,
+     "title_hi": "भगवान्‌के मत्स्यावतारकी कथा",
+     "verses_hi": 61,
+     "last_verse_hi": 61
+    }
+   ]
+  },
+  {
+   "skandha": 9,
+   "dir": "skandha-09",
+   "name": "Ninth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-09/chapter-01.md",
+      "hi": "hi/skandha-09/chapter-01.md"
+     },
+     "title": "The story of King Sudyumna, son of Vaivaswata Manu",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "वैवस्वत मनुके पुत्र राजा सुद्युम्नकी कथा",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-09/chapter-02.md",
+      "hi": "hi/skandha-09/chapter-02.md"
+     },
+     "title": "The posterity of Karūṣa and other four sons of Vaivaswata Manu",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "पृषध्र आदि मनुके पाँच पुत्रोंका वंश",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-09/chapter-03.md",
+      "hi": "hi/skandha-09/chapter-03.md"
+     },
+     "title": "The story of the sage Cyavana and his wife Sukanyā; the posterity of King śaryāti like two fire-flies.",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "महर्षि च्यवन और सुकन्याका चरित्र, राजा शर्यातिका वंश",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-09/chapter-04.md",
+      "hi": "hi/skandha-09/chapter-04.md"
+     },
+     "title": "The stories of Nābhāga and King Ambarīṣa",
+     "verses_en": 71,
+     "last_verse_en": 71,
+     "title_hi": "नाभाग और अम्बरीषकी कथा",
+     "verses_hi": 71,
+     "last_verse_hi": 71
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-09/chapter-05.md",
+      "hi": "hi/skandha-09/chapter-05.md"
+     },
+     "title": "The story of Ambarīṣa (Concluded)",
+     "verses_en": 27,
+     "last_verse_en": 27,
+     "title_hi": "दुर्वासाजीकी दुःखनिवृत्ति",
+     "verses_hi": 27,
+     "last_verse_hi": 27
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-09/chapter-06.md",
+      "hi": "hi/skandha-09/chapter-06.md"
+     },
+     "title": "The posterity of Ikṣwāku: the stories of Māndhātā and the sage Saubhari",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "इक्ष्वाकुके वंशका वर्णन, मान्धाता और सौभरि ऋषिकी कथा",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-09/chapter-07.md",
+      "hi": "hi/skandha-09/chapter-07.md"
+     },
+     "title": "The story of King Hariścandra",
+     "verses_en": 27,
+     "last_verse_en": 27,
+     "title_hi": "राजा त्रिशंकु और हरिश्चन्द्रकी कथा",
+     "verses_hi": 27,
+     "last_verse_hi": 27
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-09/chapter-08.md",
+      "hi": "hi/skandha-09/chapter-08.md"
+     },
+     "title": "The story of King Sagara",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "सगर-चरित्र",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-09/chapter-09.md",
+      "hi": "hi/skandha-09/chapter-09.md"
+     },
+     "title": "The story of King Bhagīratha: the descent of the holy Gaṅgā",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "भगीरथ-चरित्र और गंगावतरण",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-09/chapter-10.md",
+      "hi": "hi/skandha-09/chapter-10.md"
+     },
+     "title": "An account of Śrī Rāma’s pastimes",
+     "verses_en": 56,
+     "last_verse_en": 56,
+     "title_hi": "भगवान् श्रीरामकी लीलाओंका वर्णन",
+     "verses_hi": 56,
+     "last_verse_hi": 56
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-09/chapter-11.md",
+      "hi": "hi/skandha-09/chapter-11.md"
+     },
+     "title": "The other pastimes of Śrī Rāma",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "भगवान् श्रीरामकी शेष लीलाओंका वर्णन",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-09/chapter-12.md",
+      "hi": "hi/skandha-09/chapter-12.md"
+     },
+     "title": "The genealogy of (the remaining kings of) Ikṣwāku’s line",
+     "verses_en": 16,
+     "last_verse_en": 16,
+     "title_hi": "इक्ष्वाकुवंशके शेष राजाओंका वर्णन",
+     "verses_hi": 16,
+     "last_verse_hi": 16
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-09/chapter-13.md",
+      "hi": "hi/skandha-09/chapter-13.md"
+     },
+     "title": "The posterity of Nimi described",
+     "verses_en": 27,
+     "last_verse_en": 27,
+     "title_hi": "राजा निमिके वंशका वर्णन",
+     "verses_hi": 27,
+     "last_verse_hi": 27
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-09/chapter-14.md",
+      "hi": "hi/skandha-09/chapter-14.md"
+     },
+     "title": "A brief survey of the Lunar Dynasty",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "चन्द्रवंशका वर्णन",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-09/chapter-15.md",
+      "hi": "hi/skandha-09/chapter-15.md"
+     },
+     "title": "The stories of Ṛcīka, Jamadagni and Paraśurāma",
+     "verses_en": 41,
+     "last_verse_en": 41,
+     "title_hi": "ऋचीक, जमदग्नि और परशुरामजीका चरित्र",
+     "verses_hi": 41,
+     "last_verse_hi": 41
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-09/chapter-16.md",
+      "hi": "hi/skandha-09/chapter-16.md"
+     },
+     "title": "Extermination of the Kṣatriyas by Paraśurāma: an account of the posterity of the sage Viśwāmitra",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "परशुरामजीके द्वारा क्षत्रिय-संहार और विश्वामित्रजीके वंशकी कथा",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-09/chapter-17.md",
+      "hi": "hi/skandha-09/chapter-17.md"
+     },
+     "title": "The posterity of Kings Kṣatravṛddha, Raji and others of the Lunar Dynasty",
+     "verses_en": 18,
+     "last_verse_en": 18,
+     "title_hi": "क्षत्रवृद्ध, रजि आदि राजाओंके वंशका वर्णन",
+     "verses_hi": 18,
+     "last_verse_hi": 18
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-09/chapter-18.md",
+      "hi": "hi/skandha-09/chapter-18.md"
+     },
+     "title": "The story of Yayāti",
+     "verses_en": 51,
+     "last_verse_en": 51,
+     "title_hi": "ययाति-चरित्र",
+     "verses_hi": 51,
+     "last_verse_hi": 51
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-09/chapter-19.md",
+      "hi": "hi/skandha-09/chapter-19.md"
+     },
+     "title": "Yayāti’s Renunciation",
+     "verses_en": 29,
+     "last_verse_en": 29,
+     "title_hi": "ययातिका गृहत्याग",
+     "verses_hi": 29,
+     "last_verse_hi": 29
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-09/chapter-20.md",
+      "hi": "hi/skandha-09/chapter-20.md"
+     },
+     "title": "The posterity of Pūru and the stories of Duṣyanta and Bharata",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "पूरुके वंश, राजा दुष्यन्त और भरतके चरित्रका वर्णन",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-09/chapter-21.md",
+      "hi": "hi/skandha-09/chapter-21.md"
+     },
+     "title": "The posterity of Bharata and the story of Rantideva",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "भरतवंशका वर्णन, राजा रन्तिदेवकी कथा",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-09/chapter-22.md",
+      "hi": "hi/skandha-09/chapter-22.md"
+     },
+     "title": "The genealogy of the Pañcālas, the Kurus and the kings of Magadha",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "पांचाल, कौरव और मगधदेशीय राजाओंके वंशका वर्णन",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-09/chapter-23.md",
+      "hi": "hi/skandha-09/chapter-23.md"
+     },
+     "title": "An account of the posterity of Anu, Druhyu, Turvasu and Yadu",
+     "verses_en": 39,
+     "last_verse_en": 39,
+     "title_hi": "अनु, द्रुह्यु, तुर्वसु और यदुके वंशका वर्णन",
+     "verses_hi": 39,
+     "last_verse_hi": 39
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-09/chapter-24.md",
+      "hi": "hi/skandha-09/chapter-24.md"
+     },
+     "title": "An account of the posterity of Yadu",
+     "verses_en": 67,
+     "last_verse_en": 67,
+     "title_hi": "विदर्भके वंशका वर्णन",
+     "verses_hi": 67,
+     "last_verse_hi": 67
+    }
+   ]
+  },
+  {
+   "skandha": 10,
+   "dir": "skandha-10",
+   "name": "Tenth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-10/chapter-01.md",
+      "hi": "hi/skandha-10/chapter-01.md"
+     },
+     "title": "The Lord reassures Mother Earth; Vasudeva marries Devakī and Kaṃsa despatches the six sons of Devakī",
+     "verses_en": 69,
+     "last_verse_en": 69,
+     "title_hi": "भगवान्‌के द्वारा पृथ्वीको आश्वासन, वसुदेव-देवकीका विवाह और कंसके द्वारा देवकीके छः पुत्रोंकी हत्या",
+     "verses_hi": 69,
+     "last_verse_hi": 69
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-10/chapter-02.md",
+      "hi": "hi/skandha-10/chapter-02.md"
+     },
+     "title": "The Lord enters the womb of Devakī and is extolled by the gods",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "भगवान्‌का गर्भ-प्रवेश और देवताओंद्वारा गर्भस्तुति",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-10/chapter-03.md",
+      "hi": "hi/skandha-10/chapter-03.md"
+     },
+     "title": "Advent of Lord Śrī Kṛṣṇa",
+     "verses_en": 53,
+     "last_verse_en": 53,
+     "title_hi": "भगवान् श्रीकृष्णका प्राकट्य",
+     "verses_hi": 53,
+     "last_verse_hi": 53
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-10/chapter-04.md",
+      "hi": "hi/skandha-10/chapter-04.md"
+     },
+     "title": "Slipping from the grip of Kaṃsa, Yogamāyā ascends to the heavens and utters a prophecy",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "कंसके हाथसे छूटकर योगमायाका आकाशमें जाकर भविष्यवाणी करना",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-10/chapter-05.md",
+      "hi": "hi/skandha-10/chapter-05.md"
+     },
+     "title": "Festivities connected with the Birth of Lord Śrī Kṛṣṇa at Gokula",
+     "verses_en": 32,
+     "last_verse_en": 32,
+     "title_hi": "गोकुलमें भगवान्‌का जन्ममहोत्सव",
+     "verses_hi": 32,
+     "last_verse_hi": 32
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-10/chapter-06.md",
+      "hi": "hi/skandha-10/chapter-06.md"
+     },
+     "title": "Deliverance of Pūtanā",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "पूतना-उद्धार",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-10/chapter-07.md",
+      "hi": "hi/skandha-10/chapter-07.md"
+     },
+     "title": "Deliverance of the demon Tṛṇāvarta",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "शकट-भंजन और तृणावर्त-उद्धार",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-10/chapter-08.md",
+      "hi": "hi/skandha-10/chapter-08.md"
+     },
+     "title": "The Naming Ceremony of the Lord and His Infantile Sports",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "नामकरण-संस्कार और बाललीला",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-10/chapter-09.md",
+      "hi": "hi/skandha-10/chapter-09.md"
+     },
+     "title": "Grace showered on Yaśodā",
+     "verses_en": 23,
+     "last_verse_en": 23,
+     "title_hi": "श्रीकृष्णका ऊखलसे बाँधा जाना",
+     "verses_hi": 23,
+     "last_verse_hi": 23
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-10/chapter-10.md",
+      "hi": "hi/skandha-10/chapter-10.md"
+     },
+     "title": "The imprecation pronounced on Kubera’s sons by Nārada and their consequent redemption",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "यमलार्जुनका उद्धार",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-10/chapter-11.md",
+      "hi": "hi/skandha-10/chapter-11.md"
+     },
+     "title": "Destruction of Vatsāsura and Bakāsura",
+     "verses_en": 59,
+     "last_verse_en": 59,
+     "title_hi": "गोकुलसे वृन्दावन जाना तथा वत्सासुर और बकासुरका उद्धार",
+     "verses_hi": 59,
+     "last_verse_hi": 59
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-10/chapter-12.md",
+      "hi": "hi/skandha-10/chapter-12.md"
+     },
+     "title": "Deliverance of Aghāsura",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "अघासुरका उद्धार",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-10/chapter-13.md",
+      "hi": "hi/skandha-10/chapter-13.md"
+     },
+     "title": "Brahmā is seized with and ultimately rid of infatuation",
+     "verses_en": 64,
+     "last_verse_en": 64,
+     "title_hi": "ब्रह्माजीका मोह और उसका नाश",
+     "verses_hi": 64,
+     "last_verse_hi": 64
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-10/chapter-14.md",
+      "hi": "hi/skandha-10/chapter-14.md"
+     },
+     "title": "Brahmā extols the Lord",
+     "verses_en": 61,
+     "last_verse_en": 61,
+     "title_hi": "ब्रह्माजीके द्वारा भगवान्‌की स्तुति",
+     "verses_hi": 61,
+     "last_verse_hi": 61
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-10/chapter-15.md",
+      "hi": "hi/skandha-10/chapter-15.md"
+     },
+     "title": "The demon Dhenuka slain",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "धेनुकासुरका उद्धार और ग्वालबालोंको कालियनागके विषसे बचाना",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-10/chapter-16.md",
+      "hi": "hi/skandha-10/chapter-16.md"
+     },
+     "title": "The Deliverance of Kāliya",
+     "verses_en": 67,
+     "last_verse_en": 67,
+     "title_hi": "कालियपर कृपा",
+     "verses_hi": 67,
+     "last_verse_hi": 67
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-10/chapter-17.md",
+      "hi": "hi/skandha-10/chapter-17.md"
+     },
+     "title": "The Lord rescues the inhabitants of Vraja from a wild fire",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "कालियके कालियदहमें आनेकी कथा तथा भगवान्‌का व्रजवासियोंको दावानलसे बचाना",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-10/chapter-18.md",
+      "hi": "hi/skandha-10/chapter-18.md"
+     },
+     "title": "The Lord slays the demon Pralamba",
+     "verses_en": 32,
+     "last_verse_en": 32,
+     "title_hi": "प्रलम्बासुर-उद्धार",
+     "verses_hi": 32,
+     "last_verse_hi": 32
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-10/chapter-19.md",
+      "hi": "hi/skandha-10/chapter-19.md"
+     },
+     "title": "The Lord swallows up a wild fire again",
+     "verses_en": 16,
+     "last_verse_en": 16,
+     "title_hi": "गौओं और गोपोंको दावानलसे बचाना",
+     "verses_hi": 16,
+     "last_verse_hi": 16
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-10/chapter-20.md",
+      "hi": "hi/skandha-10/chapter-20.md"
+     },
+     "title": "A description of the Rains and Autumn",
+     "verses_en": 48,
+     "last_verse_en": 49,
+     "title_hi": "वर्षा और शरद्ऋतुका वर्णन",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-10/chapter-21.md",
+      "hi": "hi/skandha-10/chapter-21.md"
+     },
+     "title": "The Song inspired by the Flute",
+     "verses_en": 20,
+     "last_verse_en": 20,
+     "title_hi": "वेणुगीत",
+     "verses_hi": 20,
+     "last_verse_hi": 20
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-10/chapter-22.md",
+      "hi": "hi/skandha-10/chapter-22.md"
+     },
+     "title": "The Lord steals away the garments of cowherd maids",
+     "verses_en": 38,
+     "last_verse_en": 38,
+     "title_hi": "चीरहरण",
+     "verses_hi": 38,
+     "last_verse_hi": 38
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-10/chapter-23.md",
+      "hi": "hi/skandha-10/chapter-23.md"
+     },
+     "title": "Redemption of the wives of some Brāhmaṇas engaged in a sacrifice",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "यज्ञपत्नियोंपर कृपा",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-10/chapter-24.md",
+      "hi": "hi/skandha-10/chapter-24.md"
+     },
+     "title": "The Lord stops the sacrifice to Indra",
+     "verses_en": 38,
+     "last_verse_en": 38,
+     "title_hi": "इन्द्रयज्ञ-निवारण",
+     "verses_hi": 38,
+     "last_verse_hi": 38
+    },
+    {
+     "chapter": 25,
+     "files": {
+      "en": "en/skandha-10/chapter-25.md",
+      "hi": "hi/skandha-10/chapter-25.md"
+     },
+     "title": "The Lord lifts up Mount Govardhana",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "गोवर्धनधारण",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 26,
+     "files": {
+      "en": "en/skandha-10/chapter-26.md",
+      "hi": "hi/skandha-10/chapter-26.md"
+     },
+     "title": "Nanda’s conversation with the cowherds about Śrī Kṛṣṇa’s glory",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "नन्दबाबासे गोपोंकी श्रीकृष्णके प्रभावके विषयमें बातचीत",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 27,
+     "files": {
+      "en": "en/skandha-10/chapter-27.md",
+      "hi": "hi/skandha-10/chapter-27.md"
+     },
+     "title": "Indra extols Śrī Kṛṣṇa",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "श्रीकृष्णका अभिषेक",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    },
+    {
+     "chapter": 28,
+     "files": {
+      "en": "en/skandha-10/chapter-28.md",
+      "hi": "hi/skandha-10/chapter-28.md"
+     },
+     "title": "Śrī Kṛṣṇa rescues His father from the realm of Varuṇa",
+     "verses_en": 17,
+     "last_verse_en": 17,
+     "title_hi": "वरुणलोकसे नन्दजीको छुड़ाकर लाना",
+     "verses_hi": 17,
+     "last_verse_hi": 17
+    },
+    {
+     "chapter": 29,
+     "files": {
+      "en": "en/skandha-10/chapter-29.md",
+      "hi": "hi/skandha-10/chapter-29.md"
+     },
+     "title": "A description of the celebrated Rāsa Play of the Lord",
+     "verses_en": 48,
+     "last_verse_en": 48,
+     "title_hi": "रासलीलाका आरम्भ",
+     "verses_hi": 48,
+     "last_verse_hi": 48
+    },
+    {
+     "chapter": 30,
+     "files": {
+      "en": "en/skandha-10/chapter-30.md",
+      "hi": "hi/skandha-10/chapter-30.md"
+     },
+     "title": "The Gopīs’ Quest for Śrī Kṛṣṇa during the Rāsa-Play",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "श्रीकृष्णके विरहमें गोपियोंकी दशा",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 31,
+     "files": {
+      "en": "en/skandha-10/chapter-31.md",
+      "hi": "hi/skandha-10/chapter-31.md"
+     },
+     "title": "The Gopīs’ Song (at the Lord’s disappearance) during the Rāsa-Play",
+     "verses_en": 19,
+     "last_verse_en": 19,
+     "title_hi": "गोपिकागीत",
+     "verses_hi": 19,
+     "last_verse_hi": 19
+    },
+    {
+     "chapter": 32,
+     "files": {
+      "en": "en/skandha-10/chapter-32.md",
+      "hi": "hi/skandha-10/chapter-32.md"
+     },
+     "title": "The Lord comforts the Gopīs during the Rāsa-Play",
+     "verses_en": 22,
+     "last_verse_en": 22,
+     "title_hi": "भगवान्‌का प्रकट होकर गोपियोंको सान्त्वना देना",
+     "verses_hi": 22,
+     "last_verse_hi": 22
+    },
+    {
+     "chapter": 33,
+     "files": {
+      "en": "en/skandha-10/chapter-33.md",
+      "hi": "hi/skandha-10/chapter-33.md"
+     },
+     "title": "A Description of the Rāsa-Play",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "महारास",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 34,
+     "files": {
+      "en": "en/skandha-10/chapter-34.md",
+      "hi": "hi/skandha-10/chapter-34.md"
+     },
+     "title": "The Lord makes short work of śaṅkhacūḍa",
+     "verses_en": 32,
+     "last_verse_en": 32,
+     "title_hi": "सुदर्शन और शंखचूडका उद्धार",
+     "verses_hi": 32,
+     "last_verse_hi": 32
+    },
+    {
+     "chapter": 35,
+     "files": {
+      "en": "en/skandha-10/chapter-35.md",
+      "hi": "hi/skandha-10/chapter-35.md"
+     },
+     "title": "The Gopīs’ song in pairs of verses",
+     "verses_en": 26,
+     "last_verse_en": 26,
+     "title_hi": "युगलगीत",
+     "verses_hi": 26,
+     "last_verse_hi": 26
+    },
+    {
+     "chapter": 36,
+     "files": {
+      "en": "en/skandha-10/chapter-36.md",
+      "hi": "hi/skandha-10/chapter-36.md"
+     },
+     "title": "Kaṃsa sends Akrūra to Vraja to bring Śrī Kṛṣṇa and Balarāma to Mathurā",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "अरिष्टासुरका उद्धार और कंसका श्रीअक्रूरजीको व्रजमें भेजना",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 37,
+     "files": {
+      "en": "en/skandha-10/chapter-37.md",
+      "hi": "hi/skandha-10/chapter-37.md"
+     },
+     "title": "The demon Vyoma slain by the Lord",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "केशी और व्योमासुरका उद्धार तथा नारदजीके द्वारा भगवान्‌की स्तुति",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 38,
+     "files": {
+      "en": "en/skandha-10/chapter-38.md",
+      "hi": "hi/skandha-10/chapter-38.md"
+     },
+     "title": "Akrūra’s arrival in Vraja",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "अक्रूरजीकी व्रजयात्रा",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 39,
+     "files": {
+      "en": "en/skandha-10/chapter-39.md",
+      "hi": "hi/skandha-10/chapter-39.md"
+     },
+     "title": "Departure of Śrī Kṛṣṇa and Balarāma for Mathurā",
+     "verses_en": 57,
+     "last_verse_en": 57,
+     "title_hi": "श्रीकृष्ण-बलरामका मथुरागमन",
+     "verses_hi": 57,
+     "last_verse_hi": 57
+    },
+    {
+     "chapter": 40,
+     "files": {
+      "en": "en/skandha-10/chapter-40.md",
+      "hi": "hi/skandha-10/chapter-40.md"
+     },
+     "title": "Akrūra’s eulogy of the Lord",
+     "verses_en": 30,
+     "last_verse_en": 30,
+     "title_hi": "अक्रूरजीके द्वारा भगवान् श्रीकृष्णकी स्तुति",
+     "verses_hi": 30,
+     "last_verse_hi": 30
+    },
+    {
+     "chapter": 41,
+     "files": {
+      "en": "en/skandha-10/chapter-41.md",
+      "hi": "hi/skandha-10/chapter-41.md"
+     },
+     "title": "Entry into Mathurā of Śrī Kṛṣṇa and Balarāma",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "श्रीकृष्णका मथुराजीमें प्रवेश",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 42,
+     "files": {
+      "en": "en/skandha-10/chapter-42.md",
+      "hi": "hi/skandha-10/chapter-42.md"
+     },
+     "title": "A description of the amphitheatre for wrestlers, set up by Kaṃsa",
+     "verses_en": 38,
+     "last_verse_en": 38,
+     "title_hi": "कुब्जापर कृपा, धनुषभंग और कंसकी घबड़ाहट",
+     "verses_hi": 38,
+     "last_verse_hi": 38
+    },
+    {
+     "chapter": 43,
+     "files": {
+      "en": "en/skandha-10/chapter-43.md",
+      "hi": "hi/skandha-10/chapter-43.md"
+     },
+     "title": "The elephant Kuvalayāpīḍa killed by the Lord",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "कुवलयापीड़का उद्धार और अखाड़ेमें प्रवेश",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 44,
+     "files": {
+      "en": "en/skandha-10/chapter-44.md",
+      "hi": "hi/skandha-10/chapter-44.md"
+     },
+     "title": "Kaṃsa slain by the Lord",
+     "verses_en": 51,
+     "last_verse_en": 51,
+     "title_hi": "चाणूर, मुष्टिक आदि पहलवानोंका तथा कंसका उद्धार",
+     "verses_hi": 51,
+     "last_verse_hi": 51
+    },
+    {
+     "chapter": 45,
+     "files": {
+      "en": "en/skandha-10/chapter-45.md",
+      "hi": "hi/skandha-10/chapter-45.md"
+     },
+     "title": "The Lord brings back His preceptor’s son from the abode of Death",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "श्रीकृष्ण-बलरामका यज्ञोपवीत और गुरुकुल प्रवेश",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 46,
+     "files": {
+      "en": "en/skandha-10/chapter-46.md",
+      "hi": "hi/skandha-10/chapter-46.md"
+     },
+     "title": "The Lord relieves the agony of Nanda by despatching Uddhava to Vraja with a message of endearment",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "उद्धवजीकी व्रजयात्रा",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 47,
+     "files": {
+      "en": "en/skandha-10/chapter-47.md",
+      "hi": "hi/skandha-10/chapter-47.md"
+     },
+     "title": "Dialogue between Uddhava and the Gopīs and ode to a black bee",
+     "verses_en": 69,
+     "last_verse_en": 69,
+     "title_hi": "उद्धव तथा गोपियोंकी बातचीत और भ्रमरगीत",
+     "verses_hi": 69,
+     "last_verse_hi": 69
+    },
+    {
+     "chapter": 48,
+     "files": {
+      "en": "en/skandha-10/chapter-48.md",
+      "hi": "hi/skandha-10/chapter-48.md"
+     },
+     "title": "The Lord pays a visit to Kubjā, the hunchbacked woman, and Akrūra at their respective places",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "भगवान्‌का कुब्जा और अक्रूरजीके घर जाना",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 49,
+     "files": {
+      "en": "en/skandha-10/chapter-49.md",
+      "hi": "hi/skandha-10/chapter-49.md"
+     },
+     "title": "Akrūra’s visit to Hastināpura",
+     "verses_en": 31,
+     "last_verse_en": 31,
+     "title_hi": "अक्रूरजीका हस्तिनापुर जाना",
+     "verses_hi": 31,
+     "last_verse_hi": 31
+    },
+    {
+     "chapter": 50,
+     "files": {
+      "en": "en/skandha-10/chapter-50.md",
+      "hi": "hi/skandha-10/chapter-50.md"
+     },
+     "title": "The Lord ensconces Himself in a fortress (built by Him in the western sea under the name of Dwārakā)",
+     "verses_en": 58,
+     "last_verse_en": 58,
+     "title_hi": "जरासन्धसे युद्ध और द्वारकापुरीका निर्माण",
+     "verses_hi": 58,
+     "last_verse_hi": 58
+    },
+    {
+     "chapter": 51,
+     "files": {
+      "en": "en/skandha-10/chapter-51.md",
+      "hi": "hi/skandha-10/chapter-51.md"
+     },
+     "title": "Kālayavana gets burnt and King Mucukunda glorifies the Lord",
+     "verses_en": 64,
+     "last_verse_en": 64,
+     "title_hi": "कालयवनका भस्म होना, मुचुकुन्दकी कथा",
+     "verses_hi": 64,
+     "last_verse_hi": 64
+    },
+    {
+     "chapter": 52,
+     "files": {
+      "en": "en/skandha-10/chapter-52.md",
+      "hi": "hi/skandha-10/chapter-52.md"
+     },
+     "title": "Śrī Kṛṣṇa’s withdrawal to Dwārakā; Balarāma’s marriage; Rukmiṇī sends a Brāhmaṇa with a message to Śrī Kṛṣṇa",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "द्वारकागमन, श्रीबलरामजीका विवाह तथा श्रीकृष्णके पास रुक्मिणीजीका सन्देशा लेकर ब्राह्मणका आना",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 53,
+     "files": {
+      "en": "en/skandha-10/chapter-53.md",
+      "hi": "hi/skandha-10/chapter-53.md"
+     },
+     "title": "Śrī Kṛṣṇa carries away Rukmiṇī",
+     "verses_en": 57,
+     "last_verse_en": 57,
+     "title_hi": "रुक्मिणीहरण",
+     "verses_hi": 57,
+     "last_verse_hi": 57
+    },
+    {
+     "chapter": 54,
+     "files": {
+      "en": "en/skandha-10/chapter-54.md",
+      "hi": "hi/skandha-10/chapter-54.md"
+     },
+     "title": "Discomfiture of śiśupāla’s allies and Rukmī and the Espousal of Rukmiṇī by Śrī Kṛṣṇa solemnized",
+     "verses_en": 60,
+     "last_verse_en": 60,
+     "title_hi": "शिशुपालके साथी राजाओंकी और रुक्मीकी हार तथा श्रीकृष्ण-रुक्मिणी-विवाह",
+     "verses_hi": 60,
+     "last_verse_hi": 60
+    },
+    {
+     "chapter": 55,
+     "files": {
+      "en": "en/skandha-10/chapter-55.md",
+      "hi": "hi/skandha-10/chapter-55.md"
+     },
+     "title": "The story of Pradyumna’s birth (and the destruction of the demon śambara)",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "प्रद्युम्नका जन्म और शम्बरासुरका वध",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 56,
+     "files": {
+      "en": "en/skandha-10/chapter-56.md",
+      "hi": "hi/skandha-10/chapter-56.md"
+     },
+     "title": "The story of the ‘Syamantaka’ gem; Śrī Kṛṣṇa weds Jāmbavatī and Satyabhāmā",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "स्यमन्तकमणिकी कथा, जाम्बवती और सत्यभामाके साथ श्रीकृष्णका विवाह",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 57,
+     "files": {
+      "en": "en/skandha-10/chapter-57.md",
+      "hi": "hi/skandha-10/chapter-57.md"
+     },
+     "title": "‘Syamantaka’ stolen; śatadhanvā killed and Akrūra recalled to Dwārakā",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "स्यमन्तक-हरण, शतधन्वाका उद्धार और अक्रूरजीको फिरसे द्वारका बुलाना",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 58,
+     "files": {
+      "en": "en/skandha-10/chapter-58.md",
+      "hi": "hi/skandha-10/chapter-58.md"
+     },
+     "title": "Śrī Kṛṣṇa’s espousal with the rest of His eight principal Spouses",
+     "verses_en": 58,
+     "last_verse_en": 58,
+     "title_hi": "भगवान् श्रीकृष्णके अन्यान्य विवाहोंकी कथा",
+     "verses_hi": 58,
+     "last_verse_hi": 58
+    },
+    {
+     "chapter": 59,
+     "files": {
+      "en": "en/skandha-10/chapter-59.md",
+      "hi": "hi/skandha-10/chapter-59.md"
+     },
+     "title": "and kills the demon Naraka (the son of Mother Earth).",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "भौमासुरका उद्धार और सोलह हजार एक सौ राजकन्याओंके साथ भगवान्‌का विवाह",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 60,
+     "files": {
+      "en": "en/skandha-10/chapter-60.md",
+      "hi": "hi/skandha-10/chapter-60.md"
+     },
+     "title": "A dialogue between Śrī Kṛṣṇa and Rukmiṇī",
+     "verses_en": 59,
+     "last_verse_en": 59,
+     "title_hi": "श्रीकृष्ण-रुक्मिणी-संवाद",
+     "verses_hi": 59,
+     "last_verse_hi": 59
+    },
+    {
+     "chapter": 61,
+     "files": {
+      "en": "en/skandha-10/chapter-61.md",
+      "hi": "hi/skandha-10/chapter-61.md"
+     },
+     "title": "A description of the Lord’s progeny; Rukmī killed by Balarāma during Aniruddha’s wedding",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "भगवान्‌की सन्ततिका वर्णन तथा अनिरुद्धके विवाहमें रुक्मीका मारा जाना",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 62,
+     "files": {
+      "en": "en/skandha-10/chapter-62.md",
+      "hi": "hi/skandha-10/chapter-62.md"
+     },
+     "title": "Aniruddha made captive",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "ऊषा-अनिरुद्ध-मिलन",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 63,
+     "files": {
+      "en": "en/skandha-10/chapter-63.md",
+      "hi": "hi/skandha-10/chapter-63.md"
+     },
+     "title": "Aniruddha brought back to Dwārakā",
+     "verses_en": 53,
+     "last_verse_en": 53,
+     "title_hi": "भगवान् श्रीकृष्णके साथ बाणासुरका युद्ध",
+     "verses_hi": 53,
+     "last_verse_hi": 53
+    },
+    {
+     "chapter": 64,
+     "files": {
+      "en": "en/skandha-10/chapter-64.md",
+      "hi": "hi/skandha-10/chapter-64.md"
+     },
+     "title": "The story of king Nṛga",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "नृग राजाकी कथा",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 65,
+     "files": {
+      "en": "en/skandha-10/chapter-65.md",
+      "hi": "hi/skandha-10/chapter-65.md"
+     },
+     "title": "Baladeva triumphantly diverts the river Yamunā from its course",
+     "verses_en": 32,
+     "last_verse_en": 32,
+     "title_hi": "श्रीबलरामजीका व्रजगमन",
+     "verses_hi": 32,
+     "last_verse_hi": 32
+    },
+    {
+     "chapter": 66,
+     "files": {
+      "en": "en/skandha-10/chapter-66.md",
+      "hi": "hi/skandha-10/chapter-66.md"
+     },
+     "title": "Pauṇḍraka and others killed",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "पौण्ड्रक और काशिराजका उद्धार",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 67,
+     "files": {
+      "en": "en/skandha-10/chapter-67.md",
+      "hi": "hi/skandha-10/chapter-67.md"
+     },
+     "title": "Dwivida killed by Balarāma",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "द्विविदका उद्धार",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    },
+    {
+     "chapter": 68,
+     "files": {
+      "en": "en/skandha-10/chapter-68.md",
+      "hi": "hi/skandha-10/chapter-68.md"
+     },
+     "title": "Triumph of Saṅkarṣaṇa—in the form of dragging Hastināpura",
+     "verses_en": 54,
+     "last_verse_en": 54,
+     "title_hi": "कौरवोंपर बलरामजीका कोप और साम्बका विवाह",
+     "verses_hi": 54,
+     "last_verse_hi": 54
+    },
+    {
+     "chapter": 69,
+     "files": {
+      "en": "en/skandha-10/chapter-69.md",
+      "hi": "hi/skandha-10/chapter-69.md"
+     },
+     "title": "A Glimpse into the household life of Śrī Kṛṣṇa",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "देवर्षि नारदजीका भगवान्‌की गृहचर्या देखना",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 70,
+     "files": {
+      "en": "en/skandha-10/chapter-70.md",
+      "hi": "hi/skandha-10/chapter-70.md"
+     },
+     "title": "Śrī Kṛṣṇa’s Daily Routine; Kings taken captive by Jarāsandha send their Messenger to Śrī Kṛṣṇa",
+     "verses_en": 47,
+     "last_verse_en": 47,
+     "title_hi": "भगवान् श्रीकृष्णकी नित्यचर्या और उनके पास जरासन्धके कैदी राजाओंके दूतका आना",
+     "verses_hi": 47,
+     "last_verse_hi": 47
+    },
+    {
+     "chapter": 71,
+     "files": {
+      "en": "en/skandha-10/chapter-71.md",
+      "hi": "hi/skandha-10/chapter-71.md"
+     },
+     "title": "Śrī Kṛṣṇa goes to Indraprastha",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "श्रीकृष्णभगवान्‌का इन्द्रप्रस्थ पधारना",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 72,
+     "files": {
+      "en": "en/skandha-10/chapter-72.md",
+      "hi": "hi/skandha-10/chapter-72.md"
+     },
+     "title": "Jarāsandha killed",
+     "verses_en": 48,
+     "last_verse_en": 48,
+     "title_hi": "पाण्डवोंके राजसूययज्ञका आयोजन और जरासन्धका उद्धार",
+     "verses_hi": 48,
+     "last_verse_hi": 48
+    },
+    {
+     "chapter": 73,
+     "files": {
+      "en": "en/skandha-10/chapter-73.md",
+      "hi": "hi/skandha-10/chapter-73.md"
+     },
+     "title": "Śrī Kṛṣṇa and others return to Indraprastha",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "जरासन्धके जेलसे छूटे हुए राजाओंकी विदाई और भगवान्‌का इन्द्रप्रस्थ लौट आना",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 74,
+     "files": {
+      "en": "en/skandha-10/chapter-74.md",
+      "hi": "hi/skandha-10/chapter-74.md"
+     },
+     "title": "śiśupāla killed by Śrī Kṛṣṇa",
+     "verses_en": 54,
+     "last_verse_en": 54,
+     "title_hi": "भगवान्‌की अग्रपूजा और शिशुपालका उद्धार",
+     "verses_hi": 54,
+     "last_verse_hi": 54
+    },
+    {
+     "chapter": 75,
+     "files": {
+      "en": "en/skandha-10/chapter-75.md",
+      "hi": "hi/skandha-10/chapter-75.md"
+     },
+     "title": "Duryodhana’s Humiliation",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "राजसूययज्ञकी पूर्ति और दुर्योधनका अपमान",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 76,
+     "files": {
+      "en": "en/skandha-10/chapter-76.md",
+      "hi": "hi/skandha-10/chapter-76.md"
+     },
+     "title": "śālva’s encounter with the Yādavas",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "शाल्वके साथ यादवोंका युद्ध",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 77,
+     "files": {
+      "en": "en/skandha-10/chapter-77.md",
+      "hi": "hi/skandha-10/chapter-77.md"
+     },
+     "title": "śālva’s Deliverance",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "शाल्व-उद्धार",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 78,
+     "files": {
+      "en": "en/skandha-10/chapter-78.md",
+      "hi": "hi/skandha-10/chapter-78.md"
+     },
+     "title": "Deliverance of Dantavaktra and Vidūratha; Sūta killed by Śrī Balarāma during His Pilgrimage",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "दन्तवक्त्र और विदूरथका उद्धार तथा तीर्थयात्रामें बलरामजीके हाथसे सूतजीका वध",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 79,
+     "files": {
+      "en": "en/skandha-10/chapter-79.md",
+      "hi": "hi/skandha-10/chapter-79.md"
+     },
+     "title": "An account of Balarāma’s Pilgrimage",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "बल्वलका उद्धार और बलरामजीकी तीर्थयात्रा",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 80,
+     "files": {
+      "en": "en/skandha-10/chapter-80.md",
+      "hi": "hi/skandha-10/chapter-80.md"
+     },
+     "title": "Śrī Kṛṣṇa’s Reception of Sudāmā",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "श्रीकृष्णके द्वारा सुदामाजीका स्वागत",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 81,
+     "files": {
+      "en": "en/skandha-10/chapter-81.md",
+      "hi": "hi/skandha-10/chapter-81.md"
+     },
+     "title": "The story of parched rice brought as a Present for Śrī Kṛṣṇa by Sudāmā",
+     "verses_en": 41,
+     "last_verse_en": 41,
+     "title_hi": "सुदामाजीको ऐश्वर्यकी प्राप्ति",
+     "verses_hi": 41,
+     "last_verse_hi": 41
+    },
+    {
+     "chapter": 82,
+     "files": {
+      "en": "en/skandha-10/chapter-82.md",
+      "hi": "hi/skandha-10/chapter-82.md"
+     },
+     "title": "Meeting of the Vṛṣṇis with the Gopas and Gopīs of Vṛndāvana",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "भगवान् श्रीकृष्ण-बलरामसे गोप-गोपियोंकी भेंट",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 83,
+     "files": {
+      "en": "en/skandha-10/chapter-83.md",
+      "hi": "hi/skandha-10/chapter-83.md"
+     },
+     "title": "Conversation between Bhagavān Śrī Kṛṣṇa’s consorts and Draupadī",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "भगवान्‌की पटरानियोंके साथ द्रौपदीकी बातचीत",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 84,
+     "files": {
+      "en": "en/skandha-10/chapter-84.md",
+      "hi": "hi/skandha-10/chapter-84.md"
+     },
+     "title": "An account of the pilgrimage undertaken by Lord Śrī Kṛṣṇa",
+     "verses_en": 71,
+     "last_verse_en": 71,
+     "title_hi": "वसुदेवजीका यज्ञोत्सव",
+     "verses_hi": 71,
+     "last_verse_hi": 71
+    },
+    {
+     "chapter": 85,
+     "files": {
+      "en": "en/skandha-10/chapter-85.md",
+      "hi": "hi/skandha-10/chapter-85.md"
+     },
+     "title": "The Lord brings back from the abode of Death His six elder brothers throttled by Kaṃsa",
+     "verses_en": 59,
+     "last_verse_en": 59,
+     "title_hi": "श्रीभगवान्‌के द्वारा वसुदेवजीको ब्रह्मज्ञानका उपदेश तथा देवकीजीके छः पुत्रोंको लौटा लाना",
+     "verses_hi": 59,
+     "last_verse_hi": 59
+    },
+    {
+     "chapter": 86,
+     "files": {
+      "en": "en/skandha-10/chapter-86.md",
+      "hi": "hi/skandha-10/chapter-86.md"
+     },
+     "title": "Subhadrā carried away by Arjuna; the Lord’s Grace on Śrutadeva",
+     "verses_en": 59,
+     "last_verse_en": 59,
+     "title_hi": "सुभद्राहरण और भगवान्‌का मिथिलापुरीमें राजा जनक और श्रुतदेव ब्राह्मणके घर एक ही साथ जाना",
+     "verses_hi": 59,
+     "last_verse_hi": 59
+    },
+    {
+     "chapter": 87,
+     "files": {
+      "en": "en/skandha-10/chapter-87.md",
+      "hi": "hi/skandha-10/chapter-87.md"
+     },
+     "title": "A Song of Praise uttered by the Vedas in their living form",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "वेदस्तुति",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 88,
+     "files": {
+      "en": "en/skandha-10/chapter-88.md",
+      "hi": "hi/skandha-10/chapter-88.md"
+     },
+     "title": "Lord Rudra rescued from trouble",
+     "verses_en": 40,
+     "last_verse_en": 40,
+     "title_hi": "शिवजीका संकटमोचन",
+     "verses_hi": 40,
+     "last_verse_hi": 40
+    },
+    {
+     "chapter": 89,
+     "files": {
+      "en": "en/skandha-10/chapter-89.md",
+      "hi": "hi/skandha-10/chapter-89.md"
+     },
+     "title": "The three chief-gods put to test by the sage, Bhṛgu; the Lord brings back the dead sons of a Brāhmaṇa",
+     "verses_en": 66,
+     "last_verse_en": 66,
+     "title_hi": "भृगुजीके द्वारा त्रिदेवोंकी परीक्षा तथा भगवान्‌का मरे हुए ब्राह्मण-बालकोंको वापस लाना",
+     "verses_hi": 66,
+     "last_verse_hi": 66
+    },
+    {
+     "chapter": 90,
+     "files": {
+      "en": "en/skandha-10/chapter-90.md",
+      "hi": "hi/skandha-10/chapter-90.md"
+     },
+     "title": "The Story of the amorous sports of Śrī Kṛṣṇa narrated",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "भगवान् श्रीकृष्णके लीला-विहारका वर्णन",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    }
+   ]
+  },
+  {
+   "skandha": 11,
+   "dir": "skandha-11",
+   "name": "Eleventh",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-11/chapter-01.md",
+      "hi": "hi/skandha-11/chapter-01.md"
+     },
+     "title": "The curse of the Ṛṣis invoking the destruction of Yadu’s race",
+     "verses_en": 24,
+     "last_verse_en": 24,
+     "title_hi": "यदुवंशको ऋषियोंका शाप",
+     "verses_hi": 24,
+     "last_verse_hi": 24
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-11/chapter-02.md",
+      "hi": "hi/skandha-11/chapter-02.md"
+     },
+     "title": "Nārada visits Vasudeva and reproduces the dialogue between King Janaka and the nine Yogīśwaras",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "वसुदेवजीके पास श्रीनारदजीका आना और उन्हें राजा जनक तथा नौ योगीश्वरोंका संवाद सुनाना",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-11/chapter-03.md",
+      "hi": "hi/skandha-11/chapter-03.md"
+     },
+     "title": "A Description of Māyā and the means of transcending it; an exposition of Brahma and the Path of Action",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "माया, मायासे पार होनेके उपाय तथा ब्रह्म और कर्मयोगका निरूपण",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-11/chapter-04.md",
+      "hi": "hi/skandha-11/chapter-04.md"
+     },
+     "title": "A description of the Lord’s Descents",
+     "verses_en": 23,
+     "last_verse_en": 23,
+     "title_hi": "भगवान्‌के अवतारोंका वर्णन",
+     "verses_hi": 23,
+     "last_verse_hi": 23
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-11/chapter-05.md",
+      "hi": "hi/skandha-11/chapter-05.md"
+     },
+     "title": "The Fate of non-devotees; different methods of the Lord’s worship according to the different Yugas",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "भक्तिहीन पुरुषोंकी गति और भगवान्‌की पूजाविधिका वर्णन",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-11/chapter-06.md",
+      "hi": "hi/skandha-11/chapter-06.md"
+     },
+     "title": "The gods entreat the Lord to return to His divine realm and Uddhava approaches Him on the eve of the Yadus’ departure for Prabhāsa",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "देवताओंकी भगवान्‌से स्वधाम सिधारनेके लिये प्रार्थना तथा यादवोंको प्रभासक्षेत्र जानेकी तैयारी करते देखकर उद्धवका भगवान्‌के पास आना",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-11/chapter-07.md",
+      "hi": "hi/skandha-11/chapter-07.md"
+     },
+     "title": "The Legend of an Ascetic—the Story of eight (out of twenty-four) preceptors from the earth to the pigeon, recognized by him",
+     "verses_en": 74,
+     "last_verse_en": 74,
+     "title_hi": "अवधूतोपाख्यान—पृथ्वीसे लेकर कबूतरतक आठ गुरुओंकी कथा",
+     "verses_hi": 74,
+     "last_verse_hi": 74
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-11/chapter-08.md",
+      "hi": "hi/skandha-11/chapter-08.md"
+     },
+     "title": "What the Avadhūta learnt from the nine preceptors",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "अवधूतोपाख्यान—अजगरसे लेकर पिंगलातक नौ गुरुओंकी कथा",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-11/chapter-09.md",
+      "hi": "hi/skandha-11/chapter-09.md"
+     },
+     "title": "Story of the seven preceptors, the osprey and others; and the end of the Avadhūta’s discourse",
+     "verses_en": 33,
+     "last_verse_en": 33,
+     "title_hi": "अवधूतोपाख्यान—कुररसे लेकर भृंगीतक सात गुरुओंकी कथा",
+     "verses_hi": 33,
+     "last_verse_hi": 33
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-11/chapter-10.md",
+      "hi": "hi/skandha-11/chapter-10.md"
+     },
+     "title": "The emptiness of earthly and other-worldly enjoyments exposed",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "लौकिक तथा पारलौकिक भोगोंकी असारताका निरूपण",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-11/chapter-11.md",
+      "hi": "hi/skandha-11/chapter-11.md"
+     },
+     "title": "The characteristics of bound and liberated souls as well as of devotees",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "बद्ध, मुक्त और भक्तजनोंके लक्षण",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-11/chapter-12.md",
+      "hi": "hi/skandha-11/chapter-12.md"
+     },
+     "title": "The Glory of Satsaṅga; how to perform one’s prescribed duty and how to relinquish it?",
+     "verses_en": 24,
+     "last_verse_en": 24,
+     "title_hi": "सत्संगकी महिमा और कर्म तथा कर्मत्यागकी विधि",
+     "verses_hi": 24,
+     "last_verse_hi": 24
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-11/chapter-13.md",
+      "hi": "hi/skandha-11/chapter-13.md"
+     },
+     "title": "The teaching imparted by the Lord in the form of the Divine Swan to the sage Sanaka and his three brothers",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "हंसरूपसे सनकादिको दिये हुए उपदेशका वर्णन",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 14,
+     "files": {
+      "en": "en/skandha-11/chapter-14.md",
+      "hi": "hi/skandha-11/chapter-14.md"
+     },
+     "title": "",
+     "verses_en": 46,
+     "last_verse_en": 46,
+     "title_hi": "भक्तियोगकी महिमा तथा ध्यानविधिका वर्णन",
+     "verses_hi": 46,
+     "last_verse_hi": 46
+    },
+    {
+     "chapter": 15,
+     "files": {
+      "en": "en/skandha-11/chapter-15.md",
+      "hi": "hi/skandha-11/chapter-15.md"
+     },
+     "title": "Names and Characteristics of the various Siddhis (mystic powers) acquired through Yoga",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "भिन्न-भिन्न सिद्धियोंके नाम और लक्षण",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 16,
+     "files": {
+      "en": "en/skandha-11/chapter-16.md",
+      "hi": "hi/skandha-11/chapter-16.md"
+     },
+     "title": "Glorious manifestations of the Lord enumerated",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "भगवान्‌की विभूतियोंका वर्णन",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 17,
+     "files": {
+      "en": "en/skandha-11/chapter-17.md",
+      "hi": "hi/skandha-11/chapter-17.md"
+     },
+     "title": "The duties pertaining to the four Varṇas and four Āśramas",
+     "verses_en": 58,
+     "last_verse_en": 58,
+     "title_hi": "वर्णाश्रम-धर्म-निरूपण",
+     "verses_hi": 58,
+     "last_verse_hi": 58
+    },
+    {
+     "chapter": 18,
+     "files": {
+      "en": "en/skandha-11/chapter-18.md",
+      "hi": "hi/skandha-11/chapter-18.md"
+     },
+     "title": "The Duties of anchorites and recluses",
+     "verses_en": 48,
+     "last_verse_en": 48,
+     "title_hi": "वानप्रस्थ और संन्यासीके धर्म",
+     "verses_hi": 48,
+     "last_verse_hi": 48
+    },
+    {
+     "chapter": 19,
+     "files": {
+      "en": "en/skandha-11/chapter-19.md",
+      "hi": "hi/skandha-11/chapter-19.md"
+     },
+     "title": "in the form of the five Yamas, the five Niyamas and so on",
+     "verses_en": 45,
+     "last_verse_en": 45,
+     "title_hi": "भक्ति, ज्ञान और यम-नियमादि साधनोंका वर्णन",
+     "verses_hi": 45,
+     "last_verse_hi": 45
+    },
+    {
+     "chapter": 20,
+     "files": {
+      "en": "en/skandha-11/chapter-20.md",
+      "hi": "hi/skandha-11/chapter-20.md"
+     },
+     "title": "Jñānayoga, Karmayoga and Bhaktiyoga analysed",
+     "verses_en": 37,
+     "last_verse_en": 37,
+     "title_hi": "ज्ञानयोग, कर्मयोग और भक्तियोग",
+     "verses_hi": 37,
+     "last_verse_hi": 37
+    },
+    {
+     "chapter": 21,
+     "files": {
+      "en": "en/skandha-11/chapter-21.md",
+      "hi": "hi/skandha-11/chapter-21.md"
+     },
+     "title": "The process of determining what is good and what is evil and the secret underlying it",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "गुण-दोष व्यवस्थाका स्वरूप और रहस्य",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 22,
+     "files": {
+      "en": "en/skandha-11/chapter-22.md",
+      "hi": "hi/skandha-11/chapter-22.md"
+     },
+     "title": "Categories enumerated; Distinction between Prakṛti and Puruṣa",
+     "verses_en": 60,
+     "last_verse_en": 60,
+     "title_hi": "तत्त्वोंकी संख्या और पुरुष-प्रकृति-विवेक",
+     "verses_hi": 60,
+     "last_verse_hi": 60
+    },
+    {
+     "chapter": 23,
+     "files": {
+      "en": "en/skandha-11/chapter-23.md",
+      "hi": "hi/skandha-11/chapter-23.md"
+     },
+     "title": "The Episode of a forbearing Brāhmaṇa",
+     "verses_en": 62,
+     "last_verse_en": 62,
+     "title_hi": "एक तितिक्षु ब्राह्मणका इतिहास",
+     "verses_hi": 62,
+     "last_verse_hi": 62
+    },
+    {
+     "chapter": 24,
+     "files": {
+      "en": "en/skandha-11/chapter-24.md",
+      "hi": "hi/skandha-11/chapter-24.md"
+     },
+     "title": "A Dissertation on Sāṅkhyayoga",
+     "verses_en": 29,
+     "last_verse_en": 29,
+     "title_hi": "सांख्ययोग",
+     "verses_hi": 29,
+     "last_verse_hi": 29
+    },
+    {
+     "chapter": 25,
+     "files": {
+      "en": "en/skandha-11/chapter-25.md",
+      "hi": "hi/skandha-11/chapter-25.md"
+     },
+     "title": "The operation of the three Guṇas described delusion,",
+     "verses_en": 36,
+     "last_verse_en": 36,
+     "title_hi": "तीनों गुणोंकी वृत्तियोंका निरूपण",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 26,
+     "files": {
+      "en": "en/skandha-11/chapter-26.md",
+      "hi": "hi/skandha-11/chapter-26.md"
+     },
+     "title": "The Utterance of Purūravā bearing an Aversion for the pleasures of Sense",
+     "verses_en": 35,
+     "last_verse_en": 35,
+     "title_hi": "पुरूरवाकी वैराग्योक्ति",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 27,
+     "files": {
+      "en": "en/skandha-11/chapter-27.md",
+      "hi": "hi/skandha-11/chapter-27.md"
+     },
+     "title": "The Yoga of Formal Worship",
+     "verses_en": 55,
+     "last_verse_en": 55,
+     "title_hi": "क्रियायोगका वर्णन",
+     "verses_hi": 55,
+     "last_verse_hi": 55
+    },
+    {
+     "chapter": 28,
+     "files": {
+      "en": "en/skandha-11/chapter-28.md",
+      "hi": "hi/skandha-11/chapter-28.md"
+     },
+     "title": "The Highest Truth Discussed",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "परमार्थनिरूपण",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 29,
+     "files": {
+      "en": "en/skandha-11/chapter-29.md",
+      "hi": "hi/skandha-11/chapter-29.md"
+     },
+     "title": "Courses of conduct pleasing to the Lord: Uddhava’s departure for Badarikāśrama",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "भागवतधर्मोंका निरूपण और उद्धवजीका बदरिकाश्रमगमन",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 30,
+     "files": {
+      "en": "en/skandha-11/chapter-30.md",
+      "hi": "hi/skandha-11/chapter-30.md"
+     },
+     "title": "Holocaust of Yadu’s Race",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "यदुकुलका संहार",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 31,
+     "files": {
+      "en": "en/skandha-11/chapter-31.md",
+      "hi": "hi/skandha-11/chapter-31.md"
+     },
+     "title": "The Lord’s ascent to His divine realm",
+     "verses_en": 28,
+     "last_verse_en": 28,
+     "title_hi": "श्रीभगवान्‌का स्वधामगमन",
+     "verses_hi": 28,
+     "last_verse_hi": 28
+    }
+   ]
+  },
+  {
+   "skandha": 12,
+   "dir": "skandha-12",
+   "name": "Twelfth",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "en": "en/skandha-12/chapter-01.md",
+      "hi": "hi/skandha-12/chapter-01.md"
+     },
+     "title": "Lines of kings of Kaliyuga",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "कलियुगके राजवंशोंका वर्णन",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "en": "en/skandha-12/chapter-02.md",
+      "hi": "hi/skandha-12/chapter-02.md"
+     },
+     "title": "The Evils of Kaliyuga",
+     "verses_en": 44,
+     "last_verse_en": 44,
+     "title_hi": "कलियुगके धर्म",
+     "verses_hi": 44,
+     "last_verse_hi": 44
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "en": "en/skandha-12/chapter-03.md",
+      "hi": "hi/skandha-12/chapter-03.md"
+     },
+     "title": "the evils of Kaliyuga—loud chanting of the Divine Name",
+     "verses_en": 52,
+     "last_verse_en": 52,
+     "title_hi": "राज्य, युगधर्म और कलियुगके दोषोंसे बचनेका उपाय—नामसंकीर्तन",
+     "verses_hi": 52,
+     "last_verse_hi": 52
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "en": "en/skandha-12/chapter-04.md",
+      "hi": "hi/skandha-12/chapter-04.md"
+     },
+     "title": "The Fourfold Pralaya",
+     "verses_en": 43,
+     "last_verse_en": 43,
+     "title_hi": "चार प्रकारके प्रलय",
+     "verses_hi": 43,
+     "last_verse_hi": 43
+    },
+    {
+     "chapter": 5,
+     "files": {
+      "en": "en/skandha-12/chapter-05.md",
+      "hi": "hi/skandha-12/chapter-05.md"
+     },
+     "title": "The Final Teaching of śukadeva concerning Brahma",
+     "verses_en": 13,
+     "last_verse_en": 13,
+     "title_hi": "श्रीशुकदेवजीका अन्तिम उपदेश",
+     "verses_hi": 13,
+     "last_verse_hi": 13
+    },
+    {
+     "chapter": 6,
+     "files": {
+      "en": "en/skandha-12/chapter-06.md",
+      "hi": "hi/skandha-12/chapter-06.md"
+     },
+     "title": "",
+     "verses_en": 80,
+     "last_verse_en": 80,
+     "title_hi": "परीक्षित्‌की परमगति, जनमेजयका सर्पसत्र और वेदोंके शाखाभेद",
+     "verses_hi": 80,
+     "last_verse_hi": 80
+    },
+    {
+     "chapter": 7,
+     "files": {
+      "en": "en/skandha-12/chapter-07.md",
+      "hi": "hi/skandha-12/chapter-07.md"
+     },
+     "title": "",
+     "verses_en": 25,
+     "last_verse_en": 25,
+     "title_hi": "अथर्ववेदकी शाखाएँ और पुराणोंके लक्षण",
+     "verses_hi": 25,
+     "last_verse_hi": 25
+    },
+    {
+     "chapter": 8,
+     "files": {
+      "en": "en/skandha-12/chapter-08.md",
+      "hi": "hi/skandha-12/chapter-08.md"
+     },
+     "title": "The sage Mārkaṇḍeya embarks on a course of austerities and receives a boon",
+     "verses_en": 49,
+     "last_verse_en": 49,
+     "title_hi": "मार्कण्डेयजीकी तपस्या और वर-प्राप्ति",
+     "verses_hi": 49,
+     "last_verse_hi": 49
+    },
+    {
+     "chapter": 9,
+     "files": {
+      "en": "en/skandha-12/chapter-09.md",
+      "hi": "hi/skandha-12/chapter-09.md"
+     },
+     "title": "The sage Mārkaṇḍeya witnesses the Lord’s Māyā",
+     "verses_en": 34,
+     "last_verse_en": 34,
+     "title_hi": "मार्कण्डेयजीका माया-दर्शन",
+     "verses_hi": 34,
+     "last_verse_hi": 34
+    },
+    {
+     "chapter": 10,
+     "files": {
+      "en": "en/skandha-12/chapter-10.md",
+      "hi": "hi/skandha-12/chapter-10.md"
+     },
+     "title": "Lord śiva confers a boon on Mārkaṇḍeya",
+     "verses_en": 42,
+     "last_verse_en": 42,
+     "title_hi": "मार्कण्डेयजीको भगवान् शंकरका वरदान",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 11,
+     "files": {
+      "en": "en/skandha-12/chapter-11.md",
+      "hi": "hi/skandha-12/chapter-11.md"
+     },
+     "title": "The significance of the Lord’s own limbs, attendants and weapons and a description of the retinue of the Sun-god (changing every month in the course of a solar year)",
+     "verses_en": 50,
+     "last_verse_en": 50,
+     "title_hi": "भगवान्‌के अंग, उपांग और आयुधोंका रहस्य तथा विभिन्न सूर्यगणोंका वर्णन",
+     "verses_hi": 50,
+     "last_verse_hi": 50
+    },
+    {
+     "chapter": 12,
+     "files": {
+      "en": "en/skandha-12/chapter-12.md",
+      "hi": "hi/skandha-12/chapter-12.md"
+     },
+     "title": "A Synopsis of all the twelve Skandhas of Śrīmad Bhāgavata",
+     "verses_en": 68,
+     "last_verse_en": 68,
+     "title_hi": "श्रीमद्भागवतकी संक्षिप्त विषय-सूची",
+     "verses_hi": 68,
+     "last_verse_hi": 68
+    },
+    {
+     "chapter": 13,
+     "files": {
+      "en": "en/skandha-12/chapter-13.md",
+      "hi": "hi/skandha-12/chapter-13.md"
+     },
+     "title": "The extent of the eighteen Purāṇas and the glory of the Bhāgavata",
+     "verses_en": 23,
+     "last_verse_en": 23,
+     "title_hi": "विभिन्न पुराणोंकी श्लोक-संख्या और श्रीमद्भागवतकी महिमा",
+     "verses_hi": 23,
+     "last_verse_hi": 23
+    }
+   ]
+  },
+  {
+   "skandha": 0,
+   "dir": "mahatmya-skanda",
+   "name": "Mahatmya (Skanda Purana version)",
+   "chapters": [
+    {
+     "chapter": 1,
+     "files": {
+      "hi": "hi/mahatmya-skanda/chapter-01.md"
+     },
+     "title_hi": "परीक्षित् और वज्रनाभका समागम, शाण्डिल्य-मुनिके मुखसे भगवान्‌की लीलाके रहस्य और व्रजभूमिके महत्त्वका वर्णन",
+     "verses_hi": 42,
+     "last_verse_hi": 42
+    },
+    {
+     "chapter": 2,
+     "files": {
+      "hi": "hi/mahatmya-skanda/chapter-02.md"
+     },
+     "title_hi": "यमुना और श्रीकृष्णपत्नियोंका संवाद, कीर्तनोत्सवमें उद्धवजीका प्रकट होना",
+     "verses_hi": 35,
+     "last_verse_hi": 35
+    },
+    {
+     "chapter": 3,
+     "files": {
+      "hi": "hi/mahatmya-skanda/chapter-03.md"
+     },
+     "title_hi": "श्रीमद्भागवतकी परम्परा और उसका माहात्म्य, भागवतश्रवणसे श्रोताओंको भगवद्धामकी प्राप्ति",
+     "verses_hi": 36,
+     "last_verse_hi": 36
+    },
+    {
+     "chapter": 4,
+     "files": {
+      "hi": "hi/mahatmya-skanda/chapter-04.md"
+     },
+     "title_hi": "श्रीमद्भागवतका स्वरूप, प्रमाण, श्रोता-वक्ताके लक्षण, श्रवणविधि और माहात्म्य",
+     "verses_hi": 27,
+     "last_verse_hi": 27
+    }
+   ]
+  }
+ ]
+}

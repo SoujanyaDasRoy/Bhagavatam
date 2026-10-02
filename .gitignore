@@ -1,0 +1,42 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+/apk
+
+# Gita Press Bengali translation and everything derived from it (page images, OCR text, extracted chapters, databases): not for a repository
+/content/bn/
+/content/_bengali/**/work/
+/content/_bengali/**/out/
+/content/_bengali/**/review/
+/content/_bengali/**/data/ocr/
+/content/_bengali/*.csv
+/content/content.db
+/app/src/main/assets/content.db
+*.pdf
+
+# scratch, backups and tool caches
+/.claude/
+/_edit/
+/_pre_player_backup_src/
+/_pre_ui_fixes_backup/
+/_to_delete/
+/graphify-out/
+*.tgz
+/content/_bengali/pages/
+/content/_build/backup_*/
+__pycache__/
+# Gita Press Hindi and English chapter text and the files that quote it
+/content/hi/
+/content/en/
+/content/_gaps/
+/content/gap-report.md
+/content/_build/*_report.json
+/content/_build/*_cands.json
+/content/_build/*_issues.json
