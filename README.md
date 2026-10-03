@@ -1,74 +1,84 @@
 # Bhagavatam
 
-A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran**, in Sanskrit, Hindi, Bengali and English. It lives on your phone, has no ads and no accounts, and does not track you.
+A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran**, in Sanskrit, Hindi, Bengali and English. Built with pure Jetpack Compose for Android. It lives on your phone, has no ads, no accounts, and does not track you.
 
-- The Mahatmya and all 12 Skandhas: 341 chapters, 14,580 verses
-- Every chapter in Sanskrit with Hindi, Bengali and English translations
-- Reading and listening, side by side
+- **The Mahatmya and all 12 Skandhas**: 341 chapters, 14,580 verses
+- **Multi-Language**: Sanskrit *mool* with Hindi, Bengali, and English translations
+- **Spotify-Inspired Audio Player**: Minimal, functional Now Playing experience with synchronized karaoke lyrics
+- **Zero-Download YouTube Streams**: Instant full-chapter audio streams in Hindi, Bengali, English, and Sanskrit
+- **Fully Local & Offline-First**: Scripture text bundled on-device with zero internet required
 
 ---
 
 ## Why it exists
 
-Scripture apps often come with missing verses, broken text, ads and a constant need for the internet. This one is built for the opposite: a complete text you can open on a train, in a temple, or at dawn, and read or listen to without being interrupted.
+Scripture apps often come with missing verses, broken text, intrusive ads, and a constant need for an internet connection. This app is built for the opposite: a complete, sacred text you can open on a train, in a temple, or at dawn, and read or listen to without being interrupted.
 
 ---
 
-## What you can do
+## Features
 
-**Read**
-- Switch between the Sanskrit shloka (Devanagari, Bengali script or Roman) and the Hindi, Bengali and English translations, one at a time or together.
-- Pinch to resize the text, swipe to the next or previous chapter, and pick up exactly where you left off.
-- Four themes for different times of day: Prabhat (daylight), Sandhya (twilight), Pothi (manuscript sepia) and Ratri (dark).
+### 📖 Reading & Study
+- **Layered Translations**: Switch smoothly between Sanskrit shlokas (in Devanagari, Bengali, or IAST Roman script) and translations in Hindi, Bengali, or English. Read them side-by-side or translation-only.
+- **Bengali Typography**: Native Bengali numerals and canonical titles rendered with `NotoSerifBengali`.
+- **Customizable Reader**: Pinch-to-zoom text scaling, adjustable line height, and fast chapter navigation.
+- **Four Sacred Themes**: *Prabhat* (daylight), *Pothi* (manuscript sepia), *Sandhya* (twilight), and *Ratri* (pure dark mode).
+- **Highlights & Notes**: Long-press any verse or select text to bookmark, highlight in sacred hues, or attach personal notes stored safely on your device.
+- **Omni Search**: Search across verses, characters, story arcs (*Gajendra Moksha*, *Dhruva Charitra*, *Rasa Lila*), or jump straight to any reference (e.g. `10.29.1`).
 
-**Listen**
-- Tap **Listen** on any chapter. The app reads it aloud, verse by verse, and highlights the line being spoken. Tap a line to start from there.
-- Keeps playing with the screen off. Controls on the lock screen and Bluetooth headsets.
-- Speed, sleep timer, and play through a chapter, a Skandha or the whole book.
-- The voice is your phone's own text-to-speech, so how good it sounds depends on the voices installed. See "Better voices" below.
-
-**Study**
-- Press and hold a word for a short meaning. Select text to highlight it in a colour, add a note or bookmark a passage. Notes stay on your phone.
-- Search all four languages at once, or type a reference like `10.29.1` to jump straight there.
-- Browse well-known stories (Gajendra Moksha, Dhruva, Rasa Lila and more).
+### 🎧 Listening & Recitation
+- **Spotify-Inspired Minimal Player**:
+  - **Floating Mini Player**: Glassmorphic pill with artwork thumbnail, playback transport, horizontal swipe-to-dismiss, and one-tap close (`✕`) button.
+  - **Expanded Now Playing View**: Square hero artwork, Spotify 5-control transport bar (PlayThrough, Previous, Hero Play/Pause, Next, Loop), thin seekbar scrubber, and live synchronized lyrics sheet.
+- **Line-by-Line Karaoke Paath**: Real-time line-by-line Sanskrit karaoke and sentence-level translation highlight. Tap any line to immediately jump recitation there.
+- **YouTube Recitation Stream (Zero Download)**: Seamlessly toggle between local TTS recitation and curated YouTube recitation streams for all 12 Skandhas in Hindi, Bengali, English, and Sanskrit.
+- **Background & Lock Screen Playback**: Full Android MediaSession integration with Bluetooth headset and notification controls.
+- **Sleep Timer & Speed Control**: Set automatic timers (15m, 30m, 45m, 60m) and adjust narration speed (0.75× – 2.0×).
 
 ---
 
-## Download and install (Android)
+## Download and Install (Android)
 
 1. Open the **Releases** page of this repository on your phone: <https://github.com/SoujanyaDasRoy/Bhagavatam/releases>
-2. Under the newest release, tap `Bhagavatam-release.apk` to download it.
-3. Open the downloaded file. If Android says it cannot install apps from this source, tap **Settings** and allow installs from your browser or file manager, then go back and tap **Install**.
-4. Open the app. The whole text is already inside it.
+2. Under the latest release, download `Bhagavatam-release.apk` (or `Bhagavatam-debug.apk`).
+3. Open the downloaded file and tap **Install**.
+4. Open the app — the entire scripture text is already included offline.
 
-Needs Android 8.0 or newer. The app works fully offline. The only thing that uses the internet is the optional word-meaning lookup, which you can switch off in Settings, under Reading.
+> **Requirements**: Android 8.0 (API 26) or newer.
 
-> No APK is attached to a release yet. Until one is published, the install steps above will find nothing to download.
-
-### Better voices
-
-Android's built-in speech varies a lot from phone to phone. For a more natural voice: open Android **Settings**, go to *Text-to-speech output*, choose *Speech Recognition & Synthesis from Google*, and install the high-quality voices for Hindi, Bengali and English. The app picks the best installed voice by itself, and you can choose a different one from the headphones button in the player.
-
----
-
-## About the text
-
-The Sanskrit text and the Hindi, Bengali and English translations follow the Gita Press, Gorakhpur editions. The book text is not stored in this repository.
+### Better Voices
+Android's built-in text-to-speech engine varies across devices. For high-quality recitation:
+- Go to Android **Settings › Accessibility › Text-to-speech output**.
+- Set the Preferred engine to **Speech Recognition and Synthesis by Google**.
+- Download the high-quality voice packs for Hindi, Bengali, and English.
+- You can switch voices anytime via the **Voices** (`🎧`) button in the player.
 
 ---
 
-## For developers
+## About the Text
 
-Kotlin and Jetpack Compose, Android 8 to 15. Scripture is a bundled SQLite database; audio is Android text-to-speech behind a media session. Build with JDK 17:
+The Sanskrit scripture and translations follow the canonical **Gita Press, Gorakhpur** editions.
 
-```bash
-./gradlew assembleDebug      # debug APK
-./gradlew assembleRelease    # release APK
+---
+
+## For Developers
+
+Built with modern Android standards:
+- **Language**: Kotlin 2.0+
+- **UI Framework**: Jetpack Compose with custom design tokens
+- **Audio Engine**: Android TTS + ExoPlayer / Media3 MediaSession + AndroidView Web Streams
+- **Database**: Bundled SQLite database (`content.db`)
+
+### Build locally:
+```powershell
+# Set Java JDK 17+
+$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
+
+# Compile and assemble
+.\gradlew.bat compileDebugKotlin
+.\gradlew.bat assembleDebug
 ```
 
-More detail: [ARCHITECTURE](docs/ARCHITECTURE.md), [DATA_PIPELINE](docs/DATA_PIPELINE.md), [DESIGN_SYSTEM](DESIGN_SYSTEM.md).
-The app needs `content/content.db`, which is built locally and is not in git.
-
 ---
 
-*Om Namo Bhagavate Vasudevaya*
+*ॐ नमो भगवते वासुदेवाय*

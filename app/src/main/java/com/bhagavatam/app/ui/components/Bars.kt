@@ -6,12 +6,21 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.CircularProgressIndicator
 import com.bhagavatam.app.data.playerTextFor
-import com.bhagavatam.app.state.AudioStatus
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.tween
-import com.bhagavatam.app.ui.theme.Motion
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.bhagavatam.app.state.AudioStatus
+import androidx.compose.ui.graphics.graphicsLayer
+import com.bhagavatam.app.ui.theme.Motion
+import kotlin.math.abs
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
@@ -110,7 +119,7 @@ fun BottomScrim(modifier: Modifier = Modifier, height: Dp = 140.dp) {
     Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(listOf(bg.copy(alpha = 0f), bg.copy(alpha = 0.92f), bg))))
 }
 
-/** Mini player: Spotify-style sleek Now Playing floating bar with album art, bookmark, play/pause and next. */
+/** Mini player: Modern Glassmorphic floating pill with album art, live status, playback controls, and dismiss button. */
 @Composable
 fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifier) = CappedFontScale {
     val c = LocalReaderColors.current
@@ -118,10 +127,8 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
     val langLabel = when (state.audioLang) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English" }
     val title = SampleData.adhyayaTitle(v.skandha, v.adhyaya, state.titleLang, state.strings)
     val t = playerTextFor(state.uiLang)
-    val isBookmarked = v.ref in state.bookmarks
     val artId = artRes(chArt(v.skandha, v.adhyaya)).takeIf { it != 0 } ?: artRes(skArt(v.skandha))
 
-    // Subtitle description: problem -> status -> speaker / chapter
     val line = when {
         state.audioIssue != null -> t.textOnly
         state.audioStatus == AudioStatus.PREPARING -> t.preparing
@@ -132,24 +139,61 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
     }
     val chapterProgress = if (state.queue.isEmpty()) 0f else ((state.index + state.progress) / state.queue.size).coerceIn(0f, 1f)
 
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    val animatedOffsetX by animateFloatAsState(
+        targetValue = offsetX,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "miniPlayerOffset"
+    )
+
     Column(
-        modifier.padding(horizontal = 8.dp).fillMaxWidth()
-            .shadow(16.dp, RoundedCornerShape(14.dp), ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17))
-            .clip(RoundedCornerShape(14.dp)).background(c.surface)
-            .border(1.dp, c.separator.copy(alpha = 0.8f), RoundedCornerShape(14.dp)),
+        modifier = modifier
+            .padding(horizontal = 10.dp)
+            .fillMaxWidth()
+            .graphicsLayer { translationX = animatedOffsetX }
+            .shadow(20.dp, RoundedCornerShape(18.dp), ambientColor = Color(0x40000000), spotColor = Color(0x40000000))
+            .clip(RoundedCornerShape(18.dp))
+            .background(c.surface.copy(alpha = 0.96f))
+            .border(1.dp, c.accent.copy(alpha = 0.35f), RoundedCornerShape(18.dp))
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { offsetX = 0f },
+                    onDragCancel = { offsetX = 0f },
+                    onDragEnd = {
+                        if (abs(offsetX) > 180f) {
+                            state.dismissPlayer()
+                        }
+                        offsetX = 0f
+                    }
+                ) { _, dragAmount: Float ->
+                    offsetX += dragAmount
+                }
+            },
     ) {
         Row(
-            Modifier.fillMaxWidth().heightIn(min = 60.dp).clickable(onClick = onOpen)
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 64.dp)
+                .clickable(onClick = onOpen)
                 .pointerInput(Unit) {
                     var dy = 0f
-                    detectVerticalDragGestures(onDragStart = { dy = 0f }, onDragCancel = { dy = 0f }, onDragEnd = { if (dy < -40f) onOpen() }) { _, d -> dy += d }
+                    detectVerticalDragGestures(
+                        onDragStart = { dy = 0f },
+                        onDragCancel = { dy = 0f },
+                        onDragEnd = { if (dy < -40f) onOpen() }
+                    ) { _, d -> dy += d }
                 }
-                .padding(start = 8.dp, end = 6.dp, top = 6.dp, bottom = 6.dp),
-            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(start = 10.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            // Album Art / Pahari Miniature Thumbnail
+            // Album Art / Pahari Miniature Thumbnail with delicate glow
             Box(
-                Modifier.size(46.dp).clip(RoundedCornerShape(8.dp)).background(Brand.KesariTint),
+                Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Brand.KesariTint)
+                    .border(1.dp, c.accent.copy(alpha = 0.4f), RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center,
             ) {
                 if (artId != 0) {
@@ -160,45 +204,55 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                         contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                     )
                 } else {
-                    AppTile(size = 46, fontSize = 20)
+                    AppTile(size = 48, fontSize = 20)
                 }
             }
 
-            // Track metadata
-            Column(Modifier.weight(1f)) {
-                Text(
-                    "${state.strings.shloka} ${localDigits(v.ref, state.uiLang)} · $langLabel",
-                    fontSize = 14.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+            // Track metadata & live indicator
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        "${state.strings.shloka} ${localDigits(v.ref, state.uiLang)}",
+                        fontSize = 14.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Box(
+                        Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(c.accent.copy(alpha = 0.15f))
+                            .padding(horizontal = 5.dp, vertical = 1.dp)
+                    ) {
+                        Text(
+                            langLabel,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = c.accent
+                        )
+                    }
+                }
                 Text(
                     line,
-                    // Chapter titles are in the reading language, so the line needs that language's font.
                     fontFamily = if (v.speaker == null && state.audioIssue == null) com.bhagavatam.app.ui.screens.readingFont(state.titleLang) else null,
                     fontSize = 12.sp, color = c.secondary, maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            // Quick Bookmark Button
-            IconButton(onClick = { state.toggleBookmark(v.ref) }, modifier = Modifier.size(38.dp)) {
-                Icon(
-                    painterResource(Ic.Bookmark),
-                    contentDescription = "Bookmark",
-                    tint = if (isBookmarked) c.gold else c.secondary.copy(alpha = 0.4f),
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-
-            // Spotify-style Circular Play/Pause Button
+            // Play/Pause circular button
             val playLabel = if (state.isPlaying) t.pause else t.play
             Box(
-                Modifier.size(42.dp).clip(CircleShape).background(c.accent).clickable(onClickLabel = playLabel, role = Role.Button) { state.togglePlay() },
+                Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(c.accent)
+                    .clickable(onClickLabel = playLabel, role = Role.Button) { state.togglePlay() },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     if (state.isPlaying) painterResource(Ic.Pause) else painterResource(Ic.PlayArrow),
-                    playLabel, tint = c.chipOnText, modifier = Modifier.size(24.dp),
+                    playLabel,
+                    tint = c.chipOnText,
+                    modifier = Modifier.size(24.dp),
                 )
                 if (state.audioStatus == AudioStatus.PREPARING) {
                     CircularProgressIndicator(
@@ -209,8 +263,8 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                 }
             }
 
-            // Next Verse Button
-            IconButton(onClick = state::next, modifier = Modifier.size(38.dp)) {
+            // Next Track Button
+            IconButton(onClick = state::next, modifier = Modifier.size(36.dp)) {
                 Icon(
                     painterResource(Ic.SkipNext),
                     contentDescription = t.nextShloka,
@@ -218,14 +272,30 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                     modifier = Modifier.size(22.dp),
                 )
             }
+
+            // Dismiss ('X') Button to close and remove mini player
+            IconButton(
+                onClick = { state.dismissPlayer() },
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(c.secondary.copy(alpha = 0.12f))
+            ) {
+                Icon(
+                    painterResource(Ic.Close),
+                    contentDescription = t.closePlayer,
+                    tint = c.ink,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
         }
 
         // Bottom progress bar
         LinearProgressIndicator(
             progress = { chapterProgress },
-            modifier = Modifier.fillMaxWidth().height(2.5.dp),
+            modifier = Modifier.fillMaxWidth().height(3.dp),
             color = c.accent,
-            trackColor = c.track.copy(alpha = 0.4f),
+            trackColor = c.track.copy(alpha = 0.35f),
             strokeCap = StrokeCap.Butt,
             gapSize = 0.dp,
             drawStopIndicator = {},

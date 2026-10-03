@@ -103,7 +103,11 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
     val frac by animateFloatAsState(read.toFloat() / sk.adhyayaCount, tween(Motion.screen), label = "skandhaProgress")
     val cardAccessibility = if (n == 0) s.mahatmya else "${s.skandha} $n"
     val numeralLabel = if (n == 0) s.mahatmya else localDigits(n.toString(), state.uiLang)
-    val numeralFont = if (n == 0) (if (state.uiLang == Lang.BN) NotoSerifBengali else if (state.uiLang == Lang.HI) NotoDevanagari else EnglishReading) else EnglishReading
+    val numeralFont = when (state.uiLang) {
+        Lang.BN -> NotoSerifBengali
+        Lang.HI -> NotoDevanagari
+        else -> EnglishReading
+    }
     val numeralSize = if (n == 0) 22.sp else 36.sp
 
     Box(modifier.tappable(Radius.card, cardAccessibility, onClick = onClick)) {
@@ -111,7 +115,15 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Column {
                 Text(numeralLabel, fontFamily = numeralFont, fontSize = numeralSize, fontWeight = FontWeight.SemiBold, color = Color.White)
-                Text(if (state.titleLang == Lang.EN) sk.nameSa else sk.title(state.titleLang), fontFamily = if (state.titleLang == Lang.EN) NotoDevanagari else readingFont(state.titleLang), fontSize = 14.sp, lineHeight = 20.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                val subTitle = if (state.titleLang == Lang.EN) sk.name(state.uiLang) else sk.title(state.titleLang)
+                val subFont = if (state.titleLang == Lang.EN) {
+                    when (state.uiLang) {
+                        Lang.BN -> NotoSerifBengali
+                        Lang.HI -> NotoDevanagari
+                        else -> NotoDevanagari
+                    }
+                } else readingFont(state.titleLang)
+                Text(subTitle, fontFamily = subFont, fontSize = 14.sp, lineHeight = 20.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(localDigits("$read / ${sk.adhyayaCount} ${s.adhyayas}", state.uiLang), fontSize = 12.sp, fontWeight = FontWeight.Medium, color = Color(0xFFFFF4DC))
@@ -237,7 +249,11 @@ fun HomeScreen(
                 val frac by animateFloatAsState((done.toFloat() / total).coerceIn(0f, 1f), tween(Motion.screen), label = "readingProgress")
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(tr(ui, "Your reading", "आपका पठन", "আপনার পাঠ"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                    Text(localDigits("$done / $total", ui), fontFamily = EnglishReading, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari)
+                    Text(
+                        localDigits("$done / $total", ui),
+                        fontFamily = when (ui) { Lang.BN -> NotoSerifBengali; Lang.HI -> NotoDevanagari; else -> EnglishReading },
+                        fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari
+                    )
                 }
                 Box(Modifier.fillMaxWidth().height(8.dp).clip(CircleShape).background(Brand.Fill)) {
                     if (frac > 0f) Box(Modifier.fillMaxWidth(frac.coerceAtLeast(0.02f)).height(8.dp).clip(CircleShape).background(Brand.Kesari))
@@ -349,6 +365,11 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
     val ui = state.uiLang
     val sk = SampleData.skandha(skandha)
     val headerTitle = if (skandha == 0) s.mahatmya else localDigits("${s.skandha} $skandha", ui)
+    val headerFont = when (ui) {
+        Lang.BN -> NotoSerifBengali
+        Lang.HI -> NotoDevanagari
+        else -> EnglishReading
+    }
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = BottomRoom)) {
         item { NavBar(s.tabGranth, onBack) }
         item {
@@ -356,10 +377,20 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                 ArtBackdrop(skArt(skandha), if (skandha == 0) listOf(Color(0xFF5A3C06), Color(0xFF8A5C0F)) else skGradient(skColor(skandha)), Modifier.matchParentSize(), mandala = Color(0x33FFFFFF))
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(localDigits("${sk.adhyayaCount} ${s.adhyayas}", ui), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
-                    Text(headerTitle, fontFamily = EnglishReading, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                    // The Sanskrit name is only a separate line when the title is English; otherwise the title is that name.
-                    if (state.titleLang == Lang.EN) Text(sk.nameSa, fontFamily = NotoDevanagari, fontSize = 19.sp, color = Color.White)
-                    // Skip the line when it only repeats the Sanskrit name above (Hindi).
+                    Text(headerTitle, fontFamily = headerFont, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    if (skandha > 0) {
+                        val skName = when (state.titleLang) {
+                            Lang.BN -> sk.nameBn
+                            Lang.HI -> sk.nameSa
+                            else -> sk.nameSa
+                        }
+                        val skFont = when (state.titleLang) {
+                            Lang.BN -> NotoSerifBengali
+                            Lang.HI, Lang.SA -> NotoDevanagari
+                            else -> NotoDevanagari
+                        }
+                        Text(skName, fontFamily = skFont, fontSize = 19.sp, color = Color.White)
+                    }
                     Text(sk.title(state.titleLang), fontFamily = readingFont(state.titleLang), fontSize = 16.sp, color = Color(0xFFFFF4DC))
                 }
             }
@@ -372,13 +403,18 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
             val done = state.isFinished(skandha, a)
             val reading = skandha == state.lastSkandha && a == state.lastAdhyaya && !done
             val count = SampleData.verseCount(skandha, a)
+            val numFont = when (ui) {
+                Lang.BN -> NotoSerifBengali
+                Lang.HI -> NotoDevanagari
+                else -> EnglishReading
+            }
             Column(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(shape).background(Brand.Card)) {
                 if (!first) RowDivider()
                 Row(
                     Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpen(a) }.heightIn(min = 56.dp).padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Text(localDigits(a.toString(), ui), Modifier.width(28.dp), fontFamily = EnglishReading, fontSize = 17.sp, color = Brand.Secondary)
+                    Text(localDigits(a.toString(), ui), Modifier.width(28.dp), fontFamily = numFont, fontSize = 17.sp, color = Brand.Secondary)
                     Column(Modifier.weight(1f)) {
                         Text(SampleData.adhyayaTitle(skandha, a, state.titleLang, s), fontFamily = readingFont(state.titleLang), fontSize = 16.sp, lineHeight = 22.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 13.sp, color = Brand.Secondary)

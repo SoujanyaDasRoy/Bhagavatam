@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.bhagavatam.app.audio.AudioMode
 import com.bhagavatam.app.audio.ConfigResult
 import com.bhagavatam.app.audio.FocusController
 import com.bhagavatam.app.audio.NarrationText
@@ -349,6 +350,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
     var loop by mutableStateOf(false)
         private set
+    var audioMode by mutableStateOf(AudioMode.KARAOKE_PAATH)
+        private set
     var hasSession by mutableStateOf(false)
         private set
     var audioStatus by mutableStateOf(AudioStatus.IDLE)
@@ -523,6 +526,20 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
 
     fun pausePlayback() { if (isPlaying) pause() }
+
+    /** Fully stops audio, cancels background narration, and removes the floating mini player. */
+    fun dismissPlayer() {
+        pause()
+        hasSession = false
+        queue = emptyList()
+        activeSegment = -1
+        resumeSeg = 0
+        audioStatus = AudioStatus.IDLE
+    }
+
+    fun updateAudioMode(mode: AudioMode) {
+        audioMode = mode
+    }
 
     /** Called when the app leaves the screen: honours "keep playing in the background". */
     fun onAppBackgrounded() {

@@ -63,8 +63,25 @@ data class Skandha(
     val titleEn: String,
     val titleHi: String,
     val titleBn: String,
+    val nameBn: String = when (num) {
+        0 -> "শ্রীমদ্ভাগবত মাহাত্ম্য"
+        1 -> "প্রথম স্কন্ধ"
+        2 -> "দ্বিতীয় স্কন্ধ"
+        3 -> "তৃতীয় স্কন্ধ"
+        4 -> "চতুর্থ স্কন্ধ"
+        5 -> "পঞ্চম স্কন্ধ"
+        6 -> "ষষ্ঠ স্কন্ধ"
+        7 -> "সপ্তম স্কন্ধ"
+        8 -> "অষ্টম স্কন্ধ"
+        9 -> "নবম স্কন্ধ"
+        10 -> "দশম স্কন্ধ"
+        11 -> "একাদশ স্কন্ধ"
+        12 -> "দ্বাদশ স্কন্ধ"
+        else -> "স্কন্ধ $num"
+    },
 ) {
     fun title(ui: Lang) = when (ui) { Lang.HI -> titleHi; Lang.BN -> titleBn; else -> titleEn }
+    fun name(ui: Lang) = when (ui) { Lang.BN -> nameBn; Lang.HI -> nameSa; else -> nameSa }
 }
 
 /** Colophon ("Thus ends ...") and Gita Press notes printed after the last shloka of a chapter. */
