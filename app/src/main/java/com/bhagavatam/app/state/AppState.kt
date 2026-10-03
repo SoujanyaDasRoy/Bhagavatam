@@ -98,6 +98,29 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var showDaily by mutableStateOf(prefs.getBoolean("showDaily", true))
         private set
 
+    // ---------- reading layout and behaviour (Settings > Reading, Listening, Words & notes) ----------
+    /** Translations are set with straight right edges (justified). */
+    var justifyText by mutableStateOf(prefs.getBoolean("justifyText", false))
+        private set
+    /** The small verse number in front of each translation. */
+    var showVerseNumbers by mutableStateOf(prefs.getBoolean("showVerseNumbers", true))
+        private set
+    /** The chapter picture at the top of a chapter, where there is one. */
+    var showChapterArt by mutableStateOf(prefs.getBoolean("showChapterArt", true))
+        private set
+    /** "11 min read" under the chapter title. */
+    var showReadTime by mutableStateOf(prefs.getBoolean("showReadTime", true))
+        private set
+    /** The screen stays awake while a chapter is open. */
+    var keepScreenOnReading by mutableStateOf(prefs.getBoolean("keepScreenOnReading", false))
+        private set
+    /** The reader scrolls to the verse being narrated. */
+    var followAudio by mutableStateOf(prefs.getBoolean("followAudio", true))
+        private set
+    /** Index into the four highlight colours, used for new notes. */
+    var defaultMark by mutableStateOf(prefs.getInt("defaultMark", 0))
+        private set
+
     val strings get() = stringsFor(uiLang)
 
     private fun save(block: android.content.SharedPreferences.Editor.() -> Unit) = with(prefs.edit()) { block(); apply() }
@@ -168,6 +191,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateDarkTheme(t: ReaderTheme) { darkTheme = t; save { putString("darkTheme", t.name) } }
     fun updateLineScale(v: Float) { lineScale = v; saveScaleDebounced { putFloat("lineScale", v) } }
     fun updateShowDaily(on: Boolean) { showDaily = on; save { putBoolean("showDaily", on) } }
+    fun updateJustifyText(on: Boolean) { justifyText = on; save { putBoolean("justifyText", on) } }
+    fun updateShowVerseNumbers(on: Boolean) { showVerseNumbers = on; save { putBoolean("showVerseNumbers", on) } }
+    fun updateShowChapterArt(on: Boolean) { showChapterArt = on; save { putBoolean("showChapterArt", on) } }
+    fun updateShowReadTime(on: Boolean) { showReadTime = on; save { putBoolean("showReadTime", on) } }
+    fun updateKeepScreenOnReading(on: Boolean) { keepScreenOnReading = on; save { putBoolean("keepScreenOnReading", on) } }
+    fun updateFollowAudio(on: Boolean) { followAudio = on; save { putBoolean("followAudio", on) } }
+    fun updateDefaultMark(i: Int) { defaultMark = i.coerceIn(0, 3); save { putInt("defaultMark", defaultMark) } }
     fun updateTextScale(v: Float) { textScale = v; saveScaleDebounced { putFloat("textScale", v) } }
     fun updateKeepPlaying(on: Boolean) { keepPlaying = on; save { putBoolean("keepPlaying", on) } }
     fun cyclePlayThrough() {
@@ -281,10 +311,14 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun resetSettings() {
         followSystem = true; lightTheme = ReaderTheme.Prabhat; darkTheme = ReaderTheme.Sandhya; readerTheme = ReaderTheme.Prabhat
         textScale = 1f; lineScale = 1f; showDaily = true
+        justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true
+        keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = true
         keepPlaying = true; playThrough = PlayThrough.SKANDHA; keepScreenOn = true; speed = 1f; pauseScale = 1f
         save {
             putBoolean("followSystem", true); putString("lightTheme", "Prabhat"); putString("darkTheme", "Sandhya"); putString("theme", "Prabhat")
             putFloat("textScale", 1f); putFloat("lineScale", 1f); putBoolean("showDaily", true)
+            putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true)
+            putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", true)
             putBoolean("keepPlaying", true); putString("playThrough", PlayThrough.SKANDHA.name); putBoolean("keepScreenOn", true); putFloat("speed", 1f); putFloat("pauseScale", 1f)
         }
         restartNarration()
@@ -398,13 +432,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** Language that is heard: follows the Bhagavatam (paath) language. */
     val audioLang: Lang get() = langFor(current)
 
-    /** Chapter and Skandha titles follow the reading language (or the app UI language when reading Sanskrit). */
-    val titleLang: Lang get() = when (readLang) {
-        Lang.SA -> uiLang
-        Lang.HI -> Lang.HI
-        Lang.BN -> Lang.BN
-        Lang.EN -> Lang.EN
-    }
+    /** Chapter and Skandha titles follow the app language (menus, buttons and titles all read in one language). */
+    val titleLang: Lang get() = uiLang
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

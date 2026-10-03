@@ -358,7 +358,8 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                     Text(localDigits("${sk.adhyayaCount} ${s.adhyayas}", ui), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
                     Text(headerTitle, fontFamily = EnglishReading, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     Text(sk.nameSa, fontFamily = NotoDevanagari, fontSize = 19.sp, color = Color.White)
-                    Text(sk.title(state.titleLang), fontSize = 16.sp, color = Color(0xFFFFF4DC))
+                    // Skip the line when it only repeats the Sanskrit name above (Hindi).
+                    if (sk.title(state.titleLang) != sk.nameSa) Text(sk.title(state.titleLang), fontSize = 16.sp, color = Color(0xFFFFF4DC))
                 }
             }
         }

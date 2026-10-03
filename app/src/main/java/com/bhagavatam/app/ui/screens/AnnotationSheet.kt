@@ -139,7 +139,7 @@ fun AnnotationSheet(state: AppState) {
     val ui = state.uiLang
     val existing = d.existing
     var note by remember(d) { mutableStateOf(existing?.note.orEmpty()) }
-    var colour by remember(d) { mutableStateOf(existing?.colour?.takeIf { it != 0L } ?: MarkColours[0]) }
+    var colour by remember(d) { mutableStateOf(existing?.colour?.takeIf { it != 0L } ?: MarkColours[state.defaultMark.coerceIn(0, MarkColours.lastIndex)]) }
     val close = { state.annDraft = null }
     fun save() {
         val kind = existing?.kind ?: AnnKind.NOTE

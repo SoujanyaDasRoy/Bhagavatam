@@ -45,6 +45,7 @@ import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -237,23 +238,27 @@ fun SearchScreen(
             var focused by remember { mutableStateOf(false) }
             val focusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
             Row(
-                Modifier.fillMaxWidth().heightIn(min = 56.dp).clip(Radius.card).background(Brand.Fill)
-                    .border(1.5.dp, if (focused) Brand.Kesari else Brand.Separator, Radius.card)
+                Modifier.fillMaxWidth().heightIn(min = 60.dp)
+                    .shadow(if (focused) 8.dp else 3.dp, Radius.bar, ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17))
+                    .clip(Radius.bar).background(Brand.Card)
+                    .border(if (focused) 2.dp else 1.5.dp, if (focused) Brand.Kesari else Brand.Kesari.copy(alpha = 0.45f), Radius.bar)
                     .clickable { focusRequester.requestFocus() }
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                    .padding(start = 8.dp, end = 10.dp, top = 6.dp, bottom = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Icon(painterResource(Ic.Search), null, tint = if (focused) Brand.Kesari else Brand.Secondary, modifier = Modifier.size(22.dp))
+                Box(Modifier.size(44.dp).clip(CircleShape).background(Brand.KesariTint), contentAlignment = Alignment.Center) {
+                    Icon(painterResource(Ic.Search), null, tint = Brand.Kesari, modifier = Modifier.size(22.dp))
+                }
                 BasicTextField(
                     value = query,
                     onValueChange = { query = it },
                     singleLine = true,
-                    textStyle = TextStyle(fontSize = 16.sp, color = Brand.Ink),
+                    textStyle = TextStyle(fontSize = 17.sp, color = Brand.Ink),
                     cursorBrush = SolidColor(Brand.Kesari),
                     modifier = Modifier.weight(1f).focusRequester(focusRequester).onFocusChanged { focused = it.isFocused },
                     decorationBox = { inner ->
-                        if (query.isEmpty()) Text(s.searchHint, fontSize = 15.sp, color = Brand.Secondary)
+                        if (query.isEmpty()) Text(s.searchHint, fontSize = 15.sp, color = Brand.Secondary, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                         inner()
                     }
                 )
@@ -301,7 +306,7 @@ fun SearchScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item(span = { GridItemSpan(2) }) {
-                    SectionHeading(s.thematicLilaIndex, Modifier.padding(top = 4.dp))
+                    SectionHeading(tr(ui, "Stories", "कथाएँ", "কাহিনি"), Modifier.padding(top = 4.dp))
                 }
 
                 // Category Filter Pills

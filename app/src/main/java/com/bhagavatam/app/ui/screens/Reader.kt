@@ -135,6 +135,13 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
     LaunchedEffect(skandha, adhyaya) {
         if (verses.isNotEmpty() && !(state.lastSkandha == skandha && state.lastAdhyaya == adhyaya)) state.markRead(skandha, adhyaya, 1)
     }
+    // Optional: the screen stays on while a chapter is open.
+    val view = androidx.compose.ui.platform.LocalView.current
+    androidx.compose.runtime.DisposableEffect(state.keepScreenOnReading) {
+        val before = view.keepScreenOn
+        if (state.keepScreenOnReading) view.keepScreenOn = true
+        onDispose { view.keepScreenOn = before }
+    }
     // Reading carries on: scrolling puts the meaning card away.
     LaunchedEffect(list.isScrollInProgress) {
         if (list.isScrollInProgress && !state.showWordSheet) {
@@ -145,7 +152,7 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
     // Keep the playing shloka in view.
     val playingHere = state.hasSession && state.current.skandha == skandha && state.current.adhyaya == adhyaya
     LaunchedEffect(state.index, playingHere) {
-        if (playingHere) list.animateScrollToItem((state.index + 1).coerceAtMost(verses.size))
+        if (playingHere && state.followAudio) list.animateScrollToItem((state.index + 1).coerceAtMost(verses.size))
     }
 
     // Translation shown in book mode: the paath language, or the first chosen translation when paath is Sanskrit.
@@ -246,7 +253,7 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                 contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 140.dp),
                 verticalArrangement = Arrangement.spacedBy(if (state.showSanskrit) 0.dp else 20.dp),
             ) {
-                item { com.bhagavatam.app.ui.components.ChapterBanner(skandha, adhyaya) }
+                if (state.showChapterArt) item { com.bhagavatam.app.ui.components.ChapterBanner(skandha, adhyaya) }
                 item {
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
@@ -261,8 +268,10 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                         val readTimeBadge = String.format(s.minRead, readMinutes)
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
-                            Text("·", fontSize = 13.sp, color = c.secondary)
-                            Text(localDigits(readTimeBadge, ui), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
+                            if (state.showReadTime) {
+                                Text("·", fontSize = 13.sp, color = c.secondary)
+                                Text(localDigits(readTimeBadge, ui), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
+                            }
                         }
                         Box(Modifier.padding(top = 4.dp).width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
                     }
@@ -463,19 +472,19 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     val ui = state.uiLang
     val big = lang == Lang.HI || lang == Lang.BN
     val skLabel = if (v.skandha == 0) state.strings.mahatmya else v.skandha.toString()
+    // No rounded clip around the paragraph: it shaved the corner of the verse number and the first and last letters.
     Column(
-        Modifier.animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp)
-            .clip(Radius.group)
-            .clickable { onToggle() },
+        Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Tap a word for its meaning, tap the verse number for the shloka, press and hold to select and mark.
+        // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
             state, v.ref, lang, v.translation(lang),
-            TextStyle(fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink),
+            TextStyle(fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink,
+                textAlign = if (state.justifyText) androidx.compose.ui.text.style.TextAlign.Justify else androidx.compose.ui.text.style.TextAlign.Start),
             Modifier.fillMaxWidth(),
             prefix = buildAnnotatedString {
-                withStyle(SpanStyle(color = c.gold, fontWeight = FontWeight.Bold, fontSize = 12.sp, baselineShift = BaselineShift.Superscript)) {
+                if (state.showVerseNumbers) withStyle(SpanStyle(color = c.gold, fontWeight = FontWeight.Bold, fontSize = 12.sp, baselineShift = BaselineShift.Superscript)) {
                     append(localDigits(label, ui) + "  ")
                 }
             },

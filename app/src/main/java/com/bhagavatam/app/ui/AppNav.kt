@@ -18,6 +18,7 @@ import androidx.navigation.NavGraphBuilder
 import com.bhagavatam.app.ui.screens.AppearanceSettings
 import com.bhagavatam.app.ui.screens.ListeningSettings
 import com.bhagavatam.app.ui.screens.ReadingSettings
+import com.bhagavatam.app.ui.screens.WordsSettings
 import com.bhagavatam.app.ui.theme.Motion
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -73,6 +74,7 @@ object Routes {
     const val SET_APPEARANCE = "settings/appearance"
     const val SET_READING = "settings/reading"
     const val SET_LISTENING = "settings/listening"
+    const val SET_WORDS = "settings/words"
     fun adhyayas(s: Int) = "adhyayas/$s"
     fun reader(s: Int, a: Int) = "reader/$s/$a"
 }
@@ -157,12 +159,14 @@ fun AppNav(state: AppState) {
                         onLanguages = { nav.navigate(Routes.LANGUAGES) },
                         onAppearance = { nav.navigate(Routes.SET_APPEARANCE) },
                         onReading = { nav.navigate(Routes.SET_READING) },
-                        onListening = { nav.navigate(Routes.SET_LISTENING) })
+                        onListening = { nav.navigate(Routes.SET_LISTENING) },
+                        onWords = { nav.navigate(Routes.SET_WORDS) })
                 }
             }
             composable(Routes.SET_APPEARANCE) { TabScaffold(state, nav, Tab.Me) { AppearanceSettings(state) { nav.popBackStack() } } }
             composable(Routes.SET_READING) { TabScaffold(state, nav, Tab.Me) { ReadingSettings(state) { nav.popBackStack() } } }
             composable(Routes.SET_LISTENING) { TabScaffold(state, nav, Tab.Me) { ListeningSettings(state) { nav.popBackStack() } } }
+            composable(Routes.SET_WORDS) { TabScaffold(state, nav, Tab.Me) { WordsSettings(state) { nav.popBackStack() } } }
             composable(Routes.SAVED) {
                 TabScaffold(state, nav, Tab.Me) { SavedScreen(state, onBack = { nav.popBackStack() }) { s, a -> nav.navigate(Routes.reader(s, a)) } }
             }

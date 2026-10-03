@@ -13,7 +13,7 @@ data class Strings(
     val goToHint: String, val granthSub: String, val mahatmya: String, val finished: String, val readingNow: String,
     val sanskritOff: String, val show: String, val sampleOnly: String,
     val back: String, val speed: String, val loop: String, val sleep: String, val nowPlaying: String,
-    val searchHint: String, val tryThese: String, val recent: String, val searchAbout: String,
+    val searchHint: String, val tryThese: String, val recent: String,
     val results: String, val result: String, val noMatches: String, val noMatchesHint: String,
     val goTo: String, val shlokas: String, val chapters: String, val glossary: String, val all: String, val mool: String, val alsoIn: String,
     val sanskritAudioPacks: String, val downloadsNote: String, val onPhone: String, val downloading: String,
@@ -54,7 +54,6 @@ val EnglishStrings = Strings(
     sampleOnly = "This prototype only includes the text of Chapter 1.1. The full text comes from the content database.",
     back = "Back", speed = "Speed", loop = "Loop", sleep = "Sleep", nowPlaying = "Now playing",
     searchHint = "Word, story, character or verse (e.g. 10.29.1)", tryThese = "Try these", recent = "Recent",
-    searchAbout = "Search every layer at once: Sanskrit, Transliteration, Hindi, Bengali and English, plus chapter titles and incident guide.",
     results = "results", result = "result", noMatches = "No matches",
     noMatchesHint = "Try another spelling, an incident name, or a verse number like 1.2.6.",
     goTo = "Go to", shlokas = "Shlokas", chapters = "Chapters", glossary = "Guide", all = "All", mool = "Mool", alsoIn = "Also in",
@@ -82,7 +81,7 @@ val EnglishStrings = Strings(
     jaiShreeMadhav = "Jai Shree Madhav", shrimadBhagavatMahapuran = "Shrimad Bhagavat Mahapuran", minRead = "%d min read",
     tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bangla",
     voiceSearchHint = "Listening... Speak a story or chapter", openPrompt = "Open %s?", openAction = "Open", cancelAction = "Cancel",
-    thematicLilaIndex = "Stories & Incidents Guide",
+    thematicLilaIndex = "Names & Terms",
 )
 
 val HindiStrings = Strings(
@@ -95,7 +94,6 @@ val HindiStrings = Strings(
     sampleOnly = "इस नमूने में केवल अध्याय १.१ का पाठ है। पूरा पाठ सामग्री डेटाबेस से आएगा।",
     back = "वापस", speed = "गति", loop = "दोहराएँ", sleep = "स्लीप", nowPlaying = "अभी चल रहा है",
     searchHint = "शब्द, कथा, प्रसंग या श्लोक (जैसे 10.29.1)", tryThese = "आज़माएँ", recent = "हाल की खोज",
-    searchAbout = "एक साथ सब कुछ खोजें: संस्कृत, रोमन लिप्यन्तरण, हिन्दी, बांग्ला और अंग्रेज़ी, साथ ही अध्याय-शीर्षक और प्रसंग।",
     results = "परिणाम", result = "परिणाम", noMatches = "कुछ नहीं मिला",
     noMatchesHint = "दूसरी वर्तनी, कोई कथा का नाम या 1.2.6 जैसी श्लोक-संख्या आज़माएँ।",
     goTo = "यहाँ जाएँ", shlokas = "श्लोक", chapters = "अध्याय", glossary = "परिचय", all = "सभी", mool = "मूल", alsoIn = "इनमें भी",
@@ -122,7 +120,7 @@ val HindiStrings = Strings(
     jaiShreeMadhav = "जय श्री माधव", shrimadBhagavatMahapuran = "श्रीमद्भागवत महापुराण", minRead = "%d मिनट पाठ",
     tabAll = "सभी", tabEnglish = "अंग्रेज़ी", tabHindi = "हिन्दी", tabBangla = "বাংলা",
     voiceSearchHint = "सुन रहे हैं... कोई कथा या अध्याय बोलें", openPrompt = "%s खोलें?", openAction = "खोलें", cancelAction = "रद्द करें",
-    thematicLilaIndex = "कथा एवं चरित्र प्रसंग",
+    thematicLilaIndex = "नाम और शब्द",
 )
 
 val BengaliStrings = Strings(
@@ -135,7 +133,6 @@ val BengaliStrings = Strings(
     sampleOnly = "এই নমুনায় শুধু অধ্যায় ১.১-এর পাঠ আছে। সম্পূর্ণ পাঠ আসবে কনটেন্ট ডেটাবেস থেকে।",
     back = "ফিরুন", speed = "গতি", loop = "পুনরাবৃত্তি", sleep = "স্লিপ", nowPlaying = "এখন চলছে",
     searchHint = "শব্দ, লীলাপ্রসঙ্গ, নাম বা শ্লোক (যেমন 10.29.1)", tryThese = "চেষ্টা করুন", recent = "সাম্প্রতিক",
-    searchAbout = "একসঙ্গে সব খুঁজুন: সংস্কৃত, রোমান প্রতিবর্ণীকরণ, বাংলা, হিন্দি ও ইংরেজি, সঙ্গে অধ্যায়ের নাম ও লীলাপ্রসঙ্গ।",
     results = "ফলাফল", result = "ফলাফল", noMatches = "কিছু পাওয়া যায়নি",
     noMatchesHint = "অন্য বানান, কোনো লীলাপ্রসঙ্গের নাম বা 1.2.6-এর মতো শ্লোক-সংখ্যা চেষ্টা করুন।",
     goTo = "যান", shlokas = "শ্লোক", chapters = "অধ্যায়", glossary = "পরিচয়", all = "সব", mool = "মূল", alsoIn = "এগুলিতেও",
@@ -162,7 +159,7 @@ val BengaliStrings = Strings(
     jaiShreeMadhav = "জয় শ্রী মাধব", shrimadBhagavatMahapuran = "শ্রীমদ্ভাগবত মহাপুরাণ", minRead = "%d মিনিট পাঠ",
     tabAll = "সব", tabEnglish = "ইংরেজি", tabHindi = "হিন্দি", tabBangla = "বাংলা",
     voiceSearchHint = "শুনছি... কোনো ঘটনা বা অধ্যায় বলুন", openPrompt = "%s খুলবেন?", openAction = "খুলুন", cancelAction = "বাতিল",
-    thematicLilaIndex = "লীলাপ্রসঙ্গ ও চরিত্র পরিচয়",
+    thematicLilaIndex = "নাম ও শব্দ",
 )
 
 fun stringsFor(ui: Lang) = when (ui) {

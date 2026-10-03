@@ -48,3 +48,6 @@ __pycache__/
 .env
 *.env
 .kotlin/
+
+# old edit backups
+/_archive/
