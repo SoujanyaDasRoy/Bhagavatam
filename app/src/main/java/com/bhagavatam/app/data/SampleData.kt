@@ -145,6 +145,7 @@ object SampleData {
     private val titlesBn = HashMap<String, String>()
     private val bengaliChapters = HashSet<String>()
     @Volatile private var hasBn = false
+    @Volatile private var hasIastPlain = false
     private val cache = ConcurrentHashMap<String, List<Verse>>()
     private val verseCounts = HashMap<String, Int>()
     private val endCache = ConcurrentHashMap<String, ChapterEnd>()
@@ -158,6 +159,7 @@ object SampleData {
         cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
         // An older text database has no Bengali columns; the app must still open it.
         hasBn = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "bn") found = true; found }
+        hasIastPlain = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "iast_plain") found = true; found }
         val titleBn = if (hasBn) "title_bn" else "NULL"
         d.rawQuery("SELECT skandha, chapter, title_en, title_hi, verse_count, $titleBn FROM chapter", null).use { c ->
             while (c.moveToNext()) {
@@ -171,8 +173,6 @@ object SampleData {
         if (hasBn) d.rawQuery("SELECT DISTINCT skandha, chapter FROM verse WHERE bn IS NOT NULL AND bn <> ''", null).use { c ->
             while (c.moveToNext()) bengaliChapters.add("${c.getInt(0)}.${c.getInt(1)}")
         }
-        // Warm the full list in the background so the first search is instant.
-        Thread { allVerses.size }.apply { isDaemon = true }.start()
     }
 
     /** True when this chapter has the Bengali translation. Skandha 1, 2 and 3 (chapters 1 to 11) do so far. */
@@ -270,7 +270,36 @@ object SampleData {
     fun versesFor(s: Int, a: Int): List<Verse> =
         cache.getOrPut("$s.$a") { readVerses("WHERE skandha = ? AND chapter = ?", arrayOf(s.toString(), a.toString())) }
 
-    /** Every verse, for search. About 14,500 rows. */
+    /** Targeted SQLite search matching any relevant language column. */
+    fun searchVerses(query: String, scope: String = "ALL", limit: Int = 100): List<Verse> {
+        val q = query.trim()
+        if (q.length < 2) return emptyList()
+        val pattern = "%$q%"
+        val qPlain = com.bhagavatam.app.ui.screens.SearchFinder.foldQuery(q)
+        val plainPattern = "%$qPlain%"
+        val iastCondition = if (hasIastPlain) "(iast LIKE ? OR iast_plain LIKE ?)" else "iast LIKE ?"
+        val iastArgs = if (hasIastPlain) listOf(pattern, plainPattern) else listOf(pattern)
+
+        val (whereClause, args) = when (scope.uppercase()) {
+            "EN" -> "WHERE en LIKE ?" to listOf(pattern)
+            "HI" -> "WHERE hi LIKE ?" to listOf(pattern)
+            "BN" -> "WHERE bn LIKE ?" to listOf(pattern)
+            "SA" -> "WHERE (sa LIKE ? OR $iastCondition)" to (listOf(pattern) + iastArgs)
+            else -> {
+                val conditions = mutableListOf("en LIKE ?", "hi LIKE ?", "sa LIKE ?", iastCondition)
+                val allArgs = mutableListOf(pattern, pattern, pattern)
+                allArgs.addAll(iastArgs)
+                if (hasBn) {
+                    conditions.add("bn LIKE ?")
+                    allArgs.add(pattern)
+                }
+                "WHERE (" + conditions.joinToString(" OR ") + ")" to allArgs
+            }
+        }
+        return readVerses("$whereClause LIMIT $limit", args.toTypedArray())
+    }
+
+    /** Every verse, evaluated on-demand if needed. */
     val allVerses: List<Verse> by lazy { readVerses("", emptyArray()) }
 
     fun verse(ref: String): Verse? {

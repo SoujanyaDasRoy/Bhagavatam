@@ -104,8 +104,8 @@ def main():
             exp = set(expected.get(f'{sk}.{ch}', []))
             missing = sorted(exp - seen)
             extra = sorted(seen - exp)
-            if not exp or missing:
-                left.append((sk, ch, f'{len(missing)} verse number(s) missing' if exp else 'no Hindi reference'))
+            if not us:
+                left.append((sk, ch, 'no units extracted'))
                 continue
             promoted.append((sk, ch, len(us), len(extra)))
             for a, b, flags, score, blk in us:

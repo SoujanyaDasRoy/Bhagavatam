@@ -157,7 +157,8 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier) {
     val ui = state.uiLang
     val ctx = LocalContext.current
     val term = remember(w) { SampleData.glossary.firstOrNull { it.term.equals(w.word, ignoreCase = true) || it.dev == w.word } }
-    val meaning by produceState<com.bhagavatam.app.data.Meaning?>(null, w, state.onlineMeanings) {
+    var retryKey by remember { mutableStateOf(0) }
+    val meaning by produceState<com.bhagavatam.app.data.Meaning?>(null, w, state.onlineMeanings, retryKey) {
         value = if (state.onlineMeanings && !w.word.contains(' ')) com.bhagavatam.app.data.OnlineMeaning.lookup(w.word, w.lang) else null
     }
     val shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
@@ -190,7 +191,12 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier) {
                 }
                 Text(note, fontSize = 11.sp, color = c.secondary)
             }
-            m is com.bhagavatam.app.data.Meaning.Offline -> if (term == null) Text(tr(ui, "No connection. Try Google when you are online.", "कनेक्शन नहीं है। ऑनलाइन होने पर Google से देखें।", "সংযোগ নেই। অনলাইন হলে Google-এ দেখুন।"), fontSize = 14.sp, lineHeight = 20.sp, color = c.secondary)
+            m is com.bhagavatam.app.data.Meaning.Offline -> if (term == null) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(tr(ui, "No connection.", "कनेक्शन नहीं है।", "সংযোগ নেই।"), fontSize = 14.sp, color = c.secondary)
+                    TextAction(tr(ui, "Retry", "पुन: प्रयास", "আবার চেষ্টা")) { retryKey++ }
+                }
+            }
             else -> if (term == null) {
                 // Nothing in the glossary or Wiktionary: take the one or two lines Google gives as the meaning.
                 val g by produceState<String?>(null, w) { value = com.bhagavatam.app.data.GoogleSnippet.lookup(ctx, w.word, w.lang) }

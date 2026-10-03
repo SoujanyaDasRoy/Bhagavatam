@@ -22,7 +22,8 @@ fun occurrencesOf(word: String, lang: Lang, limit: Int = 30): Pair<Int, List<Occ
     val re = Regex("(?<![\\p{L}\\p{M}])" + Regex.escape(w) + "(?![\\p{L}\\p{M}])", RegexOption.IGNORE_CASE)
     var total = 0
     val out = ArrayList<Occurrence>()
-    for (v in SampleData.allVerses) {
+    val candidateVerses = SampleData.searchVerses(w, lang.name, limit = 300)
+    for (v in candidateVerses) {
         for (h in haystacks(v, lang)) {
             val m = re.find(h) ?: continue
             total++

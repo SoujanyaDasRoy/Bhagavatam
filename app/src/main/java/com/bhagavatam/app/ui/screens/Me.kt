@@ -122,12 +122,12 @@ fun DownloadsScreen(state: AppState) {
                         when (st) {
                             PackState.DONE -> Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(painterResource(Ic.Check), null, tint = Brand.Green)
-                                IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), "Remove pack", tint = Brand.Tertiary) }
+                                IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove pack", "पैक हटाएं", "প্যাক মুছুন"), tint = Brand.Tertiary) }
                             }
                             PackState.DOWNLOADING -> Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(Modifier.size(24.dp), color = Brand.Teal, strokeWidth = 3.dp)
                             }
-                            PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), "Download", tint = Brand.Kesari) }
+                            PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), tr(ui, "Download", "डाउनलोड करें", "ডাউনলোড করুন"), tint = Brand.Kesari) }
                         }
                     }
                 }
@@ -296,7 +296,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
         if (state.readLang == Lang.SA) {
             Column {
                 SectionLabel(s.sanskritScript)
-                Segmented(listOf("देवनागरी", "বাংলা লিপি", "IAST"), SanskritScript.entries.indexOf(state.script),
+                Segmented(listOf("देवनागरी", "বাংলা লিপি", "English (Roman)"), SanskritScript.entries.indexOf(state.script),
                     { state.updateScript(SanskritScript.entries[it]) }, fonts = listOf(NotoDevanagari, NotoSerifBengali, EnglishReading))
             }
             Column {

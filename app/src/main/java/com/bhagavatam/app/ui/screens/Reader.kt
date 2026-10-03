@@ -90,6 +90,7 @@ import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.SanskritScript
 import com.bhagavatam.app.data.Verse
 import com.bhagavatam.app.data.localDigits
+import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.state.AppState
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.semantics.Role
@@ -231,27 +232,13 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                         }
                     }
                 }
-                Box(Modifier.size(48.dp).clip(CircleShape).clickable { showSheet = true }, contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস")) { showSheet = true },
+                    contentAlignment = Alignment.Center
+                ) {
                     Text("Aa", fontFamily = EnglishReading, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
                 }
             }
-            Crossfade(state.showSanskrit, animationSpec = tween(Motion.sheet), label = "layerBar") { sanskritOn ->
-            if (sanskritOn) {
-                LayerChips(state)
-            } else {
-                Row(
-                    Modifier.padding(horizontal = 16.dp, vertical = 6.dp).fillMaxWidth().clip(Radius.group).background(c.surface)
-                        .padding(start = 14.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    Text(s.sanskritOff, Modifier.weight(1f), fontSize = 13.sp, lineHeight = 18.sp, color = c.secondary)
-                    Box(
-                        Modifier.clip(CircleShape).background(c.chipOn).clickable { state.updateShowSanskrit(true) }.padding(horizontal = 12.dp, vertical = 7.dp),
-                    ) { Text(s.show, color = c.chipOnText, fontSize = 13.sp, fontWeight = FontWeight.SemiBold) }
-                }
-            }
-            }
-
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxHeight().widthIn(max = 600.dp).fillMaxWidth(),
@@ -266,7 +253,16 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                         Text(title, fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 32.sp,
                             fontWeight = FontWeight.Medium, color = c.ink, textAlign = TextAlign.Center)
                         val count = SampleData.verseCount(skandha, adhyaya)
-                        if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
+                        val totalWords = remember(verses, bookLang) {
+                            verses.sumOf { v -> v.translation(bookLang).split("\\s+".toRegex()).size }
+                        }
+                        val readMinutes = maxOf(1, totalWords / 150)
+                        val readTimeBadge = String.format(s.minRead, readMinutes)
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
+                            Text("·", fontSize = 13.sp, color = c.secondary)
+                            Text(localDigits(readTimeBadge, ui), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
+                        }
                         Box(Modifier.padding(top = 4.dp).width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
                     }
                 }
@@ -345,7 +341,7 @@ private fun LayerChips(state: AppState) {
     val c = LocalReaderColors.current
     val all = listOf(
         Triple("${state.strings.mool}", true, { state.updateShowSanskrit(false) }),
-        Triple("IAST", state.showIast, { state.updateShowIast(!state.showIast) }),
+        Triple("English (Roman)", state.showIast, { state.updateShowIast(!state.showIast) }),
         Triple("हिन्दी", state.showHi, { state.updateShowHi(!state.showHi) }),
         Triple("বাংলা", state.showBn, { state.updateShowBn(!state.showBn) }),
         Triple("English", state.showEn, { state.updateShowEn(!state.showEn) }),
@@ -465,7 +461,13 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     val c = LocalReaderColors.current
     val ui = state.uiLang
     val big = lang == Lang.HI || lang == Lang.BN
-    Column(Modifier.animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    val skLabel = if (v.skandha == 0) state.strings.mahatmya else v.skandha.toString()
+    Column(
+        Modifier.animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp)
+            .clip(Radius.group)
+            .clickable { onToggle() },
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         // Tap a word for its meaning, tap the verse number for the shloka, press and hold to select and mark.
         MarkedText(
             state, v.ref, lang, v.translation(lang),
@@ -483,7 +485,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
                 Modifier.fillMaxWidth().clip(Radius.group).background(c.playing).padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(localDigits("${state.strings.shloka} ${v.skandha}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${state.strings.shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 val script = if (ui == Lang.BN && state.script == SanskritScript.DEVANAGARI) SanskritScript.BENGALI else state.script
                 ShlokaText(v, script, c.shloka, 16f * scale)
             }
@@ -589,7 +591,7 @@ fun ReaderSettings(state: AppState) {
             Column {
                 SectionLabel(s.sanskritScript)
                 Segmented(
-                    listOf("देवनागरी", "বাংলা লিপি", "IAST"),
+                    listOf("देवनागरी", "বাংলা লিপি", "English (Roman)"),
                     SanskritScript.entries.indexOf(state.script),
                     { state.updateScript(SanskritScript.entries[it]) },
                     fonts = listOf(NotoDevanagari, NotoSerifBengali, EnglishReading),

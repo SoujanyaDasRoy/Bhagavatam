@@ -24,19 +24,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bhagavatam.app.R
+import com.bhagavatam.app.data.Lang
+import com.bhagavatam.app.data.stringsFor
+import com.bhagavatam.app.state.AppState
 import com.bhagavatam.app.ui.theme.EnglishReading
 import com.bhagavatam.app.ui.theme.NotoDevanagari
+import com.bhagavatam.app.ui.theme.NotoSerifBengali
 
 /** Shown while the text database opens. Same night background as the system splash so the hand-off is seamless. */
 @Composable
-fun SplashScreen() {
+fun SplashScreen(state: AppState? = null) {
     val fade = remember { Animatable(0f) }
     LaunchedEffect(Unit) { fade.animateTo(1f, tween(450)) }
+    val ui = state?.uiLang ?: Lang.EN
+    val s = stringsFor(ui)
+    val titleFont = when (ui) {
+        Lang.BN -> NotoSerifBengali
+        Lang.HI -> NotoDevanagari
+        else -> EnglishReading
+    }
+    val greetingFont = when (ui) {
+        Lang.BN -> NotoSerifBengali
+        Lang.HI -> NotoDevanagari
+        else -> EnglishReading
+    }
+
     Box(Modifier.fillMaxSize().background(Color(0xFF0B0620)), contentAlignment = Alignment.Center) {
         Column(Modifier.alpha(fade.value), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Image(painterResource(R.drawable.logo_mark), "Bhagavatam", Modifier.size(132.dp).clip(RoundedCornerShape(32.dp)))
-            Text("श्रीमद्भागवत महापुराण", fontFamily = NotoDevanagari, fontSize = 24.sp, fontWeight = FontWeight.Medium, color = Color(0xFFF5C97A))
-            Text("Hari Om", fontFamily = EnglishReading, fontSize = 18.sp, color = Color(0xFFD9D2EC))
+            Text(s.shrimadBhagavatMahapuran, fontFamily = titleFont, fontSize = 24.sp, fontWeight = FontWeight.Medium, color = Color(0xFFF5C97A))
+            Text(s.jaiShreeMadhav, fontFamily = greetingFont, fontSize = 18.sp, color = Color(0xFFD9D2EC))
         }
     }
 }

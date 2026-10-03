@@ -9,8 +9,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,21 +20,32 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.AnnotatedString
@@ -45,363 +54,379 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bhagavatam.app.data.Episode
+import com.bhagavatam.app.data.EpisodeCategory
+import com.bhagavatam.app.data.Episodes
 import com.bhagavatam.app.data.Lang
 import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.Verse
 import com.bhagavatam.app.data.localDigits
+import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.state.AppState
 import com.bhagavatam.app.ui.components.LargeTitle
 import com.bhagavatam.app.ui.components.Pill
 import com.bhagavatam.app.ui.components.SectionHeading
-import com.bhagavatam.app.ui.theme.Radius
-import com.bhagavatam.app.ui.components.SectionLabel
+import com.bhagavatam.app.ui.components.tappable
 import com.bhagavatam.app.ui.theme.Brand
-import com.bhagavatam.app.ui.theme.Jakarta
 import com.bhagavatam.app.ui.theme.EnglishReading
-import com.bhagavatam.app.ui.theme.NotoSerifBengali
-import com.bhagavatam.app.ui.theme.TiroHindi
 import com.bhagavatam.app.ui.theme.NotoDevanagari
+import com.bhagavatam.app.ui.theme.NotoSerifBengali
+import com.bhagavatam.app.ui.theme.Radius
+import com.bhagavatam.app.ui.theme.TiroHindi
 import java.text.Normalizer
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.foundation.lazy.LazyRow
-import com.bhagavatam.app.data.Episodes
-import com.bhagavatam.app.data.tr
 
-/** A match inside some text: the excerpt split around the matched part. */
 data class Hit(val pre: String, val hit: String, val post: String)
 
-private enum class Layer(val label: String, val font: FontFamily, val size: Int) {
-    SA("Mool", NotoDevanagari, 18), IAST("IAST", EnglishReading, 15), EN("English", EnglishReading, 15), HI("हिन्दी", TiroHindi, 16), BN("বাংলা", NotoSerifBengali, 16);
-    fun text(v: Verse) = when (this) { SA -> v.sa.joinToString(" "); IAST -> v.iast.joinToString(" "); EN -> v.en; HI -> v.hi; BN -> v.bn }
-}
+enum class SearchScope { ALL, EN, HI, BN }
 
-private const val MaxVerseResults = 150
+private enum class SearchLayer(val label: String, val font: FontFamily, val size: Int, val lang: Lang) {
+    EN("English", EnglishReading, 15, Lang.EN),
+    HI("हिन्दी", TiroHindi, 16, Lang.HI),
+    BN("বাংলা", NotoSerifBengali, 16, Lang.BN),
+    SA("संस्कृत", NotoDevanagari, 18, Lang.SA);
 
-private enum class Scope { ALL, MOOL, EN, HI, BN, CHAPTERS, GLOSSARY }
-
-/**
- * Cheap pre-check so a keystroke does not fold 14,000 verses: English and IAST are folded once
- * (lower-case, no diacritics) and kept; Devanagari and Bengali are matched as they are.
- * Only verses that pass go through [Finder.find], which builds the highlighted excerpt.
- */
-private object SearchIndex {
-    private val marks = Regex("[\\u0300-\\u036f]")
-    private fun fold(s: String) = marks.replace(Normalizer.normalize(s, Normalizer.Form.NFD), "").lowercase()
-
-    private val en: Array<String> by lazy { SampleData.allVerses.map { fold(it.en) }.toTypedArray() }
-    private val iast: Array<String> by lazy { SampleData.allVerses.map { fold(it.iast.joinToString(" ")) }.toTypedArray() }
-
-    fun warm() { en.size; iast.size }
-
-    fun mayMatch(i: Int, v: Verse, l: Layer, variants: List<String>): Boolean {
-        if (variants.isEmpty()) return false
-        return when (l) {
-            Layer.EN -> variants.any { en[i].contains(it) }
-            Layer.IAST -> variants.any { iast[i].contains(it) }
-            Layer.SA -> v.sa.isNotEmpty() && variants.any { q -> v.sa.any { it.contains(q) } }
-            Layer.HI -> v.hi.isNotEmpty() && variants.any { v.hi.contains(it) }
-            Layer.BN -> v.bn.isNotEmpty() && variants.any { v.bn.contains(it) }
-        }
+    fun text(v: Verse) = when (this) {
+        EN -> v.en
+        HI -> v.hi
+        BN -> v.bn
+        SA -> v.sa.joinToString(" ")
     }
 }
 
-private data class VerseResult(val verse: Verse, val layer: Layer, val hit: Hit, val alsoIn: List<Layer>)
+private data class SearchResult(val verse: Verse, val layer: SearchLayer, val hit: Hit)
 
-/** Case- and diacritic-insensitive search that remembers where each folded character came from. */
-object Finder {
+object SearchFinder {
     private val marks = Regex("[\\u0300-\\u036f]")
 
+    fun variants(q: String): List<String> = if (q.trim().isEmpty()) emptyList() else listOf(q.trim())
+
+    fun foldQuery(s: String): String {
+        val t = s.trim().lowercase()
+        return marks.replace(Normalizer.normalize(t, Normalizer.Form.NFD), "")
+    }
+
     private fun fold(s: String): Pair<String, IntArray> {
-        val out = StringBuilder(); val map = ArrayList<Int>()
+        val out = StringBuilder()
+        val map = ArrayList<Int>()
         s.forEachIndexed { i, ch ->
             val d = marks.replace(Normalizer.normalize(ch.toString(), Normalizer.Form.NFD), "").lowercase()
-            d.forEach { out.append(it); map.add(i) }
+            for (k in d.indices) {
+                out.append(d[k])
+                map.add(i)
+            }
         }
         return out.toString() to map.toIntArray()
     }
 
-    fun variants(q: String): List<String> {
-        val base = marks.replace(Normalizer.normalize(q, Normalizer.Form.NFD), "").lowercase().trim()
-        if (base.isEmpty()) return emptyList()
-        return listOf(base, base.replace("sh", "s").replace("ri", "r"), base.replace("sh", "s")).distinct()
+    fun find(target: String, query: String): Hit? {
+        if (target.isBlank() || query.isBlank()) return null
+        // Fast path: direct case-insensitive match (zero Unicode normalizations)
+        val simplePos = target.indexOf(query, ignoreCase = true)
+        val (start, end, match) = if (simplePos >= 0) {
+            Triple(simplePos, (simplePos + query.length).coerceAtMost(target.length), target.substring(simplePos, (simplePos + query.length).coerceAtMost(target.length)))
+        } else {
+            // Fallback: diacritic folding for Sanskrit IAST / accented text
+            val (folded, map) = fold(target)
+            val (qFold, _) = fold(query)
+            val pos = folded.indexOf(qFold)
+            if (pos < 0) return null
+            val s = map.getOrElse(pos) { 0 }
+            val e = if (pos + qFold.length < map.size) map[pos + qFold.length] else target.length
+            Triple(s, e, target.substring(s, e))
+        }
+
+        var preStart = (start - 60).coerceAtLeast(0)
+        if (preStart > 0) preStart = target.indexOf(' ', preStart).let { if (it in 0..start) it + 1 else start }
+        var postEnd = (end + 60).coerceAtMost(target.length)
+        if (postEnd < target.length) postEnd = target.lastIndexOf(' ', postEnd).let { if (it > end) it else end }
+
+        val pre = (if (preStart > 0) "… " else "") + target.substring(preStart, start).replace('\n', ' ')
+        val post = target.substring(end, postEnd).replace('\n', ' ') + (if (postEnd < target.length) " …" else "")
+        return Hit(pre, match, post)
     }
 
-    fun find(text: String, variants: List<String>): Hit? {
-        if (variants.isEmpty()) return null
-        val (n, map) = fold(text)
+    fun find(target: String, variants: List<String>): Hit? {
         for (v in variants) {
-            val i = n.indexOf(v)
-            if (i >= 0) {
-                val start = map[i]; val end = map[i + v.length - 1] + 1
-                var from = maxOf(0, start - 36); var to = minOf(text.length, end + 70)
-                if (from > 0) text.indexOf(' ', from).let { if (it in 0 until start) from = it + 1 }
-                if (to < text.length) text.lastIndexOf(' ', to).let { if (it > end) to = it }
-                return Hit((if (from > 0) "…" else "") + text.substring(from, start), text.substring(start, end),
-                    text.substring(end, to) + if (to < text.length) "…" else "")
-            }
+            val h = find(target, v)
+            if (h != null) return h
         }
         return null
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+/** Legacy alias for compatibility with Me.kt. */
+val Finder = SearchFinder
+
 @Composable
-fun SearchScreen(state: AppState, onOpenVerse: (Int, Int) -> Unit, onOpenGlossary: () -> Unit) {
+fun SearchScreen(
+    state: AppState,
+    onOpenChapter: (Int, Int) -> Unit = { _, _ -> },
+    onOpenVerse: (Int, Int) -> Unit = onOpenChapter,
+    onOpenGlossary: () -> Unit = {},
+) {
     val s = state.strings
     val ui = state.uiLang
-    var query by rememberSaveable { mutableStateOfString("") }
-    var applied by rememberSaveable { mutableStateOfString("") }
-    androidx.compose.runtime.LaunchedEffect(query) {
-        if (query.isEmpty()) applied = "" else { kotlinx.coroutines.delay(180); applied = query }
-    }
-    val open = { sk: Int, a: Int -> state.addRecent(query); onOpenVerse(sk, a) }
-    var scope by rememberSaveable { androidx.compose.runtime.mutableStateOf(Scope.ALL) }
+    var query by rememberSaveable { mutableStateOf("") }
+    var activeScope by rememberSaveable { mutableStateOf(SearchScope.ALL) }
+    var showVoiceSheet by remember { mutableStateOf(false) }
+    var selectedCategory by rememberSaveable { mutableStateOf(EpisodeCategory.ALL) }
+    var results by remember { mutableStateOf<List<SearchResult>>(emptyList()) }
 
-    val variants = remember(applied) { Finder.variants(applied) }
-    // Excerpts are built only for the first results shown; the counts use the cheap check alone.
-    fun verseHits(layers: List<Layer>) = SampleData.allVerses.asSequence().mapIndexedNotNull { i, v ->
-        val hits = layers.mapNotNull { l -> if (SearchIndex.mayMatch(i, v, l, variants)) Finder.find(l.text(v), variants)?.let { l to it } else null }
-        if (hits.isEmpty()) null else VerseResult(v, hits.first().first, hits.first().second, hits.drop(1).map { it.first })
-    }.take(MaxVerseResults).toList()
-    fun countHits(layers: List<Layer>): Int {
-        val all = SampleData.allVerses
-        return all.indices.count { i -> layers.any { l -> SearchIndex.mayMatch(i, all[i], l, variants) } }
-    }
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) { SearchIndex.warm() }
-    }
-    val layersFor = mapOf(
-        Scope.ALL to Layer.entries.toList(), Scope.MOOL to listOf(Layer.SA, Layer.IAST),
-        Scope.EN to listOf(Layer.EN), Scope.HI to listOf(Layer.HI), Scope.BN to listOf(Layer.BN),
-    )
-    val chapterList = remember(state.titleLang) {
-        SampleData.skandhas.flatMap { sk -> (1..sk.adhyayaCount).map { a -> Triple(sk.num, a, SampleData.adhyayaTitle(sk.num, a, state.titleLang, s)) } }
-            .filter { (sk, a, _) -> SampleData.hasTitle(sk, a) }
-    }
-    fun chapterHits() = chapterList.mapNotNull { (sk, a, t) -> Finder.find(t, variants)?.let { Triple(sk, a, it) } }
-    fun glossHits() = SampleData.glossary.mapNotNull { g ->
-        val inTerm = Finder.find(g.term, variants)
-        val m = inTerm ?: Finder.find(g.dev, variants) ?: Finder.find(g.meaning, variants)
-        m?.let { Triple(g, it, inTerm != null) }
+    // Direct Verse Jump check (e.g. "10.29.1" or "10.29")
+    val parsedJump = remember(query) {
+        val match = Regex("^(\\d+)[.:/\\-\\s]+(\\d+)(?:[.:/\\-\\s]+(\\d+))?$").find(query.trim())
+        if (match != null) {
+            val sk = match.groupValues[1].toIntOrNull() ?: 1
+            val ad = match.groupValues[2].toIntOrNull() ?: 1
+            val vs = match.groupValues.getOrNull(3)?.toIntOrNull() ?: 1
+            if (sk in 0..12) Triple(sk, ad, vs) else null
+        } else null
     }
 
-    val counts = remember(variants, ui, state.titleLang) {
-        mapOf(
-            Scope.ALL to countHits(Layer.entries.toList()) + chapterHits().size + glossHits().size,
-            Scope.MOOL to countHits(layersFor.getValue(Scope.MOOL)), Scope.EN to countHits(listOf(Layer.EN)),
-            Scope.HI to countHits(listOf(Layer.HI)), Scope.BN to countHits(listOf(Layer.BN)),
-            Scope.CHAPTERS to chapterHits().size, Scope.GLOSSARY to glossHits().size,
-        )
+    // Incident Matches
+    val matchingIncidents = remember(query) {
+        if (query.trim().length >= 2) Episodes.all.filter { it.matchesQuery(query) } else emptyList()
     }
-    val verses = remember(variants, scope) { layersFor[scope]?.let { verseHits(it) } ?: emptyList() }
-    val chapters = remember(variants, scope, ui, state.titleLang) { if (scope == Scope.ALL || scope == Scope.CHAPTERS) chapterHits() else emptyList() }
-    val gloss = remember(variants, scope) { if (scope == Scope.ALL || scope == Scope.GLOSSARY) glossHits() else emptyList() }
 
-    // "10", "10.29" or "10.29.1" → a Go to card
-    val ref = Regex("^(\\d{1,2})(?:[.\\s:](\\d{1,3}))?(?:[.\\s:](\\d{1,3}))?$").find(applied.trim())
-    val goto = ref?.let { m ->
-        val sk = m.groupValues[1].toInt(); val a = m.groupValues[2].toIntOrNull() ?: 0; val vn = m.groupValues[3].toIntOrNull() ?: 0
-        if (sk in 1..12 && a <= SampleData.skandha(sk).adhyayaCount) Triple(sk, maxOf(a, 1), vn) else null
+    // Full-Text Verse Matches executed off-thread with 180ms debounce
+    LaunchedEffect(query, activeScope) {
+        val q = query.trim()
+        if (q.length < 2) {
+            results = emptyList()
+            return@LaunchedEffect
+        }
+        delay(180)
+        val searchResults = withContext(Dispatchers.Default) {
+            val candidateVerses = SampleData.searchVerses(q, activeScope.name, limit = 100)
+            val out = ArrayList<SearchResult>()
+            val layersToSearch = when (activeScope) {
+                SearchScope.ALL -> listOf(SearchLayer.EN, SearchLayer.HI, SearchLayer.BN, SearchLayer.SA)
+                SearchScope.EN -> listOf(SearchLayer.EN)
+                SearchScope.HI -> listOf(SearchLayer.HI)
+                SearchScope.BN -> listOf(SearchLayer.BN)
+            }
+
+            for (v in candidateVerses) {
+                for (layer in layersToSearch) {
+                    val text = layer.text(v)
+                    val hit = SearchFinder.find(text, q)
+                    if (hit != null) {
+                        out.add(SearchResult(v, layer, hit))
+                        break
+                    }
+                }
+                if (out.size >= 100) break
+            }
+            out
+        }
+        results = searchResults
     }
-    val verseTotal = remember(variants, scope) { layersFor[scope]?.let { countHits(it) } ?: 0 }
-    val total = verseTotal + chapters.size + gloss.size
-    val hasQuery = variants.isNotEmpty()
-    var shown by rememberSaveable(applied, scope) { androidx.compose.runtime.mutableStateOf(8) }
 
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = BottomRoom), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        item { LargeTitle(s.tabSearch) }
-        item {
-            var focused by remember { androidx.compose.runtime.mutableStateOf(false) }
-            val focus = androidx.compose.ui.platform.LocalFocusManager.current
-            val ring = Radius.group
+    Column(Modifier.fillMaxSize()) {
+        // Search Header
+        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp)) {
+            LargeTitle(s.tabSearch, s.searchAbout, horizontalPadding = 4.dp)
+            
+            // Search Input Box with Mic button
+            var focused by remember { mutableStateOf(false) }
             Row(
-                Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(54.dp).clip(ring).background(Brand.Card)
-                    .border(if (focused) 2.dp else 1.dp, if (focused) Brand.Kesari else Brand.Separator, ring).padding(start = 16.dp, end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
+                Modifier.fillMaxWidth().heightIn(min = 54.dp).clip(Radius.card).background(Brand.Fill)
+                    .border(1.dp, if (focused) Brand.Kesari else Brand.Separator, Radius.card)
+                    .padding(horizontal = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Icon(painterResource(Ic.Search), null, tint = if (focused) Brand.Kesari else Brand.Secondary)
-                Box(Modifier.weight(1f)) {
-                    if (query.isEmpty()) Text(s.searchHint, color = Brand.Tertiary, fontSize = 16.sp, maxLines = 1)
-                    BasicTextField(
-                        value = query, onValueChange = { query = it }, singleLine = true,
-                        textStyle = TextStyle(fontSize = 17.sp, color = Brand.Ink), cursorBrush = SolidColor(Brand.Kesari),
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
-                        keyboardActions = androidx.compose.foundation.text.KeyboardActions(onSearch = { state.addRecent(query); focus.clearFocus() }),
-                        modifier = Modifier.fillMaxWidth().onFocusChanged { focused = it.isFocused },
-                    )
-                }
+                Icon(painterResource(Ic.Search), null, tint = Brand.Secondary, modifier = Modifier.size(20.dp))
+                BasicTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    singleLine = true,
+                    textStyle = TextStyle(fontSize = 16.sp, color = Brand.Ink),
+                    cursorBrush = SolidColor(Brand.Kesari),
+                    modifier = Modifier.weight(1f).onFocusChanged { focused = it.isFocused },
+                    decorationBox = { inner ->
+                        if (query.isEmpty()) Text(s.searchHint, fontSize = 15.sp, color = Brand.Secondary)
+                        inner()
+                    }
+                )
                 if (query.isNotEmpty()) {
-                    Box(Modifier.size(40.dp).clip(CircleShape).background(Brand.Fill).clickable { query = "" }, contentAlignment = Alignment.Center) {
-                        Icon(painterResource(Ic.Close), tr(ui, "Clear search", "खोज साफ़ करें", "খোঁজা মুছুন"), tint = Brand.Secondary, modifier = Modifier.size(18.dp))
+                    Box(Modifier.size(32.dp).clip(CircleShape).clickable { query = "" }, contentAlignment = Alignment.Center) {
+                        Icon(painterResource(Ic.Close), null, tint = Brand.Secondary, modifier = Modifier.size(16.dp))
+                    }
+                }
+                Box(
+                    Modifier.size(36.dp).clip(CircleShape).background(Brand.KesariTint).clickable { showVoiceSheet = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(painterResource(Ic.Mic), null, tint = Brand.Kesari, modifier = Modifier.size(20.dp))
+                }
+            }
+
+            // Cross-Language Filter Tabs (when searching)
+            if (query.isNotEmpty()) {
+                Row(
+                    Modifier.padding(top = 10.dp).horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val tabs = listOf(
+                        SearchScope.ALL to s.tabAll,
+                        SearchScope.EN to s.tabEnglish,
+                        SearchScope.HI to s.tabHindi,
+                        SearchScope.BN to s.tabBangla
+                    )
+                    tabs.forEach { (sc, label) ->
+                        val on = activeScope == sc
+                        Pill(text = label, on = on, onClick = { activeScope = sc })
                     }
                 }
             }
         }
-        if (hasQuery) item {
-            val labels = listOf(s.all, s.mool, "English", "हिन्दी", "বাংলা", s.chapters.lowercase().replaceFirstChar { it.uppercase() }, s.glossary)
-            Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Scope.entries.forEachIndexed { i, sc ->
-                    Pill(labels[i], scope == sc, { scope = sc }, count = if (hasQuery) localDigits(counts.getValue(sc).toString(), ui) else null,
-                        fontFamily = when (sc) { Scope.HI -> TiroHindi; Scope.BN -> NotoSerifBengali; else -> null })
+
+        // Search Content / Results
+        if (query.isEmpty()) {
+            // Landing State: 2-Column Curated Stories & Thematic Lila Guide
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = BottomRoom),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item(span = { GridItemSpan(2) }) {
+                    SectionHeading(s.thematicLilaIndex, Modifier.padding(top = 4.dp))
+                }
+
+                // Category Filter Pills
+                item(span = { GridItemSpan(2) }) {
+                    Row(
+                        Modifier.horizontalScroll(rememberScrollState()).padding(bottom = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        EpisodeCategory.entries.forEach { cat ->
+                            val on = selectedCategory == cat
+                            Pill(text = cat.label(ui), on = on, onClick = { selectedCategory = cat })
+                        }
+                    }
+                }
+
+                // Filtered Episodes in 2-Column Grid
+                val displayedEpisodes = if (selectedCategory == EpisodeCategory.ALL) {
+                    Episodes.all
+                } else {
+                    Episodes.all.filter { it.category == selectedCategory }
+                }
+
+                items(displayedEpisodes, key = { "${it.s}.${it.a}" }) { ep ->
+                    StoryCard(ep, state, onOpenChapter)
                 }
             }
-        }
-        if (!hasQuery) {
-            if (state.recent.isNotEmpty()) item {
-                Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Row(Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Text(s.recent, Modifier.weight(1f), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                        Text(tr(ui, "Clear", "साफ़ करें", "মুছুন"), Modifier.clip(RoundedCornerShape(10.dp)).clickable { state.clearRecent() }.heightIn(min = 40.dp).padding(horizontal = 8.dp).wrapContentHeight(Alignment.CenterVertically),
-                            fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari)
+        } else {
+            // Active Search Results
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = BottomRoom),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // 1. Direct Verse Jump Card
+                if (parsedJump != null) {
+                    item {
+                        val (sk, ad, vs) = parsedJump
+                        val skTitle = if (sk == 0) s.mahatmya else SampleData.skandha(sk).title(ui)
+                        Box(
+                            Modifier.fillMaxWidth().tappable(Radius.card) { onOpenChapter(sk, ad) }
+                                .background(Brand.KesariTint).border(1.dp, Brand.Kesari, Radius.card)
+                                .padding(16.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Icon(painterResource(Ic.MenuBook), null, tint = Brand.Kesari, modifier = Modifier.size(24.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text(localDigits("${s.goTo} $skTitle · ${s.adhyaya} $ad · ${s.shloka} $vs", ui), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                                    Text(SampleData.adhyayaTitle(sk, ad, state.titleLang, s), fontSize = 13.sp, color = Brand.Secondary, maxLines = 1)
+                                }
+                                Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Kesari)
+                            }
+                        }
                     }
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        state.recent.forEach { t ->
-                            Row(Modifier.clip(CircleShape).background(Brand.Card).border(1.dp, Brand.Separator, CircleShape).clickable { query = t }.heightIn(min = 40.dp).padding(horizontal = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Icon(painterResource(Ic.History), null, tint = Brand.Secondary, modifier = Modifier.size(16.dp))
-                                Text(t, fontSize = 15.sp, color = Brand.Ink, maxLines = 1)
+                }
+
+                // 2. Incident Matches
+                if (matchingIncidents.isNotEmpty()) {
+                    item {
+                        SectionHeading(tr(ui, "Matching Divine Incidents", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ"))
+                    }
+                    items(matchingIncidents, key = { "inc_${it.s}_${it.a}" }) { ep ->
+                        Box(
+                            Modifier.fillMaxWidth().tappable(Radius.group) { onOpenChapter(ep.s, ep.a) }
+                                .background(Brand.Card).border(1.dp, Brand.Separator, Radius.group)
+                                .padding(14.dp)
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(ep.title(ui), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                                    Text(localDigits("${if (ep.s == 0) s.mahatmya else "${s.skandha} ${ep.s}"} · ${s.adhyaya} ${ep.a}", ui), fontSize = 12.sp, color = Brand.Gold)
+                                }
+                                if (ep.description(ui).isNotEmpty()) {
+                                    Text(ep.description(ui), fontSize = 13.sp, lineHeight = 18.sp, color = Brand.Secondary)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 3. Verse Matches Count Header
+                item {
+                    val countStr = localDigits("${results.size} ${if (results.size == 1) s.result else s.results}", ui)
+                    SectionHeading(countStr)
+                }
+
+                // 4. Verse Result Cards
+                if (results.isEmpty() && matchingIncidents.isEmpty() && parsedJump == null) {
+                    item {
+                        Column(
+                            Modifier.fillMaxWidth().padding(vertical = 40.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(s.noMatches, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                            Text(s.noMatchesHint, fontSize = 14.sp, color = Brand.Secondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                        }
+                    }
+                } else {
+                    items(results, key = { "${it.verse.ref}_${it.layer.name}" }) { res ->
+                        val v = res.verse
+                        val skName = if (v.skandha == 0) s.mahatmya else "${s.skandha} ${v.skandha}"
+                        val refText = localDigits("$skName · ${s.adhyaya} ${v.adhyaya} · ${s.shloka} ${v.num}", ui)
+                        Box(
+                            Modifier.fillMaxWidth().tappable(Radius.group) { onOpenChapter(v.skandha, v.adhyaya) }
+                                .background(Brand.Card).border(1.dp, Brand.Separator, Radius.group)
+                                .padding(14.dp)
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(refText, Modifier.weight(1f), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
+                                    Text(res.layer.label, fontSize = 11.sp, color = Brand.Secondary)
+                                }
+                                val excerpt = buildAnnotatedString {
+                                    append(res.hit.pre)
+                                    withStyle(SpanStyle(color = Brand.Kesari, fontWeight = FontWeight.Bold, background = Brand.KesariTint)) {
+                                        append(res.hit.hit)
+                                    }
+                                    append(res.hit.post)
+                                }
+                                Text(excerpt, fontFamily = res.layer.font, fontSize = res.layer.size.sp, lineHeight = (res.layer.size * 1.5).sp, color = Brand.Ink)
                             }
                         }
                     }
                 }
             }
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SectionHeading(tr(ui, "Well-loved stories", "प्रिय कथाएँ", "প্রিয় কথা"), Modifier.padding(horizontal = 20.dp))
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
-                        items(Episodes.all, key = { "${it.s}.${it.a}" }) { StoryCard(it, state) { sk, a -> onOpenVerse(sk, a) } }
-                    }
-                }
-            }
-            item {
-                Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SectionHeading(s.tryThese, Modifier.padding(horizontal = 4.dp))
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf("Krishna", "भक्ति", "কুন্তী", "dharma", "Narada", "10.29.1").forEach { t ->
-                            Box(Modifier.clip(CircleShape).background(Brand.Card).border(1.dp, Brand.Separator, CircleShape).clickable { query = t }.heightIn(min = 44.dp).padding(horizontal = 14.dp),
-                                contentAlignment = Alignment.Center) { Text(t, fontSize = 15.sp, color = Brand.Ink) }
-                        }
-                    }
-                    Text(s.searchAbout, Modifier.padding(horizontal = 4.dp, vertical = 6.dp), fontSize = 13.sp, lineHeight = 19.sp, color = Brand.Secondary)
-                }
-            }
-        }
-        if (goto != null) {
-            item {
-                val (sk, a, vn) = goto
-                Row(
-                    Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Brand.Card)
-                        .border(1.5.dp, Brand.Kesari.copy(alpha = 0.35f), RoundedCornerShape(16.dp)).clickable { open(sk, a) }.padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Box(Modifier.size(42.dp).clip(RoundedCornerShape(12.dp)).background(Brand.KesariTint), contentAlignment = Alignment.Center) {
-                        Text(localDigits("$sk", ui), fontFamily = EnglishReading, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari)
-                    }
-                    Column(Modifier.weight(1f)) {
-                        Text(s.goTo, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Brand.Kesari)
-                        Text(SampleData.adhyayaTitle(sk, a, state.titleLang, s), fontFamily = readingFont(state.titleLang), fontSize = 17.sp, fontWeight = FontWeight.Medium)
-                        Text(localDigits("${s.skandha} $sk · ${s.adhyaya} $a" + if (vn > 0) " · ${s.shloka} $vn" else "", ui), fontSize = 13.sp, color = Brand.Secondary)
-                    }
-                    Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Chevron)
-                }
-            }
-        }
-        if (hasQuery) {
-            item { Text(localDigits("$total ${if (total == 1) s.result else s.results}", ui), Modifier.padding(horizontal = 20.dp), fontSize = 13.sp, color = Brand.Secondary) }
-        }
-        if (verses.isNotEmpty()) {
-            item { SectionHeader(s.shlokas, verseTotal, ui) }
-            items(verses.take(shown), key = { "v" + it.verse.ref }) { r ->
-                Column(
-                    Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Brand.Card)
-                        .clickable { open(r.verse.skandha, r.verse.adhyaya) }.padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(localDigits(r.verse.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
-                        Text(SampleData.adhyayaTitle(r.verse.skandha, r.verse.adhyaya, state.titleLang, s), Modifier.weight(1f), fontSize = 12.5.sp, color = Brand.Secondary, maxLines = 1)
-                        Text(if (r.layer == Layer.SA) s.mool else r.layer.label, Modifier.clip(RoundedCornerShape(8.dp)).background(Brand.TealTint).padding(horizontal = 8.dp, vertical = 3.dp),
-                            fontSize = 11.5.sp, fontWeight = FontWeight.SemiBold, color = Brand.Teal)
-                    }
-                    Text(highlighted(r.hit), fontFamily = r.layer.font, fontSize = r.layer.size.sp, lineHeight = (r.layer.size * 1.6f).sp,
-                        color = if (r.layer == Layer.SA) Brand.Sindoor else Brand.Ink)
-                    if (r.layer == Layer.SA || r.layer == Layer.IAST) {
-                        Text(r.verse.en, fontFamily = EnglishReading, fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary)
-                    }
-                    if (r.alsoIn.isNotEmpty()) Text("${s.alsoIn} " + r.alsoIn.joinToString { if (it == Layer.SA) s.mool else it.label }, fontSize = 12.sp, color = Brand.Tertiary)
-                }
-            }
-        }
-        if (verses.size > shown) item {
-            Box(Modifier.padding(horizontal = 16.dp).fillMaxWidth().height(48.dp).clip(RoundedCornerShape(14.dp)).background(Brand.KesariTint).clickable { shown += 12 },
-                contentAlignment = Alignment.Center) {
-                Text(tr(ui, "Show more", "और दिखाएँ", "আরও দেখান") + localDigits(" (${verses.size - shown})", ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari)
-            }
-        }
-        if (chapters.isNotEmpty()) {
-            item { SectionHeader(s.chapters, chapters.size, ui) }
-            item {
-                Column(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Brand.Card)) {
-                    chapters.forEach { (sk, a, hit) ->
-                        Row(
-                            Modifier.fillMaxWidth().clickable { open(sk, a) }.heightIn(min = 52.dp).padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            Text(localDigits("$sk.$a", ui), Modifier.width(44.dp), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
-                            Text(highlighted(hit), Modifier.weight(1f), fontFamily = EnglishReading, fontSize = 16.sp)
-                            Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Chevron)
-                        }
-                    }
-                }
-            }
-        }
-        if (gloss.isNotEmpty()) {
-            item { SectionHeader(s.glossary, gloss.size, ui) }
-            items(gloss, key = { "g" + it.first.term }) { (g, hit, inTerm) ->
-                Column(
-                    Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Brand.Card)
-                        .clickable(onClick = onOpenGlossary).padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(g.term, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                        Text(g.dev, fontFamily = NotoDevanagari, fontSize = 15.sp, color = Brand.Sindoor)
-                    }
-                    Text(if (inTerm) AnnotatedString(g.meaning) else highlighted(hit), fontSize = 14.sp, lineHeight = 19.sp, color = Brand.Secondary)
-                }
-            }
-        }
-        if (hasQuery && total == 0 && goto == null) {
-            item {
-                Column(Modifier.fillMaxWidth().padding(40.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(painterResource(Ic.Search), null, tint = Brand.Tertiary, modifier = Modifier.size(32.dp))
-                    Text(s.noMatches, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
-                    Text(s.noMatchesHint, fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary)
-                }
-            }
         }
     }
-}
 
-@Composable
-private fun SectionHeader(label: String, count: Int, ui: Lang) {
-    Row(Modifier.padding(start = 20.dp, top = 8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(label, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-        Text(localDigits(count.toString(), ui), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Brand.Tertiary, modifier = Modifier.padding(top = 2.dp))
+    if (showVoiceSheet) {
+        VoiceNavigatorSheet(state, onOpenChapter = onOpenChapter) { showVoiceSheet = false }
     }
 }
-
-@Composable
-private fun highlighted(h: Hit): AnnotatedString {
-    val tint = Brand.Kesari.copy(alpha = 0.18f)
-    return buildAnnotatedString {
-        append(h.pre)
-        withStyle(SpanStyle(background = tint)) { append(h.hit) }
-        append(h.post)
-    }
-}
-
-private fun mutableStateOfString(v: String) = androidx.compose.runtime.mutableStateOf(v)

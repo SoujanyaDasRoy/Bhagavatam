@@ -22,7 +22,18 @@ HERE = Path(__file__).resolve().parent
 WORK = HERE / "work"
 VISION_DIR = WORK / "vision"
 
-DEFAULT_GEMINI_KEY = "AIzaSyCkf1ogJtdndJlzvbVtCIBuDlesCBLm8SY"
+def _get_api_key():
+    k = os.environ.get("GEMINI_API_KEY", "").strip()
+    if k:
+        return k
+    env_file = HERE / ".env"
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            if line.startswith("GEMINI_API_KEY="):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return ""
+
+DEFAULT_GEMINI_KEY = _get_api_key()
 
 SYSTEM_PROMPT = """You are an expert transcriber of Bengali classical texts.
 You are given a scanned page of the Gita Press Bengali edition of the Shrimad Bhagavata Mahapurana.
@@ -120,18 +131,24 @@ def parse_json_safely(raw_text: str) -> dict:
     raise ValueError(f"Could not parse JSON output: {raw_text[:200]}")
 
 
-def transcribe_gemini(image_path: Path, api_key: str, model_name: str = "gemini-3.5-flash-lite") -> dict:
+def transcribe_gemini(image_path: Path, api_key: str, model_name: str = "gemini-2.5-flash-lite") -> dict:
     b64_img = base64.b64encode(image_path.read_bytes()).decode("utf-8")
     
-    # Priority rotation of active models
-    models_pool = [model_name, "gemini-3.5-flash-lite", "gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.7-flash"]
-    models_to_try = []
-    for m in models_pool:
-        if m not in models_to_try:
-            models_to_try.append(m)
+    # Priority rotation of active supported models
+    models_pool = [
+        "gemini-3.1-flash-lite",
+        "gemini-3.5-flash-lite",
+        "gemini-3.8-flash",
+        "gemini-3-flash-preview",
+        "gemini-3.6-flash",
+        "gemini-3.7-flash",
+        "gemini-3.5-flash",
+    ]
+    if model_name not in models_pool:
+        models_pool.insert(0, model_name)
     
     last_err = None
-    for m in models_to_try:
+    for m in models_pool:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={api_key}"
         payload = {
             "contents": [{
@@ -146,7 +163,7 @@ def transcribe_gemini(image_path: Path, api_key: str, model_name: str = "gemini-
                 "maxOutputTokens": 8192
             }
         }
-        for attempt in range(2):
+        for attempt in range(4):
             try:
                 resp = requests.post(url, json=payload, timeout=90)
                 if resp.status_code == 200:
@@ -156,15 +173,17 @@ def transcribe_gemini(image_path: Path, api_key: str, model_name: str = "gemini-
                     rec["_model_used"] = m
                     return rec
                 elif resp.status_code == 429:
-                    last_err = f"429 Quota/Rate limit on {m}"
-                    break  # immediately try next model in the pool
-                elif resp.status_code == 503:
-                    time.sleep(2 * (attempt + 1))
+                    last_err = f"429 Rate limit on {m}"
+                    wait_time = (attempt + 1) * 6
+                    time.sleep(wait_time)
+                elif resp.status_code in (500, 503, 504):
+                    time.sleep((attempt + 1) * 3)
                 else:
                     last_err = f"HTTP {resp.status_code}: {resp.text[:200]}"
+                    break
             except Exception as e:
                 last_err = str(e)
-                time.sleep(1)
+                time.sleep(2)
     raise RuntimeError(f"Gemini failed on {image_path.name}: {last_err}")
 
 

@@ -47,4 +47,5 @@ object Ic {
     val ArrowRight = R.drawable.ic_arrow_right
     val Clock = R.drawable.ic_clock
     val Sunrise = R.drawable.ic_sunrise
+    val Mic = R.drawable.ic_mic
 }

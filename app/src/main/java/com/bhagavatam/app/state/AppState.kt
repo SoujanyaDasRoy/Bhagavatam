@@ -133,11 +133,35 @@ class AppState(app: Application) : AndroidViewModel(app) {
         ThemeMode.LIGHT -> updateTheme(lightTheme)
         ThemeMode.DARK -> updateTheme(darkTheme)
     }
+    private var saveScaleJob: Job? = null
+    private var pendingScaleSave: (android.content.SharedPreferences.Editor.() -> Unit)? = null
+
+    private fun saveScaleDebounced(block: android.content.SharedPreferences.Editor.() -> Unit) {
+        pendingScaleSave = block
+        saveScaleJob?.cancel()
+        saveScaleJob = viewModelScope.launch {
+            delay(350)
+            pendingScaleSave?.let { save(it) }
+            pendingScaleSave = null
+            saveScaleJob = null
+        }
+    }
+
+    /** Immediately writes any unwritten scale/zoom settings to disk on Activity stop or process backgrounding. */
+    fun flushPendingSaves() {
+        saveScaleJob?.cancel()
+        saveScaleJob = null
+        pendingScaleSave?.let { block ->
+            save(block)
+            pendingScaleSave = null
+        }
+    }
+
     fun updateLightTheme(t: ReaderTheme) { lightTheme = t; save { putString("lightTheme", t.name) } }
     fun updateDarkTheme(t: ReaderTheme) { darkTheme = t; save { putString("darkTheme", t.name) } }
-    fun updateLineScale(v: Float) { lineScale = v; save { putFloat("lineScale", v) } }
+    fun updateLineScale(v: Float) { lineScale = v; saveScaleDebounced { putFloat("lineScale", v) } }
     fun updateShowDaily(on: Boolean) { showDaily = on; save { putBoolean("showDaily", on) } }
-    fun updateTextScale(v: Float) { textScale = v; save { putFloat("textScale", v) } }
+    fun updateTextScale(v: Float) { textScale = v; saveScaleDebounced { putFloat("textScale", v) } }
     fun updateKeepPlaying(on: Boolean) { keepPlaying = on; save { putBoolean("keepPlaying", on) } }
     fun cyclePlayThrough() {
         playThrough = PlayThrough.entries[(playThrough.ordinal + 1) % PlayThrough.entries.size]
@@ -390,17 +414,17 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
 
     // ---- the narrator and what it reports ----
-    private var epoch = 0
+    @Volatile private var epoch = 0
     private var seqCounter = 0
-    private val seqIndex = HashMap<Int, Int>()
-    private var currentSeq = -1
-    private var highestSeq = -1
+    private val seqIndex = java.util.concurrent.ConcurrentHashMap<Int, Int>()
+    @Volatile private var currentSeq = -1
+    @Volatile private var highestSeq = -1
     private var resumeSeg = 0
     private var resumeOnGain = false
     private var errorStreak = 0
     private var silentMode = false
     private var silentJob: Job? = null
-    private var pendingStart: Pair<Int, Int>? = null
+    private var pendingStart: Triple<Int, Int, Int>? = null // (index, seg, epoch)
     private var prepJob: Job? = null
 
     private val narrator by lazy { Narrator(getApplication(), narratorEvents) }
@@ -408,10 +432,16 @@ class AppState(app: Application) : AndroidViewModel(app) {
     private val narratorEvents = object : Narrator.Listener {
         override fun onEngineReady() {
             voicesReady = true
-            pendingStart?.let { (i, seg) -> beginSpeaking(i, seg) }
+            pendingStart?.let { (i, seg, reqEpoch) ->
+                if (reqEpoch == this@AppState.epoch) beginSpeaking(i, seg)
+            }
             pendingPreview?.let { (lang, name) -> runPreview(lang, name) }
         }
-        override fun onEngineFailed() { pendingStart?.let { (i, seg) -> beginSilent(i, seg, AudioIssue.NO_ENGINE) } }
+        override fun onEngineFailed() {
+            pendingStart?.let { (i, seg, reqEpoch) ->
+                if (reqEpoch == this@AppState.epoch) beginSilent(i, seg, AudioIssue.NO_ENGINE)
+            }
+        }
         override fun onSegmentStart(epoch: Int, seq: Int, seg: Int) = handleSegmentStart(epoch, seq, seg)
         override fun onRange(epoch: Int, seq: Int, seg: Int, start: Int, end: Int) = handleRange(epoch, seq, seg, end)
         override fun onVerseEnd(epoch: Int, seq: Int) = handleVerseEnd(epoch, seq)
@@ -449,7 +479,10 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun pausePlayback() { if (isPlaying) pause() }
 
     /** Called when the app leaves the screen: honours "keep playing in the background". */
-    fun onAppBackgrounded() { if (!keepPlaying) pausePlayback() }
+    fun onAppBackgrounded() {
+        flushPendingSaves()
+        if (!keepPlaying) pausePlayback()
+    }
 
     fun next() = moveTo(index + 1)
 
@@ -520,7 +553,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
         when {
             narrator.failed -> beginSilent(first, seg, AudioIssue.NO_ENGINE)
             narrator.ready -> beginSpeaking(first, seg)
-            else -> pendingStart = first to seg
+            else -> pendingStart = Triple(first, seg, epoch)
         }
     }
 
@@ -634,6 +667,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
 
     override fun onCleared() {
+        flushPendingSaves()
         silentJob?.cancel(); sleepJob?.cancel()
         narrator.shutdown(); focus.release()
         super.onCleared()

@@ -73,7 +73,6 @@ import com.bhagavatam.app.ui.theme.Jakarta
 import com.bhagavatam.app.ui.theme.LocalAppColors
 import com.bhagavatam.app.ui.theme.EnglishReading
 import com.bhagavatam.app.ui.theme.NotoDevanagari
-import androidx.compose.foundation.layout.heightIn
 import com.bhagavatam.app.data.Episode
 import com.bhagavatam.app.data.Episodes
 import com.bhagavatam.app.data.Lang
@@ -102,11 +101,16 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
     val hue = skColor(n)
     val read = state.finished.count { it.startsWith("$n.") }
     val frac by animateFloatAsState(read.toFloat() / sk.adhyayaCount, tween(Motion.screen), label = "skandhaProgress")
-    Box(modifier.tappable(Radius.card, "${s.skandha} $n", onClick = onClick)) {
+    val cardAccessibility = if (n == 0) s.mahatmya else "${s.skandha} $n"
+    val numeralLabel = if (n == 0) s.mahatmya else localDigits(n.toString(), state.uiLang)
+    val numeralFont = if (n == 0) (if (state.uiLang == Lang.BN) NotoSerifBengali else if (state.uiLang == Lang.HI) NotoDevanagari else EnglishReading) else EnglishReading
+    val numeralSize = if (n == 0) 22.sp else 36.sp
+
+    Box(modifier.tappable(Radius.card, cardAccessibility, onClick = onClick)) {
         ArtBackdrop(skArt(n), skGradient(hue), Modifier.matchParentSize())
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Column {
-                Text(localDigits(n.toString(), state.uiLang), fontFamily = EnglishReading, fontSize = 36.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                Text(numeralLabel, fontFamily = numeralFont, fontSize = numeralSize, fontWeight = FontWeight.SemiBold, color = Color.White)
                 Text(sk.nameSa, fontFamily = NotoDevanagari, fontSize = 14.sp, lineHeight = 20.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -122,10 +126,11 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
 @Composable
 fun StoryCard(e: Episode, state: AppState, onOpen: (Int, Int) -> Unit) {
     val hue = skColor(e.s)
+    val refLabel = if (e.s == 0) "${state.strings.mahatmya}.${e.a}" else "${e.s}.${e.a}"
     Box(Modifier.width(200.dp).height(128.dp).tappable(Radius.card, e.title(state.uiLang)) { onOpen(e.s, e.a) }) {
         ArtBackdrop(chArt(e.s, e.a), skGradient(hue), Modifier.matchParentSize(), petals = 12)
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
-            Text(localDigits("${e.s}.${e.a}", state.uiLang), Modifier.clip(CircleShape).background(Color(0x33FFFFFF)).padding(horizontal = 9.dp, vertical = 3.dp),
+            Text(localDigits(refLabel, state.uiLang), Modifier.clip(CircleShape).background(Color(0x33FFFFFF)).padding(horizontal = 9.dp, vertical = 3.dp),
                 fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
             Text(e.title(state.uiLang), fontFamily = readingFont(state.uiLang), fontSize = 19.sp, lineHeight = 25.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
@@ -162,9 +167,9 @@ fun HomeScreen(
         Row(Modifier.statusBarsPadding().padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             AppTile(size = 46, fontSize = 20)
             Column(Modifier.weight(1f)) {
-                Text(tr(ui, "Jay Shree Madhav", "जय श्री माधव", "জয় শ্রী মাধব"), fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                Text(s.jaiShreeMadhav, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
                 Text(
-                    tr(ui, "Shrimad Bhagavat Mahapuran", "श्रीमद्भागवत महापुराण", "শ্রীমদ্ভাগবত মহাপুরাণ"),
+                    s.shrimadBhagavatMahapuran,
                     fontFamily = when (ui) { Lang.HI -> NotoDevanagari; Lang.BN -> NotoSerifBengali; else -> null },
                     fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Brand.Gold,
                 )
@@ -186,12 +191,13 @@ fun HomeScreen(
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             // Continue reading: tinted with the colour of the Skandha you are in.
             val skHue = skColor(state.lastSkandha)
+            val contRef = if (state.lastSkandha == 0) "${s.mahatmya} · ${s.adhyaya} ${state.lastAdhyaya}" else "${s.skandha} ${state.lastSkandha} · ${s.adhyaya} ${state.lastAdhyaya}"
             Box(
                 Modifier.reveal(0, playIntro).padding(horizontal = 16.dp).fillMaxWidth().tappable(Radius.large, s.resumeReading, onClick = onResume),
             ) {
                 ArtBackdrop(chArt(state.lastSkandha, state.lastAdhyaya), skGradient(skHue), Modifier.matchParentSize(), mandala = Color(0x26FFFFFF))
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(localDigits("${s.skandha} ${state.lastSkandha} · ${s.adhyaya} ${state.lastAdhyaya}", ui),
+                    Text(localDigits(contRef, ui),
                         fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
                     Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.titleLang, s),
                         fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, color = Color.White,
@@ -217,11 +223,11 @@ fun HomeScreen(
                 // At large text sizes two side-by-side labels break mid-word, so they stack.
                 Column(Modifier.reveal(1, playIntro).padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     QuickAction(Ic.Bookmark, savedLabel, Modifier.fillMaxWidth(), onSaved)
-                    QuickAction(Ic.Scroll, s.glossary, Modifier.fillMaxWidth(), onGlossary)
+                    QuickAction(Ic.Scroll, s.thematicLilaIndex, Modifier.fillMaxWidth(), onGlossary)
                 }
             } else Row(Modifier.reveal(1, playIntro).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 QuickAction(Ic.Bookmark, savedLabel, Modifier.weight(1f), onSaved)
-                QuickAction(Ic.Scroll, s.glossary, Modifier.weight(1f), onGlossary)
+                QuickAction(Ic.Scroll, s.thematicLilaIndex, Modifier.weight(1f), onGlossary)
             }
             // Your progress
             Column(
@@ -253,7 +259,7 @@ fun HomeScreen(
             Column(Modifier.reveal(4, playIntro), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 SectionHeading(s.tabGranth, Modifier.padding(start = 20.dp, end = 12.dp), action = s.all, onAction = onOpenGranth)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    items((1..12).toList(), key = { it }) { n -> SkandhaCard(n, state, Modifier.width(150.dp).height(124.dp)) { onOpenSkandha(n) } }
+                    items((0..12).toList(), key = { it }) { n -> SkandhaCard(n, state, Modifier.width(150.dp).height(124.dp)) { onOpenSkandha(n) } }
                 }
             }
             // Shloka of the day
@@ -286,6 +292,17 @@ fun HomeScreen(
 fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
     val s = state.strings
     val ui = state.uiLang
+    val headerTitle = when (ui) {
+        Lang.BN -> "॥ শ্রীমদ্ভাগবত মহাপুরাণ ॥"
+        Lang.HI -> "॥ श्रीमद्भागवत महापुराण ॥"
+        else -> "॥ Shrimad Bhagavat Mahapuran ॥"
+    }
+    val headerFont = when (ui) {
+        Lang.BN -> NotoSerifBengali
+        Lang.HI -> NotoDevanagari
+        else -> EnglishReading
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = BottomRoom),
@@ -296,16 +313,21 @@ fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
         item(span = { GridItemSpan(2) }) {
             Column(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalAlignment = Alignment.Start) {
                 LargeTitle(s.tabGranth, s.granthSub, horizontalPadding = 4.dp)
-                Text("॥ श्रीमद्भागवत महापुराण ॥", fontFamily = NotoDevanagari, fontSize = 20.sp, color = Brand.Sindoor, modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 8.dp))
+                Text(headerTitle, fontFamily = headerFont, fontSize = 20.sp, color = Brand.Sindoor, modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 8.dp))
             }
         }
         item(span = { GridItemSpan(2) }) {
             val m = SampleData.skandha(0)
+            val iconLetter = when (ui) {
+                Lang.BN -> "মা"
+                Lang.HI -> "मा"
+                else -> "M"
+            }
             Box(Modifier.fillMaxWidth().tappable(Radius.card) { onOpen(0) }) {
                 ArtBackdrop(skArt(0), listOf(Color(0xFF5A3C06), Color(0xFF8A5C0F)), Modifier.matchParentSize(), petals = 12, mandala = Color(0x30FFE9B0))
                 Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     Box(Modifier.size(48.dp).clip(CircleShape).background(Color(0x33FFFFFF)), contentAlignment = Alignment.Center) {
-                        Text("मा", fontFamily = NotoDevanagari, fontSize = 20.sp, color = Color.White)
+                        Text(iconLetter, fontFamily = headerFont, fontSize = 20.sp, color = Color.White)
                     }
                     Column(Modifier.weight(1f)) {
                         Text(s.mahatmya, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
@@ -326,6 +348,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
     val s = state.strings
     val ui = state.uiLang
     val sk = SampleData.skandha(skandha)
+    val headerTitle = if (skandha == 0) s.mahatmya else localDigits("${s.skandha} $skandha", ui)
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = BottomRoom)) {
         item { NavBar(s.tabGranth, onBack) }
         item {
@@ -333,7 +356,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                 ArtBackdrop(skArt(skandha), if (skandha == 0) listOf(Color(0xFF5A3C06), Color(0xFF8A5C0F)) else skGradient(skColor(skandha)), Modifier.matchParentSize(), mandala = Color(0x33FFFFFF))
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(localDigits("${sk.adhyayaCount} ${s.adhyayas}", ui), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
-                    Text(if (skandha == 0) s.mahatmya else localDigits("${s.skandha} $skandha", ui), fontFamily = EnglishReading, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(headerTitle, fontFamily = EnglishReading, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     Text(sk.nameSa, fontFamily = NotoDevanagari, fontSize = 19.sp, color = Color.White)
                     Text(sk.title(state.titleLang), fontSize = 16.sp, color = Color(0xFFFFF4DC))
                 }

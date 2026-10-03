@@ -2,11 +2,11 @@
  "pdf_dir": "C:\\Users\\sdroy\\OneDrive\\Desktop\\Coding\\Startups\\Shastra\\Bengali",
  "volumes": {
   "1": {
-   "file": "শ্রীমদ্ভাগবত মহাপুরাণ ১_গীতাপ্রেস.pdf",
+   "file": "\u09b6\u09cd\u09b0\u09c0\u09ae\u09a6\u09cd\u09ad\u09be\u0997\u09ac\u09a4 \u09ae\u09b9\u09be\u09aa\u09c1\u09b0\u09be\u09a3 \u09e7_\u0997\u09c0\u09a4\u09be\u09aa\u09cd\u09b0\u09c7\u09b8.pdf",
    "pages": 985
   },
   "2": {
-   "file": "শ্রীমদ্ভাগবত মহাপুরাণ ২_গীতাপ্রেস.pdf",
+   "file": "\u09b6\u09cd\u09b0\u09c0\u09ae\u09a6\u09cd\u09ad\u09be\u0997\u09ac\u09a4 \u09ae\u09b9\u09be\u09aa\u09c1\u09b0\u09be\u09a3 \u09e8_\u0997\u09c0\u09a4\u09be\u09aa\u09cd\u09b0\u09c7\u09b8.pdf",
    "pages": 1111
   }
  },
@@ -90,12 +90,12 @@
   [
    "2",
    1,
-   167,
+   128,
    9
   ],
   [
    "2",
-   168,
+   129,
    789,
    10
   ],

@@ -28,20 +28,23 @@ object ContentDb {
             if (android.os.Build.VERSION.SDK_INT >= 28) it.longVersionCode.toInt() else it.versionCode
         }
 
-    /** Prepare the files and attach the newest database to [SampleData]. Call once before showing UI. */
+    /** Prepare the files and attach the newest database to [SampleData]. Thread-safe. */
+    @Synchronized
     fun open(ctx: Context) {
         val prefs = ctx.getSharedPreferences("content", Context.MODE_PRIVATE)
         val code = appVersionCode(ctx)
-        if (prefs.getInt("bundledFor", -1) != code || !bundledFile(ctx).exists()) {
-            val tmp = File(bundledFile(ctx).path + ".tmp")
+        val bundled = bundledFile(ctx)
+        if (prefs.getInt("bundledFor", -1) != code || !bundled.exists()) {
+            val tmp = File(bundled.path + ".tmp")
             val copied = runCatching {
                 ctx.assets.open(ASSET).use { input -> tmp.outputStream().use { input.copyTo(it) } }
-                bundledFile(ctx).delete()
-                tmp.renameTo(bundledFile(ctx))
+                if (bundled.exists()) bundled.delete()
+                tmp.renameTo(bundled)
             }.getOrDefault(false)
             if (copied) prefs.edit().putInt("bundledFor", code).apply()
+            else if (tmp.exists()) tmp.delete()
         }
-        val best = listOf(currentFile(ctx), bundledFile(ctx)).filter { it.exists() }.maxByOrNull { versionOf(it) } ?: return
+        val best = listOf(currentFile(ctx), bundled).filter { it.exists() }.maxByOrNull { versionOf(it) } ?: return
         runCatching {
             val db = SQLiteDatabase.openDatabase(best.path, null, SQLiteDatabase.OPEN_READONLY)
             SampleData.attach(db)

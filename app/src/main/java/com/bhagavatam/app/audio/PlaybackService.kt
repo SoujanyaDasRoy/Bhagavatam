@@ -117,6 +117,15 @@ class PlaybackService : Service() {
     private fun action(name: String, code: Int): PendingIntent =
         PendingIntent.getService(this, code, Intent(this, PlaybackService::class.java).setAction(name), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        if (!state.keepPlaying || !state.isPlaying) {
+            state.pausePlayback()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
+    }
+
     override fun onDestroy() {
         scope.cancel(); session.release()
         super.onDestroy()
