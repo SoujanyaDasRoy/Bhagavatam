@@ -4,6 +4,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -14,7 +15,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextLayoutResult
+import com.bhagavatam.app.data.wordAt
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -301,15 +307,47 @@ fun keepMarkerTogether(s: String) = verseMarker.replace(s) { "॥⁠ ⁠${it.gr
 
 /** The mool shloka in the chosen script (Devanagari, Bengali or IAST). */
 @Composable
-fun ShlokaText(verse: Verse, script: SanskritScript, color: Color, size: Float, center: Boolean = false, lines: Int = Int.MAX_VALUE) {
+fun ShlokaText(
+    verse: Verse,
+    script: SanskritScript,
+    color: Color,
+    size: Float,
+    center: Boolean = false,
+    lines: Int = Int.MAX_VALUE,
+    onWordLongPress: ((String) -> Unit)? = null,
+) {
     val (text, font) = when (script) {
         SanskritScript.DEVANAGARI -> verse.sa.take(lines).joinToString("\n") to NotoDevanagari
         SanskritScript.BENGALI -> verse.sa.take(lines).joinToString("\n") { Transliterate.toBengali(it) } to NotoSerifBengali
         SanskritScript.IAST -> verse.iast.take(lines).joinToString("\n") to EnglishReading
     }
+    val processed = keepMarkerTogether(text)
+    var layoutResult by remember(processed) { mutableStateOf<TextLayoutResult?>(null) }
     Text(
-        keepMarkerTogether(text), fontFamily = font, fontSize = size.sp, lineHeight = (size * 1.8f).sp, color = color,
-        textAlign = if (center) TextAlign.Center else TextAlign.Start, modifier = Modifier.fillMaxWidth(),
+        processed,
+        fontFamily = font,
+        fontSize = size.sp,
+        lineHeight = (size * 1.8f).sp,
+        color = color,
+        textAlign = if (center) TextAlign.Center else TextAlign.Start,
+        modifier = Modifier.fillMaxWidth().then(
+            if (onWordLongPress != null) {
+                Modifier.pointerInput(processed) {
+                    detectTapGestures(
+                        onLongPress = { offset ->
+                            val layout = layoutResult ?: return@detectTapGestures
+                            val charOffset = layout.getOffsetForPosition(offset).coerceIn(0, processed.length)
+                            val range = wordAt(processed, charOffset)
+                            if (range != null) {
+                                val w = processed.substring(range).trim()
+                                if (w.isNotEmpty()) onWordLongPress(w)
+                            }
+                        }
+                    )
+                }
+            } else Modifier
+        ),
+        onTextLayout = { layoutResult = it },
     )
 }
 

@@ -3,11 +3,13 @@ package com.bhagavatam.app.ui.screens
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +22,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,12 +55,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -85,14 +89,20 @@ import com.bhagavatam.app.data.SanskritScript
 import com.bhagavatam.app.data.Verse
 import com.bhagavatam.app.data.localDigits
 import com.bhagavatam.app.data.playerTextFor
+import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.state.AppState
 import com.bhagavatam.app.state.AudioIssue
 import com.bhagavatam.app.state.AudioStatus
 import com.bhagavatam.app.ui.components.AppSlider
 import com.bhagavatam.app.ui.components.Ic
+import com.bhagavatam.app.ui.components.Mandala
+import com.bhagavatam.app.ui.components.artRes
+import com.bhagavatam.app.ui.components.chArt
 import com.bhagavatam.app.ui.components.keepMarkerTogether
 import com.bhagavatam.app.ui.components.opticallyCentred
+import com.bhagavatam.app.ui.components.skArt
 import com.bhagavatam.app.ui.components.tappable
+import com.bhagavatam.app.ui.theme.Brand
 import com.bhagavatam.app.ui.theme.EnglishReading
 import com.bhagavatam.app.ui.theme.Jakarta
 import com.bhagavatam.app.ui.theme.LocalReaderColors
@@ -105,7 +115,6 @@ import com.bhagavatam.app.util.Transliterate
 
 private fun clock(sec: Int) = "%d:%02d".format(sec / 60, sec % 60)
 
-/** The language's name in the app language, for sentences like "No Hindi voice is installed". */
 private fun languageName(ui: Lang, l: Lang) = when (ui) {
     Lang.HI -> when (l) { Lang.EN -> "अंग्रेज़ी"; Lang.BN -> "बंगाली"; else -> "हिन्दी" }
     Lang.BN -> when (l) { Lang.EN -> "ইংরেজি"; Lang.HI, Lang.SA -> "হিন্দি"; Lang.BN -> "বাংলা" }
@@ -118,24 +127,68 @@ fun PlayerScreen(state: AppState, onClose: () -> Unit) {
     val t = playerTextFor(state.uiLang)
     var showVoices by remember { mutableStateOf(false) }
     val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val v = state.current
+    val status = state.audioStatus
+    val active = if (status == AudioStatus.IDLE || status == AudioStatus.ENDED) -1 else state.activeSegment
+    val swipePx = with(LocalDensity.current) { 80.dp.toPx() }
 
-    Column(Modifier.fillMaxSize().background(c.bg).statusBarsPadding().navigationBarsPadding()) {
+    Column(
+        Modifier.fillMaxSize().background(c.bg)
+            .statusBarsPadding().navigationBarsPadding()
+            .pointerInput(Unit) {
+                var dx = 0f
+                detectHorizontalDragGestures(onDragStart = { dx = 0f }, onDragCancel = { dx = 0f }, onDragEnd = {
+                    if (dx < -swipePx) state.next() else if (dx > swipePx) state.previous()
+                }) { _, d -> dx += d }
+            },
+    ) {
+        // 1. Spotify-style Top Bar
         PlayerHeader(state, t, onClose) { showVoices = true }
+
         if (landscape) {
-            // Wide and short: the text on the left, everything you press on the right.
-            Row(Modifier.weight(1f).fillMaxWidth()) {
-                ReadingArea(state, t, Modifier.weight(1.15f).fillMaxHeight())
-                Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.Center) { Controls(state, t) }
+            Row(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp)) {
+                Column(Modifier.weight(1f).fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                    HeroCoverArt(v, Modifier.size(200.dp))
+                }
+                Column(Modifier.weight(1.2f).fillMaxHeight().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    TrackInfoRow(state, v)
+                    LyricsCard(state, state.index, active)
+                    StatusArea(state, t)
+                    ProgressBar(state, t)
+                    SpotifyTransport(state, t)
+                    SecondaryControls(state)
+                    LanguageBar(state)
+                }
             }
         } else {
-            ReadingArea(state, t, Modifier.weight(1f).fillMaxWidth())
-            Controls(state, t)
+            // Portrait: artwork and the shloka scroll; the controls stay pinned at the bottom, like a music player.
+            Column(
+                Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                HeroCoverArt(v, Modifier.fillMaxWidth(0.46f).aspectRatio(1f))
+                TrackInfoRow(state, v)
+                LyricsCard(state, state.index, active)
+                if (status == AudioStatus.ENDED) EndedActions(state, t)
+                Spacer(Modifier.height(8.dp))
+            }
+            Column(
+                Modifier.fillMaxWidth().background(c.bg).padding(horizontal = 20.dp).padding(top = 6.dp, bottom = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                StatusArea(state, t)
+                ProgressBar(state, t)
+                SpotifyTransport(state, t)
+                SecondaryControls(state)
+                LanguageBar(state)
+            }
         }
     }
     if (showVoices) VoiceSheet(state) { showVoices = false }
 }
 
-// ------------------------------------------------------------------ header
+// ------------------------------------------------------------------ Top Header
 
 @Composable
 private fun PlayerHeader(state: AppState, t: PlayerText, onClose: () -> Unit, onVoices: () -> Unit) {
@@ -145,101 +198,162 @@ private fun PlayerHeader(state: AppState, t: PlayerText, onClose: () -> Unit, on
     val v = state.current
     val reference = localDigits(if (v.skandha == 0) "${s.mahatmya} · ${s.adhyaya} ${v.adhyaya}" else "${s.skandha} ${v.skandha} · ${s.adhyaya} ${v.adhyaya}", ui)
     val title = SampleData.adhyayaTitle(v.skandha, v.adhyaya, state.titleLang, s)
-    // Swipe down anywhere on the header to close, as on a music player.
+
     Column(
         Modifier.fillMaxWidth().pointerInput(Unit) {
             var dy = 0f
-            detectVerticalDragGestures(onDragStart = { dy = 0f }, onDragEnd = { if (dy > 90f) onClose() }) { _, d -> dy += d }
+            detectVerticalDragGestures(onDragStart = { dy = 0f }, onDragEnd = { if (dy > 80f) onClose() }) { _, d -> dy += d }
         },
     ) {
         Box(Modifier.fillMaxWidth().padding(top = 8.dp), contentAlignment = Alignment.Center) {
-            Box(Modifier.width(40.dp).height(5.dp).clip(CircleShape).background(c.separator))
+            Box(Modifier.width(36.dp).height(4.dp).clip(CircleShape).background(c.separator.copy(alpha = 0.8f)))
         }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClose, Modifier.size(48.dp)) { Icon(painterResource(Ic.KeyboardArrowDown), t.closePlayer, tint = c.ink) }
+        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onClose, Modifier.size(48.dp)) {
+                Icon(painterResource(Ic.KeyboardArrowDown), t.closePlayer, tint = c.ink, modifier = Modifier.size(28.dp))
+            }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(reference, fontSize = 12.sp, color = c.secondary, maxLines = 1)
-                Text(title, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    state.strings.nowPlaying.uppercase(),
+                    fontSize = 11.sp, fontWeight = FontWeight.Bold, color = c.secondary, letterSpacing = 1.2.sp, maxLines = 1,
+                )
+                Text(
+                    "$title · $reference",
+                    fontFamily = readingFont(state.titleLang), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                )
             }
-            IconButton(onClick = onVoices, Modifier.size(48.dp)) { Icon(painterResource(Ic.Settings), t.voiceSettings, tint = c.ink, modifier = Modifier.size(22.dp)) }
+            IconButton(onClick = onVoices, Modifier.size(48.dp)) {
+                Icon(painterResource(Ic.Headphones), t.voiceSettings, tint = c.accent, modifier = Modifier.size(22.dp))
+            }
         }
     }
 }
 
-// ------------------------------------------------------------ reading area
+// ------------------------------------------------------------------ Hero Album Art
 
-/**
- * The text being read. While the voice speaks, the sentence (or line of the shloka) being said is lit and the rest
- * is slightly quieter, so the eye can follow without hunting. Tapping a sentence plays from there. The text scrolls
- * itself to keep the lit sentence in view, but never while the reader is scrolling by hand.
- */
 @Composable
-private fun ReadingArea(state: AppState, t: PlayerText, modifier: Modifier) {
-    val scroll = rememberScrollState()
-    var viewport by remember { mutableIntStateOf(0) }
-    var boxTop by remember { mutableFloatStateOf(0f) }
-    var textTop by remember { mutableFloatStateOf(0f) }
-    var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
-    val swipePx = with(LocalDensity.current) { 80.dp.toPx() }
-    val status = state.audioStatus
-    val active = if (status == AudioStatus.IDLE || status == AudioStatus.ENDED) -1 else state.activeSegment
-    val plan = state.planAt(state.index)
-
-    LaunchedEffect(state.index) { scroll.scrollTo(0) }
-    LaunchedEffect(active, status, layout) {
-        val l = layout ?: return@LaunchedEffect
-        val seg = plan.segments.getOrNull(active) ?: return@LaunchedEffect
-        if (!state.isPlaying || seg.kind != SegKind.SENTENCE || scroll.isScrollInProgress) return@LaunchedEffect
-        val at = seg.start.coerceIn(0, (l.layoutInput.text.length - 1).coerceAtLeast(0))
-        val y = textTop + l.getLineTop(l.getLineForOffset(at))
-        scroll.animateScrollTo((y - viewport * 0.3f).toInt().coerceIn(0, scroll.maxValue), tween(Motion.screen))
-    }
-
-    Column(
-        modifier.onSizeChanged { viewport = it.height }.onGloballyPositioned { boxTop = it.positionInRoot().y }
-            .pointerInput(Unit) {
-                // Swipe sideways for the previous or next shloka.
-                var dx = 0f
-                detectHorizontalDragGestures(onDragStart = { dx = 0f }, onDragCancel = { dx = 0f }, onDragEnd = {
-                    if (dx < -swipePx) state.next() else if (dx > swipePx) state.previous()
-                }) { _, d -> dx += d }
-            }
-            .verticalScroll(scroll).padding(horizontal = 24.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.Center,
+private fun HeroCoverArt(v: Verse, modifier: Modifier = Modifier) {
+    val artId = artRes(chArt(v.skandha, v.adhyaya)).takeIf { it != 0 } ?: artRes(skArt(v.skandha))
+    Box(
+        modifier
+            .shadow(24.dp, RoundedCornerShape(20.dp), ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17))
+            .clip(RoundedCornerShape(20.dp)).background(Brand.Card),
+        contentAlignment = Alignment.Center,
     ) {
-        AnimatedContent(state.index, transitionSpec = { fadeIn(tween(Motion.sheet)) togetherWith fadeOut(tween(Motion.press)) }, label = "verse") { idx ->
-            VerseContent(state, idx, active, onLayout = { layout = it }, onTextTop = { rootY -> textTop = rootY - boxTop + scroll.value })
+        if (artId != 0) {
+            Image(
+                painterResource(artId),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+            Box(Modifier.matchParentSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.40f)))))
+        } else {
+            Box(Modifier.matchParentSize().background(Brush.linearGradient(listOf(Brand.KesariTint, Brand.Gold.copy(alpha = 0.35f))))) {
+                Mandala(Brand.Gold.copy(alpha = 0.25f), Modifier.matchParentSize())
+            }
         }
-        if (status == AudioStatus.ENDED) EndedActions(state, t)
+        // Verse reference badge on bottom-left of album art
+        Box(
+            Modifier.align(Alignment.BottomStart).padding(12.dp)
+                .clip(RoundedCornerShape(8.dp)).background(Color.Black.copy(alpha = 0.65f))
+                .padding(horizontal = 10.dp, vertical = 4.dp),
+        ) {
+            Text(
+                v.ref,
+                fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = 0.5.sp,
+            )
+        }
     }
 }
 
+// ------------------------------------------------------------------ Track Title & Bookmark Row
+
 @Composable
-private fun VerseContent(state: AppState, idx: Int, active: Int, onLayout: (TextLayoutResult) -> Unit, onTextTop: (Float) -> Unit) {
+private fun TrackInfoRow(state: AppState, v: Verse) {
     val c = LocalReaderColors.current
     val ui = state.uiLang
+    val isBookmarked = v.ref in state.bookmarks
+    val langLabel = when (state.audioLang) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English" }
+
+    Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                "${state.strings.shloka} ${localDigits(v.ref, ui)}",
+                fontSize = 22.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 1,
+            )
+            val sub = if (v.speaker != null) "${v.speaker} · $langLabel" else langLabel
+            Text(
+                sub,
+                fontSize = 14.sp, color = c.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis,
+            )
+        }
+        IconButton(
+            onClick = { state.toggleBookmark(v.ref) },
+            modifier = Modifier.size(46.dp),
+        ) {
+            Icon(
+                painterResource(Ic.Bookmark),
+                contentDescription = if (isBookmarked) "Remove bookmark" else "Bookmark",
+                tint = if (isBookmarked) c.gold else c.secondary.copy(alpha = 0.4f),
+                modifier = Modifier.size(24.dp),
+            )
+        }
+    }
+}
+
+// ------------------------------------------------------------------ Spotify-Style Lyrics / Shloka Card
+
+@Composable
+private fun LyricsCard(state: AppState, idx: Int, active: Int) {
+    val c = LocalReaderColors.current
     val verse = state.queue.getOrElse(idx) { state.current }
     val lang = state.audioLang
     val scale = state.textScale
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(18.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(localDigits("${verse.skandha}.${verse.adhyaya}.${verse.numLabel}", ui), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
-            if (verse.speaker != null) Text(verse.speaker, fontFamily = NotoDevanagari, fontSize = 13.sp, color = c.secondary)
+    val plan = state.planAt(idx)
+
+    Column(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp))
+            .background(c.surface).border(1.dp, c.separator.copy(alpha = 0.7f), RoundedCornerShape(18.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                tr(state.uiLang, "SHLOKA & RECITATION", "श्लोक और पाठ", "শ্লোক ও পাঠ"),
+                fontSize = 11.sp, fontWeight = FontWeight.Bold, color = c.gold, letterSpacing = 1.sp,
+            )
+            if (verse.speaker != null) {
+                Text(verse.speaker, fontFamily = NotoDevanagari, fontSize = 12.sp, color = c.secondary)
+            }
         }
-        if (lang == Lang.SA) {
-            ShlokaLines(state, verse, state.planAt(idx), active, 22f * scale)
+
+        // 1. Sanskrit Shloka with live line karaoke
+        if (lang == Lang.SA || state.showSanskrit) {
+            ShlokaLines(state, verse, plan, if (lang == Lang.SA) active else -1, 18f * scale)
+        }
+
+        // 2. Translation layer
+        if (lang != Lang.SA) {
+            Box(Modifier.fillMaxWidth().height(1.dp).background(c.separator.copy(alpha = 0.5f)))
+            TranslationText(state, verse, lang, plan, active)
+        } else {
             val tr = state.alongsideLayers().firstOrNull()
             if (tr != null && verse.hasText(tr)) {
-                Text(verse.translation(tr), Modifier.fillMaxWidth(), fontFamily = readingFont(tr), fontSize = (16 * scale).sp, lineHeight = (26 * scale * state.lineScale).sp, color = c.secondary)
+                Box(Modifier.fillMaxWidth().height(1.dp).background(c.separator.copy(alpha = 0.5f)))
+                Text(
+                    verse.translation(tr),
+                    Modifier.fillMaxWidth(),
+                    fontFamily = readingFont(tr),
+                    fontSize = (15 * scale).sp,
+                    lineHeight = (24 * scale * state.lineScale).sp,
+                    color = c.secondary,
+                )
             }
-        } else {
-            if (state.showSanskrit) ShlokaLines(state, verse, state.planAt(idx), -1, 17f * scale)
-            TranslationText(state, verse, lang, state.planAt(idx), active, onLayout, onTextTop)
         }
     }
 }
 
-/** The shloka line by line, so each line can be lit as it is recited and tapped to start from there. */
 @Composable
 private fun ShlokaLines(state: AppState, verse: Verse, plan: VersePlan, active: Int, size: Float) {
     val c = LocalReaderColors.current
@@ -248,39 +362,42 @@ private fun ShlokaLines(state: AppState, verse: Verse, plan: VersePlan, active: 
         SanskritScript.BENGALI -> verse.sa.map { Transliterate.toBengali(it) } to NotoSerifBengali
         SanskritScript.IAST -> verse.iast to EnglishReading
     }
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         lines.forEachIndexed { i, line ->
             val seg = plan.segments.indexOfFirst { it.kind == SegKind.SHLOKA && it.start == i }
             val lit = seg >= 0 && seg == active
-            val quiet = active >= 0 && !lit
+            val fill by animateColorAsState(if (lit) c.accent.copy(alpha = 0.18f) else Color.Transparent, tween(Motion.press), label = "litFill")
             Text(
                 keepMarkerTogether(line),
-                Modifier.clip(RoundedCornerShape(8.dp)).then(if (lit) Modifier.background(c.accent.copy(alpha = 0.12f)) else Modifier)
+                Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
+                    .background(fill)
                     .then(if (seg >= 0) Modifier.clickable(role = Role.Button) { state.playFromSegment(seg) } else Modifier)
-                    .padding(horizontal = 8.dp, vertical = 1.dp),
-                fontFamily = font, fontSize = size.sp, lineHeight = (size * 1.75f).sp,
-                color = if (quiet) c.shloka.copy(alpha = 0.72f) else c.shloka, textAlign = TextAlign.Center,
+                    .padding(horizontal = 8.dp, vertical = 2.dp),
+                fontFamily = font, fontSize = size.sp, lineHeight = (size * 1.6f).sp,
+                color = if (lit) c.ink else c.shloka, fontWeight = if (lit) FontWeight.SemiBold else FontWeight.Normal,
+                textAlign = TextAlign.Center,
             )
         }
     }
 }
 
 @Composable
-private fun TranslationText(
-    state: AppState, verse: Verse, lang: Lang, plan: VersePlan, active: Int,
-    onLayout: (TextLayoutResult) -> Unit, onTextTop: (Float) -> Unit,
-) {
+private fun TranslationText(state: AppState, verse: Verse, lang: Lang, plan: VersePlan, active: Int) {
     val c = LocalReaderColors.current
     val scale = state.textScale
     val big = lang == Lang.HI || lang == Lang.BN
     val text = verse.translation(lang)
-    // The lit sentence gets a tint; the others step back a little (never below 4.5:1).
+
     val shown = remember(text, plan, active, c.ink, c.accent) {
         buildAnnotatedString {
             append(text)
             if (active >= 0) plan.segments.forEachIndexed { i, seg ->
                 if (seg.kind == SegKind.SENTENCE && seg.start >= 0 && seg.end <= text.length) {
-                    addStyle(if (i == active) SpanStyle(background = c.accent.copy(alpha = 0.14f), color = c.ink) else SpanStyle(color = c.ink.copy(alpha = 0.72f)), seg.start, seg.end)
+                    addStyle(
+                        if (i == active) SpanStyle(background = c.accent.copy(alpha = 0.18f), color = c.ink, fontWeight = FontWeight.SemiBold)
+                        else SpanStyle(color = c.ink.copy(alpha = 0.75f)),
+                        seg.start, seg.end,
+                    )
                 }
             }
         }
@@ -288,50 +405,131 @@ private fun TranslationText(
     var result by remember { mutableStateOf<TextLayoutResult?>(null) }
     Text(
         shown,
-        Modifier.fillMaxWidth().onGloballyPositioned { onTextTop(it.positionInRoot().y) }.pointerInput(plan) {
+        Modifier.fillMaxWidth().pointerInput(plan) {
             detectTapGestures { pos ->
                 val off = result?.getOffsetForPosition(pos) ?: return@detectTapGestures
                 val hit = plan.segments.indexOfFirst { it.kind == SegKind.SENTENCE && off >= it.start && off < it.end }
                 if (hit >= 0) state.playFromSegment(hit)
             }
         },
-        onTextLayout = { result = it; onLayout(it) },
-        fontFamily = readingFont(lang), fontSize = ((if (big) 21 else 20) * scale).sp,
-        lineHeight = ((if (big) 36 else 32) * scale * state.lineScale).sp, color = c.ink,
+        onTextLayout = { result = it },
+        fontFamily = readingFont(lang), fontSize = ((if (big) 18 else 17) * scale).sp,
+        lineHeight = ((if (big) 30 else 26) * scale * state.lineScale).sp, color = c.ink,
     )
 }
 
+// ------------------------------------------------------------------ Scrubber / Seekbar
+
 @Composable
-private fun EndedActions(state: AppState, t: PlayerText) {
+private fun ProgressBar(state: AppState, t: PlayerText) {
     val c = LocalReaderColors.current
-    val v = state.queue.firstOrNull()
-    val hasNext = v != null && SampleData.neighbour(v.skandha, v.adhyaya, 1) != null
-    Row(Modifier.fillMaxWidth().padding(top = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(
-            Modifier.weight(1f).heightIn(min = 52.dp).tappable(Radius.group, t.replay) { state.togglePlay() }.border(1.dp, c.separator, Radius.group).padding(horizontal = 12.dp),
-            contentAlignment = Alignment.Center,
-        ) { Text(t.replay, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, textAlign = TextAlign.Center) }
-        if (hasNext) Box(
-            Modifier.weight(1f).heightIn(min = 52.dp).tappable(Radius.group, t.nextChapter) { state.playNextChapter() }.background(c.accent).padding(horizontal = 12.dp),
-            contentAlignment = Alignment.Center,
-        ) { Text(t.nextChapter, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.chipOnText, textAlign = TextAlign.Center) }
+    val ui = state.uiLang
+    val total = state.queue.size
+    var drag by remember { mutableStateOf<Float?>(null) }
+    val shown = (drag ?: state.index.toFloat()).toInt().coerceIn(0, (total - 1).coerceAtLeast(0))
+    val sec = state.secondsLeft
+    val minutes = (sec + 30) / 60
+    val left = when {
+        state.audioStatus == AudioStatus.ENDED -> ""
+        sec < 60 -> t.lessThanMinute
+        minutes >= 60 -> t.hoursLeft(minutes / 60, minutes % 60)
+        else -> t.minutesLeft(minutes)
+    }
+
+    Column(Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
+        AppSlider(
+            value = drag ?: state.index.toFloat(),
+            onValueChange = { drag = it },
+            onValueChangeFinished = { drag?.let { state.seekTo(it.toInt()) }; drag = null },
+            valueRange = 0f..(total - 1).coerceAtLeast(1).toFloat(),
+            enabled = total > 1, active = c.accent, inactive = c.track,
+            modifier = Modifier.fillMaxWidth().semantics { contentDescription = t.position(shown + 1, total) },
+        )
+        Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(localDigits("${shown + 1} / $total", ui), fontSize = 12.sp, color = c.secondary)
+            Text(localDigits(left, ui), fontSize = 12.sp, color = c.secondary)
+        }
     }
 }
 
-// ---------------------------------------------------------------- controls
+// ------------------------------------------------------------------ Spotify Transport Bar
 
 @Composable
-private fun Controls(state: AppState, t: PlayerText) {
-    Column(Modifier.fillMaxWidth()) {
-        StatusArea(state, t)
-        ProgressBar(state, t)
-        Transport(state, t)
-        SecondaryControls(state)
-        LanguageBar(state)
+private fun SpotifyTransport(state: AppState, t: PlayerText) {
+    val c = LocalReaderColors.current
+    Row(
+        Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Repeat / Loop toggle
+        IconButton(onClick = state::toggleLoop, Modifier.size(46.dp)) {
+            Icon(
+                painterResource(Ic.Repeat),
+                contentDescription = state.strings.loop,
+                tint = if (state.loop) c.accent else c.secondary.copy(alpha = 0.6f),
+                modifier = Modifier.size(24.dp),
+            )
+        }
+
+        // Skip Previous
+        IconButton(onClick = state::previous, Modifier.size(52.dp)) {
+            Icon(
+                painterResource(Ic.SkipPrevious),
+                contentDescription = t.prevShloka,
+                tint = c.ink,
+                modifier = Modifier.size(32.dp),
+            )
+        }
+
+        // Hero Play / Pause Button
+        val playLabel = if (state.isPlaying) t.pause else t.play
+        Box(
+            Modifier.size(68.dp).shadow(12.dp, CircleShape, ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17))
+                .clip(CircleShape).background(c.accent)
+                .clickable(role = Role.Button, onClickLabel = playLabel) { state.togglePlay() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Crossfade(state.isPlaying, animationSpec = tween(Motion.press), label = "playIcon") { playing ->
+                Icon(
+                    painterResource(if (playing) Ic.Pause else Ic.PlayArrow),
+                    null, tint = c.chipOnText, modifier = Modifier.size(36.dp),
+                )
+            }
+            if (state.audioStatus == AudioStatus.PREPARING) {
+                CircularProgressIndicator(
+                    Modifier.matchParentSize().padding(4.dp),
+                    color = c.chipOnText.copy(alpha = 0.85f),
+                    strokeWidth = 2.5.dp,
+                )
+            }
+        }
+
+        // Skip Next
+        IconButton(onClick = state::next, Modifier.size(52.dp)) {
+            Icon(
+                painterResource(Ic.SkipNext),
+                contentDescription = t.nextShloka,
+                tint = c.ink,
+                modifier = Modifier.size(32.dp),
+            )
+        }
+
+        // Speed Toggle
+        Box(
+            Modifier.size(46.dp).clip(CircleShape).clickable(role = Role.Button) { state.cycleSpeed() },
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                "${state.speed}×",
+                fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.ink,
+            )
+        }
     }
 }
 
-/** One quiet line saying what the voice is doing, or a plain explanation (and a way out) when it cannot speak. */
+// ------------------------------------------------------------------ Status Area
+
 @Composable
 private fun StatusArea(state: AppState, t: PlayerText) {
     val c = LocalReaderColors.current
@@ -351,81 +549,27 @@ private fun StatusArea(state: AppState, t: PlayerText) {
     }
     if (issue != null) {
         Row(
-            Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth().animateContentSize().clip(Radius.group).background(c.surface)
-                .padding(start = 14.dp, top = 6.dp, bottom = 6.dp, end = 4.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            Modifier.padding(horizontal = 8.dp, vertical = 2.dp).fillMaxWidth().clip(Radius.group).background(c.surface)
+                .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp).semantics { liveRegion = LiveRegionMode.Polite },
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(text, Modifier.weight(1f), fontSize = 13.sp, lineHeight = 18.sp, color = c.ink)
+            Text(text, Modifier.weight(1f), fontSize = 12.sp, lineHeight = 16.sp, color = c.ink)
             if (issue != AudioIssue.NO_ENGINE) Box(
-                Modifier.heightIn(min = 48.dp).clip(RoundedCornerShape(10.dp)).clickable(role = Role.Button) {
+                Modifier.heightIn(min = 40.dp).clip(RoundedCornerShape(8.dp)).clickable(role = Role.Button) {
                     runCatching { context.startActivity(Narrator.settingsIntent()) }
-                }.padding(horizontal = 10.dp),
+                }.padding(horizontal = 8.dp),
                 contentAlignment = Alignment.Center,
-            ) { Text(t.installVoice, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = c.accent) }
+            ) { Text(t.installVoice, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = c.accent) }
         }
-    } else {
-        Crossfade(text, animationSpec = tween(Motion.sheet), label = "status") { line ->
-            Text(
-                line, Modifier.fillMaxWidth().heightIn(min = 28.dp).padding(horizontal = 24.dp).semantics { liveRegion = LiveRegionMode.Polite },
-                fontSize = 13.sp, lineHeight = 18.sp, color = c.secondary, textAlign = TextAlign.Center,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ProgressBar(state: AppState, t: PlayerText) {
-    val c = LocalReaderColors.current
-    val ui = state.uiLang
-    val total = state.queue.size
-    var drag by remember { mutableStateOf<Float?>(null) }
-    val shown = (drag ?: state.index.toFloat()).toInt().coerceIn(0, (total - 1).coerceAtLeast(0))
-    val sec = state.secondsLeft
-    val minutes = (sec + 30) / 60
-    val left = when {
-        state.audioStatus == AudioStatus.ENDED -> ""
-        sec < 60 -> t.lessThanMinute
-        minutes >= 60 -> t.hoursLeft(minutes / 60, minutes % 60)
-        else -> t.minutesLeft(minutes)
-    }
-    Column(Modifier.padding(horizontal = 20.dp)) {
-        AppSlider(
-            value = drag ?: state.index.toFloat(),
-            onValueChange = { drag = it },
-            onValueChangeFinished = { drag?.let { state.seekTo(it.toInt()) }; drag = null },
-            valueRange = 0f..(total - 1).coerceAtLeast(1).toFloat(),
-            enabled = total > 1, active = c.accent, inactive = c.track,
-            modifier = Modifier.fillMaxWidth().semantics { contentDescription = t.position(shown + 1, total) },
+    } else if (text.isNotEmpty()) {
+        Text(
+            text, Modifier.fillMaxWidth().padding(horizontal = 16.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            fontSize = 12.sp, color = c.secondary, textAlign = TextAlign.Center,
         )
-        Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp)) {
-            Text(localDigits("${shown + 1} / $total", ui), Modifier.weight(1f), fontSize = 13.sp, color = c.secondary)
-            Text(localDigits(left, ui), fontSize = 13.sp, color = c.secondary)
-        }
     }
 }
 
-@Composable
-private fun Transport(state: AppState, t: PlayerText) {
-    val c = LocalReaderColors.current
-    Row(
-        Modifier.fillMaxWidth().padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = state::previous, Modifier.size(56.dp)) { Icon(painterResource(Ic.SkipPrevious), t.prevShloka, tint = c.ink, modifier = Modifier.size(30.dp)) }
-        val label = if (state.isPlaying) t.pause else t.play
-        Box(
-            Modifier.size(72.dp).tappable(CircleShape, label) { state.togglePlay() }.background(c.accent).semantics { contentDescription = label },
-            contentAlignment = Alignment.Center,
-        ) {
-            Crossfade(state.isPlaying, animationSpec = tween(Motion.press), label = "playIcon") { playing ->
-                Icon(painterResource(if (playing) Ic.Pause else Ic.PlayArrow), null, tint = c.chipOnText, modifier = Modifier.size(38.dp))
-            }
-            // While the voice is getting ready (first start, a new language, a new voice) a ring runs round the button.
-            if (state.audioStatus == AudioStatus.PREPARING) CircularProgressIndicator(Modifier.matchParentSize().padding(5.dp), color = c.chipOnText.copy(alpha = 0.85f), strokeWidth = 2.5.dp)
-        }
-        IconButton(onClick = state::next, Modifier.size(56.dp)) { Icon(painterResource(Ic.SkipNext), t.nextShloka, tint = c.ink, modifier = Modifier.size(30.dp)) }
-    }
-}
+// ------------------------------------------------------------------ Secondary Controls
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -433,50 +577,79 @@ private fun SecondaryControls(state: AppState) {
     val s = state.strings
     val ui = state.uiLang
     var showSleep by remember { mutableStateOf(false) }
-    FlowRow(
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    val c = LocalReaderColors.current
+
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Chip("${state.speed}×", s.speed, on = false) { state.cycleSpeed() }
-        Chip(null, s.loop, on = state.loop, icon = painterResource(Ic.Repeat), toggle = true) { state.toggleLoop() }
-        Chip(if (state.sleepMinutes > 0) clock(state.sleepLeftSec) else null, s.sleep, on = state.sleepMinutes > 0, icon = painterResource(Ic.Bedtime)) { showSleep = !showSleep }
+        // Sleep timer chip
+        Chip(
+            if (state.sleepMinutes > 0) clock(state.sleepLeftSec) else null,
+            s.sleep, on = state.sleepMinutes > 0, icon = painterResource(Ic.Bedtime),
+        ) { showSleep = !showSleep }
+
+        // Playthrough mode badge (Adhyaya / Skandha / Granth)
+        Chip(
+            null,
+            when (state.playThrough) {
+                com.bhagavatam.app.state.PlayThrough.ADHYAYA -> s.throughAdhyaya
+                com.bhagavatam.app.state.PlayThrough.SKANDHA -> s.throughSkandha
+                com.bhagavatam.app.state.PlayThrough.GRANTH -> s.throughGranth
+            },
+            on = false,
+        ) { state.cyclePlayThrough() }
     }
+
     if (showSleep) {
-        val c = LocalReaderColors.current
         FlowRow(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).animateContentSize(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally), verticalArrangement = Arrangement.spacedBy(8.dp),
+            Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp).animateContentSize(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             listOf(0, 15, 30, 45, 60).forEach { m ->
                 val on = state.sleepMinutes == m
                 Box(
-                    Modifier.heightIn(min = 48.dp).clip(CircleShape).background(if (on) c.chipOn else c.track)
-                        .selectable(selected = on, role = Role.RadioButton) { state.setSleep(m); showSleep = false }.padding(horizontal = 16.dp),
+                    Modifier.heightIn(min = 40.dp).clip(CircleShape).background(if (on) c.chipOn else c.track)
+                        .selectable(selected = on, role = Role.RadioButton) { state.setSleep(m); showSleep = false }.padding(horizontal = 14.dp),
                     contentAlignment = Alignment.Center,
-                ) { Text(if (m == 0) s.off else localDigits("$m", ui), fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = if (on) c.chipOnText else c.ink) }
+                ) {
+                    Text(
+                        if (m == 0) s.off else localDigits("$m min", ui),
+                        fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = if (on) c.chipOnText else c.ink,
+                    )
+                }
             }
         }
     }
 }
 
-/** The language that is heard. Choosing one rebuilds the narration and carries on from the start of this shloka. */
+// ------------------------------------------------------------------ Recitation Language Bar
+
 @Composable
 private fun LanguageBar(state: AppState) {
     val c = LocalReaderColors.current
     val langs = buildList { add(Lang.SA); add(Lang.HI); if (BENGALI_READY) add(Lang.BN); add(Lang.EN) }
     val names = langs.map { when (it) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English" } }
     val fonts = langs.map { when (it) { Lang.SA -> NotoDevanagari; Lang.HI -> TiroHindi; Lang.BN -> NotoSerifBengali; Lang.EN -> Jakarta } }
+
     Row(
-        Modifier.padding(horizontal = 16.dp, vertical = 14.dp).fillMaxWidth().clip(Radius.field).background(c.track).padding(3.dp),
+        Modifier.padding(horizontal = 4.dp, vertical = 4.dp).fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(c.track.copy(alpha = 0.6f)).padding(3.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         langs.forEachIndexed { i, l ->
             val on = l == state.readLang
             Box(
-                Modifier.weight(1f).heightIn(min = 48.dp).clip(RoundedCornerShape(9.dp)).background(if (on) c.surface else Color.Transparent)
+                Modifier.weight(1f).heightIn(min = 42.dp).clip(RoundedCornerShape(9.dp)).background(if (on) c.surface else Color.Transparent)
                     .selectable(selected = on, role = Role.Tab) { if (!on) { state.updateReadLang(l); state.restartNarration() } },
                 contentAlignment = Alignment.Center,
-            ) { Text(names[i], Modifier.opticallyCentred(fonts[i]), fontFamily = fonts[i], fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = if (on) c.ink else c.secondary, maxLines = 1) }
+            ) {
+                Text(
+                    names[i], Modifier.opticallyCentred(fonts[i]), fontFamily = fonts[i],
+                    fontSize = 14.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium, color = if (on) c.ink else c.secondary, maxLines = 1,
+                )
+            }
         }
     }
 }
@@ -485,13 +658,30 @@ private fun LanguageBar(state: AppState) {
 private fun Chip(top: String?, label: String, on: Boolean, icon: Painter? = null, toggle: Boolean = false, onClick: () -> Unit) {
     val c = LocalReaderColors.current
     Row(
-        Modifier.heightIn(min = 48.dp).clip(CircleShape).border(1.dp, if (on) c.accent else c.separator, CircleShape)
+        Modifier.heightIn(min = 40.dp).clip(CircleShape).border(1.dp, if (on) c.accent else c.separator, CircleShape)
             .then(if (toggle) Modifier.toggleable(value = on, role = Role.Switch) { onClick() } else Modifier.clickable(role = Role.Button, onClick = onClick))
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        if (icon != null) Icon(icon, null, tint = if (on) c.accent else c.ink, modifier = Modifier.size(18.dp))
-        if (top != null) Text(top, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = if (on) c.accent else c.ink)
-        else Text(label, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = if (on) c.accent else c.ink)
+        if (icon != null) Icon(icon, null, tint = if (on) c.accent else c.ink, modifier = Modifier.size(16.dp))
+        if (top != null) Text(top, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (on) c.accent else c.ink)
+        else Text(label, fontSize = 13.sp, fontWeight = FontWeight.Medium, color = if (on) c.accent else c.ink)
+    }
+}
+
+@Composable
+private fun EndedActions(state: AppState, t: PlayerText) {
+    val c = LocalReaderColors.current
+    val v = state.queue.firstOrNull()
+    val hasNext = v != null && SampleData.neighbour(v.skandha, v.adhyaya, 1) != null
+    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Box(
+            Modifier.weight(1f).heightIn(min = 48.dp).tappable(Radius.group, t.replay) { state.togglePlay() }.border(1.dp, c.separator, Radius.group).padding(horizontal = 12.dp),
+            contentAlignment = Alignment.Center,
+        ) { Text(t.replay, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = c.ink, textAlign = TextAlign.Center) }
+        if (hasNext) Box(
+            Modifier.weight(1f).heightIn(min = 48.dp).tappable(Radius.group, t.nextChapter) { state.playNextChapter() }.background(c.accent).padding(horizontal = 12.dp),
+            contentAlignment = Alignment.Center,
+        ) { Text(t.nextChapter, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = c.chipOnText, textAlign = TextAlign.Center) }
     }
 }

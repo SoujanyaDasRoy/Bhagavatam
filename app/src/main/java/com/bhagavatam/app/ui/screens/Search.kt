@@ -45,6 +45,8 @@ import kotlinx.coroutines.withContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -229,37 +231,39 @@ fun SearchScreen(
     Column(Modifier.fillMaxSize()) {
         // Search Header
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp)) {
-            LargeTitle(s.tabSearch, s.searchAbout, horizontalPadding = 4.dp)
+            LargeTitle(s.tabSearch, null, horizontalPadding = 4.dp)
             
             // Search Input Box with Mic button
             var focused by remember { mutableStateOf(false) }
+            val focusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
             Row(
-                Modifier.fillMaxWidth().heightIn(min = 54.dp).clip(Radius.card).background(Brand.Fill)
-                    .border(1.dp, if (focused) Brand.Kesari else Brand.Separator, Radius.card)
-                    .padding(horizontal = 14.dp),
+                Modifier.fillMaxWidth().heightIn(min = 56.dp).clip(Radius.card).background(Brand.Fill)
+                    .border(1.5.dp, if (focused) Brand.Kesari else Brand.Separator, Radius.card)
+                    .clickable { focusRequester.requestFocus() }
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Icon(painterResource(Ic.Search), null, tint = Brand.Secondary, modifier = Modifier.size(20.dp))
+                Icon(painterResource(Ic.Search), null, tint = if (focused) Brand.Kesari else Brand.Secondary, modifier = Modifier.size(22.dp))
                 BasicTextField(
                     value = query,
                     onValueChange = { query = it },
                     singleLine = true,
                     textStyle = TextStyle(fontSize = 16.sp, color = Brand.Ink),
                     cursorBrush = SolidColor(Brand.Kesari),
-                    modifier = Modifier.weight(1f).onFocusChanged { focused = it.isFocused },
+                    modifier = Modifier.weight(1f).focusRequester(focusRequester).onFocusChanged { focused = it.isFocused },
                     decorationBox = { inner ->
                         if (query.isEmpty()) Text(s.searchHint, fontSize = 15.sp, color = Brand.Secondary)
                         inner()
                     }
                 )
                 if (query.isNotEmpty()) {
-                    Box(Modifier.size(32.dp).clip(CircleShape).clickable { query = "" }, contentAlignment = Alignment.Center) {
-                        Icon(painterResource(Ic.Close), null, tint = Brand.Secondary, modifier = Modifier.size(16.dp))
+                    Box(Modifier.size(36.dp).clip(CircleShape).clickable { query = "" }, contentAlignment = Alignment.Center) {
+                        Icon(painterResource(Ic.Close), null, tint = Brand.Secondary, modifier = Modifier.size(18.dp))
                     }
                 }
                 Box(
-                    Modifier.size(36.dp).clip(CircleShape).background(Brand.KesariTint).clickable { showVoiceSheet = true },
+                    Modifier.size(38.dp).clip(CircleShape).background(Brand.KesariTint).clickable { showVoiceSheet = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(painterResource(Ic.Mic), null, tint = Brand.Kesari, modifier = Modifier.size(20.dp))

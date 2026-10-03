@@ -70,13 +70,11 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
     /** The full word sheet (all places the word appears) on top of the compact meaning card. */
     var showWordSheet by mutableStateOf(false)
-    /** When set, Google results for this text are shown inside the app (the web panel). */
-    var webQuery by mutableStateOf<String?>(null)
-    var showHi by mutableStateOf(prefs.getBoolean("showHi", false))
+    var showHi by mutableStateOf(prefs.getBoolean("showHi", prefs.getString("uiLang", "EN") == "HI"))
         private set
-    var showBn by mutableStateOf(prefs.getBoolean("showBn", false) && BENGALI_READY)
+    var showBn by mutableStateOf(prefs.getBoolean("showBn", prefs.getString("uiLang", "EN") == "BN") && BENGALI_READY)
         private set
-    var showEn by mutableStateOf(prefs.getBoolean("showEn", true))
+    var showEn by mutableStateOf(prefs.getBoolean("showEn", prefs.getString("uiLang", "EN") == "EN" || (!prefs.getBoolean("showHi", false) && !prefs.getBoolean("showBn", false))))
         private set
     var readerTheme by mutableStateOf(ReaderTheme.valueOf(prefs.getString("theme", "Prabhat")!!))
         private set
@@ -105,7 +103,16 @@ class AppState(app: Application) : AndroidViewModel(app) {
     private fun save(block: android.content.SharedPreferences.Editor.() -> Unit) = with(prefs.edit()) { block(); apply() }
 
     fun finishOnboarding() { onboarded = true; save { putBoolean("onboarded", true) } }
-    fun updateUiLang(l: Lang) { uiLang = l; save { putString("uiLang", l.name) } }
+    fun updateUiLang(l: Lang) {
+        uiLang = l
+        save { putString("uiLang", l.name) }
+        when (l) {
+            Lang.HI -> if (!showHi && !showBn && !showEn) updateShowHi(true)
+            Lang.BN -> if (!showHi && !showBn && !showEn) updateShowBn(true)
+            Lang.EN -> if (!showHi && !showBn && !showEn) updateShowEn(true)
+            else -> {}
+        }
+    }
     fun updateReadLang(l: Lang) {
         readLang = l; save { putString("readLang", l.name) }
         if (l != Lang.SA) { showSanskrit = false; save { putBoolean("showSanskrit", false) } }
@@ -174,7 +181,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
         if (showHi) add(Lang.HI)
         if (showBn && BENGALI_READY) add(Lang.BN)
         if (showEn) add(Lang.EN)
-    }.ifEmpty { listOf(Lang.EN) }
+    }.ifEmpty {
+        when (uiLang) {
+            Lang.HI -> listOf(Lang.HI)
+            Lang.BN -> listOf(Lang.BN)
+            else -> listOf(Lang.EN)
+        }
+    }
 
     // ---------- reading position ----------
     var lastSkandha by mutableStateOf(prefs.getInt("lastS", 1))
@@ -385,9 +398,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** Language that is heard: follows the Bhagavatam (paath) language. */
     val audioLang: Lang get() = langFor(current)
 
-    /** Chapter and Skandha titles follow the reading (paath) language: Sanskrit or Hindi -> Hindi titles,
-     *  English -> English, Bengali -> Bengali (chapter titles fall back to English until Bengali is extracted). */
-    val titleLang: Lang get() = when (readLang) { Lang.SA, Lang.HI -> Lang.HI; Lang.BN -> Lang.BN; Lang.EN -> Lang.EN }
+    /** Chapter and Skandha titles follow the reading language (or the app UI language when reading Sanskrit). */
+    val titleLang: Lang get() = when (readLang) {
+        Lang.SA -> uiLang
+        Lang.HI -> Lang.HI
+        Lang.BN -> Lang.BN
+        Lang.EN -> Lang.EN
+    }
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

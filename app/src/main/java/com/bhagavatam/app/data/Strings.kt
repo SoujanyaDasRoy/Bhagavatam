@@ -1,43 +1,57 @@
 package com.bhagavatam.app.data
 
-/** Interface text in the three app languages. */
+/**
+ * Localized interface strings for English, Hindi and Bengali.
+ *
+ * The strings only cover the app shell: buttons, labels, tabs, empty states, and names of languages and scripts. The
+ * sacred texts themselves come from the database in their own columns (sa, hi, bn, en).
+ */
 data class Strings(
     val tabHome: String, val tabGranth: String, val tabSearch: String, val tabDownloads: String, val tabMe: String,
     val homeGreeting: String, val skandha: String, val adhyaya: String, val adhyayas: String, val shloka: String,
-    val stoppedAt: String, val resumeReading: String, val shlokaOfDay: String, val listen: String, val goToHint: String,
-    val granthSub: String, val mahatmya: String, val finished: String, val readingNow: String,
-    val sanskritOff: String, val show: String, val sampleOnly: String, val back: String,
-    val speed: String, val loop: String, val sleep: String, val nowPlaying: String,
-    val searchHint: String, val tryThese: String, val recent: String, val searchAbout: String, val results: String, val result: String,
-    val noMatches: String, val noMatchesHint: String, val goTo: String, val shlokas: String, val chapters: String, val glossary: String,
-    val all: String, val mool: String, val alsoIn: String,
-    val sanskritAudioPacks: String, val downloadsNote: String, val onPhone: String, val downloading: String, val sanskritAudio: String,
-    val packs: String, val saved: String, val bookmarks: String, val highlights: String,
+    val stoppedAt: String, val resumeReading: String, val shlokaOfDay: String, val listen: String,
+    val goToHint: String, val granthSub: String, val mahatmya: String, val finished: String, val readingNow: String,
+    val sanskritOff: String, val show: String, val sampleOnly: String,
+    val back: String, val speed: String, val loop: String, val sleep: String, val nowPlaying: String,
+    val searchHint: String, val tryThese: String, val recent: String, val searchAbout: String,
+    val results: String, val result: String, val noMatches: String, val noMatchesHint: String,
+    val goTo: String, val shlokas: String, val chapters: String, val glossary: String, val all: String, val mool: String, val alsoIn: String,
+    val sanskritAudioPacks: String, val downloadsNote: String, val onPhone: String, val downloading: String,
+    val sanskritAudio: String, val packs: String, val saved: String, val bookmarks: String, val highlights: String,
     val savedVerses: String, val languages: String, val reading: String, val showSanskrit: String, val showSanskritNote: String,
-    val listening: String, val keepPlaying: String, val backgroundNote: String, val playThrough: String,
-    val throughAdhyaya: String, val throughSkandha: String, val throughGranth: String,
+    val listening: String, val keepPlaying: String, val backgroundNote: String,
+    val playThrough: String, val throughAdhyaya: String, val throughSkandha: String, val throughGranth: String,
     val sleepTimer: String, val off: String, val keepScreenOn: String, val textSize: String, val texts: String, val gitaPress: String,
     val appLanguage: String, val appLanguageNote: String, val bhagLanguage: String, val bhagLanguageNote: String,
     val sanskritScript: String, val showAlongside: String, val transliteration: String,
     val hindiTr: String, val bengaliTr: String, val englishTr: String,
     val readSa: String, val readHi: String, val readBn: String, val readEn: String,
     val chooseLanguage: String, val changeLater: String, val continueBtn: String, val textsFrom: String,
-    val paathQuestion: String, val paathSub: String, val paathLanguage: String, val startReading: String, val stepOf: String,
-    val preview: String, val glossaryHint: String, val themes: List<String>,
-    val jaiShreeMadhav: String, val shrimadBhagavatMahapuran: String, val minRead: String,
-    val tabAll: String, val tabEnglish: String, val tabHindi: String, val tabBangla: String,
-    val voiceSearchHint: String, val openPrompt: String, val openAction: String, val cancelAction: String,
+    val paathQuestion: String, val paathSub: String, val paathLanguage: String, val startReading: String,
+    val stepOf: String, val preview: String, val glossaryHint: String,
+    val themes: List<String>,
+    val jaiShreeMadhav: String,
+    val shrimadBhagavatMahapuran: String,
+    val minRead: String,
+    val tabAll: String,
+    val tabEnglish: String,
+    val tabHindi: String,
+    val tabBangla: String,
+    val voiceSearchHint: String,
+    val openPrompt: String,
+    val openAction: String,
+    val cancelAction: String,
     val thematicLilaIndex: String,
 )
 
 val EnglishStrings = Strings(
     tabHome = "Home", tabGranth = "Content", tabSearch = "Search", tabDownloads = "Downloads", tabMe = "Settings",
-    homeGreeting = "Hari Om. Continue where you left off.", skandha = "Skandha", adhyaya = "Adhyaya", adhyayas = "adhyayas", shloka = "Shloka",
+    homeGreeting = "Hari Om. Continue where you left off.", skandha = "Skandha", adhyaya = "Chapter", adhyayas = "chapters", shloka = "Shloka",
     stoppedAt = "Stopped at shloka", resumeReading = "Resume reading", shlokaOfDay = "Shloka of the day", listen = "Listen",
     goToHint = "Go to a verse, e.g. 10.29.1",
     granthSub = "Mahatmya and 12 Skandhas", mahatmya = "Mahatmya", finished = "finished", readingNow = "Reading",
     sanskritOff = "Sanskrit is off. Tap a verse number to see its shloka.", show = "Show",
-    sampleOnly = "This prototype only includes the text of Adhyaya 1.1. The full text comes from the content database.",
+    sampleOnly = "This prototype only includes the text of Chapter 1.1. The full text comes from the content database.",
     back = "Back", speed = "Speed", loop = "Loop", sleep = "Sleep", nowPlaying = "Now playing",
     searchHint = "Word, story, character or verse (e.g. 10.29.1)", tryThese = "Try these", recent = "Recent",
     searchAbout = "Search every layer at once: Sanskrit, Transliteration, Hindi, Bengali and English, plus chapter titles and incident guide.",
@@ -52,7 +66,7 @@ val EnglishStrings = Strings(
     showSanskritNote = "Turn off to read the translations on their own, like a book. You can still tap a verse number to see its shloka.",
     listening = "Listening", keepPlaying = "Keep playing in the background",
     backgroundNote = "Paath carries on from the lock screen, notification and Bluetooth headphones after you leave the app.",
-    playThrough = "Play through", throughAdhyaya = "This adhyaya", throughSkandha = "Whole Skandha", throughGranth = "Whole granth",
+    playThrough = "Play through", throughAdhyaya = "This chapter", throughSkandha = "Whole Skandha", throughGranth = "Whole granth",
     sleepTimer = "Sleep timer", off = "Off", keepScreenOn = "Keep screen on", textSize = "Text size", texts = "Texts", gitaPress = "Gita Press, Gorakhpur",
     appLanguage = "App language", appLanguageNote = "Menus, buttons and chapter titles.",
     bhagLanguage = "Bhagavatam language", bhagLanguageNote = "What you read and hear during paath.",
@@ -68,7 +82,7 @@ val EnglishStrings = Strings(
     jaiShreeMadhav = "Jai Shree Madhav", shrimadBhagavatMahapuran = "Shrimad Bhagavat Mahapuran", minRead = "%d min read",
     tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bangla",
     voiceSearchHint = "Listening... Speak a story or chapter", openPrompt = "Open %s?", openAction = "Open", cancelAction = "Cancel",
-    thematicLilaIndex = "Thematic Lila Guide",
+    thematicLilaIndex = "Stories & Incidents Guide",
 )
 
 val HindiStrings = Strings(
@@ -106,9 +120,9 @@ val HindiStrings = Strings(
     paathLanguage = "पाठ की भाषा", startReading = "पढ़ना शुरू करें", stepOf = "२ / २", preview = "झलक · १.१.१",
     glossaryHint = "नाम और शब्द", themes = listOf("प्रभात", "पोथी", "सन्ध्या", "रात्रि"),
     jaiShreeMadhav = "जय श्री माधव", shrimadBhagavatMahapuran = "श्रीमद्भागवत महापुराण", minRead = "%d मिनट पाठ",
-    tabAll = "सभी", tabEnglish = "अंग्रेज़ी", tabHindi = "हिन्दी", tabBangla = "बांग्ला",
+    tabAll = "सभी", tabEnglish = "अंग्रेज़ी", tabHindi = "हिन्दी", tabBangla = "বাংলা",
     voiceSearchHint = "सुन रहे हैं... कोई कथा या अध्याय बोलें", openPrompt = "%s खोलें?", openAction = "खोलें", cancelAction = "रद्द करें",
-    thematicLilaIndex = "लीला एवं चरित्र परिचय",
+    thematicLilaIndex = "कथा एवं चरित्र प्रसंग",
 )
 
 val BengaliStrings = Strings(
@@ -148,7 +162,7 @@ val BengaliStrings = Strings(
     jaiShreeMadhav = "জয় শ্রী মাধব", shrimadBhagavatMahapuran = "শ্রীমদ্ভাগবত মহাপুরাণ", minRead = "%d মিনিট পাঠ",
     tabAll = "সব", tabEnglish = "ইংরেজি", tabHindi = "হিন্দি", tabBangla = "বাংলা",
     voiceSearchHint = "শুনছি... কোনো ঘটনা বা অধ্যায় বলুন", openPrompt = "%s খুলবেন?", openAction = "খুলুন", cancelAction = "বাতিল",
-    thematicLilaIndex = "লীলা ও চরিত্র পরিচয়",
+    thematicLilaIndex = "লীলাপ্রসঙ্গ ও চরিত্র পরিচয়",
 )
 
 fun stringsFor(ui: Lang) = when (ui) {

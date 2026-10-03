@@ -22,6 +22,8 @@
 *.pdf
 
 # scratch, backups and tool caches
+/_archive/
+/_archive
 /.claude/
 /_edit/
 /_pre_player_backup_src/

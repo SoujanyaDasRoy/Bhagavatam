@@ -114,8 +114,8 @@ class Narrator(private val app: Application, private val listener: Listener) {
         return runCatching { engine.voices }.getOrNull().orEmpty()
             .filter { it.locale.language == language && !it.features.contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED) }
             .sortedWith(compareByDescending<Voice> { it.quality }
+                .thenByDescending { !it.isNetworkConnectionRequired }
                 .thenByDescending { it.locale.country == localeFor(lang).country }
-                .thenBy { it.isNetworkConnectionRequired }
                 .thenBy { it.name })
     }
 
@@ -125,7 +125,7 @@ class Narrator(private val app: Application, private val listener: Listener) {
         val locale = localeFor(lang)
         if (engine.setLanguage(locale) < TextToSpeech.LANG_AVAILABLE) return ConfigResult.NO_VOICE
         val voices = installedVoices(lang)
-        val chosen = voices.firstOrNull { it.name == voiceName } ?: voices.firstOrNull()
+        val chosen = voices.firstOrNull { it.name == voiceName } ?: voices.maxByOrNull { it.quality } ?: voices.firstOrNull()
         if (chosen != null) runCatching { engine.voice = chosen }
         engine.setSpeechRate(baseRate(lang) * speed)
         engine.setPitch(basePitch(lang))
@@ -191,9 +191,9 @@ class Narrator(private val app: Application, private val listener: Listener) {
             Lang.EN -> Locale("en", "IN")
         }
 
-        /** Slightly slower than the engine's default: sacred text is read, not announced. Sanskrit slower still. */
-        fun baseRate(lang: Lang) = when (lang) { Lang.SA -> 0.82f; Lang.EN -> 0.94f; else -> 0.92f }
-        fun basePitch(lang: Lang) = if (lang == Lang.SA) 0.96f else 1.0f
+        /** Slightly slower than the engine's default: sacred text is read with meditative cadence. */
+        fun baseRate(lang: Lang) = when (lang) { Lang.SA -> 0.85f; Lang.BN -> 0.88f; Lang.EN -> 0.92f; else -> 0.90f }
+        fun basePitch(lang: Lang) = when (lang) { Lang.SA -> 0.98f; else -> 1.0f }
 
         /** Opens the system screen where voices are installed and the engine is chosen. */
         fun settingsIntent(): Intent = Intent("com.android.settings.TTS_SETTINGS").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

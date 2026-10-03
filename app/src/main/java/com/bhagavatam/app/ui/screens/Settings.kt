@@ -91,12 +91,14 @@ fun SettingsScreen(
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
         LargeTitle(s.tabMe)
 
+        // 1. Look & Theme Mode
         Column {
             SectionLabel(t.theme)
             ThemeSwitcher(state, t.modes)
             if (state.themeMode == ThemeMode.SYSTEM) Note(t.matchPhoneNote)
         }
 
+        // 2. Core Preferences (Appearance, Reading, Languages, Audio)
         Column {
             SectionLabel(t.preferences)
             GroupCard {
@@ -110,15 +112,17 @@ fun SettingsScreen(
             }
         }
 
+        // 3. Library & Study Tools
         Column {
             SectionLabel(t.librarySec)
             GroupCard {
                 ValueRow(s.savedVerses, localDigits((state.bookmarks + state.highlights.keys).distinct().size.toString(), ui), Ic.Bookmark, onSaved)
                 RowDivider()
-                ValueRow(s.glossary, "", Ic.Scroll, onGlossary)
+                ValueRow(s.thematicLilaIndex, "", Ic.Scroll, onGlossary)
             }
         }
 
+        // 4. Data & Progress Management
         Column {
             SectionLabel(t.dataSec)
             GroupCard {
@@ -132,11 +136,13 @@ fun SettingsScreen(
             }
         }
 
+        // 5. Corpus, Edition & App Info
         Column {
             SectionLabel(t.aboutSec)
             GroupCard {
                 ValueRow(t.textsFrom, s.gitaPress); RowDivider()
-                ValueRow(t.version, BuildConfig.VERSION_NAME); RowDivider()
+                ValueRow(tr(ui, "Corpus", "सम्पूर्ण ग्रन्थ", "সম্পূর্ণ গ্রন্থ"), localDigits(tr(ui, "341 Chapters · 14,580 Verses", "३४१ अध्याय · १४,५८० श्लोक", "৩৪১টি অধ্যায় · ১৪,৫৮০টি শ্লোক"), ui)); RowDivider()
+                ValueRow(t.version, "v${BuildConfig.VERSION_NAME}"); RowDivider()
                 ValueRow(t.contentVersion, localDigits(ContentDb.openVersion.toString(), ui))
             }
         }

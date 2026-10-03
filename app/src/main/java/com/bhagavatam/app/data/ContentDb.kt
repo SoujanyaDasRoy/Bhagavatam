@@ -34,7 +34,7 @@ object ContentDb {
         val prefs = ctx.getSharedPreferences("content", Context.MODE_PRIVATE)
         val code = appVersionCode(ctx)
         val bundled = bundledFile(ctx)
-        if (prefs.getInt("bundledFor", -1) != code || !bundled.exists()) {
+        if (prefs.getInt("bundledFor", -1) != code || !bundled.exists() || versionOf(bundled) < 7) {
             val tmp = File(bundled.path + ".tmp")
             val copied = runCatching {
                 ctx.assets.open(ASSET).use { input -> tmp.outputStream().use { input.copyTo(it) } }
