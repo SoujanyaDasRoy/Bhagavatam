@@ -183,7 +183,8 @@ object SampleData {
         val k = "$s.$a"
         val t = when (lang) {
             Lang.HI, Lang.SA -> titlesHi[k].orEmpty().ifEmpty { titlesEn[k].orEmpty() }
-            Lang.BN -> titlesBn[k].orEmpty().ifEmpty { titlesEn[k].orEmpty() }
+            // A chapter without a Bengali title falls back to Hindi (the same script family), then English.
+            Lang.BN -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }.ifEmpty { titlesEn[k].orEmpty() }
             else -> titlesEn[k].orEmpty()
         }
         return t.ifEmpty { "${s10n.adhyaya} ${localDigits(a.toString(), lang)}" }

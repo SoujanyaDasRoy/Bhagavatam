@@ -173,6 +173,8 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                 )
                 Text(
                     line,
+                    // Chapter titles are in the reading language, so the line needs that language's font.
+                    fontFamily = if (v.speaker == null && state.audioIssue == null) com.bhagavatam.app.ui.screens.readingFont(state.titleLang) else null,
                     fontSize = 12.sp, color = c.secondary, maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

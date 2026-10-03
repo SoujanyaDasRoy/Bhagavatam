@@ -432,8 +432,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** Language that is heard: follows the Bhagavatam (paath) language. */
     val audioLang: Lang get() = langFor(current)
 
-    /** Chapter and Skandha titles follow the app language (menus, buttons and titles all read in one language). */
-    val titleLang: Lang get() = uiLang
+    /** Chapter and Skandha titles follow the reading language; with Sanskrit they follow the app language. Labels and menus always follow the app language. */
+    val titleLang: Lang get() = if (readLang == Lang.SA) uiLang else readLang
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

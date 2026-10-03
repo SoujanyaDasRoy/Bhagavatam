@@ -354,7 +354,7 @@ fun SearchScreen(
                                 Icon(painterResource(Ic.MenuBook), null, tint = Brand.Kesari, modifier = Modifier.size(24.dp))
                                 Column(Modifier.weight(1f)) {
                                     Text(localDigits("${s.goTo} $skTitle · ${s.adhyaya} $ad · ${s.shloka} $vs", ui), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                                    Text(SampleData.adhyayaTitle(sk, ad, state.titleLang, s), fontSize = 13.sp, color = Brand.Secondary, maxLines = 1)
+                                    Text(SampleData.adhyayaTitle(sk, ad, state.titleLang, s), fontFamily = readingFont(state.titleLang), fontSize = 13.sp, color = Brand.Secondary, maxLines = 1)
                                 }
                                 Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Kesari)
                             }

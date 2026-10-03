@@ -347,12 +347,27 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
 @Composable
 private fun LayerChips(state: AppState) {
     val c = LocalReaderColors.current
+    // One rule for the chips: they show what the page is in. With the shloka on they toggle layers under it; with the shloka off
+    // (translation-only reading) they pick the single language being read, the same one the audio and the titles use.
+    val book = !state.showSanskrit
+    val firstTranslation = state.alongsideLayers().first()
+    fun pick(l: Lang) {
+        when (l) { Lang.HI -> state.updateShowHi(true); Lang.BN -> state.updateShowBn(true); else -> state.updateShowEn(true) }
+        state.updateReadLang(l)
+        state.restartNarration()
+    }
     val all = listOf(
-        Triple("${state.strings.mool}", state.showSanskrit, { state.updateShowSanskrit(!state.showSanskrit) }),
-        Triple("Roman", state.showIast, { state.updateShowIast(!state.showIast) }),
-        Triple("हिन्दी", state.showHi, { state.updateShowHi(!state.showHi) }),
-        Triple("বাংলা", state.showBn, { state.updateShowBn(!state.showBn) }),
-        Triple("English", state.showEn, { state.updateShowEn(!state.showEn) }),
+        Triple(state.strings.mool, state.showSanskrit, {
+            if (state.showSanskrit) { state.updateReadLang(firstTranslation) } else state.updateReadLang(Lang.SA)
+            state.restartNarration()
+        }),
+        Triple("Roman", state.showIast && state.showSanskrit, {
+            if (book) { state.updateReadLang(Lang.SA); state.updateShowIast(true) } else state.updateShowIast(!state.showIast)
+            state.restartNarration()
+        }),
+        Triple("हिन्दी", if (book) state.readLang == Lang.HI else state.showHi, { if (book) pick(Lang.HI) else state.updateShowHi(!state.showHi) }),
+        Triple("বাংলা", if (book) state.readLang == Lang.BN else state.showBn, { if (book) pick(Lang.BN) else state.updateShowBn(!state.showBn) }),
+        Triple("English", if (book) state.readLang == Lang.EN else state.showEn, { if (book) pick(Lang.EN) else state.updateShowEn(!state.showEn) }),
     )
     val allFonts = listOf(null, null, TiroHindi, NotoSerifBengali, null)
     val keep = all.indices.filter { BENGALI_READY || it != 3 }
