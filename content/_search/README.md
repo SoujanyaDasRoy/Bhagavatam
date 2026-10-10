@@ -1,13 +1,22 @@
-# content/_search - research and pipeline for the search index
+# content/_search - search index pipeline
 
-Plan and rules: `docs/superpowers/plans/2026-10-09-search.md`. Working agreement: `AGENTS.md` (section 8).
+Plan and rules: `docs/superpowers/plans/2026-10-09-search.md`. Working agreement: `AGENTS.md` (section 8). State: `docs/agent/HANDOFF.md`.
 
-| File | State |
+| File | What |
 |---|---|
-| `prototype.py` | works: builds in memory the per-language word index and the loose phonetic key, prints index size estimates and key quality checks. Research code, not imported by the app |
-| `gold_queries.json` | the objective test set: `required` queries must pass, `target` queries are expected to fail until their feature exists |
-| `eval_queries.py` | runs the gold queries: `python content/_search/eval_queries.py` (prototype engine); `--engine index` is for the real `search.db` once it exists |
-| `aliases.json`, `build_index.py`, `tests/` | to be written (Tasks 1 to 3) |
+| `prototype.py` | the loose phonetic key (`loose_from_roman`, `loose_from_indic`) and the old in-memory prototype |
+| `build_index.py` | `content.db` + `aliases.json` -> `search.db`; refuses to build if an alias form is not in the book; `--check` only verifies the aliases |
+| `search_engine.py` | reference reader of `search.db` (what the Kotlin `SearchIndex` must reproduce) |
+| `aliases.json` | name aliases (by loose key) and related words (by exact form) |
+| `gold_queries.json`, `eval_queries.py` | the objective test set and its runner (default engine: the real `search.db`) |
+| `compare_rules.py` | tests a candidate key rule on every word of the book (how rules are decided, see `docs/agent/DECISIONS.md`) |
+| `tests/` | `test_loose_pairs.py` + `loose_pairs.json` (shared with Kotlin), `test_search_db.py` |
 | `work/`, `search.db` | outputs; in `.gitignore`, never commit (derived from the Gita Press text) |
 
-Current result on the prototype: all required queries pass; the targets that fail are related words (crocodile and alligator), typos, and name aliases (Narasimha and Nrisimha).
+```
+py content/_search/build_index.py
+py content/_search/eval_queries.py
+py content/_search/tests/test_search_db.py
+py content/_search/tests/test_loose_pairs.py
+```
+Result: 28 of 28 gold queries pass; `search.db` is 5.85 MB.

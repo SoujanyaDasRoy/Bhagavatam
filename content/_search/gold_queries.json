@@ -169,7 +169,7 @@
         "8.2"
       ],
       "scope": "chapter",
-      "status": "target",
+      "status": "required",
       "why": "the text says alligator, never crocodile and elephant in one verse; needs related words and chapter-level matching"
     },
     {
@@ -189,7 +189,7 @@
         "8.2"
       ],
       "scope": "chapter",
-      "status": "target",
+      "status": "required",
       "why": "the book also says ग्राह for the same animal"
     },
     {
@@ -205,14 +205,14 @@
       "id": "typo-1",
       "query": "Krshna",
       "min_verses": 1000,
-      "status": "target",
+      "status": "required",
       "why": "one letter missing: needs typo tolerance"
     },
     {
       "id": "typo-2",
       "query": "Arjna",
       "min_verses": 100,
-      "status": "target",
+      "status": "required",
       "why": "needs typo tolerance"
     },
     {
@@ -231,7 +231,7 @@
         "Nrisimha",
         "नृसिंह"
       ],
-      "status": "target",
+      "status": "required",
       "why": "the Roman name and the Sanskrit spelling differ in more than transliteration (nara- vs nri-); needs an alias list for names"
     },
     {
@@ -240,7 +240,7 @@
       "chapters_include": [
         "10.29"
       ],
-      "status": "target",
+      "status": "required",
       "why": "the stories list calls it Rasa Lila; the book text says rasa and krida; a story and its chapters must be linked"
     }
   ]

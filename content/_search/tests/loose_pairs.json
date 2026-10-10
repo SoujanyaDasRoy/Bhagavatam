@@ -405,6 +405,91 @@
       "input": "ଅର୍ଜୁନ",
       "fn": "indic",
       "key": "arjun"
+    },
+    {
+      "input": "samsara",
+      "fn": "roman",
+      "key": "sansar"
+    },
+    {
+      "input": "saṃsāra",
+      "fn": "roman",
+      "key": "sansar"
+    },
+    {
+      "input": "संसार",
+      "fn": "indic",
+      "key": "sansar"
+    },
+    {
+      "input": "সংসার",
+      "fn": "indic",
+      "key": "sansar"
+    },
+    {
+      "input": "Nrisimha",
+      "fn": "roman",
+      "key": "nrisinh"
+    },
+    {
+      "input": "Nṛsiṃha",
+      "fn": "roman",
+      "key": "nrisinh"
+    },
+    {
+      "input": "नृसिंह",
+      "fn": "indic",
+      "key": "nrisinh"
+    },
+    {
+      "input": "নৃসিংহ",
+      "fn": "indic",
+      "key": "nrisinh"
+    },
+    {
+      "input": "Narasimha",
+      "fn": "roman",
+      "key": "narasinh"
+    },
+    {
+      "input": "नरसिंह",
+      "fn": "indic",
+      "key": "narasinh"
+    },
+    {
+      "input": "kamsa",
+      "fn": "roman",
+      "key": "kans"
+    },
+    {
+      "input": "कंस",
+      "fn": "indic",
+      "key": "kans"
+    },
+    {
+      "input": "ahankara",
+      "fn": "roman",
+      "key": "ahankar"
+    },
+    {
+      "input": "अहंकार",
+      "fn": "indic",
+      "key": "ahankar"
+    },
+    {
+      "input": "অহংকার",
+      "fn": "indic",
+      "key": "ahankar"
+    },
+    {
+      "input": "simha",
+      "fn": "roman",
+      "key": "sinh"
+    },
+    {
+      "input": "सिंह",
+      "fn": "indic",
+      "key": "sinh"
     }
   ],
   "must_match": [
@@ -491,6 +576,26 @@
     [
       "Arjuna",
       "ଅର୍ଜୁନ"
+    ],
+    [
+      "samsara",
+      "संसार"
+    ],
+    [
+      "Nrisimha",
+      "नृसिंह"
+    ],
+    [
+      "Narasimha",
+      "नरसिंह"
+    ],
+    [
+      "kamsa",
+      "কংস"
+    ],
+    [
+      "ahankara",
+      "অহংকার"
     ]
   ],
   "must_not_match": [

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run content/_search/gold_queries.json against a search engine and report what passes.
 
-    python content/_search/eval_queries.py                 uses the prototype engine (in-memory, same ideas as the plan)
-    python content/_search/eval_queries.py --engine index  uses the real search.db once Task 2 of the plan exists (see _engine_index)
+    python content/_search/eval_queries.py                 uses the real search.db (search_engine.Index, built by build_index.py)
+    python content/_search/eval_queries.py --engine prototype   the old in-memory loose-key prototype (no aliases, related words or typos)
 
 Output per query: PASS, FAIL (a required query broke: fix it), or TARGET (a target query that does not pass yet: expected).
 Exit code 1 if any required query fails. A target that starts passing is reported as 'TARGET now passes: promote it to required'.
@@ -54,7 +54,7 @@ class Prototype:
             sets.append(hit)
         return set.intersection(*sets)
 
-    def chapters(self, hit, scope):
+    def chapters(self, hit, scope, query=""):
         return set(hit) if scope == "chapter" else {(self.meta[v][0], self.meta[v][1]) for v in hit}
 
 
@@ -83,7 +83,7 @@ def run(engine) -> int:
             if "max_verses" in g and n > g["max_verses"]:
                 problems.append(f"{n} results, expected at most {g['max_verses']}")
             if "chapters_include" in g:
-                have = {f"{a}.{b}" for a, b in engine.chapters(hit, scope)}
+                have = {f"{a}.{b}" for a, b in engine.chapters(hit, scope, g["query"])}
                 missing = [c for c in g["chapters_include"] if c not in have]
                 if missing:
                     problems.append(f"chapters {missing} not in the results")
@@ -101,10 +101,13 @@ def run(engine) -> int:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--engine", choices=["prototype", "index"], default="prototype")
+    ap.add_argument("--engine", choices=["prototype", "index"], default="index")
     a = ap.parse_args()
     if a.engine == "index":
-        sys.exit("The real index does not exist yet (Task 2 of the search plan). Implement _engine_index here: open content/_search/search.db, same verses()/chapters() interface.")
+        from search_engine import Index, SEARCH_DB   # the real content/_search/search.db (build it with build_index.py)
+        if not SEARCH_DB.exists():
+            sys.exit("search.db does not exist: run  py content/_search/build_index.py  first (or use --engine prototype).")
+        sys.exit(run(Index()))
     sys.exit(run(Prototype()))
 
 
