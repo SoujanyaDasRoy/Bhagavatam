@@ -8,9 +8,10 @@ Do not use models marked "Leaving soon" for a long phase; they may disappear in 
 
 | Phase | Work | Model |
 |---|---|---|
-| 1 | Search pipeline, pure Python (plan Tasks 1 to 4) | Claude Opus 4.6 (Thinking) |
+| 1 | Search pipeline, pure Python (plan Tasks 1 to 4) | DONE (2026-10-11, commit beefd56; see HANDOFF.md) |
 | 2 | Dictionary pipeline, pure Python (plan Tasks 1 to 4) | Claude Sonnet 4.6 (Thinking) |
-| 3 | Search in the app, Kotlin (plan Tasks 5 to 8) | Claude Opus 4.6 (Thinking) |
+| 3a | Search core in Kotlin: `LooseKey`, `SearchQuery`, `SearchIndex` + unit tests, no UI (plan Task 5) | Claude Sonnet 4.6 (Thinking) |
+| 3b | Search results screen, in-chapter find, ship (plan Tasks 6 to 8) | Claude Opus 4.6 (Thinking) |
 | 4 | Dictionary in the app, Kotlin (plan Tasks 5 to 7) | Claude Opus 4.6 (Thinking) |
 | 5 | Final check on device, all language, theme and font combinations, report | Gemini 3.8 Flash (Medium) |
 
@@ -40,7 +41,9 @@ When you finish, or when you must stop, do two things:
 
 ---
 
-## PHASE 1: Search pipeline (Python only). Model: Claude Opus 4.6 (Thinking)
+## PHASE 1: Search pipeline (Python only). DONE, kept for reference
+
+Finished by Claude Code on 2026-10-11 after the Opus session ran out of quota halfway. Read `docs/agent/HANDOFF.md` instead of doing this phase.
 
 Plan: `docs/superpowers/plans/2026-10-09-search.md`, Tasks 1 to 4. Task 0 is answered (see DECISIONS.md).
 
@@ -71,9 +74,10 @@ Do not start Android work in this phase.
 
 ---
 
-## PHASE 3: Search in the app (Kotlin). Model: Claude Opus 4.6 (Thinking)
+## PHASE 3: Search in the app (Kotlin). 3a: Claude Sonnet 4.6 (Thinking), 3b: Claude Opus 4.6 (Thinking)
 
-Plan: `docs/superpowers/plans/2026-10-09-search.md`, Tasks 5 to 8. Needs Phase 1 done (read HANDOFF.md).
+Plan: `docs/superpowers/plans/2026-10-09-search.md`, Tasks 5 to 8. Phase 1 is done: read HANDOFF.md first; `content/_search/search_engine.py` is the behaviour to port, `build_index.py` has the schema. Do 3a (Task 5, no UI, pure unit tests) in one session and 3b (Tasks 6 to 8) in the next, so one quota is enough for each.
+Stories are not in `search.db`: match them from `Episodes.kt` with the same loose key, as `search_engine.story_chapters` does. Copy a freshly built `search.db` to `app/src/main/assets/search.db` (gitignored) and check `meta.content_version` against the database.
 
 Do:
 - Task 5: Kotlin core. The Kotlin loose key must give exactly the Python output: write `LooseKeyTest` that reads `content/_search/tests/loose_pairs.json` (the same file; copy it into `app/src/test/resources/` only if reading across the tree is not possible, and say so). `Normalise.kt` and `Lemmatizer.kt` serve both search and the dictionary: check whether they exist before writing; write once.
