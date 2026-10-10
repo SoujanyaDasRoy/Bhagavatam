@@ -38,25 +38,9 @@ object OnlineMeaning {
         Lang.SA -> listOf("sa", "hi", "mr", "ne", "bn")
     }
 
-    private val suffixes = mapOf(
-        Lang.BN to listOf("গুলোর", "গুলো", "দের", "েরা", "ের", "কে", "তে", "েই", "টি", "রা", "র", "ে", "ই", "ও"),
-        Lang.HI to listOf("ाओं", "ओं", "ें", "ों", "ने", "को", "का", "की", "के", "से", "में", "पर", "ा", "ी", "े"),
-        Lang.SA to listOf("स्य", "ाय", "ेन", "ेषु", "ानि", "ाः", "ः", "म्", "ं"),
-        Lang.EN to listOf("ing", "ed", "es", "ly", "s"),
-    )
-
     /** Simpler forms of [w]: each known ending removed (longest first), and for Bengali also the "ৎ" spelling of a final "ত". */
-    internal fun stems(w: String, lang: Lang): List<String> {
-        val out = ArrayList<String>()
-        for (suf in (suffixes[lang] ?: emptyList()).sortedByDescending { it.length }) {
-            if (w.length > suf.length + 1 && w.endsWith(suf)) {
-                val stem = w.dropLast(suf.length)
-                out.add(stem)
-                if (lang == Lang.BN && stem.endsWith("ত")) out.add(stem.dropLast(1) + "ৎ")
-            }
-        }
-        return out
-    }
+    internal fun stems(w: String, lang: Lang): List<String> = Lemmatizer.stems(w, lang)
+
 
     /** Bengali script to Devanagari (the two scripts are laid out alike). Bengali "ব" is both ब and व, so both readings are returned. */
     internal fun bengaliToDevanagari(w: String): List<String> {
