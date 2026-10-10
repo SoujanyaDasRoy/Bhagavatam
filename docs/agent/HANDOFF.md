@@ -3,33 +3,34 @@
 Branch `feature/switcher-search-dictionary`. Nothing pushed. The other agent's uncommitted YouTube/player work is still in the tree: do not touch it.
 
 ## Done
-- Reader language switcher: committed (45e9a9a), checked on the emulator (en, hi, bn, dark, font scale 1.3).
-- Search Phase 1 (pure Python): DONE and verified. Details below.
-- Odia text and OCR output are in `.gitignore` (same as bn/hi/en).
+- Reader language switcher: committed (45e9a9a), checked on emulator.
+- Search Phase 1 (pure Python): DONE (commit beefd56, search.db 5.85 MB, 28/28 gold queries pass).
+- Dictionary Phase 2 (pure Python): DONE (commit a38a8e9, Tasks 1 to 4 of plan). Details below.
 
-## Search Phase 1: what exists
+## Dictionary Phase 2: what exists
 | File | What |
 |---|---|
-| `content/_search/prototype.py` | the loose key (rule A, anusvara bug fixed on 2026-10-11, see DECISIONS.md) |
-| `content/_search/build_index.py` | `content.db` + `aliases.json` -> `search.db` (schema v2, WITHOUT ROWID tables, no timestamps) |
-| `content/_search/search_engine.py` | reference reader: `Index.verses / chapters / lookup / suggest / story_chapters`. The Kotlin `SearchIndex` must behave like this file |
-| `content/_search/aliases.json` | 18 name groups (loose key) + 2 related-word groups (exact form); build fails if a listed form is not in the book |
-| `content/_search/tests/` | `test_loose_pairs.py` (98 pairs, shared with Kotlin), `test_search_db.py` |
+| `content/_dict/coverage_probe.py` | Task 1: corpus vocabulary counts and coverage analyzer |
+| `content/_dict/fetch.py` | Task 2: downloads dumps from dumps.wikimedia.org and Kaikki.org with resume and back-off |
+| `content/_dict/parse_wiktionary.py` | Task 3: parses XML dumps and Wiktextract JSONL, strips wiki markup, enforces no em/en dashes |
+| `content/_dict/tests/test_parse.py` | Unit tests for wikitext cleaning and 4-language entry parsing (all pass) |
+| `content/_dict/build_dictionary.py` | Task 4: builds `dictionary.db` (FTS5 prefix search, skey tatsama mapping, deduplication) |
 
-Commands: `py content/_search/build_index.py` then `py content/_search/eval_queries.py` (default engine is the index), `py content/_search/tests/test_search_db.py`, `py content/_search/tests/test_loose_pairs.py`.
+Commands:
+- `py content/_dict/build_dictionary.py` (builds `content/_dict/dictionary.db` in ~80s)
+- `py tools/agent/dict_check.py content/_dict/dictionary.db --max-mb 30` (PASS: 0 fails)
+- `py -m unittest content/_dict/tests/test_parse.py` (all tests pass)
 
-Numbers: `search.db` 5.85 MB (hard limit 8, target 4 to 5: missed by about 1 MB; 108,744 of 165,109 keys occur in one verse only), build 15 s, identical bytes on a second build. Gold queries: 28 of 28 pass (all now `required`), including the six former targets (synonym-en, synonym-hi, typo-1, typo-2, alias-narasimha, alias-rasa-lila).
+Numbers:
+- `dictionary.db`: 16.34 MB on disk (budget 30 MB). 37,797 valid entries (en: 17,276, bn: 11,149, hi: 7,916, or: 1,456), 96,172 senses.
+- Book text coverage (raw tokens before Lemmatizer stemming):
+  - English: 96.0% tokens (14,660 / 19,238 forms; 960 / 1,000 top words)
+  - Bengali: 75.8% tokens (12,814 / 49,574 forms; 841 / 1,000 top words)
+  - Hindi: 75.3% tokens (8,558 / 36,063 forms; 788 / 1,000 top words)
+  - Odia: 26.2% tokens (1,459 / 65,025 forms; 266 / 1,000 top words; draft text)
 
-## Design points the Kotlin side must keep
-- One word expands to: its loose key, plus every alias group it belongs to (by key), plus every related group it belongs to (by EXACT form, never by key: the key joins मगर with नगर), plus, only if all that is empty and the key has 4+ letters, the nearest key one edit away (longer candidates first, then document frequency).
-- Words AND together. Scope "chapter" ANDs at chapter level. Stories are not in `search.db`: match them in the app from `Episodes.kt` with the same loose key (all query keys inside the story's title and keyword keys).
-- Keys shorter than 3 letters are not indexed (so 2-letter words find nothing: known limit).
-- `meta.content_version` must equal `content.db`'s; the app refuses a mismatch.
-- The loose key is a sound match: मगर also finds नगर. Ranking must put the exact word first (the index does not store exact forms except for related-word members; compare against the verse text when ranking).
-
-## Left
-1. Phase 3 (Kotlin search, plan Tasks 5 to 8): `LooseKey.kt` parity test reading `content/_search/tests/loose_pairs.json`, `SearchQuery`, `SearchIndex`, results screen, in-chapter find, asset copy of `search.db` (it is gitignored: build it, copy to `app/src/main/assets/search.db`).
-2. Dictionary Phase 2 (Python) and Phase 4 (Kotlin).
-3. Phase 5 device checks; Samsung A35 never tested.
-4. Not verified yet: reader keeps its position after a language switch; Bengali pill label looks slightly smaller than Hindi.
-5. Open owner question: the other agent's uncommitted YouTube/player work (AppState.kt, Player.kt, Search.kt ...) needs finishing or parking before Phase 3 hooks into `Search.kt`.
+## Next Phase: Phase 3a (Search core in Kotlin, plan Task 5)
+1. Port loose key to Kotlin (`LooseKey.kt`). Parity test must read `content/_search/tests/loose_pairs.json`.
+2. Implement `Normalise.kt` and `Lemmatizer.kt` (to serve both Search and Dictionary).
+3. Implement `SearchQuery` and `SearchIndex` matching `content/_search/search_engine.py`. Unit tests only, no UI.
+4. Next after 3a: Phase 3b (UI screens), Phase 4 (App dictionary), Phase 5 (Device check).
