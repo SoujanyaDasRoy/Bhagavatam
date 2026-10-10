@@ -12,6 +12,7 @@ data class SearchResult(
     val verseIds: List<Int>,
     val chapters: List<Pair<Int, Int>>,
     val storyChapters: List<Pair<Int, Int>> = emptyList(),
+    val sameChapterOnly: List<Pair<Int, Int>> = emptyList(),
     val correctedKey: String? = null,
     val suggestedWord: String? = null,
     val searchTimeMs: Long = 0
@@ -345,7 +346,7 @@ object SearchIndex {
                 correctedKey = corrKey
                 // Find display word from candidate forms
                 db?.rawQuery("SELECT forms FROM loose WHERE key = ?", arrayOf(corrKey))?.use { c ->
-                    if (c.moveToFirst()) suggestedWord = c.getString(0)?.split(",")?.firstOrNull()
+                    if (c.moveToFirst()) suggestedWord = c.getString(0)?.split(Regex("[|,]+"))?.firstOrNull()
                 }
             }
             if (vIds.isEmpty()) {
@@ -368,11 +369,23 @@ object SearchIndex {
             intersectedVerseIds = intersectedVerseIds.intersect(verseIdSets[i])
         }
 
+        var sameChapterMatches = emptyList<Pair<Int, Int>>()
+        if (intersectedVerseIds.isEmpty() && verseIdSets.size > 1) {
+            // Words didn't meet in a single verse, check if they meet in the same chapter
+            val chapSets = verseIdSets.map { vids -> vids.map { chapterOf(it) }.toSet() }
+            var commonChaps = chapSets[0]
+            for (i in 1 until chapSets.size) {
+                commonChaps = commonChaps.intersect(chapSets[i])
+            }
+            sameChapterMatches = commonChaps.toList().sortedWith(compareBy({ it.first }, { it.second }))
+        }
+
         val sortedVerseIds = intersectedVerseIds.sorted()
         val matchingChapters = HashSet<Pair<Int, Int>>()
         for (vid in sortedVerseIds) {
             matchingChapters.add(chapterOf(vid))
         }
+        matchingChapters.addAll(sameChapterMatches)
 
         val stories = storyChapters(rawQuery)
         matchingChapters.addAll(stories)
@@ -381,6 +394,7 @@ object SearchIndex {
             verseIds = sortedVerseIds,
             chapters = matchingChapters.toList().sortedWith(compareBy({ it.first }, { it.second })),
             storyChapters = stories,
+            sameChapterOnly = sameChapterMatches,
             correctedKey = correctedKey,
             suggestedWord = suggestedWord,
             searchTimeMs = System.currentTimeMillis() - t0

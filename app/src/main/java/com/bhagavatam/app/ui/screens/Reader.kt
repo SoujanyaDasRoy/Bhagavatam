@@ -8,6 +8,9 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -86,6 +89,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import com.bhagavatam.app.data.BENGALI_READY
 import com.bhagavatam.app.data.Lang
+import com.bhagavatam.app.data.LooseKey
+import com.bhagavatam.app.data.Normalise
 import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.SanskritScript
 import com.bhagavatam.app.data.Verse
@@ -132,6 +137,10 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
     // The chapter title sits once, in the text. It moves up into the bar only after it has scrolled out of view.
     val titleInBar by remember { derivedStateOf { list.firstVisibleItemIndex >= 2 } }
     val reference = localDigits(if (skandha == 0) "${s.mahatmya} · ${s.adhyaya} $adhyaya" else "${s.skandha} $skandha · ${s.adhyaya} $adhyaya", ui)
+
+    var showFindBar by remember { mutableStateOf(false) }
+    var findQuery by remember { mutableStateOf("") }
+    var currentMatchIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(skandha, adhyaya) {
         if (verses.isNotEmpty() && !(state.lastSkandha == skandha && state.lastAdhyaya == adhyaya)) state.markRead(skandha, adhyaya, 1)
@@ -182,6 +191,52 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
         out
     }
     val rowVerses = remember(verses, bookRows, state.showSanskrit) { if (state.showSanskrit) verses else bookRows.map { it.verse } }
+
+    // In-chapter find matches supporting Roman and Indic spellings across scripts
+    val matchingVerseIndices = remember(findQuery, rowVerses) {
+        val q = findQuery.trim()
+        if (q.length < 2) return@remember emptyList<Int>()
+        val qWords = q.split(Regex("\\s+")).filter { it.isNotBlank() }
+        val qKeys = qWords.map { LooseKey.keyOf(it) }.filter { it.length >= 3 }.toSet()
+        val qExacts = qWords.map { Normalise.exactOf(it) }.toSet()
+
+        val out = ArrayList<Int>()
+        for (i in rowVerses.indices) {
+            val v = rowVerses[i]
+            val layers = listOf(v.sa.joinToString(" "), v.iast.joinToString(" "), v.hi, v.en, v.bn)
+            var matched = false
+            for (text in layers) {
+                if (text.isBlank()) continue
+                if (text.contains(q, ignoreCase = true) || SearchFinder.find(text, q) != null) {
+                    matched = true
+                    break
+                }
+                val words = Regex("[\\p{L}\\p{M}\\p{N}]+").findAll(text)
+                for (match in words) {
+                    val w = match.value
+                    val looseW = LooseKey.keyOf(w)
+                    val exactW = Normalise.exactOf(w)
+                    if (qKeys.any { k -> k == looseW || (looseW.length >= 3 && looseW.contains(k)) } ||
+                        qExacts.any { e -> e == exactW || (exactW.length >= 3 && exactW.contains(e)) }) {
+                        matched = true
+                        break
+                    }
+                }
+                if (matched) break
+            }
+            if (matched) out.add(i)
+        }
+        out
+    }
+
+    LaunchedEffect(matchingVerseIndices, currentMatchIndex) {
+        if (matchingVerseIndices.isNotEmpty()) {
+            val safeIndex = currentMatchIndex.coerceIn(0, matchingVerseIndices.size - 1)
+            val verseItemOffset = if (state.showChapterArt) 2 else 1
+            val targetItem = verseItemOffset + matchingVerseIndices[safeIndex]
+            list.animateScrollToItem(targetItem)
+        }
+    }
 
     // Resume where the reader stopped.
     LaunchedEffect(skandha, adhyaya) {
@@ -243,10 +298,88 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                 // The language pill shows words while the title is out of the bar, and shrinks to its icon once the title moves in.
                 LanguagePill(state, compact = titleInBar) { showLangSheet = true }
                 Box(
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন")) {
+                        showFindBar = !showFindBar
+                        if (!showFindBar) findQuery = ""
+                    },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(painterResource(Ic.Search), tr(ui, "Find", "खोज", "খুঁজুন"), tint = if (showFindBar) Brand.Kesari else c.accent, modifier = Modifier.size(20.dp))
+                }
+                Box(
                     Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস")) { showSheet = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Aa", fontFamily = EnglishReading, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
+                }
+            }
+
+            AnimatedVisibility(visible = showFindBar) {
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
+                        .shadow(4.dp, Radius.bar).clip(Radius.bar).background(c.surface)
+                        .border(1.dp, Brand.Kesari.copy(alpha = 0.5f), Radius.bar)
+                        .padding(start = 12.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(painterResource(Ic.Search), null, tint = Brand.Kesari, modifier = Modifier.size(18.dp))
+                    BasicTextField(
+                        value = findQuery,
+                        onValueChange = {
+                            findQuery = it
+                            currentMatchIndex = 0
+                        },
+                        singleLine = true,
+                        textStyle = TextStyle(fontSize = 15.sp, color = c.ink),
+                        cursorBrush = SolidColor(Brand.Kesari),
+                        modifier = Modifier.weight(1f),
+                        decorationBox = { inner ->
+                            if (findQuery.isEmpty()) {
+                                Text(tr(ui, "Find in chapter...", "अध्याय में खोजें...", "অধ্যায়ে খুঁজুন..."), fontSize = 14.sp, color = c.secondary)
+                            }
+                            inner()
+                        }
+                    )
+                    if (findQuery.isNotEmpty()) {
+                        val matchCountStr = if (matchingVerseIndices.isNotEmpty()) {
+                            localDigits("${currentMatchIndex + 1}/${matchingVerseIndices.size}", ui)
+                        } else {
+                            localDigits("0/0", ui)
+                        }
+                        Text(matchCountStr, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = if (matchingVerseIndices.isNotEmpty()) c.gold else c.secondary)
+
+                        IconButton(
+                            onClick = {
+                                if (matchingVerseIndices.isNotEmpty()) {
+                                    currentMatchIndex = (currentMatchIndex - 1 + matchingVerseIndices.size) % matchingVerseIndices.size
+                                }
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(painterResource(Ic.KeyboardArrowUp), tr(ui, "Previous", "पिछला", "পূর্ববর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                        }
+
+                        IconButton(
+                            onClick = {
+                                if (matchingVerseIndices.isNotEmpty()) {
+                                    currentMatchIndex = (currentMatchIndex + 1) % matchingVerseIndices.size
+                                }
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(painterResource(Ic.KeyboardArrowDown), tr(ui, "Next", "अगला", "পরবর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                        }
+                    }
+                    IconButton(
+                        onClick = {
+                            showFindBar = false
+                            findQuery = ""
+                        },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(painterResource(Ic.Close), s.back, tint = c.secondary, modifier = Modifier.size(18.dp))
+                    }
                 }
             }
             LazyColumn(
@@ -292,12 +425,16 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                 }
                 if (state.showSanskrit) {
                     items(verses, key = { it.ref }) { v ->
-                        VerseBlock(state, v, playingHere && state.current.ref == v.ref, scale)
+                        val isFindMatch = showFindBar && matchingVerseIndices.isNotEmpty() && matchingVerseIndices.getOrNull(currentMatchIndex)?.let { rowVerses.getOrNull(it)?.ref == v.ref } == true
+                        VerseBlock(state, v, (playingHere && state.current.ref == v.ref) || isFindMatch, scale)
                     }
                 } else {
                     items(bookRows, key = { it.verse.ref }) { r ->
-                        BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked) {
-                            if (r.verse.ref in peeked) peeked.remove(r.verse.ref) else peeked.add(r.verse.ref)
+                        val isFindMatch = showFindBar && matchingVerseIndices.isNotEmpty() && matchingVerseIndices.getOrNull(currentMatchIndex)?.let { rowVerses.getOrNull(it)?.ref == r.verse.ref } == true
+                        Box(modifier = if (isFindMatch) Modifier.clip(Radius.group).background(c.playing) else Modifier) {
+                            BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked) {
+                                if (r.verse.ref in peeked) peeked.remove(r.verse.ref) else peeked.add(r.verse.ref)
+                            }
                         }
                     }
                 }

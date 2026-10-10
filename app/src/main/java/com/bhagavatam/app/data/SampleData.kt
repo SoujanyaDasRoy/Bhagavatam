@@ -241,46 +241,51 @@ object SampleData {
 
     fun hasTitle(s: Int, a: Int) = titlesEn.containsKey("$s.$a")
 
+    @Synchronized
     private fun readVerses(where: String, args: Array<String>): List<Verse> {
         val d = db ?: return emptyList()
         val out = ArrayList<Verse>()
         var prevChapter = ""
-        d.rawQuery(
-            "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"} FROM verse $where ORDER BY skandha, chapter, num",
-            args,
-        ).use { c ->
-            while (c.moveToNext()) {
-                val key = "${c.getInt(0)}.${c.getInt(1)}"
-                val firstOfChapter = key != prevChapter
-                prevChapter = key
-                var sa = c.getString(5).orEmpty()
-                var hi = c.getString(7).orEmpty()
-                var speaker = c.getString(4)?.takeIf { it.isNotBlank() }
-                if (firstOfChapter) {
-                    // In the source PDFs the chapter heading ran into the first shloka. The reader shows the title once, above the text.
-                    val title = titlesHi[key].orEmpty()
-                    val cleanSa = stripLeadingTitle(sa, title)
-                    if (cleanSa != sa) {
-                        sa = cleanSa
-                        // What is left on top is the speaker line, which every other shloka keeps in its own field.
-                        val head = sa.substringBefore('\n')
-                        if (head.contains("उवाच")) { if (speaker == null) speaker = head.trim(); sa = sa.substringAfter('\n', "") }
+        try {
+            d.rawQuery(
+                "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"} FROM verse $where ORDER BY skandha, chapter, num",
+                args,
+            ).use { c ->
+                while (c.moveToNext()) {
+                    val key = "${c.getInt(0)}.${c.getInt(1)}"
+                    val firstOfChapter = key != prevChapter
+                    prevChapter = key
+                    var sa = c.getString(5).orEmpty()
+                    var hi = c.getString(7).orEmpty()
+                    var speaker = c.getString(4)?.takeIf { it.isNotBlank() }
+                    if (firstOfChapter) {
+                        // In the source PDFs the chapter heading ran into the first shloka. The reader shows the title once, above the text.
+                        val title = titlesHi[key].orEmpty()
+                        val cleanSa = stripLeadingTitle(sa, title)
+                        if (cleanSa != sa) {
+                            sa = cleanSa
+                            // What is left on top is the speaker line, which every other shloka keeps in its own field.
+                            val head = sa.substringBefore('\n')
+                            if (head.contains("उवाच")) { if (speaker == null) speaker = head.trim(); sa = sa.substringAfter('\n', "") }
+                        }
+                        hi = stripLeadingTitle(hi, title)
                     }
-                    hi = stripLeadingTitle(hi, title)
-                }
-                out.add(
-                    Verse(
-                        skandha = c.getInt(0), adhyaya = c.getInt(1), num = c.getInt(2), numEnd = c.getInt(3),
-                        speaker = speaker,
-                        sa = if (sa.isEmpty()) emptyList() else sa.split('\n'),
-                        iast = c.getString(6).orEmpty().tidyDashes().let { if (it.isEmpty()) emptyList() else it.split('\n') },
-                        hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
-                        bnFrom = if (c.isNull(12)) null else c.getInt(12),
-                        enFrom = if (c.isNull(9)) null else c.getInt(9),
-                        hiFrom = if (c.isNull(10)) null else c.getInt(10),
+                    out.add(
+                        Verse(
+                            skandha = c.getInt(0), adhyaya = c.getInt(1), num = c.getInt(2), numEnd = c.getInt(3),
+                            speaker = speaker,
+                            sa = if (sa.isEmpty()) emptyList() else sa.split('\n'),
+                            iast = c.getString(6).orEmpty().tidyDashes().let { if (it.isEmpty()) emptyList() else it.split('\n') },
+                            hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
+                            bnFrom = if (c.isNull(12)) null else c.getInt(12),
+                            enFrom = if (c.isNull(9)) null else c.getInt(9),
+                            hiFrom = if (c.isNull(10)) null else c.getInt(10),
+                        )
                     )
-                )
+                }
             }
+        } catch (_: Throwable) {
+            return emptyList()
         }
         return out
     }
@@ -288,7 +293,20 @@ object SampleData {
     fun versesFor(s: Int, a: Int): List<Verse> =
         cache.getOrPut("$s.$a") { readVerses("WHERE skandha = ? AND chapter = ?", arrayOf(s.toString(), a.toString())) }
 
+    /** Fetch verses by rowids (used by SearchIndex results). */
+    @Synchronized
+    fun versesByIds(ids: List<Int>): List<Verse> {
+        if (ids.isEmpty()) return emptyList()
+        val out = ArrayList<Verse>()
+        for (chunk in ids.chunked(400)) {
+            val list = chunk.joinToString(",")
+            out.addAll(readVerses("WHERE rowid IN ($list)", emptyArray()))
+        }
+        return out
+    }
+
     /** Targeted SQLite search matching any relevant language column. */
+    @Synchronized
     fun searchVerses(query: String, scope: String = "ALL", limit: Int = 100): List<Verse> {
         val q = query.trim()
         if (q.length < 2) return emptyList()
