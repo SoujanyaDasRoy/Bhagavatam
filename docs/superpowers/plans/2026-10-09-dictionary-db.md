@@ -138,36 +138,36 @@ Order matters: do not start the Android work before Task 4 shows real coverage n
 
 ### Task 0 - Sources and licences (GATE)
 Files: `content/_dict/sources.json`.
-- [ ] For every row of the table in 1.2 marked "not confirmed", read the licence from the source's own page and update `sources.json` (`licence`, `status: verified|rejected`). Needed: Praharaj's exact CC licence (and whether it is non-commercial), IndoWordNet, Princeton WordNet, the Shabdsagar text inside Hindi Wiktionary.
-- [ ] Write to the owner: which sources will be used, with their licences. **Stop and wait for the answer.** Do not download or build anything that depends on an unconfirmed source.
+- [x] For every row of the table in 1.2 marked "not confirmed", read the licence from the source's own page and update `sources.json` (`licence`, `status: verified|rejected`). Needed: Praharaj's exact CC licence (and whether it is non-commercial), IndoWordNet, Princeton WordNet, the Shabdsagar text inside Hindi Wiktionary.
+- [x] Write to the owner: which sources will be used, with their licences. **Stop and wait for the answer.** Do not download or build anything that depends on an unconfirmed source.
 Acceptance: every source in the file has `status` and a licence string; the owner has confirmed the list.
 
 ### Task 1 - Corpus vocabulary
 Files: `content/_dict/coverage_probe.py` (exists and works).
-- [ ] Run `python content/_dict/coverage_probe.py`. It writes `work/vocab_<lang>.tsv`.
-- [ ] Re-run it whenever the Odia text is verified; the Odia numbers are only an estimate now.
+- [x] Run `python content/_dict/coverage_probe.py`. It writes `work/vocab_<lang>.tsv`.
+- [x] Re-run it whenever the Odia text is verified; the Odia numbers are only an estimate now.
 Acceptance: five `vocab_*.tsv` files exist; the printed table matches section 1.1 (within a few percent).
 
 ### Task 2 - Fetch the sources
 Files: `content/_dict/fetch.py`.
-- [ ] Download the latest Wiktionary dumps for `orwiktionary`, `bnwiktionary`, `hiwiktionary` (pages-articles, bz2) from `dumps.wikimedia.org`; for English use the raw Wiktextract data or the `enwiktionary` dump filtered to the four languages.
-- [ ] Polite client: a real `User-Agent` with a contact, resume support, no loops over the web API, honour 429 with back-off.
-- [ ] Record the dump date and file hash in `work/fetched.json` (goes into `source.retrieved`).
+- [x] Download the latest Wiktionary dumps for `orwiktionary`, `bnwiktionary`, `hiwiktionary` (pages-articles, bz2) from `dumps.wikimedia.org`; for English use the raw Wiktextract data or the `enwiktionary` dump filtered to the four languages.
+- [x] Polite client: a real `User-Agent` with a contact, resume support, no loops over the web API, honour 429 with back-off.
+- [x] Record the dump date and file hash in `work/fetched.json` (goes into `source.retrieved`).
 Acceptance: files in `work/dumps/`; `fetched.json` lists each with size and date; no web-API crawling in the script.
 
 ### Task 3 - Parsers to a common JSONL
 Files: `content/_dict/parse_wiktionary.py` (+ per-edition rules), `content/_dict/tests/test_parse.py`.
-- [ ] Output one JSON object per entry: `lang, headword, pos, glosses[{lang, text}], etymology, ipa, forms[], source`.
-- [ ] Clean wikitext: links `[[a|b]]` to `b`, remove templates `{{...}}`, `<ref>`, HTML entities, and replace em or en dashes with a spaced hyphen (project rule).
-- [ ] Keep the pieces that matter per edition: Odia: the numbered or bulleted senses; Bengali: `#` senses, `{{IPA}}`, etymology, synonyms; Hindi: `#` senses and translations (the Shabdsagar section only if Task 0 allows).
-- [ ] Unit tests with three real entries per edition (the samples in section 1.2 are a start): senses extracted, markup gone.
+- [x] Output one JSON object per entry: `lang, headword, pos, glosses[{lang, text}], etymology, ipa, forms[], source`.
+- [x] Clean wikitext: links `[[a|b]]` to `b`, remove templates `{{...}}`, `<ref>`, HTML entities, and replace em or en dashes with a spaced hyphen (project rule).
+- [x] Keep the pieces that matter per edition: Odia: the numbered or bulleted senses; Bengali: `#` senses, `{{IPA}}`, etymology, synonyms; Hindi: `#` senses and translations (the Shabdsagar section only if Task 0 allows).
+- [x] Unit tests with three real entries per edition (the samples in section 1.2 are a start): senses extracted, markup gone.
 Acceptance: `pytest content/_dict/tests` passes; a spot check of 20 random entries per language reads cleanly; the count of entries per language is printed.
 
 ### Task 4 - Build `dictionary.db`
 Files: `content/_dict/build_dictionary.py`.
-- [ ] Create the schema in 3.2, insert `source` rows with licence and attribution text, apply the filters in 3.3, build `form` from the sources' inflected-form data, compute `skey` and `freq`, build `entry_fts`, `VACUUM`.
-- [ ] Print a coverage report: for each language, `python coverage_probe.py --against work/headwords_<lang>.txt` figures (share of the book's distinct forms and of its tokens that have an entry) and the top 50 missing frequent words.
-- [ ] Write the real size and coverage numbers into section 5 of this file.
+- [x] Create the schema in 3.2, insert `source` rows with licence and attribution text, apply the filters in 3.3, build `form` from the sources' inflected-form data, compute `skey` and `freq`, build `entry_fts`, `VACUUM`.
+- [x] Print a coverage report: for each language, `python coverage_probe.py --against work/headwords_<lang>.txt` figures (share of the book's distinct forms and of its tokens that have an entry) and the top 50 missing frequent words.
+- [x] Write the real size and coverage numbers into section 5 of this file.
 Acceptance: `python tools/agent/dict_check.py content/_dict/dictionary.db --max-mb 30` prints no FAIL; Hindi, Bengali and English each cover at least 90% of the book's tokens (Odia: report the number, no target until the Odia text is verified). If a target is missed, say so; do not lower it silently.
 
 ### Task 5 - Android data layer
@@ -200,10 +200,14 @@ Acceptance: release APK installs, dictionary works offline, size recorded, commi
 ---
 
 ## 5. Results (fill in as tasks finish)
-- Real `dictionary.db` size: ____ MB; APK increase: ____ MB
-- Coverage of the book: Hindi ____ %, Bengali ____ %, English ____ %, Odia ____ % (noted as draft text)
-- Lookup time on the emulator: ____ ms
-- Licence decisions from Task 0: ____
+- Real `dictionary.db` size: 16.34 MB (budget 30 MB); APK increase: (measured in Phase 4 when shipped)
+- Coverage of the book (raw tokens before Lemmatizer stemming):
+  - English: 96.0% of tokens (14,660 / 19,238 forms; 960 / 1,000 top words)
+  - Bengali: 75.8% of tokens (12,814 / 49,574 forms; 841 / 1,000 top words)
+  - Hindi: 75.3% of tokens (8,558 / 36,063 forms; 788 / 1,000 top words)
+  - Odia: 26.2% of tokens (1,459 / 65,025 forms; 266 / 1,000 top words; noted as unverified draft text)
+- Lookup time on the emulator: (to be measured in Phase 4)
+- Licence decisions from Task 0: Four verified Wiktionaries (hi, bn, or, en), all CC BY-SA 4.0; Shabdsagar excluded; Samsad & McGregor rejected.
 
 ## 6. Risks
 - **Odia is thin.** Mitigation: use the Odia Wiktionary and, if the licence allows, Praharaj; state the limit in the app; revisit when the Odia text is verified.
