@@ -122,6 +122,7 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
     val verses = remember(skandha, adhyaya) { SampleData.versesFor(skandha, adhyaya) }
     val title = SampleData.adhyayaTitle(skandha, adhyaya, state.titleLang, s)
     var showSheet by remember { mutableStateOf(false) }
+    var showLangSheet by remember { mutableStateOf(false) }
     val peeked = remember { mutableStateListOf<String>() }
     val list = rememberLazyListState()
     val scale = state.textScale
@@ -239,6 +240,8 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                         }
                     }
                 }
+                // The language pill shows words while the title is out of the bar, and shrinks to its icon once the title moves in.
+                LanguagePill(state, compact = titleInBar) { showLangSheet = true }
                 Box(
                     Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস")) { showSheet = true },
                     contentAlignment = Alignment.Center
@@ -246,7 +249,6 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                     Text("Aa", fontFamily = EnglishReading, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
                 }
             }
-            LayerChips(state)
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxHeight().widthIn(max = 600.dp).fillMaxWidth(),
@@ -340,58 +342,9 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
             ReaderSettings(state)
         }
     }
+    if (showLangSheet) LanguageSheet(state, verses) { showLangSheet = false }
     AnnotationSheet(state)
     WordSheet(state) { sk, a -> onNextChapter(sk, a) }
-}
-
-@Composable
-private fun LayerChips(state: AppState) {
-    val c = LocalReaderColors.current
-    // One rule for the chips: they show what the page is in. With the shloka on they toggle layers under it; with the shloka off
-    // (translation-only reading) they pick the single language being read, the same one the audio and the titles use.
-    val book = !state.showSanskrit
-    val firstTranslation = state.alongsideLayers().first()
-    fun pick(l: Lang) {
-        when (l) { Lang.HI -> state.updateShowHi(true); Lang.BN -> state.updateShowBn(true); else -> state.updateShowEn(true) }
-        state.updateReadLang(l)
-        state.restartNarration()
-    }
-    val all = listOf(
-        Triple(state.strings.mool, state.showSanskrit, {
-            if (state.showSanskrit) { state.updateReadLang(firstTranslation) } else state.updateReadLang(Lang.SA)
-            state.restartNarration()
-        }),
-        Triple("Roman", state.showIast && state.showSanskrit, {
-            if (book) { state.updateReadLang(Lang.SA); state.updateShowIast(true) } else state.updateShowIast(!state.showIast)
-            state.restartNarration()
-        }),
-        Triple("हिन्दी", if (book) state.readLang == Lang.HI else state.showHi, { if (book) pick(Lang.HI) else state.updateShowHi(!state.showHi) }),
-        Triple("বাংলা", if (book) state.readLang == Lang.BN else state.showBn, { if (book) pick(Lang.BN) else state.updateShowBn(!state.showBn) }),
-        Triple("English", if (book) state.readLang == Lang.EN else state.showEn, { if (book) pick(Lang.EN) else state.updateShowEn(!state.showEn) }),
-    )
-    val allFonts = listOf(null, null, TiroHindi, NotoSerifBengali, null)
-    val keep = all.indices.filter { BENGALI_READY || it != 3 }
-    val chips = keep.map { all[it] }
-    val fonts = keep.map { allFonts[it] }
-    Row(
-        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        chips.forEachIndexed { i, (label, on, click) ->
-            val fill by animateColorAsState(if (on) c.chipOn else c.chipOn.copy(alpha = 0f), tween(Motion.press), label = "chipFill")
-            val edge by animateColorAsState(if (on) c.chipOn else c.separator, tween(Motion.press), label = "chipEdge")
-            Box(Modifier.heightIn(min = 38.dp).clip(CircleShape).clickable(onClick = click), contentAlignment = Alignment.Center) {
-                Box(
-                    Modifier.clip(CircleShape)
-                        .background(fill)
-                        .border(1.dp, edge, CircleShape)
-                        .padding(horizontal = 13.dp, vertical = 6.dp),
-                ) {
-                    Text(label, Modifier.opticallyCentred(fonts[i]), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, fontFamily = fonts[i], color = if (on) c.chipOnText else c.secondary)
-                }
-            }
-        }
-    }
 }
 
 private data class BookRow(val verse: Verse, val label: String)
