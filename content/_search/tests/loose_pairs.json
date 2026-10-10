@@ -1,0 +1,510 @@
+{
+  "_note": "Keys are generated from content/_search/prototype.py (rule A). Never edit by hand; see docs/agent/DECISIONS.md. Regenerate by changing the code, then re-running the generator.",
+  "pairs": [
+    {
+      "input": "Krishna",
+      "fn": "roman",
+      "key": "krisn"
+    },
+    {
+      "input": "krishna",
+      "fn": "roman",
+      "key": "krisn"
+    },
+    {
+      "input": "Krisna",
+      "fn": "roman",
+      "key": "krisn"
+    },
+    {
+      "input": "Kṛṣṇa",
+      "fn": "roman",
+      "key": "krisn"
+    },
+    {
+      "input": "कृष्ण",
+      "fn": "indic",
+      "key": "krisn"
+    },
+    {
+      "input": "কৃষ্ণ",
+      "fn": "indic",
+      "key": "krisn"
+    },
+    {
+      "input": "कृष्णः",
+      "fn": "indic",
+      "key": "krisn"
+    },
+    {
+      "input": "Yudhishthira",
+      "fn": "roman",
+      "key": "judistir"
+    },
+    {
+      "input": "Yudhisthira",
+      "fn": "roman",
+      "key": "judistir"
+    },
+    {
+      "input": "Yudhiṣṭhira",
+      "fn": "roman",
+      "key": "judistir"
+    },
+    {
+      "input": "युधिष्ठिर",
+      "fn": "indic",
+      "key": "judistir"
+    },
+    {
+      "input": "যুধিষ্ঠির",
+      "fn": "indic",
+      "key": "judistir"
+    },
+    {
+      "input": "Narada",
+      "fn": "roman",
+      "key": "narad"
+    },
+    {
+      "input": "Nārada",
+      "fn": "roman",
+      "key": "narad"
+    },
+    {
+      "input": "नारद",
+      "fn": "indic",
+      "key": "narad"
+    },
+    {
+      "input": "নারদ",
+      "fn": "indic",
+      "key": "narad"
+    },
+    {
+      "input": "Gajendra",
+      "fn": "roman",
+      "key": "gajendr"
+    },
+    {
+      "input": "গজেন্দ্র",
+      "fn": "indic",
+      "key": "gajendr"
+    },
+    {
+      "input": "गजेन्द्र",
+      "fn": "indic",
+      "key": "gajendr"
+    },
+    {
+      "input": "Kunti",
+      "fn": "roman",
+      "key": "kunti"
+    },
+    {
+      "input": "Kuntī",
+      "fn": "roman",
+      "key": "kunti"
+    },
+    {
+      "input": "कुन्ती",
+      "fn": "indic",
+      "key": "kunti"
+    },
+    {
+      "input": "কুন্তী",
+      "fn": "indic",
+      "key": "kunti"
+    },
+    {
+      "input": "কুন্তি",
+      "fn": "indic",
+      "key": "kunti"
+    },
+    {
+      "input": "Shri",
+      "fn": "roman",
+      "key": "sri"
+    },
+    {
+      "input": "Sri",
+      "fn": "roman",
+      "key": "sri"
+    },
+    {
+      "input": "Śrī",
+      "fn": "roman",
+      "key": "sri"
+    },
+    {
+      "input": "श्री",
+      "fn": "indic",
+      "key": "sri"
+    },
+    {
+      "input": "শ্রী",
+      "fn": "indic",
+      "key": "sri"
+    },
+    {
+      "input": "Rishi",
+      "fn": "roman",
+      "key": "risi"
+    },
+    {
+      "input": "ऋषि",
+      "fn": "indic",
+      "key": "risi"
+    },
+    {
+      "input": "Dhruva",
+      "fn": "roman",
+      "key": "drub"
+    },
+    {
+      "input": "ধ্রুব",
+      "fn": "indic",
+      "key": "drub"
+    },
+    {
+      "input": "ध्रुव",
+      "fn": "indic",
+      "key": "drub"
+    },
+    {
+      "input": "Prahlada",
+      "fn": "roman",
+      "key": "prahlad"
+    },
+    {
+      "input": "Prahlāda",
+      "fn": "roman",
+      "key": "prahlad"
+    },
+    {
+      "input": "प्रह्लाद",
+      "fn": "indic",
+      "key": "prahlad"
+    },
+    {
+      "input": "প্রহ্লাদ",
+      "fn": "indic",
+      "key": "prahlad"
+    },
+    {
+      "input": "Arjuna",
+      "fn": "roman",
+      "key": "arjun"
+    },
+    {
+      "input": "অর্জুন",
+      "fn": "indic",
+      "key": "arjun"
+    },
+    {
+      "input": "अर्जुन",
+      "fn": "indic",
+      "key": "arjun"
+    },
+    {
+      "input": "Bhagavan",
+      "fn": "roman",
+      "key": "bagaban"
+    },
+    {
+      "input": "Bhagavān",
+      "fn": "roman",
+      "key": "bagaban"
+    },
+    {
+      "input": "भगवान",
+      "fn": "indic",
+      "key": "bagaban"
+    },
+    {
+      "input": "ভগবান",
+      "fn": "indic",
+      "key": "bagaban"
+    },
+    {
+      "input": "भगवान्",
+      "fn": "indic",
+      "key": "bagaban"
+    },
+    {
+      "input": "Dharma",
+      "fn": "roman",
+      "key": "darn"
+    },
+    {
+      "input": "धर्म",
+      "fn": "indic",
+      "key": "darn"
+    },
+    {
+      "input": "ধর্ম",
+      "fn": "indic",
+      "key": "darn"
+    },
+    {
+      "input": "Parikshit",
+      "fn": "roman",
+      "key": "pariksit"
+    },
+    {
+      "input": "Parīkṣit",
+      "fn": "roman",
+      "key": "pariksit"
+    },
+    {
+      "input": "परीक्षित",
+      "fn": "indic",
+      "key": "pariksit"
+    },
+    {
+      "input": "পরীক্ষিত",
+      "fn": "indic",
+      "key": "pariksit"
+    },
+    {
+      "input": "rasa",
+      "fn": "roman",
+      "key": "ras"
+    },
+    {
+      "input": "Rāsa",
+      "fn": "roman",
+      "key": "ras"
+    },
+    {
+      "input": "रस",
+      "fn": "indic",
+      "key": "ras"
+    },
+    {
+      "input": "রস",
+      "fn": "indic",
+      "key": "ras"
+    },
+    {
+      "input": "Hari",
+      "fn": "roman",
+      "key": "hari"
+    },
+    {
+      "input": "हरि",
+      "fn": "indic",
+      "key": "hari"
+    },
+    {
+      "input": "হরি",
+      "fn": "indic",
+      "key": "hari"
+    },
+    {
+      "input": "Vishnu",
+      "fn": "roman",
+      "key": "bisnu"
+    },
+    {
+      "input": "विष्णु",
+      "fn": "indic",
+      "key": "bisnu"
+    },
+    {
+      "input": "বিষ্ণু",
+      "fn": "indic",
+      "key": "bisnu"
+    },
+    {
+      "input": "Brahma",
+      "fn": "roman",
+      "key": "brahn"
+    },
+    {
+      "input": "ब्रह्मा",
+      "fn": "indic",
+      "key": "brahn"
+    },
+    {
+      "input": "ব্রহ্মা",
+      "fn": "indic",
+      "key": "brahn"
+    },
+    {
+      "input": "Mahabharata",
+      "fn": "roman",
+      "key": "nahabarat"
+    },
+    {
+      "input": "महाभारत",
+      "fn": "indic",
+      "key": "nahabarat"
+    },
+    {
+      "input": "মহাভারত",
+      "fn": "indic",
+      "key": "nahabarat"
+    },
+    {
+      "input": "Suta",
+      "fn": "roman",
+      "key": "sut"
+    },
+    {
+      "input": "सूत",
+      "fn": "indic",
+      "key": "sut"
+    },
+    {
+      "input": "সূত",
+      "fn": "indic",
+      "key": "sut"
+    },
+    {
+      "input": "Shuka",
+      "fn": "roman",
+      "key": "suk"
+    },
+    {
+      "input": "शुक",
+      "fn": "indic",
+      "key": "suk"
+    },
+    {
+      "input": "শুক",
+      "fn": "indic",
+      "key": "suk"
+    },
+    {
+      "input": "কুমীর",
+      "fn": "indic",
+      "key": "kunir"
+    },
+    {
+      "input": "কুমির",
+      "fn": "indic",
+      "key": "kunir"
+    },
+    {
+      "input": "मगर",
+      "fn": "indic",
+      "key": "nagar"
+    },
+    {
+      "input": "ଭଗବାନ",
+      "fn": "indic",
+      "key": "bagaban"
+    },
+    {
+      "input": "ଧର୍ମ",
+      "fn": "indic",
+      "key": "darn"
+    },
+    {
+      "input": "ଅର୍ଜୁନ",
+      "fn": "indic",
+      "key": "arjun"
+    }
+  ],
+  "must_match": [
+    [
+      "Krishna",
+      "कृष्ण"
+    ],
+    [
+      "Krishna",
+      "কৃষ্ণ"
+    ],
+    [
+      "Yudhishthira",
+      "युधिष्ठिर"
+    ],
+    [
+      "Narada",
+      "नारद"
+    ],
+    [
+      "Shri",
+      "श्री"
+    ],
+    [
+      "Rishi",
+      "ऋषि"
+    ],
+    [
+      "Gajendra",
+      "গজেন্দ্র"
+    ],
+    [
+      "Kunti",
+      "কুন্তী"
+    ],
+    [
+      "Arjuna",
+      "অর্জুন"
+    ],
+    [
+      "Dhruva",
+      "ধ্রুব"
+    ],
+    [
+      "Bhagavan",
+      "ভগবান"
+    ],
+    [
+      "Prahlada",
+      "প্রহ্লাদ"
+    ],
+    [
+      "Hari",
+      "হরি"
+    ],
+    [
+      "Vishnu",
+      "বিষ্ণু"
+    ],
+    [
+      "Brahma",
+      "ব্রহ্মা"
+    ],
+    [
+      "Suta",
+      "সূত"
+    ],
+    [
+      "Parikshit",
+      "পরীক্ষিত"
+    ],
+    [
+      "rasa",
+      "রস"
+    ],
+    [
+      "Bhagavan",
+      "ଭଗବାନ"
+    ],
+    [
+      "Dharma",
+      "ଧର୍ମ"
+    ],
+    [
+      "Arjuna",
+      "ଅର୍ଜୁନ"
+    ]
+  ],
+  "must_not_match": [
+    [
+      "Krishna",
+      "আকর্ষণ"
+    ],
+    [
+      "Narada",
+      "निरोध"
+    ],
+    [
+      "Kunti",
+      "कान्त"
+    ]
+  ]
+}

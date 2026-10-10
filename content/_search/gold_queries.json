@@ -1,0 +1,247 @@
+{
+  "_note": "Gold queries for the search plan (docs/superpowers/plans/2026-10-09-search.md). status 'required' must pass in every engine; 'target' is expected to fail until the named feature is built (the checker reports it as TARGET, not FAIL). Chapter numbers are skandha.chapter and were taken from the book data. Add queries here when a bug is found, with the fix.",
+  "queries": [
+    {
+      "id": "name-roman-1",
+      "query": "Krishna",
+      "min_verses": 1000,
+      "status": "required",
+      "why": "today the app finds 0 in English because the text spells it with diacritics"
+    },
+    {
+      "id": "name-roman-2",
+      "query": "krishna",
+      "min_verses": 1000,
+      "status": "required",
+      "why": "lower case must give the same"
+    },
+    {
+      "id": "name-devanagari",
+      "query": "कृष्ण",
+      "min_verses": 1000,
+      "status": "required"
+    },
+    {
+      "id": "name-bengali",
+      "query": "কৃষ্ণ",
+      "min_verses": 1000,
+      "status": "required"
+    },
+    {
+      "id": "same-set-across-scripts",
+      "same_results": [
+        "krishna",
+        "कृष्ण",
+        "কৃষ্ণ"
+      ],
+      "status": "required",
+      "why": "one name, one result set, in any script"
+    },
+    {
+      "id": "spelling-variant-1",
+      "same_results": [
+        "Krisna",
+        "Krishna",
+        "Kṛṣṇa"
+      ],
+      "status": "required",
+      "why": "users type without diacritics or with sh/s variants"
+    },
+    {
+      "id": "spelling-variant-2",
+      "same_results": [
+        "Yudhisthira",
+        "Yudhishthira",
+        "Yudhiṣṭhira"
+      ],
+      "status": "required"
+    },
+    {
+      "id": "gajendra",
+      "query": "Gajendra",
+      "min_verses": 15,
+      "max_verses": 60,
+      "chapters_include": [
+        "8.2",
+        "8.3"
+      ],
+      "status": "required"
+    },
+    {
+      "id": "precision-kunti",
+      "query": "Kunti",
+      "max_verses": 120,
+      "chapters_include": [
+        "1.8"
+      ],
+      "status": "required",
+      "why": "a coarse key matched 1,527 verses; the real answer is under 100"
+    },
+    {
+      "id": "precision-rasa",
+      "query": "rasa",
+      "max_verses": 300,
+      "status": "required",
+      "why": "a coarse key matched 1,151 verses"
+    },
+    {
+      "id": "precision-narada",
+      "query": "Narada",
+      "max_verses": 500,
+      "status": "required"
+    },
+    {
+      "id": "dhruva",
+      "query": "Dhruva",
+      "chapters_include": [
+        "4.8",
+        "4.9"
+      ],
+      "status": "required"
+    },
+    {
+      "id": "narasimha",
+      "query": "Narasimha",
+      "chapters_include": [
+        "7.8"
+      ],
+      "status": "required"
+    },
+    {
+      "id": "and-not-phrase-hi",
+      "query": "हाथी मगर",
+      "min_verses": 1,
+      "status": "required",
+      "why": "two words must both be present, in any order, not as one string"
+    },
+    {
+      "id": "reference-verse",
+      "query": "10.29.1",
+      "kind": "reference",
+      "expect": [
+        10,
+        29,
+        1
+      ],
+      "status": "required"
+    },
+    {
+      "id": "reference-chapter",
+      "query": "10.29",
+      "kind": "reference",
+      "expect": [
+        10,
+        29,
+        null
+      ],
+      "status": "required"
+    },
+    {
+      "id": "reference-spaces",
+      "query": "10 29 1",
+      "kind": "reference",
+      "expect": [
+        10,
+        29,
+        1
+      ],
+      "status": "required"
+    },
+    {
+      "id": "reference-out-of-range",
+      "query": "13.1.1",
+      "kind": "reference",
+      "expect": null,
+      "status": "required",
+      "why": "there is no 13th skandha"
+    },
+    {
+      "id": "too-short",
+      "query": "a",
+      "max_verses": 0,
+      "status": "required",
+      "why": "one letter is not a search"
+    },
+    {
+      "id": "synonym-en",
+      "query": "crocodile elephant",
+      "chapters_include": [
+        "8.2"
+      ],
+      "scope": "chapter",
+      "status": "target",
+      "why": "the text says alligator, never crocodile and elephant in one verse; needs related words and chapter-level matching"
+    },
+    {
+      "id": "synonym-bn",
+      "query": "হাতি কুমির",
+      "chapters_include": [
+        "8.2"
+      ],
+      "scope": "chapter",
+      "status": "required",
+      "why": "the book spells it কুমীর (long ী); needs vowel-length folding and related words (passes with the vowel-keeping key, so now required)"
+    },
+    {
+      "id": "synonym-hi",
+      "query": "हाथी मगर",
+      "chapters_include": [
+        "8.2"
+      ],
+      "scope": "chapter",
+      "status": "target",
+      "why": "the book also says ग्राह for the same animal"
+    },
+    {
+      "id": "bengali-length-variant",
+      "same_results": [
+        "কুমীর",
+        "কুমির"
+      ],
+      "status": "required",
+      "why": "short and long i are spelled interchangeably in Bengali (passes with the vowel-keeping key, so now required)"
+    },
+    {
+      "id": "typo-1",
+      "query": "Krshna",
+      "min_verses": 1000,
+      "status": "target",
+      "why": "one letter missing: needs typo tolerance"
+    },
+    {
+      "id": "typo-2",
+      "query": "Arjna",
+      "min_verses": 100,
+      "status": "target",
+      "why": "needs typo tolerance"
+    },
+    {
+      "id": "stem-hi",
+      "same_results": [
+        "भगवान",
+        "भगवान्"
+      ],
+      "status": "required",
+      "why": "trailing halant and case endings (passes with the vowel-keeping key, so now required)"
+    },
+    {
+      "id": "alias-narasimha",
+      "same_results": [
+        "Narasimha",
+        "Nrisimha",
+        "नृसिंह"
+      ],
+      "status": "target",
+      "why": "the Roman name and the Sanskrit spelling differ in more than transliteration (nara- vs nri-); needs an alias list for names"
+    },
+    {
+      "id": "alias-rasa-lila",
+      "query": "Rasa Lila",
+      "chapters_include": [
+        "10.29"
+      ],
+      "status": "target",
+      "why": "the stories list calls it Rasa Lila; the book text says rasa and krida; a story and its chapters must be linked"
+    }
+  ]
+}

@@ -51,3 +51,23 @@ __pycache__/
 
 # old edit backups
 /_archive/
+
+# dictionary pipeline outputs (downloads, vocabulary derived from the book text, built databases)
+/content/_dict/work/
+/content/_dict/dictionary.db
+/app/src/main/assets/dictionary.db
+
+# search pipeline outputs (the index is derived from the book text)
+/content/_search/work/
+/content/_search/search.db
+/app/src/main/assets/search.db
+
+
+# Gita Press Odia translation and everything derived from it (OCR text, transcripts, chapters): not for a repository
+/content/or/
+/content/_odia/batches/
+/content/_odia/vision_transcripts/
+/content/_odia/review/
+/content/_odia/flagged.csv
+/content/_odia/report.md
+/content/_odia/**/work/
