@@ -120,3 +120,15 @@ Plan: `docs/superpowers/plans/2026-10-09-search.md`. The objective target is `co
 - **Speed budget:** first results in under 50 ms on the emulator or phone, never on the main thread, stale queries cancelled. Size budget: `search.db` at most 8 MB (target 4 to 5 MB). Report real numbers in section 5 of the plan.
 - **Shared code with the dictionary:** `Normalise.kt` and `Lemmatizer.kt` serve both plans. Check whether they exist before writing them, and do not make two copies.
 - Odia text in the app is an unverified draft: build Odia search last and say so.
+
+## 9. Odia transcription work (Skandha 5 to 12)
+
+Method, measured numbers and acceptance rule: `docs/agent/ODIA_ACCURACY.md`. Prompt and owner steps: `docs/agent/ODIA_PROMPT.md`. Tools: `content/_odia`.
+- **Tools read the pages; you do not.** Run `odia_vision.py` (needs `GEMINI_API_KEY` in the shell). Never read page images and type the text yourself, and never write a key into a file.
+- **One reading is never enough.** Pass A and pass B (two models, two image sizes) are compared word by word by `odia_verify.py`; Tesseract is only a tie-breaker (it is wrong in about 1 word in 4).
+- **Impossible spellings are flagged even when both readings agree** (`odia_text.SEVERE`). `ends_with_virama` is information only (ଭଗବାନ୍ is a normal word). Do not shrink `SEVERE` to improve a report.
+- **Accuracy is measured, not assumed:** random audit of accepted words, `audit-score`, 95% upper bound at most 1%. A failed audit stops promotion.
+- **Changes go through `odia_verify.py apply`**, not hand edits of chapter markdown. `verification_status` rises only as the audit and the structure check allow.
+- **Generated data stays out of git:** `content/or`, `content/_odia/work_*`, `vision_transcripts`, `vt`, `out`, `review` are in `.gitignore`; `commit_check.sh` blocks them. Commit code and docs only.
+- **Do not change `content.db` or the app** from this work until the owner has read `work_final/review/report.md`. When promoted, both `content/content.db` and `app/src/main/assets/content.db` change together.
+- Tests before any change to the tools: `py content/_odia/tests/test_verify.py` (must print PASS).

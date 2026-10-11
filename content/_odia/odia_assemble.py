@@ -355,7 +355,7 @@ def chapter_md(ch, status):
     title = ch.title.replace('"', "'")
     head = ["---", f"skandha: {ch.s}", f"chapter: {ch.c}", f'title: "{title}"', "language: or", f"section: {ch.section}",
             f'source_pdf: "{"; ".join(pdfs)}"', "source_pages: [" + ", ".join(f'"{x}"' for x in srcs) + "]",
-            'extraction_method: "Tesseract OCR (ori) + layout analysis"', f'verification_status: "{status}"', "---", ""]
+            f'extraction_method: "{os.environ.get("ODIA_METHOD", "Tesseract OCR (ori) + layout analysis")}"', f'verification_status: "{status}"', "---", ""]
     head.append(f"# {SK_NAMES[ch.s]} ସ୍କନ୍ଧ" if ch.s else "# ମାହାତ୍ମ୍ୟ")
     head += ["", f"## ଅଧ୍ୟାୟ {od_digits(ch.c)}" + (f" - {ch.title}" if ch.title else ""), ""]
     body = []

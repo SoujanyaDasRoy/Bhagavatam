@@ -71,3 +71,10 @@ __pycache__/
 /content/_odia/flagged.csv
 /content/_odia/report.md
 /content/_odia/**/work/
+# Odia verification work (readings, consensus, review pages, audits): derived from the printed book
+/content/_odia/work_v/
+/content/_odia/work_tess/
+/content/_odia/work_final/
+/content/_odia/work/
+/content/_odia/vt/
+/content/_odia/out/

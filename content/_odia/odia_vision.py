@@ -16,6 +16,15 @@ Run:
     python odia_vision.py run --vol 2 --workers 4
 Restartable: a page is done when its JSON exists. Failures go to work_v/errors.log; re-run to retry.
 --model claude-opus-5-5 --force re-reads hard pages with a stronger model.
+
+Gemini backend (the one to use with a Google AI Studio key; the free tier is enough for a pilot):
+    pip install google-genai pymupdf pillow
+    $env:GEMINI_API_KEY = "..."               # set it in the shell; never write a key into a file in the repository
+    python odia_vision.py run --backend gemini --skandha 5 --pages 579-585            # pilot: first chapter of Skandha 5
+    python odia_vision.py run --backend gemini --skandha 5-12 --workers 3             # pass A  -> work_v/vision
+    python odia_vision.py run --backend gemini --skandha 5-12 --pass B --model gemini-2.5-pro --workers 2   # pass B -> work_v/vision_b
+Pass A and pass B are two independent readings of every page; odia_verify.py compares them word by word.
+The backend is --backend, else gemini when GEMINI_API_KEY is set, else anthropic.
 """
 import argparse, base64, io, json, os, re, sys, threading, time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -24,8 +33,13 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 WORK = Path(os.environ.get("ODIA_VWORK", HERE / "work_v"))
 CFG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
-DEFAULT_MODEL = os.environ.get("ODIA_MODEL", "claude-sonnet-5-5")
-LONG_EDGE = 2000
+DEFAULT_MODEL = os.environ.get("ODIA_MODEL")   # when unset, main() picks the backend default
+GEMINI_MODEL = os.environ.get("ODIA_GEMINI_MODEL", "gemini-2.5-flash")
+ANTHROPIC_MODEL = "claude-sonnet-5-5"
+PASS_DIR = {"A": "vision", "B": "vision_b", "C": "vision_c"}   # where each independent reading is stored
+LONG_EDGE = int(os.environ.get("ODIA_LONG_EDGE", "2000"))
+# Pass B is rendered at another size from another cache folder: a second reading of the SAME pixels would repeat the same slips.
+LONG_EDGE_B = int(os.environ.get("ODIA_LONG_EDGE_B", "2600"))
 OD = "୦୧୨୩୪୫୬୭୮୯"
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -88,8 +102,9 @@ def _fitz():
     return fitz
 
 
-def page_image(vol, page):
-    out = WORK / "images" / f"v{vol}_p{page:04d}.png"
+def page_image(vol, page, edge=None, sub="images"):
+    edge = edge or LONG_EDGE
+    out = WORK / sub / f"v{vol}_p{page:04d}.png"
     if out.exists():
         return out
     from PIL import Image, ImageOps
@@ -109,13 +124,21 @@ def page_image(vol, page):
             img = Image.open(io.BytesIO(pix.tobytes("png")))
     img = ImageOps.autocontrast(img.convert("L"), cutoff=1)
     w, h = img.size
-    s = LONG_EDGE / max(w, h)
+    s = edge / max(w, h)
     img = img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
     img.save(out, optimize=True)
     return out
 
 
-def client():
+def client(backend="anthropic"):
+    if backend == "gemini":
+        try:
+            from google import genai
+        except ImportError:
+            sys.exit("pip install google-genai pymupdf pillow")
+        if not os.environ.get("GEMINI_API_KEY"):
+            sys.exit("GEMINI_API_KEY is not set (create a key in Google AI Studio and set it in the shell, not in a file).")
+        return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     try:
         import anthropic
     except ImportError:
@@ -125,7 +148,49 @@ def client():
     return anthropic.Anthropic(max_retries=6, timeout=180)
 
 
-def transcribe(cl, model, img_path):
+def gemini_prompt():
+    """The tool schema, spelled out for a model that answers in plain JSON instead of calling a tool."""
+    props = TOOL["input_schema"]["properties"]
+    fields = "\n".join(f'- "{k}": {v.get("description", "")}' for k, v in props.items())
+    return (PROMPT + "\nAnswer with ONE JSON object and nothing else (no markdown fence). Keys:\n" + fields +
+            "\nUse null for an absent value, [] for an empty list, and keep every key.")
+
+
+def parse_gemini_json(text):
+    """Model text -> dict. Tolerates a ```json fence; raises on anything that is not an object with 'paragraphs'."""
+    t = (text or "").strip()
+    t = re.sub(r"^```(?:json)?\s*|\s*```$", "", t)
+    d = json.loads(t)
+    if isinstance(d, list) and d and isinstance(d[0], dict):
+        d = d[0]
+    if not isinstance(d, dict) or "paragraphs" not in d:
+        raise ValueError("no paragraphs in the answer")
+    return d
+
+
+def transcribe_gemini(cl, model, img_path):
+    from google.genai import types
+    last = None
+    prompt = gemini_prompt()
+    for attempt in range(5):
+        try:
+            r = cl.models.generate_content(
+                model=model,
+                contents=[types.Part.from_bytes(data=img_path.read_bytes(), mime_type="image/png"), prompt],
+                config=types.GenerateContentConfig(temperature=0, response_mime_type="application/json", max_output_tokens=16384))
+            out = parse_gemini_json(r.text)
+            u = getattr(r, "usage_metadata", None)
+            out["_usage"] = {"in": getattr(u, "prompt_token_count", None), "out": getattr(u, "candidates_token_count", None)}
+            return out
+        except Exception as e:  # noqa
+            last = e
+            time.sleep(3 + 5 * attempt)
+    raise RuntimeError(f"giving up: {last}")
+
+
+def transcribe(cl, model, img_path, backend="anthropic"):
+    if backend == "gemini":
+        return transcribe_gemini(cl, model, img_path)
     data = base64.standard_b64encode(img_path.read_bytes()).decode()
     last = None
     for max_tokens in (4096, 8192):
@@ -176,29 +241,54 @@ def parse_range(s, hi):
     return int(a), int(b or a)
 
 
-def cmd_run(a):
-    vols = [a.vol] if a.vol else [1, 2]
+def skandha_spans(spec):
+    """'5' or '5-12' -> [(vol, first_page, last_page)] from data/skandha_pages.json (made from the assembled chapters)."""
+    sp = json.loads((HERE / "data" / "skandha_pages.json").read_text(encoding="utf-8"))
+    lo, _, hi = spec.partition("-")
+    lo, hi = int(lo), int(hi or lo)
+    return [(int(v), x, y) for k in range(lo, hi + 1) for v, x, y in sp[str(k)]]
+
+
+def pages_to_do(a, out_dir):
+    """The (vol, page) list a run covers. Pure function of the arguments and the files already written."""
+    if a.skandha:
+        want = skandha_spans(a.skandha)
+        if a.pages:
+            plo, phi = parse_range(a.pages, 10 ** 6)
+            want = [(v, max(x, plo), min(y, phi)) for v, x, y in want if max(x, plo) <= min(y, phi)]
+        cand = [(v, p) for v, x, y in want for p in range(x, y + 1)]
+        if a.vol:
+            cand = [(v, p) for v, p in cand if v == a.vol]
+    else:
+        cand = []
+        for v in ([a.vol] if a.vol else [1, 2]):
+            lo, hi = parse_range(a.pages, vol_pages(v))
+            cand += [(v, p) for p in range(lo, min(hi, vol_pages(v)) + 1)]
     todo = []
-    for v in vols:
-        lo, hi = parse_range(a.pages, vol_pages(v))
-        for p in range(lo, min(hi, vol_pages(v)) + 1):
-            if any(str(sv) == str(v) and x <= p <= y for sv, x, y in CFG.get("skip_pages", [])):
-                continue
-            f = WORK / "vision" / f"v{v}_p{p:04d}.json"
-            if a.force or not f.exists():
-                todo.append((v, p))
+    for v, p in dict.fromkeys(cand):
+        if any(str(sv) == str(v) and x <= p <= y for sv, x, y in CFG.get("skip_pages", [])):
+            continue
+        if a.force or not (out_dir / f"v{v}_p{p:04d}.json").exists():
+            todo.append((v, p))
+    return todo
+
+
+def cmd_run(a):
+    out_dir = WORK / PASS_DIR[a.passname]
+    todo = pages_to_do(a, out_dir)
     if a.limit:
         todo = todo[:a.limit]
-    print(f"{len(todo)} page(s) with {a.model}", flush=True)
+    print(f"{len(todo)} page(s) with {a.backend}:{a.model} -> {out_dir}", flush=True)
     if not todo:
         return
-    (WORK / "vision").mkdir(parents=True, exist_ok=True)
-    cl = client(); lock = threading.Lock(); done = [0]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cl = client(a.backend); lock = threading.Lock(); done = [0]
 
     def job(v, p):
-        img = page_image(v, p)
-        res = normalise(transcribe(cl, a.model, img), v, p, a.model)
-        (WORK / "vision" / f"v{v}_p{p:04d}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
+        img = page_image(v, p, LONG_EDGE_B, "images_b") if a.passname == "B" else page_image(v, p)
+        res = normalise(transcribe(cl, a.model, img, a.backend), v, p, f"{a.backend}:{a.model}")
+        res["_page"]["pass"] = a.passname
+        (out_dir / f"v{v}_p{p:04d}.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
         return v, p
 
     with ThreadPoolExecutor(a.workers) as ex:
@@ -223,9 +313,14 @@ def cmd_estimate(a):
 def main():
     ap = argparse.ArgumentParser(); sp = ap.add_subparsers(dest="cmd", required=True)
     r = sp.add_parser("run"); r.add_argument("--vol", type=int); r.add_argument("--pages"); r.add_argument("--workers", type=int, default=4)
-    r.add_argument("--model", default=DEFAULT_MODEL); r.add_argument("--limit", type=int); r.add_argument("--force", action="store_true")
+    r.add_argument("--model"); r.add_argument("--limit", type=int); r.add_argument("--force", action="store_true")
+    r.add_argument("--backend", choices=["anthropic", "gemini"]); r.add_argument("--skandha", help="5 or 5-12 (uses data/skandha_pages.json)")
+    r.add_argument("--pass", dest="passname", choices=list(PASS_DIR), default="A", help="A=work_v/vision, B=work_v/vision_b, C=work_v/vision_c")
     sp.add_parser("estimate")
     a = ap.parse_args()
+    if a.cmd == "run":
+        a.backend = a.backend or ("gemini" if os.environ.get("GEMINI_API_KEY") else "anthropic")
+        a.model = a.model or DEFAULT_MODEL or (GEMINI_MODEL if a.backend == "gemini" else ANTHROPIC_MODEL)
     {"run": cmd_run, "estimate": cmd_estimate}[a.cmd](a)
 
 
