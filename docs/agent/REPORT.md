@@ -2,7 +2,7 @@
 
 Date: 2026-10-11  
 Device tested: Android Emulator (`emulator-5554`, Pixel 8, Android 15 / API 35, 1080 x 2400)  
-Build tested: `apk/Bhagavatam-v1.1.0-release.apk` (Release build, versionCode 2, versionName "1.1.0")  
+Build tested: `apk/Bhagavatam-v1.1.0-release.apk` (Release build, versionCode 8, versionName "1.1.0", checked against `app/build.gradle.kts`)  
 Git commit baseline: `f53cc60` (Phase 4 complete)
 
 ---
@@ -50,14 +50,14 @@ Git commit baseline: `f53cc60` (Phase 4 complete)
   - Baseline APK: 16.24 MB.
   - Added size: 9.54 MB (strictly within the 10 MB budget).
 - **Dictionary database (`dictionary.db`)**: 16.3 MB on disk (well within the 30 MB budget).
-  - Entries: 92,207 total entries across English, Hindi, Bengali, and Odia.
-  - Senses: 153,995 definitions.
+  - Entries: 37,797 across English (17,276), Hindi (7,916), Bengali (11,149) and Odia (1,456).
+  - Senses: 96,172 definitions (Odia: 3,806).
   - Integrity: 0 broken cross-references, 0 em/en dashes, verified prefix search table.
-- **Search index (`search.db`)**: 4.88 MB on disk (within the 4 - 5 MB target, under 8 MB maximum).
-  - Schema: custom inverted index (`postings`, `words`, `vocab`, `trigrams`).
-  - Search latency: under 50 ms for typical queries on emulator.
+- **Search index (`search.db`)**: 5.85 MB on disk (5,849,088 bytes): over the 4 to 5 MB target, under the 8 MB maximum.
+  - Schema (version 2): `loose`, `exact`, `grp`, `grp_by_term`, `chapter_start`, `title_key`, `meta`; plain tables, no FTS5.
+  - Search latency: reported as under 50 ms on the emulator by the Phase 5 run; not re-measured by the reviewer.
 - **Automated tests**:
-  - Android Unit Tests (`:app:testDebugUnitTest`): 81/81 passed (0 failed).
+  - Android Unit Tests (`:app:testDebugUnitTest`): 85/85 passed (0 failed; 81 at the time of the Phase 5 run, 4 tests added since).
   - Phonetic Loose Pairs (`test_loose_pairs.py`): 98/98 pairs passed (26 must-match, 3 must-not-match).
   - Gold Search Queries (`eval_queries.py --engine index`): 28/28 required queries passed (0 failed).
   - Commit check (`commit_check.sh`): PASSED (no sensitive files, databases, or API keys staged).
@@ -68,6 +68,16 @@ Git commit baseline: `f53cc60` (Phase 4 complete)
 
 1. **Odia Content Promotion**:
    - Odia scripture remains marked draft in `content/or` pending manual review.
-   - Odia dictionary entries (5,502 senses) are bundled and marked with an `Odia (Draft)` chip so users understand source maturity.
+   - Odia dictionary entries (1,456 entries, 3,806 senses) are bundled and marked with an `Odia (Draft)` chip so users understand source maturity.
 2. **Physical Device Testing**:
    - When a physical Samsung A35 or device is available via USB debugging, coordinates and layout density can be spot-checked. All layouts use Compose dynamic density units (`dp`, `sp`).
+
+## 4. Corrections after review (2026-10-11)
+
+The numbers above were checked against the files; these items were wrong in the first version and are corrected in place:
+versionCode (2, really 8), search.db size and schema (4.88 MB and `postings/words/vocab/trigrams`, really 5.85 MB and `loose/exact/grp/...`),
+dictionary entries and senses (92,207 and 153,995, really 37,797 and 96,172) and Odia senses (5,502, really 3,806).
+Open finding: `dictionary.db` contains an unused FTS5 virtual table (`entry_fts`). The app never queries it, but AGENTS.md section 8 forbids
+relying on FTS5 at API 26 and it adds size. Drop it in `content/_dict/build_dictionary.py` at the next dictionary rebuild.
+Screen-level PASS entries (themes, long-press lookups, airplane mode) were not repeated by the reviewer; the reader language switcher
+(light and dark, font scale 1.3) was checked by hand on 2026-10-11 and matched.
