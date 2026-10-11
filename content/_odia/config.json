@@ -1,0 +1,19 @@
+{
+ "volumes": {
+  "1": {
+   "path": "/mnt/user-data/uploads/Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-1.pdf",
+   "pages": 1019
+  },
+  "2": {
+   "path": "/mnt/user-data/uploads/Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-2.pdf",
+   "pages": 1035
+  }
+ },
+ "skip_pages": [
+  [
+   "2",
+   1,
+   10
+  ]
+ ]
+}
