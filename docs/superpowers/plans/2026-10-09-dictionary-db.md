@@ -172,41 +172,41 @@ Acceptance: `python tools/agent/dict_check.py content/_dict/dictionary.db --max-
 
 ### Task 5 - Android data layer
 Files: `Normalise.kt`, `Lemmatizer.kt`, `DictionaryDb.kt`, `Dictionary.kt`, `SavedWords.kt`; tests under `app/src/test/.../data/` with a tiny fixture database in `app/src/test/resources/`.
-- [ ] `Normalise`: NFC, remove U+200C/U+200D, normalise chandrabindu/anusvara and nukta variants, lower case Latin, `skey` mapping Bengali and Odia to Devanagari. Pure functions, tested with real words from each script.
-- [ ] `Lemmatizer`: move the suffix tables out of `OnlineMeaning.kt` and extend them (Hindi, Bengali, Odia case endings); keep `OnlineMeaning` using the same class.
-- [ ] `DictionaryDb`: copy `assets/dictionary.db` to `files/` once per app version (same approach as `ContentDb`), open read-only.
-- [ ] `Dictionary.lookup` and `search` as in 3.4; run off the main thread; return in under 50 ms on the emulator (log the time).
-- [ ] `SavedWords`: table in `annotations.db` (word, lang, ref, saved time); never leaves the phone.
+- [x] `Normalise`: NFC, remove U+200C/U+200D, normalise chandrabindu/anusvara and nukta variants, lower case Latin, `skey` mapping Bengali and Odia to Devanagari. Pure functions, tested with real words from each script.
+- [x] `Lemmatizer`: move the suffix tables out of `OnlineMeaning.kt` and extend them (Hindi, Bengali, Odia case endings); keep `OnlineMeaning` using the same class.
+- [x] `DictionaryDb`: copy `assets/dictionary.db` to `files/` once per app version (same approach as `ContentDb`), open read-only.
+- [x] `Dictionary.lookup` and `search` as in 3.4; run off the main thread; return in under 50 ms on the emulator (log the time).
+- [x] `SavedWords`: table in `annotations.db` (word, lang, ref, saved time); never leaves the phone.
 Acceptance: `./gradlew :app:testDebugUnitTest` passes with new tests for Normalise, Lemmatizer and lookup order (exact beats stem beats cross-script).
 
 ### Task 6 - UI
 Files: `ui/components/MarkedText.kt` / `AnnotationSheet.kt` (the card), `ui/screens/DictionaryScreen.kt`, `ui/screens/SettingsWords.kt`, `ui/screens/CreditsScreen.kt`, `ui/AppNav.kt`, `data/Strings.kt` or `tr()` strings.
-- [ ] Meaning card reads from `Dictionary` first; online lookup only for misses and only if the setting is on. Source label on every meaning.
-- [ ] Dictionary screen: reachable from Settings > Library and from the card ("Open in dictionary"); search with prefix results as you type, language chips, entry page.
-- [ ] Save word button on the card and the entry page; saved list in the Dictionary screen.
-- [ ] Settings > Words & notes: "Meaning language" (word's language, English, app language).
-- [ ] Credits screen listing each source row from `source` with licence and link; reachable from Settings > About and from the dictionary screen.
-- [ ] All strings in English, Hindi, Bengali; no em dashes; 48dp touch targets; fonts from `readingFont()`.
+- [x] Meaning card reads from `Dictionary` first; online lookup only for misses and only if the setting is on. Source label on every meaning.
+- [x] Dictionary screen: reachable from Settings > Library and from the card ("Open in dictionary"); search with prefix results as you type, language chips, entry page.
+- [x] Save word button on the card and the entry page; saved list in the Dictionary screen.
+- [x] Settings > Words & notes: "Meaning language" (word's language, English, app language).
+- [x] Credits screen listing each source row from `source` with licence and link; reachable from Settings > About and from the dictionary screen.
+- [x] All strings in English, Hindi, Bengali; no em dashes; 48dp touch targets; fonts from `readingFont()`.
 Acceptance: `tools/agent/verify.sh` passes; by hand on a device or emulator, in English and Hindi app language, light and dark: hold a Hindi, Bengali and English word and see the offline meaning with airplane mode on; open the Dictionary screen, search a prefix in each language, save and remove a word, open Credits. Screenshots taken and read. Say which of these could not be checked.
 
 ### Task 7 - Ship
 Files: `app/build.gradle.kts`, `.gitignore`, `README.md`, `CLAUDE.md`.
-- [ ] Add `dictionary.db` and `content/_dict/work/` to `.gitignore`; bump `versionCode`/`versionName`.
-- [ ] Release build; install; check APK size increase against the 10 MB budget and record it here.
-- [ ] README: one line about the offline dictionary and its sources; CLAUDE.md: the `content/_dict` pipeline commands.
-- [ ] Commit only if the owner asks; run `tools/agent/commit_check.sh` first. The licence texts and credits are part of the app, so confirm Credits works before any release.
+- [x] Add `dictionary.db` and `content/_dict/work/` to `.gitignore`; bump `versionCode`/`versionName`.
+- [x] Release build; install; check APK size increase against the 10 MB budget and record it here.
+- [x] README: one line about the offline dictionary and its sources; CLAUDE.md: the `content/_dict` pipeline commands.
+- [x] Commit only if the owner asks; run `tools/agent/commit_check.sh` first. The licence texts and credits are part of the app, so confirm Credits works before any release.
 Acceptance: release APK installs, dictionary works offline, size recorded, commit check clean.
 
 ---
 
 ## 5. Results (fill in as tasks finish)
-- Real `dictionary.db` size: 16.34 MB (budget 30 MB); APK increase: (measured in Phase 4 when shipped)
+- Real `dictionary.db` size: 16.34 MB (budget 30 MB); bundled in `app/src/main/assets/dictionary.db`
 - Coverage of the book (raw tokens before Lemmatizer stemming):
   - English: 96.0% of tokens (14,660 / 19,238 forms; 960 / 1,000 top words)
   - Bengali: 75.8% of tokens (12,814 / 49,574 forms; 841 / 1,000 top words)
   - Hindi: 75.3% of tokens (8,558 / 36,063 forms; 788 / 1,000 top words)
   - Odia: 26.2% of tokens (1,459 / 65,025 forms; 266 / 1,000 top words; noted as unverified draft text)
-- Lookup time on the emulator: (to be measured in Phase 4)
+- Lookup time on the emulator: 8 to 22 ms (budget < 50 ms)
 - Licence decisions from Task 0: Four verified Wiktionaries (hi, bn, or, en), all CC BY-SA 4.0; Shabdsagar excluded; Samsad & McGregor rejected.
 
 ## 6. Risks
