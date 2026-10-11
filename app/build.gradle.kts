@@ -4,8 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// APK files are named Bhagavatam-debug.apk and Bhagavatam-release.apk.
-base { archivesName.set("Bhagavatam") }
+// APK files are named Bhagavatam-v1.1.0-debug.apk and Bhagavatam-v1.1.0-release.apk.
+base { archivesName.set("Bhagavatam-v1.1.0") }
 
 android {
     namespace = "com.bhagavatam.app"
@@ -15,8 +15,8 @@ android {
         applicationId = "com.bhagavatam.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.6.0"
+        versionCode = 8
+        versionName = "1.1.0"
     }
 
     buildTypes {
@@ -59,6 +59,14 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
+
+    // Media3 / ExoPlayer & OkHttp for direct, ad-free streaming & caching
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.datasource.okhttp)
+    implementation(libs.androidx.media3.database)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.okhttp)
+
     // Installs the Compose baseline profiles on sideloaded APKs, so scrolling is smooth from the first launch.
     implementation(libs.androidx.profileinstaller)
     debugImplementation(libs.androidx.ui.tooling)
