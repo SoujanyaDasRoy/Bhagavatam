@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -182,19 +183,41 @@ fun AnnotationSheet(state: AppState) {
 
 /**
  * Fast, compact, offline-first card above the reading controls for a pressed or tapped word.
- * Shows the book's own glossary entry if there is one, then the Wiktionary meaning (when allowed).
+ * Shows the book's own glossary entry if there is one, then the offline dictionary, then online Wiktionary.
  */
 @Composable
-fun MeaningCard(state: AppState, modifier: Modifier = Modifier, framed: Boolean = true) {
+fun MeaningCard(
+    state: AppState,
+    modifier: Modifier = Modifier,
+    framed: Boolean = true,
+    onOpenDictionary: (() -> Unit)? = null
+) {
     val w = state.lookup ?: return
     val c = LocalReaderColors.current
     val ui = state.uiLang
     val clipboard = LocalClipboardManager.current
     val term = remember(w) { SampleData.glossary.firstOrNull { it.term.equals(w.word, ignoreCase = true) || it.dev == w.word } }
     var retryKey by remember { mutableStateOf(0) }
-    val meaning by produceState<com.bhagavatam.app.data.Meaning?>(null, w, state.onlineMeanings, retryKey) {
-        value = if (state.onlineMeanings && !w.word.contains(' ')) com.bhagavatam.app.data.OnlineMeaning.lookup(w.word, w.lang) else null
+
+    // 1. Offline dictionary lookup
+    val offlineEntries by produceState<List<com.bhagavatam.app.data.DictEntry>>(emptyList(), w, state.meaningLangMode, retryKey) {
+        value = withContext(Dispatchers.IO) {
+            com.bhagavatam.app.data.Dictionary.lookup(
+                word = w.word,
+                lang = w.lang.code,
+                preferredGlossLang = state.preferredMeaningLang(w.lang.code)
+            )
+        }
     }
+
+    // 2. Online meaning fallback (only when offline has no hit and setting is enabled)
+    val onlineMeaning by produceState<com.bhagavatam.app.data.Meaning?>(null, w, state.onlineMeanings, offlineEntries, retryKey) {
+        value = if (offlineEntries.isEmpty() && state.onlineMeanings && !w.word.contains(' ')) {
+            com.bhagavatam.app.data.OnlineMeaning.lookup(w.word, w.lang)
+        } else null
+    }
+
+    val isSaved = state.isWordSaved(w.word, w.lang.code)
     val shape = RoundedCornerShape(18.dp)
 
     Column(
@@ -214,20 +237,33 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier, framed: Boolean 
                     color = c.ink,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    fontFamily = readingFont(w.lang)
                 )
                 if (term != null && term.dev.isNotEmpty() && term.dev != term.term) {
                     Text(term.dev, fontSize = 12.sp, color = c.gold, fontWeight = FontWeight.Medium)
                 }
             }
+            // Save word button
+            IconButton(
+                onClick = { state.toggleSavedWord(w.word, w.lang.code, w.ref) },
+                modifier = Modifier.size(36.dp),
+            ) {
+                Icon(
+                    painterResource(Ic.Bookmark),
+                    contentDescription = "Save word",
+                    tint = if (isSaved) c.gold else c.secondary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
             IconButton(
                 onClick = { clipboard.setText(AnnotatedString(w.word)) },
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(36.dp),
             ) {
                 Icon(painterResource(Ic.Copy), contentDescription = "Copy", tint = c.secondary, modifier = Modifier.size(16.dp))
             }
             IconButton(
                 onClick = { state.lookup = null },
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(36.dp),
             ) {
                 Icon(painterResource(Ic.Close), contentDescription = tr(ui, "Close", "बंद करें", "বন্ধ করুন"), tint = c.secondary, modifier = Modifier.size(16.dp))
             }
@@ -235,16 +271,51 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier, framed: Boolean 
 
         if (term != null) {
             Text(term.meaning, fontSize = 14.sp, lineHeight = 20.sp, color = c.ink, maxLines = 3, overflow = TextOverflow.Ellipsis)
-        } else {
-            val m = meaning
-            when {
-                !state.onlineMeanings -> {
-                    Text(tr(ui, "Online meaning lookup is disabled in Settings.", "सेटिंग में ऑनलाइन अर्थ बंद है।", "সেটিংসে অনলাইন অর্থ বন্ধ আছে।"), fontSize = 13.sp, color = c.secondary)
+        } else if (offlineEntries.isNotEmpty()) {
+            val first = offlineEntries.first()
+            if (!first.headword.equals(w.word, ignoreCase = true)) {
+                Text(
+                    tr(ui, "Base word: ", "मूल शब्द: ", "মূল শব্দ: ") + first.headword,
+                    fontSize = 12.sp,
+                    color = c.gold,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = readingFont(w.lang)
+                )
+            }
+            val sensesToShow = first.senses.take(3)
+            sensesToShow.forEach { sense ->
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (first.pos.isNotBlank()) Text("[${first.pos}]", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                    Text(
+                        sense.gloss,
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp,
+                        color = c.ink,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = readingFont(w.lang)
+                    )
                 }
+            }
+            if (first.isCrossScript) {
+                Text(
+                    tr(ui, "(Sanskrit origin - also in Hindi)", "(संस्कृत मूल - हिन्दी में भी)", "(সংস্কৃত মূল - হিন্দিতেও)"),
+                    fontSize = 11.sp,
+                    color = c.secondary
+                )
+            }
+            Text(
+                (first.source?.name ?: "Wiktionary") + " · CC BY-SA 4.0",
+                fontSize = 11.sp,
+                color = c.secondary
+            )
+        } else {
+            val m = onlineMeaning
+            when {
                 w.word.contains(' ') -> {
                     Text(tr(ui, "Select a single word to see its dictionary meaning.", "शब्दकोश अर्थ के लिए एक शब्द चुनें।", "অভিধান অর্থের জন্য একটি শব্দ নির্বাচন করুন।"), fontSize = 13.sp, color = c.secondary)
                 }
-                m == null -> {
+                m == null && state.onlineMeanings -> {
                     Text(tr(ui, "Looking up meaning...", "अर्थ खोज रहे हैं...", "অর্থ খোঁজা হচ্ছে..."), fontSize = 13.sp, color = c.secondary)
                 }
                 m is com.bhagavatam.app.data.Meaning.Found -> {
@@ -254,6 +325,7 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier, framed: Boolean 
                             Text(e.defs.take(1).joinToString(" "), fontSize = 13.sp, lineHeight = 18.sp, color = c.ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
                     }
+                    Text("Wiktionary · CC BY-SA", fontSize = 11.sp, color = c.secondary)
                 }
                 m is com.bhagavatam.app.data.Meaning.Offline -> {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -269,9 +341,16 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier, framed: Boolean 
 
         Row(
             Modifier.fillMaxWidth().padding(top = 2.dp),
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            if (onOpenDictionary != null) {
+                TextAction(tr(ui, "Open in dictionary", "शब्दकोश में देखें", "অভিধানে দেখুন")) {
+                    onOpenDictionary()
+                }
+            } else {
+                Spacer(Modifier.width(1.dp))
+            }
             TextAction(tr(ui, "Occurrences in Granth", "ग्रंथ में खोजें", "গ্রন্থে দেখুন")) {
                 state.showWordSheet = true
             }
@@ -279,10 +358,14 @@ fun MeaningCard(state: AppState, modifier: Modifier = Modifier, framed: Boolean 
     }
 }
 
-/** A tapped word: glossary definition, occurrences in the book, and external dictionary / search options. */
+/** A tapped word: glossary definition, occurrences in the book, and dictionary options. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WordSheet(state: AppState, onOpenChapter: (Int, Int) -> Unit) {
+fun WordSheet(
+    state: AppState,
+    onOpenChapter: (Int, Int) -> Unit,
+    onOpenDictionary: (() -> Unit)? = null
+) {
     if (!state.showWordSheet) return
     val w = state.lookup ?: return
     val c = LocalReaderColors.current
@@ -307,27 +390,17 @@ fun WordSheet(state: AppState, onOpenChapter: (Int, Int) -> Unit) {
                 .padding(bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Text(w.word, fontSize = 24.sp, fontWeight = FontWeight.Medium, color = c.ink)
+            Text(w.word, fontSize = 24.sp, fontWeight = FontWeight.Medium, color = c.ink, fontFamily = readingFont(w.lang))
             if (term != null) {
                 Text("${term.term} · ${term.dev}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 Text(term.meaning, fontSize = 16.sp, lineHeight = 24.sp, color = c.ink)
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.horizontalScroll(rememberScrollState()),
-            ) {
-                TextAction(tr(ui, "Look up in Dictionary App", "शब्दकोश ऐप में देखें", "অভিধান অ্যাপে দেখুন")) {
-                    val i = Intent(Intent.ACTION_PROCESS_TEXT)
-                        .setType("text/plain")
-                        .putExtra(Intent.EXTRA_PROCESS_TEXT, w.word)
-                        .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
-                    runCatching { ctx.startActivity(Intent.createChooser(i, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
-                }
-                TextAction(tr(ui, "Search on Web", "वेब पर खोजें", "ওয়েবে খুঁজুন")) {
-                    val searchIntent = Intent(Intent.ACTION_WEB_SEARCH).apply {
-                        putExtra(SearchManager.QUERY, "${w.word} meaning")
+            if (onOpenDictionary != null) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextAction(tr(ui, "Open in Dictionary", "शब्दकोश में देखें", "অভিধানে দেখুন")) {
+                        close()
+                        onOpenDictionary()
                     }
-                    runCatching { ctx.startActivity(searchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
                 }
             }
             val f = found
@@ -357,10 +430,13 @@ fun WordSheet(state: AppState, onOpenChapter: (Int, Int) -> Unit) {
     }
 }
 
-
 /** One compact panel above the reading controls: the word and its meaning on top, the mark actions underneath. */
 @Composable
-fun SelectionPanel(state: AppState, modifier: Modifier = Modifier) {
+fun SelectionPanel(
+    state: AppState,
+    modifier: Modifier = Modifier,
+    onOpenDictionary: (() -> Unit)? = null
+) {
     if (state.lookup == null && state.selBar == null) return
     val c = LocalReaderColors.current
     val shape = RoundedCornerShape(18.dp)
@@ -369,8 +445,9 @@ fun SelectionPanel(state: AppState, modifier: Modifier = Modifier) {
             .shadow(8.dp, shape, ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17))
             .clip(shape).background(c.surface).border(1.dp, c.separator, shape),
     ) {
-        if (state.lookup != null) MeaningCard(state, framed = false)
+        if (state.lookup != null) MeaningCard(state, framed = false, onOpenDictionary = onOpenDictionary)
         if (state.lookup != null && state.selBar != null) Box(Modifier.fillMaxWidth().height(1.dp).background(c.separator))
         if (state.selBar != null) SelectionBar(state, framed = false)
     }
 }
+

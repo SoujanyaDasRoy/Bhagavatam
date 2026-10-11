@@ -42,6 +42,8 @@ import com.bhagavatam.app.ui.components.FloatingTabBar
 import com.bhagavatam.app.ui.components.MiniPlayer
 import com.bhagavatam.app.ui.components.Tab
 import com.bhagavatam.app.ui.screens.AdhyayasScreen
+import com.bhagavatam.app.ui.screens.CreditsScreen
+import com.bhagavatam.app.ui.screens.DictionaryScreen
 import com.bhagavatam.app.ui.screens.DownloadsScreen
 import com.bhagavatam.app.ui.screens.GlossaryScreen
 import com.bhagavatam.app.ui.screens.GranthScreen
@@ -70,6 +72,8 @@ object Routes {
     const val PLAYER = "player"
     const val SAVED = "saved"
     const val GLOSSARY = "glossary"
+    const val DICTIONARY = "dictionary"
+    const val CREDITS = "credits"
     const val LANGUAGES = "languages"
     const val SET_APPEARANCE = "settings/appearance"
     const val SET_READING = "settings/reading"
@@ -133,6 +137,7 @@ fun AppNav(state: AppState) {
                 val rs = e.arguments?.getInt("s") ?: 1
                 ReaderScreen(state, rs, e.arguments?.getInt("a") ?: 1,
                     onBack = { nav.popBackStack() }, onOpenPlayer = { nav.navigate(Routes.PLAYER) },
+                    onOpenDictionary = { nav.navigate(Routes.DICTIONARY) },
                     onNextChapter = { s, a -> nav.navigate(Routes.reader(s, a)) { popUpTo(Routes.READER) { inclusive = true } } },
                     onPrevChapter = { s, a -> nav.navigate(Routes.reader(s, a)) { popUpTo(Routes.READER) { inclusive = true } } })
             }
@@ -160,7 +165,9 @@ fun AppNav(state: AppState) {
                         onAppearance = { nav.navigate(Routes.SET_APPEARANCE) },
                         onReading = { nav.navigate(Routes.SET_READING) },
                         onListening = { nav.navigate(Routes.SET_LISTENING) },
-                        onWords = { nav.navigate(Routes.SET_WORDS) })
+                        onWords = { nav.navigate(Routes.SET_WORDS) },
+                        onDictionary = { nav.navigate(Routes.DICTIONARY) },
+                        onCredits = { nav.navigate(Routes.CREDITS) })
                 }
             }
             composable(Routes.SET_APPEARANCE) { TabScaffold(state, nav, Tab.Me) { AppearanceSettings(state) { nav.popBackStack() } } }
@@ -171,6 +178,20 @@ fun AppNav(state: AppState) {
                 TabScaffold(state, nav, Tab.Me) { SavedScreen(state, onBack = { nav.popBackStack() }) { s, a -> nav.navigate(Routes.reader(s, a)) } }
             }
             composable(Routes.GLOSSARY) { TabScaffold(state, nav, Tab.Me) { GlossaryScreen(state) { nav.popBackStack() } } }
+            composable(Routes.DICTIONARY) {
+                DictionaryScreen(
+                    state = state,
+                    initialWord = state.lookup?.word,
+                    onBack = { nav.popBackStack() },
+                    onOpenCredits = { nav.navigate(Routes.CREDITS) }
+                )
+            }
+            composable(Routes.CREDITS) {
+                CreditsScreen(
+                    state = state,
+                    onBack = { nav.popBackStack() }
+                )
+            }
             composable(Routes.LANGUAGES) { LanguagesScreen(state) { nav.popBackStack() } }
         }
     }

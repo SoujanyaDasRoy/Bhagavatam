@@ -68,4 +68,33 @@ object Normalise {
 
     /** Returns true if text contains Indic letters (Devanagari, Bengali, or Odia). */
     fun isIndic(text: String): Boolean = INDIC.matcher(text).find()
+
+    /**
+     * Map chandrabindu (ँ / ঁ / ଁ) to anusvara (ं / ং / ଂ) for script-variant matching.
+     */
+    fun foldChandrabindu(text: String): String {
+        val s = nfc(text)
+        val sb = java.lang.StringBuilder(s.length)
+        for (i in 0 until s.length) {
+            when (s[i]) {
+                '\u0901' -> sb.append('\u0902') // Devanagari
+                '\u0981' -> sb.append('\u0982') // Bengali
+                '\u0B01' -> sb.append('\u0B02') // Odia
+                else -> sb.append(s[i])
+            }
+        }
+        return sb.toString()
+    }
+
+    /**
+     * Strip nukta marks (U+093C, U+09BC, U+0B3C) across Indic scripts.
+     * Decomposes via NFD first so composite characters (e.g. क़, ড়) are also stripped,
+     * then recomposes back to NFC.
+     */
+    fun stripNukta(text: String): String {
+        val decomp = Normalizer.normalize(text, Normalizer.Form.NFD)
+        val noNukta = decomp.replace("[\u093C\u09BC\u0B3C]".toRegex(), "")
+        return nfc(noNukta)
+    }
 }
+

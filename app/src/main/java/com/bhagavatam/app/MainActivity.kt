@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
                 withContext(Dispatchers.IO) {
                     ContentDb.open(applicationContext)
                     com.bhagavatam.app.data.SearchIndex.open(applicationContext)
+                    com.bhagavatam.app.data.DictionaryDb.open(applicationContext)
                 }
                 val left = 700 - (System.currentTimeMillis() - t0)
                 if (left > 0) delay(left)

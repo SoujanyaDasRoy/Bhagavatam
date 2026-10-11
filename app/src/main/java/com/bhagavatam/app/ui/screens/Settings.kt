@@ -89,6 +89,7 @@ private enum class DataAction { PROGRESS, SEARCHES, SAVED, RESET }
 fun SettingsScreen(
     state: AppState, onSaved: () -> Unit, onGlossary: () -> Unit, onLanguages: () -> Unit,
     onAppearance: () -> Unit, onReading: () -> Unit, onListening: () -> Unit, onWords: () -> Unit = {},
+    onDictionary: () -> Unit = {}, onCredits: () -> Unit = {},
 ) {
     val s = state.strings
     val t = settingsTextFor(state.uiLang)
@@ -111,8 +112,8 @@ fun SettingsScreen(
             listOf(
                 Entry(Ic.Palette, t.appearance, t.modes[state.themeMode.ordinal], onAppearance),
                 Entry(Ic.TextSize, t.readingSec, localDigits("${(state.textScale * 100).toInt()}%", ui), onReading),
-                Entry(Ic.Languages, s.languages, "${langName(state.uiLang)} \u00b7 ${langName(state.readLang)}", onLanguages),
-                Entry(Ic.Headphones, t.listeningSec, "${state.speed}\u00d7", onListening),
+                Entry(Ic.Languages, s.languages, "${langName(state.uiLang)} · ${langName(state.readLang)}", onLanguages),
+                Entry(Ic.Headphones, t.listeningSec, "${state.speed}×", onListening),
                 Entry(Ic.Scroll, wordsTitle(ui), tr(ui, if (state.onlineMeanings) "Online" else "Offline", if (state.onlineMeanings) "ऑनलाइन" else "ऑफ़लाइन", if (state.onlineMeanings) "অনলাইন" else "অফলাইন"), onWords),
             ),
         )
@@ -122,6 +123,7 @@ fun SettingsScreen(
             listOf(
                 Entry(Ic.Bookmark, s.savedVerses, localDigits(savedCount.toString(), ui), onSaved),
                 Entry(Ic.Scroll, s.thematicLilaIndex, "", onGlossary),
+                Entry(Ic.MenuBook, tr(ui, "Dictionary", "शब्दकोश", "অভিধান"), "", onDictionary),
             ),
         )
 
@@ -139,7 +141,8 @@ fun SettingsScreen(
             t.aboutSec,
             listOf(
                 Entry(Ic.Scroll, t.textsFrom, s.gitaPress),
-                Entry(Ic.Scroll, tr(ui, "Corpus", "सम्पूर्ण ग्रन्थ", "সম্পূর্ণ গ্রন্থ"), localDigits(tr(ui, "341 Chapters \u00b7 14,580 Verses", "३४१ अध्याय \u00b7 १४,५८० श्लोक", "৩৪১টি অধ্যায় \u00b7 ১৪,৫৮০টি শ্লোক"), ui)),
+                Entry(Ic.Scroll, tr(ui, "Corpus", "सम्पूर्ण ग्रन्थ", "সম্পূর্ণ গ্রন্থ"), localDigits(tr(ui, "341 Chapters · 14,580 Verses", "३४१ अध्याय · १४,५८० श्लोक", "৩৪১টি অধ্যায় · ১৪,৫৮০টি শ্লোক"), ui)),
+                Entry(Ic.Languages, tr(ui, "Dictionary credits", "शब्दकोश आभार", "অভিধান কৃতজ্ঞতা স্বীকার"), "", onCredits),
                 Entry(Ic.Settings, t.version, "v${BuildConfig.VERSION_NAME}"),
                 Entry(Ic.Settings, t.contentVersion, localDigits(ContentDb.openVersion.toString(), ui)),
             ),

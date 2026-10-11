@@ -120,7 +120,16 @@ import com.bhagavatam.app.ui.theme.NotoDevanagari
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit, onOpenPlayer: () -> Unit, onNextChapter: (Int, Int) -> Unit = { _, _ -> }, onPrevChapter: (Int, Int) -> Unit = { _, _ -> }) {
+fun ReaderScreen(
+    state: AppState,
+    skandha: Int,
+    adhyaya: Int,
+    onBack: () -> Unit,
+    onOpenPlayer: () -> Unit,
+    onOpenDictionary: () -> Unit = {},
+    onNextChapter: (Int, Int) -> Unit = { _, _ -> },
+    onPrevChapter: (Int, Int) -> Unit = { _, _ -> }
+) {
     val c = LocalReaderColors.current
     val s = state.strings
     val ui = state.uiLang
@@ -448,7 +457,7 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
             Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (state.hasSession) 96.dp else 76.dp).padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SelectionPanel(state)
+            SelectionPanel(state, onOpenDictionary = onOpenDictionary)
         }
         Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 10.dp)) {
             Crossfade(state.hasSession, animationSpec = tween(Motion.sheet), label = "playControl") { session ->
@@ -481,7 +490,7 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
     }
     if (showLangSheet) LanguageSheet(state, verses) { showLangSheet = false }
     AnnotationSheet(state)
-    WordSheet(state) { sk, a -> onNextChapter(sk, a) }
+    WordSheet(state, { sk, a -> onNextChapter(sk, a) }, onOpenDictionary = onOpenDictionary)
 }
 
 private data class BookRow(val verse: Verse, val label: String)
