@@ -168,6 +168,24 @@ def parse_gemini_json(text):
     return d
 
 
+class QuotaExhausted(RuntimeError):
+    """The API says this model's DAILY allowance is used up. Retrying today cannot help."""
+
+
+def quota_kind(msg):
+    """'day' for a per-day cap, 'minute' for a per-minute cap, None for anything else (from the API's error text)."""
+    m = str(msg)
+    if "RESOURCE_EXHAUSTED" in m or "429" in m:
+        return "day" if "PerDay" in m else "minute"
+    return None
+
+
+def retry_delay_s(msg, default=20, cap=90):
+    """Seconds the API asks us to wait ('retryDelay': '12s'), capped, else the default."""
+    m = re.search(r"retryDelay['\"]?:\s*['\"]?(\d+(?:\.\d+)?)s", str(msg))
+    return min(float(m.group(1)), cap) if m else default
+
+
 def transcribe_gemini(cl, model, img_path):
     from google.genai import types
     last = None
@@ -184,7 +202,10 @@ def transcribe_gemini(cl, model, img_path):
             return out
         except Exception as e:  # noqa
             last = e
-            time.sleep(3 + 5 * attempt)
+            kind = quota_kind(e)
+            if kind == "day":
+                raise QuotaExhausted(f"{model}: daily request allowance used up")
+            time.sleep(retry_delay_s(e) if kind == "minute" else 3 + 5 * attempt)
     raise RuntimeError(f"giving up: {last}")
 
 
@@ -283,8 +304,11 @@ def cmd_run(a):
         return
     out_dir.mkdir(parents=True, exist_ok=True)
     cl = client(a.backend); lock = threading.Lock(); done = [0]
+    quota_hit = threading.Event()
 
     def job(v, p):
+        if quota_hit.is_set():
+            raise QuotaExhausted("skipped: daily allowance already used up")
         img = page_image(v, p, LONG_EDGE_B, "images_b") if a.passname == "B" else page_image(v, p)
         res = normalise(transcribe(cl, a.model, img, a.backend), v, p, f"{a.backend}:{a.model}")
         res["_page"]["pass"] = a.passname
@@ -297,12 +321,51 @@ def cmd_run(a):
             v, p = futs[f]
             try:
                 f.result(); status = "ok"
+            except QuotaExhausted as e:
+                status = "QUOTA"
+                if not quota_hit.is_set():
+                    quota_hit.set()
+                    with lock, open(WORK / "errors.log", "a", encoding="utf-8") as fh:
+                        fh.write(f"v{v} p{p}: QUOTA {e}\n")
             except Exception as e:  # noqa
                 status = f"FAILED {e}"
                 with lock, open(WORK / "errors.log", "a", encoding="utf-8") as fh:
                     fh.write(f"v{v} p{p}: {e}\n")
             done[0] += 1
-            print(f"{done[0]}/{len(todo)} v{v}_p{p:04d} {status}", flush=True)
+            if status != "QUOTA":
+                print(f"{done[0]}/{len(todo)} v{v}_p{p:04d} {status}", flush=True)
+    if quota_hit.is_set():
+        left = len(pages_to_do(a, out_dir))
+        print(f"STOPPED: the daily request allowance of {a.backend}:{a.model} is used up. {left} page(s) of this selection are still to do.\n"
+              "The same command continues from there. Options: wait for the daily reset, enable billing on the key (the free tier allows about "
+              "20 requests per model per day, which is not enough for a skandha), or use another key. Do not switch to a different model for "
+              "part of a pass: a pass should be one model (see 'status').", flush=True)
+        sys.exit(3)
+
+
+def cmd_status(a):
+    """Progress of every pass for skandha 5 to 12 (or --skandha), and which models actually read the pages."""
+    lo, _, hi = (a.skandha or "5-12").partition("-")
+    lo, hi = int(lo), int(hi or lo)
+    sp = json.loads((HERE / "data" / "skandha_pages.json").read_text(encoding="utf-8"))
+    cons = WORK / "consensus"
+    print(f"{'skandha':8} {'pages':>5} | {'A done':>6} {'B done':>6} {'consensus':>9} | models A | models B")
+    for k in range(lo, hi + 1):
+        want = [(v, p) for v, x, y in sp[str(k)] for p in range(x, y + 1)]
+        row = []
+        for d in ("vision", "vision_b", "consensus"):
+            have = [(v, p) for v, p in want if (WORK / d / f"v{v}_p{p:04d}.json").exists()]
+            row.append(have)
+        mods = []
+        for d, have in (("vision", row[0]), ("vision_b", row[1])):
+            c = {}
+            for v, p in have:
+                m = json.loads((WORK / d / f"v{v}_p{p:04d}.json").read_text(encoding="utf-8")).get("_page", {}).get("model", "?")
+                c[m] = c.get(m, 0) + 1
+            mods.append(", ".join(f"{m} x{n}" for m, n in sorted(c.items(), key=lambda kv: -kv[1])) or "-")
+        flag = "  <- mixed models" if any(", " in m for m in mods) else ""
+        print(f"{k:<8} {len(want):>5} | {len(row[0]):>6} {len(row[1]):>6} {len(row[2]):>9} | {mods[0]} | {mods[1]}{flag}")
+    print("\nA pass should be ONE model for every page; pass B a different, stronger one (default gemini-2.5-pro).")
 
 
 def cmd_estimate(a):
@@ -317,11 +380,12 @@ def main():
     r.add_argument("--backend", choices=["anthropic", "gemini"]); r.add_argument("--skandha", help="5 or 5-12 (uses data/skandha_pages.json)")
     r.add_argument("--pass", dest="passname", choices=list(PASS_DIR), default="A", help="A=work_v/vision, B=work_v/vision_b, C=work_v/vision_c")
     sp.add_parser("estimate")
+    st = sp.add_parser("status"); st.add_argument("--skandha", help="5 or 5-12 (default 5-12)")
     a = ap.parse_args()
     if a.cmd == "run":
         a.backend = a.backend or ("gemini" if os.environ.get("GEMINI_API_KEY") else "anthropic")
         a.model = a.model or DEFAULT_MODEL or (GEMINI_MODEL if a.backend == "gemini" else ANTHROPIC_MODEL)
-    {"run": cmd_run, "estimate": cmd_estimate}[a.cmd](a)
+    {"run": cmd_run, "estimate": cmd_estimate, "status": cmd_status}[a.cmd](a)
 
 
 if __name__ == "__main__":

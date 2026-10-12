@@ -89,6 +89,16 @@ try:
 except ValueError:
     check(True, "an answer without paragraphs is rejected")
 
+# ---- quota handling (error texts as the API returned them)
+DAY = "429 RESOURCE_EXHAUSTED. {'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaValue': '20'}, {'retryDelay': '70691s'}"
+MIN = "429 RESOURCE_EXHAUSTED. {'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier'}, {'@type': 'RetryInfo', 'retryDelay': '12s'}"
+check(ov.quota_kind(DAY) == "day", "a per-day cap is recognised (retrying today cannot help)")
+check(ov.quota_kind(MIN) == "minute", "a per-minute cap is recognised")
+check(ov.quota_kind("503 UNAVAILABLE high demand") is None, "other errors are not quota errors")
+check(ov.retry_delay_s(MIN) == 12.0, "the API's own retry delay is used")
+check(ov.retry_delay_s(DAY) == 90, "a huge retry delay is capped")
+check(ov.retry_delay_s("boom", default=20) == 20, "no delay in the text: the default")
+
 # ---- arbitration: items, prompt, answer parsing
 import json  # noqa: E402
 import tempfile  # noqa: E402

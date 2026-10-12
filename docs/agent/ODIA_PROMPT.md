@@ -12,6 +12,30 @@
 5. Time and size, as estimates: 1,437 pages, about 3,000 input and 1,600 output tokens per page and pass (4.3M in, 2.3M out per pass). Two passes
    plus arbitration. A pass at 3 workers is roughly 1 to 3 hours depending on limits.
 
+## Free tier limit (found on 2026-10-12 in `work_v/errors.log`)
+273 of 287 errors were `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, limit 20: the free Gemini tier allows about **20 requests per model per day**.
+That is 20 pages a day per model, so a skandha is out of reach on it (Skandha 6 alone is 110 pages per pass). The run so far got 131 pages by
+switching between model names, which mixed models inside one pass (pass B is 112 of 119 pages `gemini-flash-lite`, not the stronger model the plan names).
+- Real fix: enable billing on the AI Studio project (then the per-day cap no longer applies; check the per-minute limits and prices there),
+  or use another key. Then pass A and pass B each get ONE model: `py odia_vision.py status` shows whether they are uniform.
+- The tool now stops at once on a per-day cap (exit code 3, "N pages still to do") instead of retrying, and `status` shows progress per pass and model.
+- Skandha 5 was read with mixed models and a weak pass B; once billing is on, re-read pass B for it (`--pass B --force --skandha 5 --model gemini-2.5-pro`).
+
+## Skandha 6 only (110 pages, v1:696 to v1:805), after billing is on
+```
+cd content\_odia
+$env:GEMINI_API_KEY = "<key>"; $env:ODIA_PDF_1 = "C:\Users\sdroy\Downloads\Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-1.pdf"
+py odia_vision.py run --skandha 6 --pass A --model gemini-2.5-flash --workers 3
+py odia_vision.py run --skandha 6 --pass B --model gemini-2.5-pro --workers 2
+py odia_verify.py compare --skandha 6 --lexicon work_v\lexicon.txt
+py odia_arbitrate.py run --skandha 6 --model gemini-2.5-pro
+py odia_verify.py apply work_v\arbitration\decisions_model.json --source model
+py odia_verify.py report
+py odia_review.py queue --limit 300
+py odia_vision.py status --skandha 6
+```
+The same commands with `--skandha 7`, `8` ... do the others, one skandha at a time.
+
 ## Your part during the run (the only human steps)
 - **Review list** (after pass A, B and arbitration): open `content\_odia\work_v\review\queue.html`, answer with keys 1/2/3 or type the printed word,
   press "Download answers", put the file where the agent says. The list is the words nothing could settle; expect a few hundred to a few
