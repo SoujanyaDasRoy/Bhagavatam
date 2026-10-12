@@ -381,9 +381,7 @@ def build() -> None:
     db.executemany("INSERT INTO sense VALUES (?, ?, ?, ?, ?, ?)", sense_rows)
     db.executemany("INSERT INTO form VALUES (?, ?, ?)", form_rows)
 
-    print("Building FTS5 index and secondary indexes...")
-    db.execute("CREATE VIRTUAL TABLE entry_fts USING fts5(headword, content='entry', content_rowid='id')")
-    db.executemany("INSERT INTO entry_fts(rowid, headword) VALUES (?, ?)", fts_rows)
+    print("Building indexes (prefix search is LIKE on the (lang, norm) index; no FTS5, see AGENTS.md)...")
 
     db.execute("CREATE INDEX idx_entry_lang_norm ON entry(lang, norm)")
     db.execute("CREATE INDEX idx_entry_skey ON entry(skey)")

@@ -77,7 +77,7 @@ Git commit baseline: `f53cc60` (Phase 4 complete)
 The numbers above were checked against the files; these items were wrong in the first version and are corrected in place:
 versionCode (2, really 8), search.db size and schema (4.88 MB and `postings/words/vocab/trigrams`, really 5.85 MB and `loose/exact/grp/...`),
 dictionary entries and senses (92,207 and 153,995, really 37,797 and 96,172) and Odia senses (5,502, really 3,806).
-Open finding: `dictionary.db` contains an unused FTS5 virtual table (`entry_fts`). The app never queries it, but AGENTS.md section 8 forbids
+Fixed 2026-10-12: `dictionary.db` contained an unused FTS5 virtual table (`entry_fts`); it is removed from the build, the checker and both databases (17.1 to 15.6 MB). The app never queries it, but AGENTS.md section 8 forbids
 relying on FTS5 at API 26 and it adds size. Drop it in `content/_dict/build_dictionary.py` at the next dictionary rebuild.
 Screen-level PASS entries (themes, long-press lookups, airplane mode) were not repeated by the reviewer; the reader language switcher
 (light and dark, font scale 1.3) was checked by hand on 2026-10-11 and matched.

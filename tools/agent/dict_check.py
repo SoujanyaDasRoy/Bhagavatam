@@ -106,10 +106,9 @@ def check(path: Path, max_mb: float) -> int:
         print(f"  {label}: {n}")
         if n:
             fail(f"{label}: {n}")
-    fts = "entry_fts" in have
-    print(f"  prefix search table: {'present' if fts else 'missing'}")
-    if not fts:
-        fail("entry_fts (FTS5 prefix search over headwords) is missing")
+    print(f"  FTS5 table: {'PRESENT' if 'entry_fts' in have else 'none'}")
+    if "entry_fts" in have:
+        fail("entry_fts is present: the app does prefix search with LIKE on the (lang, norm) index; FTS5 is not reliable at API 26 and costs size")
 
     print("== sample for a human to read (does each meaning fit the word?)")
     for lang in LANGS:
@@ -128,7 +127,6 @@ def selftest() -> int:
         create table entry(id integer primary key, lang text, headword text, norm text, skey text, pos text, ipa text, etymology text, freq integer, source_id integer);
         create table sense(id integer primary key, entry_id integer, idx integer, gloss_lang text, gloss text, example text);
         create table form(form_norm text, entry_id integer, kind text);
-        create virtual table entry_fts using fts5(headword, content='entry', content_rowid='id');
         insert into meta values('dictionary_version','1'),('built','2026-10-09'),('schema','1');
         insert into source values(1,'enwikt','English Wiktionary','CC BY-SA 4.0','https://en.wiktionary.org','Text from Wiktionary, CC BY-SA 4.0','2026-10-09');
         """
@@ -139,7 +137,6 @@ def selftest() -> int:
             n += 1
             db.execute("insert into entry values(?,?,?,?,?,?,?,?,?,?)", (n, lang, w, w, w, "noun", None, None, 10, 1))
             db.execute("insert into sense values(?,?,?,?,?,?)", (n, n, 0, "en", f"meaning of {w}", None))
-    db.execute("insert into entry_fts(rowid, headword) select id, headword from entry")
     db.commit()
     db.close()
     print("-- selftest 1: a sound database must pass")
