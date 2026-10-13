@@ -637,96 +637,71 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     }
 }
 
-/** After the last shloka: the "Thus ends ..." colophon, the Gita Press notes (collapsed), then previous and next chapter. */
 @Composable
 private fun ChapterEndBlock(
     state: AppState, skandha: Int, adhyaya: Int, prev: Pair<Int, Int>?, next: Pair<Int, Int>?,
     onPrev: (Int, Int) -> Unit, onNext: (Int, Int) -> Unit,
 ) {
     val c = LocalReaderColors.current
-    val ui = state.uiLang
-    val lang = state.titleLang
-    val end = remember(skandha, adhyaya, lang) { SampleData.chapterEnd(skandha, adhyaya, lang) }
-    val font = if (lang == Lang.HI) TiroHindi else EnglishReading
-    // The closing line ("iti shrimad bhagavate ...") in the script the person reads in. Where the book's own line is not in the
-    // database, the standard opening of it is built from the Skandha and chapter numbers (it never invents a chapter name).
-    val sanskritLine = remember(skandha, adhyaya, end) { end.sanskrit.ifEmpty { genericColophon(skandha, adhyaya) } }
-    val sanskritShown = when (lang) {
-        Lang.BN -> com.bhagavatam.app.util.Transliterate.toBengali(sanskritLine)
-        Lang.EN -> com.bhagavatam.app.util.Transliterate.toIast(sanskritLine)
-        else -> sanskritLine
-    }
-    val sanskritFont = when (lang) { Lang.BN -> NotoSerifBengali; Lang.EN -> EnglishReading; else -> NotoDevanagari }
-    var showNotes by remember(skandha, adhyaya) { mutableStateOf(false) }
-    val notesLabel = when (lang) { Lang.HI -> "\u091f\u093f\u092a\u094d\u092a\u0923\u093f\u092f\u093e\u0901"; Lang.BN -> "\u099f\u09c0\u0995\u09be"; else -> "Notes" }
-    val (prevLabel, nextLabel) = chapterLabels(lang)
-    Column(Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    val (prevLabel, nextLabel) = chapterLabels(state.titleLang)
+    Column(Modifier.fillMaxWidth().padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Box(Modifier.width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
-        if (sanskritShown.isNotEmpty()) {
-            Text(sanskritShown, Modifier.padding(horizontal = 8.dp), fontFamily = sanskritFont, fontSize = (16 * state.textScale).sp, lineHeight = (26 * state.textScale).sp,
-                fontWeight = FontWeight.Medium, color = c.shloka, textAlign = TextAlign.Center)
-        }
-        // The translation of the closing line exists in English only; Hindi readers already have the line itself, and Bengali has no
-        // translation in the database yet, so nothing in another language is shown to them.
-        if (lang == Lang.EN && end.colophon.isNotEmpty()) {
-            Text(end.colophon, Modifier.padding(horizontal = 8.dp), fontFamily = font, fontSize = (14 * state.textScale).sp, lineHeight = (22 * state.textScale).sp,
-                color = c.secondary, textAlign = TextAlign.Center)
-        }
-        if (end.notes.isNotEmpty() && lang != Lang.BN) {
-            Row(
-                Modifier.heightIn(min = 48.dp).clip(RoundedCornerShape(12.dp)).clickable { showNotes = !showNotes }.padding(horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(notesLabel, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
-                Text(if (showNotes) "\u25b4" else "\u25be", fontSize = 14.sp, color = c.accent)
-            }
-            if (showNotes) {
-                Text(end.notes, Modifier.fillMaxWidth().clip(Radius.group).background(c.surface).padding(14.dp),
-                    fontFamily = font, fontSize = (14 * state.textScale).sp, lineHeight = (22 * state.textScale).sp, color = c.secondary)
-            }
-        }
-        // Stacked and full width: the chapter titles are long, and two narrow buttons cut them to one line. Next comes first.
-        Column(Modifier.fillMaxWidth().padding(top = 6.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            ChapterButton(state, nextLabel, next, filled = true, back = false, modifier = Modifier.fillMaxWidth()) { next?.let { onNext(it.first, it.second) } }
-            ChapterButton(state, prevLabel, prev, filled = false, back = true, modifier = Modifier.fillMaxWidth()) { prev?.let { onPrev(it.first, it.second) } }
+        ClosingLine(state, skandha, adhyaya)
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            ChapterButton(state, nextLabel, next, filled = true, back = false) { next?.let { onNext(it.first, it.second) } }
+            ChapterButton(state, prevLabel, prev, filled = false, back = true) { prev?.let { onPrev(it.first, it.second) } }
         }
         Spacer(Modifier.height(8.dp))
     }
 }
 
-/** Previous or next chapter at the end of the text: what it is, and the chapter's own title. */
 @Composable
-private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>?, filled: Boolean, back: Boolean, modifier: Modifier, onClick: () -> Unit) {
+private fun ClosingLine(state: AppState, skandha: Int, adhyaya: Int) {
+    val c = LocalReaderColors.current
+    val lang = state.titleLang
+    val end = remember(skandha, adhyaya, lang) { SampleData.chapterEnd(skandha, adhyaya, lang) }
+    val line = end.sanskrit.ifEmpty { genericColophon(skandha, adhyaya) }
+    val shown = when (lang) {
+        Lang.BN -> com.bhagavatam.app.util.Transliterate.toBengali(line)
+        Lang.EN -> com.bhagavatam.app.util.Transliterate.toIast(line)
+        else -> line
+    }
+    val font = when (lang) { Lang.BN -> NotoSerifBengali; Lang.EN -> EnglishReading; else -> NotoDevanagari }
+    if (shown.isNotEmpty()) {
+        Text(shown, Modifier.padding(horizontal = 8.dp), fontFamily = font, fontSize = (16 * state.textScale).sp, lineHeight = (26 * state.textScale).sp,
+            fontWeight = FontWeight.Medium, color = c.shloka, textAlign = TextAlign.Center)
+    }
+    if (lang == Lang.EN && end.colophon.isNotEmpty()) {
+        Text(end.colophon, Modifier.padding(horizontal = 8.dp), fontFamily = EnglishReading, fontSize = (14 * state.textScale).sp,
+            lineHeight = (22 * state.textScale).sp, color = c.secondary, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>?, filled: Boolean, back: Boolean, onClick: () -> Unit) {
     val c = LocalReaderColors.current
     val enabled = target != null
     val ink = if (filled) Brand.OnKesari else c.ink
     val sub = if (filled) Brand.OnKesari else c.secondary
     Row(
-        modifier.heightIn(min = 72.dp)
+        Modifier.fillMaxWidth().heightIn(min = 56.dp)
             .then(if (enabled) Modifier.tappable(Radius.group, label, onClick = onClick) else Modifier.clip(Radius.group))
             .background(if (filled) Brand.Kesari else c.surface)
             .border(1.dp, if (filled) Brand.Kesari else c.separator, Radius.group)
-            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .alpha(if (enabled) 1f else 0.4f),
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (back) Icon(painterResource(Ic.ArrowBackIos), null, tint = ink, modifier = Modifier.size(20.dp))
-        Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1, letterSpacing = 0.4.sp)
-            if (target != null) {
-                val ref = if (target.first == 0) state.titleStrings().mahatmya else state.titleStrings().skandha + " " + localDigits(target.first.toString(), state.titleLang)
-                Text(
-                    "$ref · " + state.titleStrings().adhyaya + " " + localDigits(target.second.toString(), state.titleLang),
-                    fontSize = 12.sp, color = sub, maxLines = 1,
-                )
-                Text(
-                    SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
-                    fontFamily = readingFont(state.titleLang), fontSize = 16.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium, color = ink,
-                    maxLines = 2, overflow = TextOverflow.Ellipsis,
-                )
-            }
+        if (back) Icon(painterResource(Ic.ArrowBackIos), null, tint = ink, modifier = Modifier.size(18.dp))
+        Column(Modifier.weight(1f)) {
+            val number = target?.let { " · " + localDigits(it.second.toString(), state.titleLang) }.orEmpty()
+            Text(label + number, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1)
+            if (target != null) Text(
+                SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
+                fontFamily = readingFont(state.titleLang), fontSize = 15.sp, lineHeight = 20.sp, color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
+            )
         }
-        if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(20.dp))
+        if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(18.dp))
     }
 }
 
