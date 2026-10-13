@@ -78,3 +78,6 @@ __pycache__/
 /content/_odia/work/
 /content/_odia/vt/
 /content/_odia/out/
+
+# Local OCR work (models, line images, audits): derived from the printed book
+/content/_localocr/work/
