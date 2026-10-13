@@ -7,7 +7,7 @@ in its own layer, so here it is removed from the translation:
   1. footnote lines that stand alone, like "(১) ক্রাঞ্চল।"     (listed in the report, not silently lost)
   2. speaker lines that stand alone ("...উবাচ", "রাজোবাচ")
   3. the Sanskrit verse of that same row, found from verse.sa written in Bengali script, up to its printed verse number
-  4. a verse number left at the very end of the text ("১২ ।।"): Hindi has none
+  4. the verse number at the very end is kept and written one way: "॥ N ॥" with no-break spaces (it is not removed)
 Nothing else is changed. Run:
     py content/_build/clean_bn_text.py content/content.db --dry-run        report only
     py content/_build/clean_bn_text.py content/content.db                  write (a backup is kept next to the database)
@@ -20,10 +20,11 @@ import sqlite3
 import sys
 
 BN_DIGITS = "০-৯"
+NB = " "   # no-break space
 FOOTNOTE = re.compile(r"(?m)^[ \t]*\([" + BN_DIGITS + r"0-9]+\)[ \t]*[^\n]{0,30}$\n?")
 SPEAKER = re.compile(r"(?m)^[ \t]*[^\n]{0,25}(?:উবাচ|ঊবাচ|বাচ)[ \t]*$\n?")
 MARK = re.compile(r"[॥।]+\s*[" + BN_DIGITS + r"]+(?:\s*[-–]\s*[" + BN_DIGITS + r"]+)*\s*[।॥]+")
-TRAIL_MARK = re.compile(r"\s*[" + BN_DIGITS + r"]+\s*[।॥]+\s*$")
+TRAIL_MARK = re.compile(r"[\s ]*(?:[॥।]+[\s ]*)?[" + BN_DIGITS + r"]+[\s ]*[।॥]+[\s ]*$")
 WORD = re.compile(r"[ঀ-৿]+")
 
 
@@ -88,12 +89,20 @@ def clean(bn: str, sa: str):
 
     text = re.sub(r"[ \t]+", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
+    # The printed verse number at the end is KEPT. The extraction left it in many shapes ("১২ ।।", "১২ ॥।", "১২ ॥"); it is
+    # written one way, like the printed edition: the sentence ends with a danda, then "॥ N ॥" with no-break spaces so the
+    # number can never wrap onto a line of its own.
     m = TRAIL_MARK.search(text)
-    if m and removed is not None:
-        removed.append(("marker", m.group(0).strip()))
-        text = text[:m.start()].rstrip()
-        if text and text[-1] not in "।?!\"”’)":
-            text += "।"
+    if m:
+        number = re.search(r"[" + BN_DIGITS + r"]+", m.group(0)).group(0)
+        body = text[:m.start()].rstrip()
+        if body and body[-1] not in "।?!\"”’)":
+            body += "।"
+        if body:
+            new_text = body + NB + "॥" + NB + number + NB + "॥"
+            if new_text != text:
+                removed.append(("marker", "tidied: " + m.group(0).strip()))
+            text = new_text
     return text, removed
 
 
