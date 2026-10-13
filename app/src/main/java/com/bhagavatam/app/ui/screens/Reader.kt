@@ -392,13 +392,13 @@ fun ReaderScreen(
                     }
                 }
             }
-            if (!state.hasSession) TipBanner(state, Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxHeight().widthIn(max = 600.dp).fillMaxWidth(),
                 contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 140.dp),
                 verticalArrangement = Arrangement.spacedBy(if (state.showSanskrit) 0.dp else 20.dp),
             ) {
+                if (!state.hasSession && state.nextTip() != null) item(key = "tip") { TipBanner(state, Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) }
                 if (state.showChapterArt) item { com.bhagavatam.app.ui.components.ChapterBanner(skandha, adhyaya) }
                 item {
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -619,7 +619,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
         )
         if (peek) {
             Column(
-                Modifier.fillMaxWidth().clip(Radius.group).background(c.playing).padding(14.dp),
+                Modifier.fillMaxWidth().clip(Radius.group).background(c.surface).border(1.dp, c.separator, Radius.group).padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Text(localDigits("${state.strings.shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)

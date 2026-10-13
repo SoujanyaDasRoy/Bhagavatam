@@ -37,7 +37,7 @@ fun TipBanner(state: AppState, modifier: Modifier = Modifier) {
         else -> tr(ui, "The language button at the top changes what you read and shows the shloka.", "ऊपर का भाषा बटन पढ़ने की भाषा बदलता है और श्लोक दिखाता है।", "উপরের ভাষা বোতাম পড়ার ভাষা বদলায় ও শ্লোক দেখায়।")
     }
     Column(
-        modifier.fillMaxWidth().clip(Radius.field).background(Brand.KesariTint).border(1.dp, Brand.Kesari.copy(alpha = 0.55f), Radius.field)
+        modifier.fillMaxWidth().clip(Radius.field).background(Brand.Card).border(1.dp, Brand.Separator, Radius.field)
             .padding(start = 14.dp, end = 6.dp, top = 8.dp, bottom = 2.dp),
     ) {
         Text(text, fontSize = 15.sp, lineHeight = 22.sp, color = Brand.Ink)
