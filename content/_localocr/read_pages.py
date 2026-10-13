@@ -89,6 +89,7 @@ def main():
     ap.add_argument("--prior", type=float, default=0.0, help="penalty per word not in the trusted word list (0 = no word list)")
     ap.add_argument("--out", default=str(WORK / "pages_a"))
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--list", help="text file with one page per line, like v1_p0696")
     a = ap.parse_args()
     jobs = []
     if a.skandha:
@@ -100,6 +101,8 @@ def main():
                 plo, _, phi = a.pages.partition("-")
                 lo, hi = max(x, int(plo)), min(y, int(phi or plo))
             jobs += [(v, p) for p in range(lo, hi + 1)]
+    elif a.list:
+        jobs = [(int(x[1]), int(x[4:8])) for x in Path(a.list).read_text().split() if x.startswith("v")]
     elif a.pages:
         plo, _, phi = a.pages.partition("-")
         jobs = [(a.vol, p) for p in range(int(plo), int(phi or plo) + 1)]
