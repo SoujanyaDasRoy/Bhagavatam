@@ -27,17 +27,27 @@ sys.stdout.reconfigure(encoding="utf-8")
 TESS_EXE = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
-def install_recogniser(model_file):
+def trusted_lexicon():
+    """Word counts of the transcribed pages that are already trusted (Skandha 1 to 4), for the likelihood rescoring."""
+    import collections
+    import odia_text as T
+    from ensemble import Lexicon
+    cnt = collections.Counter()
+    for f in (ODIA / "vision_transcripts").glob("v*_p*.json"):
+        for para in json.loads(f.read_text(encoding="utf-8")).get("paragraphs", []):
+            for w in T.tokens(para):
+                c = T.core(w)
+                if c and not T.is_marker(w):
+                    cnt[c] += 1
+    return Lexicon(cnt)
+
+
+def install_recogniser(model_files, penalty=0.0):
     import pytesseract
     pytesseract.pytesseract.tesseract_cmd = TESS_EXE
-    import crnn
     import odia_ocr as o
-    import torch
-    ck = torch.load(WORK / "model" / model_file, map_location=crnn.DEV)
-    m = crnn.CRNN(len(ck["chars"]) + 1).to(crnn.DEV)
-    m.load_state_dict(ck["state"])
-    m.eval()
-    chars = ck["chars"]
+    from ensemble import Reader
+    reader = Reader(model_files, trusted_lexicon() if penalty > 0 else None, penalty=penalty)
     pad = 5
 
     def ocr_lines(img, psm=6, conf_cut=30):
@@ -58,7 +68,7 @@ def install_recogniser(model_file):
             if c.shape[0] < 8 or c.shape[1] < 12:
                 c = img[:1, :1]
             crops.append(c)
-        texts = crnn.read_images(m, chars, crops) if crops else []
+        texts = reader.read_lines(crops) if crops else []
         out = []
         for b, t in zip(order, texts):
             words = [(w, 95.0) for w in t.split()]
@@ -75,7 +85,8 @@ def main():
     ap.add_argument("--skandha")
     ap.add_argument("--pages", help="e.g. 696-700 (needs --vol if not skandha)")
     ap.add_argument("--vol", type=int, default=1)
-    ap.add_argument("--model", default="crnn.pt")
+    ap.add_argument("--model", default="crnn.pt", help="one model file, or two separated by a comma (their likelihoods are added)")
+    ap.add_argument("--prior", type=float, default=0.0, help="penalty per word not in the trusted word list (0 = no word list)")
     ap.add_argument("--out", default=str(WORK / "pages_a"))
     ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
@@ -97,7 +108,7 @@ def main():
     jobs = list(dict.fromkeys(jobs))
     out = Path(a.out) / "vision"
     out.mkdir(parents=True, exist_ok=True)
-    o = install_recogniser(a.model)
+    o = install_recogniser(a.model.split(","), a.prior)
     t0 = time.time()
     done = 0
     for v, p in jobs:
@@ -109,7 +120,7 @@ def main():
         except Exception as e:  # noqa
             print(f"v{v} p{p}: FAILED {e}", flush=True)
             continue
-        rec["_page"]["model"] = f"crnn:{a.model}"
+        rec["_page"]["model"] = f"crnn:{a.model}" + (f"+prior{a.prior:g}" if a.prior else "")
         f.write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
         done += 1
         if done % 10 == 0:

@@ -14,6 +14,7 @@ Output (ignored by git): work/train/{train,eval}/<id>.{png,gt.txt,box} and work/
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -27,18 +28,20 @@ sys.stdout.reconfigure(encoding="utf-8")
 import odia_text as T  # noqa: E402
 
 WORK = HERE / "work"
-LINES = WORK / "lines"
-OUT = WORK / "train"
+BN = os.environ.get("LOCALOCR_LANG") == "bn"          # Bengali: lines_bn -> train_bn, ben base model, no Odia wa/ba rule
+LINES = WORK / ("lines_bn" if BN else "lines")
+OUT = WORK / ("train_bn" if BN else "train")
 TESS = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 SUBST = {"—": "-", "–": "-", "‘": "'", "’": "'", "“": '"', "”": '"', "\u200c": "", "\u200d": ""}
 TRAIN_MAX_PAGE = 410
 
 
 def base_chars():
-    f = WORK / "tessdata_best" / "ori.lstm-unicharset"
+    code = "ben" if BN else "ori"
+    f = WORK / "tessdata_best" / f"{code}.lstm-unicharset"
     if not f.exists():
-        subprocess.run([r"C:\Program Files\Tesseract-OCR\combine_tessdata.exe", "-u", str(WORK / "tessdata_best" / "ori.traineddata"),
-                        str(WORK / "tessdata_best" / "ori.")], check=True, capture_output=True)
+        subprocess.run([r"C:\Program Files\Tesseract-OCR\combine_tessdata.exe", "-u", str(WORK / "tessdata_best" / f"{code}.traineddata"),
+                        str(WORK / "tessdata_best" / f"{code}.")], check=True, capture_output=True)
     out = set()
     for i, line in enumerate(f.read_text(encoding="utf-8").split("\n")):
         if i and line:
@@ -52,7 +55,10 @@ def clean_text(s):
         s = s.replace(a, b)
     # Odia ba-phala and wa-phala are printed alike; the transcript has wa (U+0B71) 799 times and ba 37 times after "ଦ୍" and 1002 to 47 after "ସ୍".
     # One spelling for the label, or the model is trained on noise it cannot resolve from the image.
-    s = s.replace("\u0b4d\u0b2c", "\u0b4d\u0b71")
+    # Only after d, s, t, sh, h, j, dh, ss are these the wa-phala cases. After m, r, l, n (sambandha, sarva, parvata, gandharva)
+    # the sign is a real "ba": changing it there corrupted the first training labels (found by auditing the output).
+    if not BN:
+        s = re.sub("(?<=[\u0b26\u0b38\u0b24\u0b36\u0b39\u0b1c\u0b27\u0b37]\u0b4d)\u0b2c", "\u0b71", s)
     return " ".join(s.split())
 
 
@@ -76,7 +82,11 @@ def select(min_sim):
         if r["sim"] < min_sim:
             drop("low similarity"); continue
         t = clean_text(r["gt"])
-        if any(T.severe(w) for w in t.split()):
+        if BN:
+            bad = bool(re.search(r"[A-Za-z0-9ऀ-ॣ०-ॿ଀-୿]", t)) or "্্" in t   # Latin, digits, other scripts, double virama
+        else:
+            bad = any(T.severe(w) for w in t.split())
+        if bad:
             drop("impossible spelling"); continue
         if any(c not in known and c != " " for c in t):
             drop("character unknown to base model"); continue
@@ -96,7 +106,7 @@ def write_sets(keep):
         d.mkdir(parents=True)
     counts = {"train": 0, "eval": 0}
     for r in keep:
-        sub = "train" if r["page"] <= TRAIN_MAX_PAGE else "eval"
+        sub = ("train" if (r["vol"] == 1 or r["page"] <= 700) else "eval") if BN else ("train" if r["page"] <= TRAIN_MAX_PAGE else "eval")
         d = OUT / sub
         shutil.copy(LINES / f"{r['id']}.png", d / f"{r['id']}.png")
         (d / f"{r['id']}.gt.txt").write_text(r["text"] + "\n", encoding="utf-8")

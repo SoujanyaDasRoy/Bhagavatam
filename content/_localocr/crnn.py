@@ -12,6 +12,7 @@ import argparse
 import glob
 import json
 import math
+import os
 import random
 import sys
 import time
@@ -25,7 +26,7 @@ import torch.nn.functional as F
 
 HERE = Path(__file__).resolve().parent
 WORK = HERE / "work"
-TRAIN = WORK / "train"
+TRAIN = WORK / ("train_bn" if os.environ.get("LOCALOCR_LANG") == "bn" else "train")
 MODEL = WORK / "model"
 H = 64
 MAX_W = 1400

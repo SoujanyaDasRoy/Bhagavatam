@@ -25,10 +25,17 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ODIA = HERE.parent / "_odia"
 WORK = HERE / "work"
-LINES = WORK / "lines"
+LANG = "bn" if "--lang" in sys.argv and sys.argv[sys.argv.index("--lang") + 1] == "bn" else "or"
+LINES = WORK / ("lines" if LANG == "or" else "lines_bn")
+BN_BASE = Path.home() / "OneDrive" / "Desktop" / "Coding" / "Startups" / "Shastra" / "Bengali"
 os.environ.setdefault("TESSDATA_PREFIX", str(WORK / "tessdata_best"))
-os.environ.setdefault("ODIA_PDF_1", str(Path.home() / "Downloads" / "Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-1.pdf"))
-os.environ.setdefault("ODIA_PDF_2", str(Path.home() / "Downloads" / "Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-2.pdf"))
+if LANG == "bn":
+    os.environ["ODIA_PDF_1"] = str(next(BN_BASE.glob("*১_গীতাপ্রেস*")))
+    os.environ["ODIA_PDF_2"] = str(next(BN_BASE.glob("*২_গীতাপ্রেস*")))
+    os.environ["TESSDATA_PREFIX"] = str(WORK / "tessdata_best")
+else:
+    os.environ.setdefault("ODIA_PDF_1", str(Path.home() / "Downloads" / "Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-1.pdf"))
+    os.environ.setdefault("ODIA_PDF_2", str(Path.home() / "Downloads" / "Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-2.pdf"))
 sys.path.insert(0, str(ODIA))
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -48,7 +55,7 @@ def _imports():
 
 def zone_lines(pytesseract, img):
     """Stock Tesseract on a zone image -> [{box:(x0,y0,x1,y1), text}] in reading order."""
-    d = pytesseract.image_to_data(img, lang="ori", config="--oem 1 --psm 6", output_type=pytesseract.Output.DICT)
+    d = pytesseract.image_to_data(img, lang="ori" if LANG == "or" else "ben", config="--oem 1 --psm 6", output_type=pytesseract.Output.DICT)
     lines = {}
     for i, t in enumerate(d["text"]):
         if not t.strip():
@@ -114,15 +121,43 @@ def align_lines(hyps, key_words, T, min_cover=0.5):
     return out, 0
 
 
+_BN = {}
+
+
+def bn_units():
+    """{(vol, page): [unit text, ...]} from content/bn: a unit is credited to the page it starts on."""
+    if _BN:
+        return _BN
+    import glob
+    import unicodedata
+    for f in sorted(glob.glob(str(HERE.parent / "bn" / "skandha-*" / "chapter-*.md"))):
+        t = Path(f).read_text(encoding="utf-8")
+        sp = re.search(r"^source_pages:.*$", t, re.M)
+        vols = {int(p): int(v) for v, p in re.findall(r'"v(\d):(\d+)"', sp.group(0))} if sp else {}
+        for m in re.finditer(r"^### [^\n]*\n<!-- page: (\d+)[^>]*-->\s*\n(.*?)(?=^### |^---|\Z)", t, re.M | re.S):
+            page = int(m.group(1))
+            body = unicodedata.normalize("NFC", m.group(2)).strip()
+            if body and page in vols:
+                _BN.setdefault((vols[page], page), []).append(body)
+    return _BN
+
+
 def page_lines(vol, page):
     cv2, np, pytesseract, o, T = _imports()
-    f = ODIA / "vision_transcripts" / f"v{vol}_p{page:04d}.json"
-    if not f.exists():
-        return []
-    key = json.loads(f.read_text(encoding="utf-8"))
     import unicodedata
-    # raw words, exactly as the transcript has them (quotes, dashes, spaced verse markers): the line text must be what is printed
-    key_words = [w for para in key.get("paragraphs", []) for w in unicodedata.normalize("NFC", para).split()]
+    if LANG == "bn":
+        units = bn_units()
+        texts = [t for k in (page - 1, page, page + 1) for t in units.get((vol, k), [])]
+        key_words = [w for t in texts for w in t.split()]
+        if not key_words:
+            return []
+    else:
+        f = ODIA / "vision_transcripts" / f"v{vol}_p{page:04d}.json"
+        if not f.exists():
+            return []
+        key = json.loads(f.read_text(encoding="utf-8"))
+        # raw words, exactly as the transcript has them (quotes, dashes, spaced verse markers): the line text must be what is printed
+        key_words = [w for para in key.get("paragraphs", []) for w in unicodedata.normalize("NFC", para).split()]
     g = o.render(vol, page)
     lay = o.analyse(g)
     if lay is None or lay.get("split") is None:
@@ -167,15 +202,22 @@ def main():
     ap.add_argument("--pages", help="e.g. 88-120 (volume 1)")
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--lang", default="or", choices=["or", "bn"])
+    ap.add_argument("--vol", type=int, default=1)
     a = ap.parse_args()
-    if a.all:
+    if a.all and LANG == "bn":
+        units = bn_units()
+        jobs = sorted(k for k in units if k[0] == a.vol)
+        lo = hi = None
+    elif a.all:
         lo, hi = 88, 578
     elif a.pages:
         lo, _, hi = a.pages.partition("-")
         lo, hi = int(lo), int(hi or lo)
     else:
         ap.error("--pages or --all")
-    jobs = [(1, p) for p in range(lo, hi + 1)]
+    if lo is not None:
+        jobs = [(a.vol, p) for p in range(lo, hi + 1)]
     man = LINES / "manifest.jsonl"
     LINES.mkdir(parents=True, exist_ok=True)
     n = bad = 0
