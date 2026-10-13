@@ -50,15 +50,15 @@ val AppLight = AppColors(
 )
 
 val AppDark = AppColors(
-    bg = Color(0xFF12141C),
-    surface = Color(0xFF20263A),
-    sunk = Color(0xFF2C3248),
+    bg = Color(0xFF151412),
+    surface = Color(0xFF211F1C),
+    sunk = Color(0xFF2D2A26),
     ink = Color(0xFFEDE8DC),
     inkSecondary = Color(0xFFB4AE9F),
-    line = Color(0xFF3B4260),
+    line = Color(0xFF423E38),
     accent = Color(0xFFF2B27A),
-    onAccent = Color(0xFF12141C),
-    accentTint = Color(0xFF3A2F34),
+    onAccent = Color(0xFF151412),
+    accentTint = Color(0xFF3A2E26),
     gold = Color(0xFFD9B45E),
     shloka = Color(0xFFF2C38B),
     link = Color(0xFF6FD0D3),
@@ -68,7 +68,7 @@ val AppDark = AppColors(
 )
 
 /** True black for OLED screens. */
-val AppRatri = AppDark.copy(bg = Color(0xFF000000), surface = Color(0xFF14141A), sunk = Color(0xFF20202A), line = Color(0xFF34343C), inkSecondary = Color(0xFF9F9A8D), accentTint = Color(0xFF2A2024))
+val AppRatri = AppDark.copy(bg = Color(0xFF000000), surface = Color(0xFF12110F), sunk = Color(0xFF1D1B18), line = Color(0xFF36322D), inkSecondary = Color(0xFF9F9A8D), accentTint = Color(0xFF2A211B), onAccent = Color(0xFF000000))
 
 /** Sepia paper. */
 val AppPothi = AppLight.copy(bg = Color(0xFFF3E7CF), surface = Color(0xFFFAF0DC), sunk = Color(0xFFE3D4B6), ink = Color(0xFF3B2F20), inkSecondary = Color(0xFF6B5A43), line = Color(0xFFD9C8A6), link = Color(0xFF0B6E72))

@@ -216,8 +216,13 @@ fun HomeScreen(
                         maxLines = 3, overflow = TextOverflow.Ellipsis)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            Text(s.resumeReading, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFF4DC))
-                            Text(localDigits("${s.stoppedAt} ${state.lastVerse}", ui), fontSize = 13.sp, color = Color(0xFFFFF4DC))
+                            if (state.hasRead) {
+                                Text(s.resumeReading, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFF4DC))
+                                Text(localDigits("${s.stoppedAt} ${state.lastVerse}", ui), fontSize = 13.sp, color = Color(0xFFFFF4DC))
+                            } else {
+                                Text(tr(ui, "Start with Skandha 1", "स्कन्ध १ से शुरू करें", "স্কন্ধ ১ দিয়ে শুরু করুন"), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFF4DC))
+                                Text(tr(ui, "Begin the first chapter", "पहला अध्याय आरम्भ करें", "প্রথম অধ্যায় শুরু করুন"), fontSize = 13.sp, color = Color(0xFFFFF4DC))
+                            }
                         }
                         Box(
                             Modifier.size(56.dp).clip(CircleShape).background(Color(0xFFF5C97A))

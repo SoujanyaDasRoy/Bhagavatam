@@ -112,7 +112,7 @@ internal fun ThemeSwitcher(state: AppState, labels: List<String>) {
     Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         ThemeMode.entries.forEachIndexed { i, mode ->
             val on = state.themeMode == mode
-            val ring by animateColorAsState(if (on) Brand.Kesari else Brand.Separator, tween(Motion.sheet), label = "themeRing")
+            val ring by animateColorAsState(if (on) Brand.Kesari else Brand.Secondary.copy(alpha = 0.5f), tween(Motion.sheet), label = "themeRing")
             Column(
                 Modifier.weight(1f).clip(Radius.group).selectable(selected = on, role = Role.RadioButton) { state.setThemeMode(mode) },
                 horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp),

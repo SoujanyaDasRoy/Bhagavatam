@@ -1,6 +1,6 @@
 # Better onboarding: plan
 
-**Status:** plan only, nothing implemented. Written 2026-10-13 from a fresh-install walk-through on the emulator (light and dark).
+**Status:** built 2026-10-13 (language choices kept separate; coach marks implemented as a banner in the reader). Written 2026-10-13 from a fresh-install walk-through on the emulator (light and dark).
 
 ## What exists today (measured)
 Splash (about 5 s) -> step 1 "Choose the language for the app" (English, Hindi, Bengali) -> step 2 "How will you do paath?" (paath language, four "show alongside" switches, a preview) -> Home.

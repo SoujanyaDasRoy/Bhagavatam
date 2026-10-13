@@ -101,6 +101,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.semantics.Role
 import com.bhagavatam.app.ui.components.AppSlider
 import com.bhagavatam.app.ui.components.BottomScrim
+import com.bhagavatam.app.ui.components.TipBanner
 import com.bhagavatam.app.ui.theme.Radius
 import com.bhagavatam.app.ui.components.MiniPlayer
 import com.bhagavatam.app.ui.components.MarkedText
@@ -391,6 +392,7 @@ fun ReaderScreen(
                     }
                 }
             }
+            if (!state.hasSession) TipBanner(state, Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxHeight().widthIn(max = 600.dp).fillMaxWidth(),
@@ -451,7 +453,7 @@ fun ReaderScreen(
             }
         }
 
-        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 120.dp else 100.dp)
+        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 150.dp else 130.dp)
         // Action bar while text is selected: sits just above the play controls.
         Column(
             Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (state.hasSession) 96.dp else 76.dp).padding(horizontal = 12.dp),

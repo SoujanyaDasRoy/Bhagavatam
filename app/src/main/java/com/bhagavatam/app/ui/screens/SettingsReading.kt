@@ -128,5 +128,13 @@ fun ReadingSettings(state: AppState, onBack: () -> Unit) {
         ) {
             SwitchRow(tr(ui, "Keep screen on while reading", "पढ़ते समय स्क्रीन चालू रखें", "পড়ার সময় স্ক্রিন চালু রাখুন"), state.keepScreenOnReading, state::updateKeepScreenOnReading)
         }
+        SettingsGroup(
+            tr(ui, "Tips", "सुझाव", "টিপস"),
+            tr(ui, "Short hints about listening, word meanings and languages. Turning this on shows them again.",
+                "सुनने, शब्दार्थ और भाषाओं के बारे में छोटे सुझाव। इसे चालू करने पर वे फिर से दिखते हैं।",
+                "শোনা, শব্দের অর্থ ও ভাষা সম্পর্কে ছোট ইঙ্গিত। চালু করলে সেগুলো আবার দেখানো হবে।"),
+        ) {
+            SwitchRow(tr(ui, "Show tips", "सुझाव दिखाएँ", "টিপস দেখান"), state.tipsEnabled, state::updateTipsEnabled)
+        }
     }
 }

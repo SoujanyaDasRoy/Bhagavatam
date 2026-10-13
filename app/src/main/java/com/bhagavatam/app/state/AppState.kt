@@ -53,6 +53,9 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
  * All app state for the prototype: settings, reading position, saved verses and the player.
  * Settings are kept in SharedPreferences; move to DataStore + Room when the real content lands.
  */
+/** The order first-use tips are shown in, one at a time. Stored by id in `AppState.tipsSeen`. */
+val TIP_ORDER = listOf("listen", "holdWord", "languagePill")
+
 class AppState(app: Application) : AndroidViewModel(app) {
 
     private val prefs = app.getSharedPreferences("bhagavatam", Context.MODE_PRIVATE)
@@ -242,9 +245,33 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var lastVerse by mutableStateOf(prefs.getInt("lastV", 1))
         private set
 
+    /** False until the person has opened a chapter: Home then says "Start with Skandha 1" instead of "Resume". */
+    var hasRead by mutableStateOf(prefs.getBoolean("hasRead", false))
+        private set
+
     fun markRead(s: Int, a: Int, v: Int) {
-        lastSkandha = s; lastAdhyaya = a; lastVerse = v
-        save { putInt("lastS", s); putInt("lastA", a); putInt("lastV", v) }
+        lastSkandha = s; lastAdhyaya = a; lastVerse = v; hasRead = true
+        save { putInt("lastS", s); putInt("lastA", a); putInt("lastV", v); putBoolean("hasRead", true) }
+    }
+
+    // ---------- first-use tips (shown one at a time, once each) ----------
+    var tipsEnabled by mutableStateOf(prefs.getBoolean("tipsEnabled", true))
+        private set
+    val tipsSeen = mutableStateListOf<String>().apply { addAll(prefs.getStringSet("tipsSeen", emptySet()).orEmpty()) }
+
+    /** The next tip to show, or null when tips are off or all were seen. */
+    fun nextTip(): String? = if (!tipsEnabled) null else TIP_ORDER.firstOrNull { it !in tipsSeen }
+
+    fun markTipSeen(id: String) {
+        if (id !in tipsSeen) tipsSeen.add(id)
+        save { putStringSet("tipsSeen", tipsSeen.toSet()) }
+    }
+
+    /** Turning tips back on shows them again from the start. */
+    fun updateTipsEnabled(on: Boolean) {
+        tipsEnabled = on
+        if (on) tipsSeen.clear()
+        save { putBoolean("tipsEnabled", on); putStringSet("tipsSeen", tipsSeen.toSet()) }
     }
 
     /** Chapters whose last shloka has been reached, as "skandha.chapter" keys. */

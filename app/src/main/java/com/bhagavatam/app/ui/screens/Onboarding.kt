@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.bhagavatam.app.data.BENGALI_READY
 import com.bhagavatam.app.data.Lang
 import com.bhagavatam.app.data.SampleData
+import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.state.AppState
 import com.bhagavatam.app.ui.components.AppTile
 import com.bhagavatam.app.ui.components.GroupCard
@@ -62,7 +63,10 @@ fun OnboardingLanguageScreen(state: AppState, onContinue: () -> Unit) {
     val s = state.strings
     Column(Modifier.fillMaxSize().background(Brand.Paper).statusBarsPadding().navigationBarsPadding()) {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            VSpace(80)
+            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp), horizontalArrangement = Arrangement.End) {
+                Text(tr(state.uiLang, "1 of 2", "१ / २", "১ / ২"), fontSize = 13.sp, color = Brand.Secondary)
+            }
+            VSpace(40)
             Column(Modifier.fillMaxWidth().padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 AppTile(size = 72, fontSize = 36)
                 VSpace(18)
@@ -82,6 +86,15 @@ fun OnboardingLanguageScreen(state: AppState, onContinue: () -> Unit) {
                     }
             }
             Text(s.changeLater, Modifier.padding(start = 36.dp, end = 36.dp, top = 10.dp), style = MaterialTheme.typography.bodySmall, color = Brand.Secondary)
+            Text(tr(state.uiLang, "Works fully offline. No sign-in.", "पूरी तरह ऑफ़लाइन। साइन-इन की ज़रूरत नहीं।", "সম্পূর্ণ অফলাইন। সাইন-ইন লাগে না।"),
+                Modifier.padding(start = 36.dp, end = 36.dp, top = 6.dp), style = MaterialTheme.typography.bodySmall, color = Brand.Secondary)
+            VSpace(20)
+            // The same verse in the chosen language, so the choice is visible and not only a name in a list.
+            Column(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card).padding(16.dp)) {
+                val v = SampleData.adhyaya1.first()
+                Text(v.translation(state.uiLang), fontFamily = readingFont(state.uiLang), fontSize = 15.sp, lineHeight = 23.sp, color = Brand.Ink,
+                    maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+            }
         }
         Column(Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             PrimaryButton(s.continueBtn, onContinue)
