@@ -107,6 +107,7 @@ object RecitationStream {
      * Generate pinpoint search query for top liked, highly praised authentic recitation on YouTube.
      */
     fun getQuery(skandha: Int, chapter: Int, lang: Lang): String = when (lang) {
+        Lang.OR -> if (skandha == 0) "ଶ୍ରୀମଦ୍ଭାଗବତ ମାହାତ୍ମ୍ୟ ଅଧ୍ୟାୟ $chapter ଓଡ଼ିଆ ପାଠ" else "ଶ୍ରୀମଦ୍ଭାଗବତ ମହାପୁରାଣ ସ୍କନ୍ଧ $skandha ଅଧ୍ୟାୟ $chapter ଓଡ଼ିଆ ପାଠ"
         Lang.BN -> if (skandha == 0) "শ্রীমদ্ভাগবত মাহাত্ম্য অধ্যায় $chapter বাংলা পাঠ গীতাপ্রেস"
                    else "শ্রীমদ্ভাগবত মহাপুরাণ স্কন্ধ $skandha অধ্যায় $chapter বাংলা পাঠ গীতাপ্রেস প্রভুপাদ"
         Lang.HI -> if (skandha == 0) "श्रीमद्भागवत माहात्म्य अध्याय $chapter गीताप्रेस गोरखपुर संपूर्ण पाठ"

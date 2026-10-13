@@ -567,7 +567,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
     }
 }
 
-private fun layerName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.SA -> "संस्कृत"; Lang.EN -> "English" }
+private fun layerName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.OR -> "ଓଡ଼ିଆ"; Lang.SA -> "संस्कृत"; Lang.EN -> "English" }
 
 /** The standard opening of the closing line for chapters whose own line is not in the database. Empty for the Mahatmya. */
 private fun genericColophon(skandha: Int, adhyaya: Int): String {

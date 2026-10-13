@@ -95,6 +95,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var showHi by mutableStateOf(prefs.getBoolean("showHi", prefs.getString("uiLang", "EN") == "HI"))
         private set
     var showBn by mutableStateOf(prefs.getBoolean("showBn", prefs.getString("uiLang", "EN") == "BN") && BENGALI_READY)
+    var showOr by mutableStateOf(prefs.getBoolean("showOr", false) && com.bhagavatam.app.data.ODIA_READY)
         private set
     var showEn by mutableStateOf(prefs.getBoolean("showEn", prefs.getString("uiLang", "EN") == "EN" || (!prefs.getBoolean("showHi", false) && !prefs.getBoolean("showBn", false))))
         private set
@@ -180,6 +181,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
     fun updateShowHi(on: Boolean) { showHi = on; save { putBoolean("showHi", on) } }
     fun updateShowBn(on: Boolean) { showBn = on; save { putBoolean("showBn", on) } }
+    fun updateShowOr(on: Boolean) { showOr = on; save { putBoolean("showOr", on) } }
     fun updateShowEn(on: Boolean) { showEn = on; save { putBoolean("showEn", on) } }
     /** Picking one theme by hand turns off "match phone". */
     fun updateTheme(t: ReaderTheme) {
@@ -243,6 +245,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun alongsideLayers(): List<Lang> = buildList {
         if (showHi) add(Lang.HI)
         if (showBn && BENGALI_READY) add(Lang.BN)
+        if (showOr && com.bhagavatam.app.data.ODIA_READY) add(Lang.OR)
         if (showEn) add(Lang.EN)
     }.ifEmpty {
         when (uiLang) {
@@ -489,12 +492,12 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
 
     /** The chosen voice for a language; Sanskrit is read with the Hindi voice. */
-    fun voiceFor(lang: Lang): String? = when (lang) { Lang.HI, Lang.SA -> voiceHi; Lang.BN -> voiceBn; Lang.EN -> voiceEn }
+    fun voiceFor(lang: Lang): String? = when (lang) { Lang.HI, Lang.SA -> voiceHi; Lang.BN -> voiceBn; Lang.OR -> voiceBn; Lang.EN -> voiceEn }
 
     fun chooseVoice(lang: Lang, name: String?) {
         when (lang) {
             Lang.HI, Lang.SA -> { voiceHi = name; save { putString("voiceHi", name) } }
-            Lang.BN -> { voiceBn = name; save { putString("voiceBn", name) } }
+            Lang.BN, Lang.OR -> { voiceBn = name; save { putString("voiceBn", name) } }
             Lang.EN -> { voiceEn = name; save { putString("voiceEn", name) } }
         }
         restartNarration()
@@ -520,6 +523,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
         val sample = when (lang) {
             Lang.HI, Lang.SA -> "श्रीमद्भागवत महापुराण का पाठ सुनिए।"
             Lang.BN -> "শ্রীমদ্ভাগবত মহাপুরাণ শুনুন।"
+            Lang.OR -> "ଶ୍ରୀମଦ୍ଭାଗବତ ମହାପୁରାଣ ଶୁଣନ୍ତୁ।"
             Lang.EN -> "Listen to the Shrimad Bhagavat Mahapuran."
         }
         narrator.preview(lang, speed, name, sample)

@@ -166,6 +166,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
 fun readingFont(l: Lang): FontFamily = when (l) {
     Lang.HI -> TiroHindi
     Lang.BN -> NotoSerifBengali
+    Lang.OR -> androidx.compose.ui.text.font.FontFamily.Serif
     Lang.SA -> NotoDevanagari
     Lang.EN -> EnglishReading
 }

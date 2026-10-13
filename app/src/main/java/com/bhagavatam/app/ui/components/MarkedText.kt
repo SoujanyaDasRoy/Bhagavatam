@@ -1,6 +1,12 @@
 package com.bhagavatam.app.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
+import com.bhagavatam.app.data.Corrections
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +43,7 @@ fun MarkedText(
     state: AppState,
     ref: String,
     lang: Lang,
-    text: String,
+    rawText: String,
     style: TextStyle,
     modifier: Modifier = Modifier,
     prefix: AnnotatedString = AnnotatedString(""),
@@ -45,6 +51,9 @@ fun MarkedText(
     onTextTap: (() -> Unit)? = null,
 ) {
     val c = LocalReaderColors.current
+    // Words the readers could not agree on carry "[?]" in the Odia text: shown without it, underlined in red, tappable.
+    val (text, doubtful) = remember(rawText) { splitDoubtful(rawText) }
+    var asking by remember(text) { mutableStateOf<IntRange?>(null) }
     val anns = state.annotationsFor(ref, lang.code)
     val pl = prefix.length
 
@@ -66,11 +75,23 @@ fun MarkedText(
 
     var layoutResult by remember(annotated) { mutableStateOf<TextLayoutResult?>(null) }
 
+    asking?.let { r ->
+        val word = text.substring(r.first, r.last + 1).trim(' ', ',', '.', ';', ':', '!', '?', '\u0964', '\u0965')
+        DoubtDialog(state, ref, lang, word) { asking = null }
+    }
+
     Text(
         text = annotated,
         style = style,
         onTextLayout = { layoutResult = it },
-        modifier = modifier.pointerInput(text, anns, pl) {
+        modifier = modifier.drawBehind {
+            val layout = layoutResult ?: return@drawBehind
+            for (r in doubtful) for (i in r) {
+                if (i + pl >= layout.layoutInput.text.length) continue
+                val b = layout.getBoundingBox(i + pl)
+                drawLine(Color(0xFFD32F2F), Offset(b.left, b.bottom - 1f), Offset(b.right, b.bottom - 1f), strokeWidth = 2.5f)
+            }
+        }.pointerInput(text, anns, pl) {
             detectTapGestures(
                 onTap = { offset ->
                     val layout = layoutResult ?: return@detectTapGestures
@@ -78,6 +99,11 @@ fun MarkedText(
                     val textOffset = charOffset - pl
                     if (textOffset < 0) {
                         onPrefixTap?.invoke()
+                        return@detectTapGestures
+                    }
+                    val doubt = doubtful.firstOrNull { textOffset in it }
+                    if (doubt != null) {
+                        asking = doubt
                         return@detectTapGestures
                     }
                     val hit = anns.firstOrNull { a ->
@@ -111,5 +137,56 @@ fun MarkedText(
                 }
             )
         }
+    )
+}
+
+
+/** "word[?]" markers removed from [t]; returns the text without them and the character ranges of the doubtful words in it. */
+private fun splitDoubtful(t: String): Pair<String, List<IntRange>> {
+    if (!t.contains("[?]")) return t to emptyList()
+    val out = StringBuilder()
+    val ranges = ArrayList<IntRange>()
+    var wordStart = 0
+    var i = 0
+    while (i < t.length) {
+        if (t.startsWith("[?]", i)) {
+            if (out.length > wordStart) ranges.add(wordStart until out.length)
+            i += 3
+            continue
+        }
+        val ch = t[i]
+        out.append(ch)
+        if (ch.isWhitespace()) wordStart = out.length
+        i++
+    }
+    return out.toString() to ranges
+}
+
+/** Asked when a reader taps a red-underlined word: is it spelled correctly? If not, the correction goes to the maker. */
+@Composable
+private fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String, onDone: () -> Unit) {
+    val ui = state.uiLang
+    val context = LocalContext.current
+    AlertDialog(
+        onDismissRequest = onDone,
+        title = { Text(word) },
+        text = {
+            Text(
+                com.bhagavatam.app.data.tr(
+                    ui,
+                    "This book was read from the scan by a computer and this word is not certain. Is it spelled correctly?",
+                    "यह पुस्तक स्कैन से कंप्यूटर द्वारा पढ़ी गई है और यह शब्द निश्चित नहीं है। क्या वर्तनी सही है?",
+                    "এই বইটি স্ক্যান থেকে কম্পিউটার পড়েছে এবং এই শব্দটি নিশ্চিত নয়। বানান কি ঠিক?",
+                )
+            )
+        },
+        confirmButton = {
+            if (Corrections.enabled) TextButton(onClick = {
+                Corrections.open(context, ref, word)
+                android.widget.Toast.makeText(context, com.bhagavatam.app.data.tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।"), android.widget.Toast.LENGTH_LONG).show()
+                onDone()
+            }) { Text(com.bhagavatam.app.data.tr(ui, "No, send the correct word", "नहीं, सही शब्द भेजें", "না, সঠিক শব্দ পাঠান")) }
+        },
+        dismissButton = { TextButton(onClick = onDone) { Text(com.bhagavatam.app.data.tr(ui, "Yes, it is correct", "हाँ, सही है", "হ্যাঁ, ঠিক আছে")) } },
     )
 }

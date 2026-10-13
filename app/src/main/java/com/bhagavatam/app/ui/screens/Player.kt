@@ -119,7 +119,7 @@ private fun clock(sec: Int) = "%d:%02d".format(sec / 60, sec % 60)
 
 private fun languageName(ui: Lang, l: Lang) = when (ui) {
     Lang.HI -> when (l) { Lang.EN -> "अंग्रेज़ी"; Lang.BN -> "बंगाली"; else -> "हिन्दी" }
-    Lang.BN -> when (l) { Lang.EN -> "ইংরেজি"; Lang.HI, Lang.SA -> "হিন্দি"; Lang.BN -> "বাংলা" }
+    Lang.BN -> when (l) { Lang.EN -> "ইংরেজি"; Lang.HI, Lang.SA -> "হিন্দি"; Lang.BN -> "বাংলা"; Lang.OR -> "ওড়িয়া" }
     else -> when (l) { Lang.EN -> "English"; Lang.BN -> "Bengali"; else -> "Hindi" }
 }
 
@@ -368,6 +368,7 @@ private fun TrackMetadataRow(state: AppState, v: Verse) {
         Lang.SA -> "संस्कृत"
         Lang.HI -> "हिन्दी"
         Lang.BN -> "বাংলা"
+        Lang.OR -> "ଓଡ଼ିଆ"
         Lang.EN -> "English"
     }
 
@@ -1506,6 +1507,7 @@ private fun LanguageBar(state: AppState) {
             Lang.SA -> "संस्कृत"
             Lang.HI -> "हिन्दी"
             Lang.BN -> "বাংলা"
+            Lang.OR -> "ଓଡ଼ିଆ"
             Lang.EN -> "English"
         }
     }
@@ -1514,6 +1516,7 @@ private fun LanguageBar(state: AppState) {
             Lang.SA -> NotoDevanagari
             Lang.HI -> TiroHindi
             Lang.BN -> NotoSerifBengali
+            Lang.OR -> androidx.compose.ui.text.font.FontFamily.Serif
             Lang.EN -> Jakarta
         }
     }

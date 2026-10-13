@@ -159,9 +159,9 @@ def apply(db_path, src_root=None, version=None):
     db.execute('UPDATE chapter SET title_or = NULL')
     stats = dict(chapters=0, verses_with_text=0, verses_pointing=0, verses_without=0, odia_blocks_unmatched=0)
     issues = []
-    for path in sorted(glob.glob(os.path.join(src_root, 'skandha-*', 'chapter-*.md'))):
-        m = re.search(r'skandha-(\d+)[/\\]chapter-(\d+)\.md$', path)
-        s, c = int(m.group(1)), int(m.group(2))
+    for path in sorted(glob.glob(os.path.join(src_root, 'skandha-*', 'chapter-*.md')) + glob.glob(os.path.join(src_root, 'mahatmya', 'chapter-*.md'))):
+        m = re.search(r'(?:skandha-(\d+)|(mahatmya))[/\\]chapter-(\d+)\.md$', path)
+        s, c = (0 if m.group(2) else int(m.group(1))), int(m.group(3))
         t = open(path, encoding='utf-8').read()
         rows = [(r[0], r[1]) for r in db.execute('SELECT num, num_end FROM verse WHERE skandha=? AND chapter=? ORDER BY num', (s, c))]
         if not rows:

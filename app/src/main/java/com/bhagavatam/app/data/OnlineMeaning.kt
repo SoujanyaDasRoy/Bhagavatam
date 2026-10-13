@@ -35,6 +35,7 @@ object OnlineMeaning {
         Lang.EN -> listOf("en")
         Lang.HI -> listOf("hi", "sa", "mr", "ne")
         Lang.BN -> listOf("bn", "sa", "hi")
+        Lang.OR -> listOf("or", "sa", "hi")
         Lang.SA -> listOf("sa", "hi", "mr", "ne", "bn")
     }
 

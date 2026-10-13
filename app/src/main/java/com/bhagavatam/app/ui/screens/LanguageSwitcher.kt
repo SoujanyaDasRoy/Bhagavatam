@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bhagavatam.app.data.Lang
+import com.bhagavatam.app.data.ODIA_READY
 import com.bhagavatam.app.data.SanskritScript
 import com.bhagavatam.app.data.Verse
 import com.bhagavatam.app.data.tr
@@ -70,18 +71,19 @@ import com.bhagavatam.app.ui.theme.EnglishReading
  * Languages that have no text for the open chapter are shown greyed out with the reason, not hidden and not an error after a tap.
  */
 
-private val TRANSLATIONS = listOf(Lang.HI, Lang.BN, Lang.EN)
+private val TRANSLATIONS = listOf(Lang.HI, Lang.BN, Lang.EN) + (if (ODIA_READY) listOf(Lang.OR) else emptyList())
 
 /** Translations that have text in at least one verse of the open chapter. */
 internal fun availableTranslations(verses: List<Verse>): Set<Lang> = TRANSLATIONS.filter { l -> verses.any { it.hasText(l) } }.toSet()
 
 /** A language's name written in its own script. */
-internal fun ownName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English"; Lang.SA -> "संस्कृत" }
+internal fun ownName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.OR -> "ଓଡ଼ିଆ"; Lang.EN -> "English"; Lang.SA -> "संस्कृत" }
 
 /** A language's name written in the app language (the small line under the own-script name). */
 internal fun nameIn(ui: Lang, l: Lang) = when (l) {
     Lang.HI -> tr(ui, "Hindi", "हिन्दी", "হিন্দি")
     Lang.BN -> tr(ui, "Bengali", "बंगाली", "বাংলা")
+    Lang.OR -> tr(ui, "Odia (machine-read)", "ओड़िया (मशीन से पढ़ा)", "ওড়িয়া (যন্ত্রে পড়া)")
     Lang.EN -> tr(ui, "English", "अंग्रेज़ी", "ইংরেজি")
     Lang.SA -> tr(ui, "Sanskrit", "संस्कृत", "সংস্কৃত")
 }
@@ -146,7 +148,7 @@ private fun LanguageRow(name: String, font: FontFamily?, sub: String, enabled: B
     }
 }
 
-private fun fontFor(l: Lang): FontFamily? = when (l) { Lang.HI -> NotoDevanagari; Lang.BN -> NotoSerifBengali; Lang.SA -> NotoDevanagari; Lang.EN -> EnglishReading }
+private fun fontFor(l: Lang): FontFamily? = when (l) { Lang.HI -> NotoDevanagari; Lang.BN -> NotoSerifBengali; Lang.OR -> androidx.compose.ui.text.font.FontFamily.Serif; Lang.SA -> NotoDevanagari; Lang.EN -> EnglishReading }
 
 /** The sheet opened by the pill. [verses] are the open chapter's verses, used to grey out languages it does not have. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,14 +166,14 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
         state.restartNarration()
     }
     fun pick(l: Lang) {
-        when (l) { Lang.HI -> state.updateShowHi(true); Lang.BN -> state.updateShowBn(true); else -> state.updateShowEn(true) }
+        when (l) { Lang.HI -> state.updateShowHi(true); Lang.BN -> state.updateShowBn(true); Lang.OR -> state.updateShowOr(true); else -> state.updateShowEn(true) }
         state.updateReadLang(l)
         state.restartNarration()
     }
     fun toggleLayer(l: Lang) {
         val on = l in layers
         if (on && !canTurnOff(layers.size)) return
-        when (l) { Lang.HI -> state.updateShowHi(!on); Lang.BN -> state.updateShowBn(!on); else -> state.updateShowEn(!on) }
+        when (l) { Lang.HI -> state.updateShowHi(!on); Lang.BN -> state.updateShowBn(!on); Lang.OR -> state.updateShowOr(!on); else -> state.updateShowEn(!on) }
     }
 
     // Open fully, so every language row is in view and none sits half cut off at the bottom edge.

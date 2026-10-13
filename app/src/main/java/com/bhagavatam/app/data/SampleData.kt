@@ -12,7 +12,10 @@ import java.util.concurrent.ConcurrentHashMap
  * so far; elsewhere `bn` is empty and the app says so (see [SampleData.hasBengali]).
  */
 
-enum class Lang(val code: String) { SA("sa"), HI("hi"), BN("bn"), EN("en") }
+enum class Lang(val code: String) { SA("sa"), HI("hi"), BN("bn"), EN("en"), OR("or") }
+
+/** Odia is machine-read from the Gita Press scan and not yet reviewed by an Odia reader; words the readers disagreed on are marked and shown underlined in red. */
+const val ODIA_READY = true
 
 /** Bengali is offered as a reading layer. It is partial (see [SampleData.hasBengali]); chapters without it fall back to Hindi for listening and say so when read. */
 const val BENGALI_READY = true
@@ -28,6 +31,7 @@ data class Verse(
     val en: String,
     val hi: String,
     val bn: String = "",
+    val or: String = "",
     val speaker: String? = null,
     /** Last shloka number when one block covers a range, e.g. 5-6. */
     val numEnd: Int = num,
@@ -37,18 +41,21 @@ data class Verse(
     val hiFrom: Int? = null,
     /** Same for the Bengali translation: for a joint verse, the verse that carries it. */
     val bnFrom: Int? = null,
+    /** Same for the Odia translation. */
+    val orFrom: Int? = null,
 ) {
     val ref get() = "$skandha.$adhyaya.$num"
 
     /** True when this block carries its own text in [lang] (grouped verses print the translation only once). */
-    fun hasText(lang: Lang) = when (lang) { Lang.HI -> hi; Lang.BN -> bn; Lang.EN -> en; else -> "x" }.isNotEmpty()
+    fun hasText(lang: Lang) = when (lang) { Lang.HI -> hi; Lang.BN -> bn; Lang.EN -> en; Lang.OR -> or; else -> "x" }.isNotEmpty()
 
     val numLabel get() = if (numEnd > num) "$num-$numEnd" else "$num"
 
     fun translation(lang: Lang): String {
-        val t = when (lang) { Lang.HI -> hi; Lang.BN -> bn; else -> en }
+        val t = when (lang) { Lang.HI -> hi; Lang.BN -> bn; Lang.OR -> or; else -> en }
         if (t.isNotEmpty()) return t
         return when (lang) {
+            Lang.OR -> if (orFrom != null) "→ ଶ୍ଳୋକ $orFrom ଅନୁବାଦ ସହିତ" else "ଓଡ଼ିଆ ଅନୁବାଦ ଏବେ ଉପଲବ୍ଧ ନାହିଁ।"
             Lang.BN -> if (bnFrom != null) "→ শ্লোক $bnFrom-এর অনুবাদের সঙ্গে" else "বাংলা অনুবাদ এখনও যোগ করা হয়নি।"
             Lang.HI -> if (hiFrom != null) "\u2192 \u0936\u094d\u0932\u094b\u0915 $hiFrom \u0915\u0947 \u092d\u093e\u0935\u093e\u0930\u094d\u0925 \u0915\u0947 \u0938\u093e\u0925" else "\u092d\u093e\u0935\u093e\u0930\u094d\u0925 \u0909\u092a\u0932\u092c\u094d\u0927 \u0928\u0939\u0940\u0902\u0964"
             else -> if (enFrom != null) "\u2192 Translated together with verse $enFrom" else "No English translation is printed for this verse."
@@ -163,6 +170,7 @@ object SampleData {
     private val titlesBn = HashMap<String, String>()
     private val bengaliChapters = HashSet<String>()
     @Volatile private var hasBn = false
+    @Volatile private var hasOr = false
     @Volatile private var hasIastPlain = false
     private val cache = ConcurrentHashMap<String, List<Verse>>()
     private val verseCounts = HashMap<String, Int>()
@@ -177,6 +185,7 @@ object SampleData {
         cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
         // An older text database has no Bengali columns; the app must still open it.
         hasBn = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "bn") found = true; found }
+        hasOr = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "or") found = true; found }
         hasIastPlain = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "iast_plain") found = true; found }
         val titleBn = if (hasBn) "title_bn" else "NULL"
         d.rawQuery("SELECT skandha, chapter, title_en, title_hi, verse_count, $titleBn FROM chapter", null).use { c ->
@@ -251,7 +260,7 @@ object SampleData {
         var prevChapter = ""
         try {
             d.rawQuery(
-                "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"} FROM verse $where ORDER BY skandha, chapter, num",
+                "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"}, ${if (hasOr) "\"or\", or_from" else "NULL, NULL"} FROM verse $where ORDER BY skandha, chapter, num",
                 args,
             ).use { c ->
                 while (c.moveToNext()) {
@@ -281,6 +290,7 @@ object SampleData {
                             iast = c.getString(6).orEmpty().tidyDashes().let { if (it.isEmpty()) emptyList() else it.split('\n') },
                             hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
                             bnFrom = if (c.isNull(12)) null else c.getInt(12),
+                            or = c.getString(13).orEmpty().tidyDashes(), orFrom = if (c.isNull(14)) null else c.getInt(14),
                             enFrom = if (c.isNull(9)) null else c.getInt(9),
                             hiFrom = if (c.isNull(10)) null else c.getInt(10),
                         )
