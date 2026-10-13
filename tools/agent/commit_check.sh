@@ -8,7 +8,7 @@ staged="$(git diff --cached --name-only --diff-filter=AM)"
 [ -z "$staged" ] && { echo "Nothing is staged."; exit 0; }
 
 echo "== files that must not be committed (book text, databases, APKs, PDFs, keys)"
-hits="$(echo "$staged" | grep -E '(^|/)\.env$|\.env$|\.db$|\.apk$|\.pdf$|\.tgz$|^content/(bn|hi|en|or)/|^content/_odia/(work[^/]*|out|review|vision_transcripts|batches|vt)/|^content/_bengali/.*/(work|out|review)/|^_archive/' || true)"
+hits="$(echo "$staged" | grep -E '(^|/)\.env$|\.env$|\.db$|\.apk$|\.pdf$|\.tgz$|^content/(bn|hi|en|or)/|^content/_odia/(work[^/]*|out|review|vision_transcripts|batches|vt)/|^content/_localocr/work/|^content/_bengali/.*/(work|out|review)/|^_archive/' || true)"
 if [ -n "$hits" ]; then echo "$hits" | head -20; echo "FAIL: remove these from the index (git rm --cached) and add them to .gitignore"; bad=1; else echo "none"; fi
 
 echo "== key-like strings in the staged changes"
