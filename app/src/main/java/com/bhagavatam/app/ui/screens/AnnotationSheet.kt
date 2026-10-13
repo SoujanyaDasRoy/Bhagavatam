@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import com.bhagavatam.app.data.AnnDraft
 import com.bhagavatam.app.data.AnnKind
 import com.bhagavatam.app.data.Annotation
+import com.bhagavatam.app.data.Corrections
 import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.localDigits
 import com.bhagavatam.app.data.occurrencesOf
@@ -198,6 +199,7 @@ fun MeaningCard(
     val clipboard = LocalClipboardManager.current
     val term = remember(w) { SampleData.glossary.firstOrNull { it.term.equals(w.word, ignoreCase = true) || it.dev == w.word } }
     var retryKey by remember { mutableStateOf(0) }
+    val context = LocalContext.current
 
     // 1. Offline dictionary lookup
     val offlineEntries by produceState<List<com.bhagavatam.app.data.DictEntry>>(emptyList(), w, state.meaningLangMode, retryKey) {
@@ -254,6 +256,12 @@ fun MeaningCard(
                     tint = if (isSaved) c.gold else c.secondary,
                     modifier = Modifier.size(16.dp)
                 )
+            }
+            if (Corrections.enabled) IconButton(onClick = {
+                Corrections.open(context, w.ref, w.word)
+                android.widget.Toast.makeText(context, tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।"), android.widget.Toast.LENGTH_LONG).show()
+            }, modifier = Modifier.size(36.dp)) {
+                Icon(painterResource(Ic.MessageSquare), contentDescription = tr(ui, "Report an error", "त्रुटि बताएँ", "ভুল জানান"), tint = c.secondary, modifier = Modifier.size(16.dp))
             }
             IconButton(
                 onClick = { clipboard.setText(AnnotatedString(w.word)) },
@@ -450,4 +458,3 @@ fun SelectionPanel(
         if (state.selBar != null) SelectionBar(state, framed = false)
     }
 }
-
