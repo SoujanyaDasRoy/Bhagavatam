@@ -95,6 +95,9 @@ import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.SanskritScript
 import com.bhagavatam.app.data.Verse
 import com.bhagavatam.app.data.localDigits
+import com.bhagavatam.app.data.digitsTo
+import com.bhagavatam.app.data.stringsFor
+import com.bhagavatam.app.state.LangZone
 import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.state.AppState
 import androidx.compose.ui.draw.shadow
@@ -146,7 +149,9 @@ fun ReaderScreen(
     val swipePx = with(LocalDensity.current) { 96.dp.toPx() }
     // The chapter title sits once, in the text. It moves up into the bar only after it has scrolled out of view.
     val titleInBar by remember { derivedStateOf { list.firstVisibleItemIndex >= 2 } }
-    val reference = localDigits(if (skandha == 0) "${s.mahatmya} · ${s.adhyaya} $adhyaya" else "${s.skandha} $skandha · ${s.adhyaya} $adhyaya", ui)
+    // The words of the reference and the reading time are the page's (reading language); the digits are the app's.
+    val rs = stringsFor(state.langFor(LangZone.PAGE))
+    val reference = localDigits(if (skandha == 0) "${rs.mahatmya} · ${rs.adhyaya} $adhyaya" else "${rs.skandha} $skandha · ${rs.adhyaya} $adhyaya", ui)
 
     var showFindBar by remember { mutableStateOf(false) }
     var findQuery by remember { mutableStateOf("") }
@@ -411,9 +416,9 @@ fun ReaderScreen(
                             verses.sumOf { v -> v.translation(bookLang).split("\\s+".toRegex()).size }
                         }
                         val readMinutes = maxOf(1, totalWords / 150)
-                        val readTimeBadge = String.format(s.minRead, readMinutes)
+                        val readTimeBadge = String.format(rs.minRead, readMinutes)
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
+                            if (count > 0) Text(localDigits("$count ${rs.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
                             if (state.showReadTime) {
                                 Text("·", fontSize = 13.sp, color = c.secondary)
                                 Text(localDigits(readTimeBadge, ui), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
@@ -549,7 +554,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 val big = l == Lang.HI || l == Lang.BN
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (layers.size > 1) Text(layerName(l), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = c.gold)
-                    val body = v.translation(l)
+                    val body = digitsTo(v.translation(l), state.uiLang)
                     val style = TextStyle(fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
                         lineHeight = ((if (big) 32 else 27) * scale * state.lineScale).sp, color = c.ink)
                     // Pointers such as "translated together with verse 5" are not text to mark.
@@ -605,7 +610,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     ) {
         // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
-            state, v.ref, lang, v.translation(lang),
+            state, v.ref, lang, digitsTo(v.translation(lang), ui),
             TextStyle(fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink,
                 textAlign = if (state.justifyText) androidx.compose.ui.text.style.TextAlign.Justify else androidx.compose.ui.text.style.TextAlign.Start),
             Modifier.fillMaxWidth(),
@@ -622,7 +627,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
                 Modifier.fillMaxWidth().clip(Radius.group).background(c.surface).border(1.dp, c.separator, Radius.group).padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(localDigits("${state.strings.shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${stringsFor(state.langFor(LangZone.PAGE)).shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 val script = if (ui == Lang.BN && state.script == SanskritScript.DEVANAGARI) SanskritScript.BENGALI else state.script
                 ShlokaText(v, script, c.shloka, 16f * scale, onWordLongPress = { word ->
                     state.lookup = com.bhagavatam.app.data.WordLookup(word, Lang.SA, v.ref)
@@ -653,7 +658,7 @@ private fun ChapterEndBlock(
     }
     val sanskritFont = when (lang) { Lang.BN -> NotoSerifBengali; Lang.EN -> EnglishReading; else -> NotoDevanagari }
     var showNotes by remember(skandha, adhyaya) { mutableStateOf(false) }
-    val notesLabel = when (ui) { Lang.HI -> "\u091f\u093f\u092a\u094d\u092a\u0923\u093f\u092f\u093e\u0901"; Lang.BN -> "\u099f\u09c0\u0995\u09be"; else -> "Notes" }
+    val notesLabel = when (lang) { Lang.HI -> "\u091f\u093f\u092a\u094d\u092a\u0923\u093f\u092f\u093e\u0901"; Lang.BN -> "\u099f\u09c0\u0995\u09be"; else -> "Notes" }
     val (prevLabel, nextLabel) = chapterLabels(lang)
     Column(Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Box(Modifier.width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))

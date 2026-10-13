@@ -53,6 +53,16 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
  * All app state for the prototype: settings, reading position, saved verses and the player.
  * Settings are kept in SharedPreferences; move to DataStore + Room when the real content lands.
  */
+/**
+ * Which language a piece of text is written in. FRAME is the app around the page (menus, buttons, tips, settings, counts);
+ * PAGE is the book and what names it (verse text, titles, the chapter-end block, references printed beside a title, lock-screen
+ * title). Digits are the exception: they follow the app language everywhere. See docs/superpowers/plans/2026-10-14-language-rules.md.
+ */
+enum class LangZone { FRAME, PAGE }
+
+/** `title` is the reading language, or the app language when the reading language is Sanskrit. */
+fun zoneLang(zone: LangZone, ui: Lang, title: Lang): Lang = if (zone == LangZone.FRAME) ui else title
+
 /** The order first-use tips are shown in, one at a time. Stored by id in `AppState.tipsSeen`. */
 val TIP_ORDER = listOf("listen", "holdWord", "languagePill")
 
@@ -141,6 +151,11 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateUiLang(l: Lang) {
         uiLang = l
         save { putString("uiLang", l.name) }
+        // First run: the translation shown under the shloka is the language the person chose, and no other, so the first
+        // page is not mixed. After onboarding the person's own switches are never touched here.
+        if (!onboarded && l != Lang.SA) {
+            updateShowHi(l == Lang.HI); updateShowBn(l == Lang.BN && BENGALI_READY); updateShowEn(l == Lang.EN)
+        }
         when (l) {
             Lang.HI -> if (!showHi && !showBn && !showEn) updateShowHi(true)
             Lang.BN -> if (!showHi && !showBn && !showEn) updateShowBn(true)
@@ -533,6 +548,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
 
     /** Chapter and Skandha titles follow the reading language; with Sanskrit they follow the app language. Labels and menus always follow the app language. */
     val titleLang: Lang get() = if (readLang == Lang.SA) uiLang else readLang
+
+    fun langFor(zone: LangZone): Lang = zoneLang(zone, uiLang, titleLang)
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

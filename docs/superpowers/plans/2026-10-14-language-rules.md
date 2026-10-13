@@ -1,6 +1,6 @@
 # App language and reading language: one rule, written down
 
-**Status:** plan only, nothing implemented. Written 2026-10-14 after the owner asked for "a rule for app language and reader language, which things are to be what".
+**Status:** decided and implemented 2026-10-14 (tasks 1 and 2; the 12-screen matrix of task 4 is not done). Written after the owner asked for "a rule for app language and reader language, which things are to be what".
 
 ## 1. The problem, seen in the app
 The app has two separate language settings, as the owner decided: the **app language** (menus and labels) and the **reading language** (the text). Today each screen decides by itself which one to follow, so a Bengali reader with an English app sees mixed screens. Found in the code and in screenshots:
@@ -67,3 +67,17 @@ One sentence: **the page shows the language you read in; the frame around the pa
 5. **Document** the rule in `DESIGN_SYSTEM.md` and as one comment next to `LangZone`, so new features follow it.
 
 Tasks 1 and 2 are the work; 3 to 5 make it stick. Odia fits the rule unchanged (R = Odia needs the font and the text; A stays English, Hindi or Bengali).
+
+## 6. Owner decisions (2026-10-14) and what was built
+| Decision | Answer | Built |
+|---|---|---|
+| Reference line ("Skandha 10 · Chapter 29") and reading time | reading language | words from the reading language's strings, in the reader and on the Home resume card |
+| Digits in the reading text | app language | `digitsTo()` writes every digit in the translation in the app's digits (a 1-for-1 swap, text offsets unchanged) |
+| First-run reading language | the reader's own language | choosing the app language on the first screen switches on that translation only; the second screen starts from it |
+| Lock-screen and mini-player title | reading language | already so (`titleLang`) |
+
+Also built: `LangZone { FRAME, PAGE }`, `zoneLang()` and `AppState.langFor(zone)` as the single place for the rule; the chapter-end "Notes" heading and the peeked shloka caption follow the reading language; unit tests for the zones and the digit rule.
+
+Interpretation to confirm: "digits in the reading text: app language" was applied to the translation text of verses (including the number at the end of a paragraph). The Sanskrit shloka layer keeps its own printed digits.
+
+Not done: the 12-screen screenshot matrix (3 app languages by 4 reading languages), the fallback label for text missing in the reading language, and a `DESIGN_SYSTEM.md` section.

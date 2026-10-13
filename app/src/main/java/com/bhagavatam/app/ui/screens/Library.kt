@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.localDigits
+import com.bhagavatam.app.data.stringsFor
 import com.bhagavatam.app.state.AppState
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.animation.Crossfade
@@ -203,7 +204,8 @@ fun HomeScreen(
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             // Continue reading: tinted with the colour of the Skandha you are in.
             val skHue = skColor(state.lastSkandha)
-            val contRef = if (state.lastSkandha == 0) "${s.mahatmya} · ${s.adhyaya} ${state.lastAdhyaya}" else "${s.skandha} ${state.lastSkandha} · ${s.adhyaya} ${state.lastAdhyaya}"
+            val rs = stringsFor(state.titleLang)
+            val contRef = if (state.lastSkandha == 0) "${rs.mahatmya} · ${rs.adhyaya} ${state.lastAdhyaya}" else "${rs.skandha} ${state.lastSkandha} · ${rs.adhyaya} ${state.lastAdhyaya}"
             Box(
                 Modifier.reveal(0, playIntro).padding(horizontal = 16.dp).fillMaxWidth().tappable(Radius.large, s.resumeReading, onClick = onResume),
             ) {
