@@ -21,6 +21,53 @@ object Transliterate {
         'ॐ' to "ওঁ",
     )
 
+    private val IAST_VOWEL = mapOf(
+        'अ' to "a", 'आ' to "ā", 'इ' to "i", 'ई' to "ī", 'उ' to "u", 'ऊ' to "ū", 'ऋ' to "ṛ", 'ॠ' to "ṝ", 'ऌ' to "ḷ",
+        'ए' to "e", 'ऐ' to "ai", 'ओ' to "o", 'औ' to "au",
+    )
+    private val IAST_MATRA = mapOf(
+        'ा' to "ā", 'ि' to "i", 'ी' to "ī", 'ु' to "u", 'ू' to "ū", 'ृ' to "ṛ", 'ॄ' to "ṝ", 'े' to "e", 'ै' to "ai", 'ो' to "o", 'ौ' to "au",
+    )
+    private val IAST_CONS = mapOf(
+        'क' to "k", 'ख' to "kh", 'ग' to "g", 'घ' to "gh", 'ङ' to "ṅ", 'च' to "c", 'छ' to "ch", 'ज' to "j", 'झ' to "jh", 'ञ' to "ñ",
+        'ट' to "ṭ", 'ठ' to "ṭh", 'ड' to "ḍ", 'ढ' to "ḍh", 'ण' to "ṇ", 'त' to "t", 'थ' to "th", 'द' to "d", 'ध' to "dh", 'न' to "n",
+        'प' to "p", 'फ' to "ph", 'ब' to "b", 'भ' to "bh", 'म' to "m", 'य' to "y", 'र' to "r", 'ल' to "l", 'व' to "v",
+        'श' to "ś", 'ष' to "ṣ", 'स' to "s", 'ह' to "h", 'ळ' to "ḷ",
+    )
+
+    /** Devanagari Sanskrit to Roman (IAST), for readers who read in English. Keeps every inherent "a", as Sanskrit does. */
+    fun toIast(deva: String): String {
+        val sb = StringBuilder(deva.length * 2)
+        var i = 0
+        while (i < deva.length) {
+            val ch = deva[i]
+            val cons = IAST_CONS[ch]
+            when {
+                cons != null -> {
+                    sb.append(cons)
+                    val nx = deva.getOrNull(i + 1)
+                    when {
+                        nx != null && IAST_MATRA.containsKey(nx) -> { sb.append(IAST_MATRA.getValue(nx)); i++ }
+                        nx == '्' -> i++
+                        else -> sb.append('a')
+                    }
+                }
+                IAST_VOWEL.containsKey(ch) -> sb.append(IAST_VOWEL.getValue(ch))
+                ch == 'ं' || ch == 'ँ' -> sb.append('ṃ')
+                ch == 'ः' -> sb.append('ḥ')
+                ch == 'ऽ' -> sb.append('\'')
+                ch == 'ॐ' -> sb.append("oṃ")
+                ch == '।' -> sb.append('|')
+                ch == '॥' -> sb.append("||")
+                ch in '०'..'९' -> sb.append(('0' + (ch - '०')))
+                ch == '़' || ch == '्' -> {}
+                else -> sb.append(ch)
+            }
+            i++
+        }
+        return sb.toString()
+    }
+
     fun toBengali(deva: String): String {
         val sb = StringBuilder(deva.length)
         for (ch in deva) {

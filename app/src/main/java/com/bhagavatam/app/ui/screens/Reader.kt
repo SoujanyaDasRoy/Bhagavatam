@@ -564,6 +564,16 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
 
 private fun layerName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.SA -> "संस्कृत"; Lang.EN -> "English" }
 
+/** The standard opening of the closing line for chapters whose own line is not in the database. Empty for the Mahatmya. */
+private fun genericColophon(skandha: Int, adhyaya: Int): String {
+    val ord = listOf("", "प्रथम", "द्वितीय", "तृतीय", "चतुर्थ", "पञ्चम", "षष्ठ", "सप्तम", "अष्टम", "नवम", "दशम", "एकादश", "द्वादश")
+    if (skandha !in 1..12) return ""
+    val n = adhyaya.toString().map { '०' + (it - '0') }.joinToString("")
+    return "इति श्रीमद्भागवते महापुराणे पारमहंस्यां संहितायां ${ord[skandha]}स्कन्धे ॥ $n ॥"
+}
+
+private fun AppState.titleStrings() = com.bhagavatam.app.data.stringsFor(titleLang)
+
 private fun chapterLabels(ui: Lang) = when (ui) {
     Lang.HI -> "पिछला अध्याय" to "अगला अध्याय"
     Lang.BN -> "আগের অধ্যায়" to "পরের অধ্যায়"
@@ -633,16 +643,31 @@ private fun ChapterEndBlock(
     val lang = state.titleLang
     val end = remember(skandha, adhyaya, lang) { SampleData.chapterEnd(skandha, adhyaya, lang) }
     val font = if (lang == Lang.HI) TiroHindi else EnglishReading
+    // The closing line ("iti shrimad bhagavate ...") in the script the person reads in. Where the book's own line is not in the
+    // database, the standard opening of it is built from the Skandha and chapter numbers (it never invents a chapter name).
+    val sanskritLine = remember(skandha, adhyaya, end) { end.sanskrit.ifEmpty { genericColophon(skandha, adhyaya) } }
+    val sanskritShown = when (lang) {
+        Lang.BN -> com.bhagavatam.app.util.Transliterate.toBengali(sanskritLine)
+        Lang.EN -> com.bhagavatam.app.util.Transliterate.toIast(sanskritLine)
+        else -> sanskritLine
+    }
+    val sanskritFont = when (lang) { Lang.BN -> NotoSerifBengali; Lang.EN -> EnglishReading; else -> NotoDevanagari }
     var showNotes by remember(skandha, adhyaya) { mutableStateOf(false) }
     val notesLabel = when (ui) { Lang.HI -> "\u091f\u093f\u092a\u094d\u092a\u0923\u093f\u092f\u093e\u0901"; Lang.BN -> "\u099f\u09c0\u0995\u09be"; else -> "Notes" }
-    val (prevLabel, nextLabel) = chapterLabels(ui)
+    val (prevLabel, nextLabel) = chapterLabels(lang)
     Column(Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Box(Modifier.width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
-        if (end.colophon.isNotEmpty()) {
+        if (sanskritShown.isNotEmpty()) {
+            Text(sanskritShown, Modifier.padding(horizontal = 8.dp), fontFamily = sanskritFont, fontSize = (16 * state.textScale).sp, lineHeight = (26 * state.textScale).sp,
+                fontWeight = FontWeight.Medium, color = c.shloka, textAlign = TextAlign.Center)
+        }
+        // The translation of the closing line exists in English only; Hindi readers already have the line itself, and Bengali has no
+        // translation in the database yet, so nothing in another language is shown to them.
+        if (lang == Lang.EN && end.colophon.isNotEmpty()) {
             Text(end.colophon, Modifier.padding(horizontal = 8.dp), fontFamily = font, fontSize = (14 * state.textScale).sp, lineHeight = (22 * state.textScale).sp,
                 color = c.secondary, textAlign = TextAlign.Center)
         }
-        if (end.notes.isNotEmpty()) {
+        if (end.notes.isNotEmpty() && lang != Lang.BN) {
             Row(
                 Modifier.heightIn(min = 48.dp).clip(RoundedCornerShape(12.dp)).clickable { showNotes = !showNotes }.padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -655,9 +680,10 @@ private fun ChapterEndBlock(
                     fontFamily = font, fontSize = (14 * state.textScale).sp, lineHeight = (22 * state.textScale).sp, color = c.secondary)
             }
         }
-        Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            ChapterButton(state, prevLabel, prev, filled = false, back = true, modifier = Modifier.weight(1f)) { prev?.let { onPrev(it.first, it.second) } }
-            ChapterButton(state, nextLabel, next, filled = true, back = false, modifier = Modifier.weight(1f)) { next?.let { onNext(it.first, it.second) } }
+        // Stacked and full width: the chapter titles are long, and two narrow buttons cut them to one line. Next comes first.
+        Column(Modifier.fillMaxWidth().padding(top = 6.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            ChapterButton(state, nextLabel, next, filled = true, back = false, modifier = Modifier.fillMaxWidth()) { next?.let { onNext(it.first, it.second) } }
+            ChapterButton(state, prevLabel, prev, filled = false, back = true, modifier = Modifier.fillMaxWidth()) { prev?.let { onPrev(it.first, it.second) } }
         }
         Spacer(Modifier.height(8.dp))
     }
@@ -671,7 +697,7 @@ private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>
     val ink = if (filled) Brand.OnKesari else c.ink
     val sub = if (filled) Brand.OnKesari else c.secondary
     Row(
-        modifier.heightIn(min = 64.dp)
+        modifier.heightIn(min = 72.dp)
             .then(if (enabled) Modifier.tappable(Radius.group, label, onClick = onClick) else Modifier.clip(Radius.group))
             .background(if (filled) Brand.Kesari else c.surface)
             .border(1.dp, if (filled) Brand.Kesari else c.separator, Radius.group)
@@ -680,12 +706,20 @@ private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         if (back) Icon(painterResource(Ic.ArrowBackIos), null, tint = ink, modifier = Modifier.size(20.dp))
-        Column(Modifier.weight(1f), horizontalAlignment = if (back) Alignment.Start else Alignment.End) {
-            Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = ink, maxLines = 1)
-            if (target != null) Text(
-                SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
-                fontFamily = readingFont(state.titleLang), fontSize = 12.sp, color = sub, maxLines = 1, overflow = TextOverflow.Ellipsis,
-            )
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(label, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1, letterSpacing = 0.4.sp)
+            if (target != null) {
+                val ref = if (target.first == 0) state.titleStrings().mahatmya else state.titleStrings().skandha + " " + localDigits(target.first.toString(), state.titleLang)
+                Text(
+                    "$ref · " + state.titleStrings().adhyaya + " " + localDigits(target.second.toString(), state.titleLang),
+                    fontSize = 12.sp, color = sub, maxLines = 1,
+                )
+                Text(
+                    SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
+                    fontFamily = readingFont(state.titleLang), fontSize = 16.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium, color = ink,
+                    maxLines = 2, overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
         if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(20.dp))
     }

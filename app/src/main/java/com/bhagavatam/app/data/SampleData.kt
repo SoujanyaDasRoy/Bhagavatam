@@ -85,7 +85,8 @@ data class Skandha(
 }
 
 /** Colophon ("Thus ends ...") and Gita Press notes printed after the last shloka of a chapter. */
-data class ChapterEnd(val colophon: String, val notes: String)
+/** `sanskrit` is the printed closing line ("iti shrimad bhagavate ...") when the book has it for this chapter, else empty. */
+data class ChapterEnd(val colophon: String, val notes: String, val sanskrit: String = "")
 
 data class GlossaryTerm(val term: String, val dev: String, val meaning: String)
 
@@ -227,15 +228,17 @@ object SampleData {
             if (!c.moveToFirst()) return ChapterEnd("", "")
             val notesEn = c.getString(0).orEmpty(); val notesHi = c.getString(1).orEmpty(); val colEn = c.getString(2).orEmpty()
             fun clean(t: String) = t.lines().map { it.removePrefix("- ").trim() }.filter { it.isNotEmpty() && it != "*" && !legacyGlyphs.containsMatchIn(it) }.joinToString("\n").tidyDashes()
+            val sanskritLine = Regex("इति श्रीमद्.*?॥\\s*[०-९0-9]+\\s*॥")
+                .find(notesHi.lines().joinToString(" ") { it.removePrefix("- ").trim() }.replace(Regex("\\s+"), " "))?.value.orEmpty().tidyDashes()
             if (lang == Lang.HI || lang == Lang.SA) {
                 val flat = notesHi.lines().joinToString(" ") { it.removePrefix("- ").trim() }.replace(Regex("\\s+"), " ")
                 val m = Regex("इति श्रीमद्.*?॥\\s*[०-९0-9]+\\s*॥").find(flat)
                 val colophon = m?.value.orEmpty()
                 val rest = if (m != null) notesHi.lines().joinToString("\n").replace(Regex("(?s)- \\*\\s*\\n- इति श्रीमद्.*?॥\\s*[०-९0-9]+\\s*॥\\s*\\n?"), "") else notesHi
-                return ChapterEnd(colophon.tidyDashes(), clean(rest))
+                return ChapterEnd(colophon.tidyDashes(), clean(rest), sanskritLine)
             }
             val colophon = colEn.substringBefore("\n\n### Notes").removeSuffix("*").trim()
-            return ChapterEnd(colophon.tidyDashes(), clean(notesEn))
+            return ChapterEnd(colophon.tidyDashes(), clean(notesEn), sanskritLine)
         }
     }
 
