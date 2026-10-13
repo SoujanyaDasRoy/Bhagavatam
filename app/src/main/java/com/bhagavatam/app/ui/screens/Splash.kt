@@ -13,6 +13,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +38,13 @@ import com.bhagavatam.app.ui.theme.NotoSerifBengali
 @Composable
 fun SplashScreen(state: AppState? = null) {
     val fade = remember { Animatable(0f) }
+    // The splash is always night-blue: the clock and battery must be light, whatever the phone's own theme is.
+    val view = LocalView.current
+    if (!view.isInEditMode) SideEffect {
+        (view.context as? android.app.Activity)?.window?.let { w ->
+            WindowCompat.getInsetsController(w, view).apply { isAppearanceLightStatusBars = false; isAppearanceLightNavigationBars = false }
+        }
+    }
     LaunchedEffect(Unit) { fade.animateTo(1f, tween(450)) }
     val ui = state?.uiLang ?: Lang.EN
     val s = stringsFor(ui)
