@@ -33,3 +33,26 @@ py content/_localocr/read_pages.py --skandha 7-12 --model crnn_b.pt --out conten
 py content/_odia/odia_verify.py compare --a content/_localocr/work/pages_a/vision --b content/_localocr/work/pages_b/vision --t <tesseract pages>
 ```
 Assemble with `content/_odia/odia_assemble.py --starts data/starts_s5_12_dense.json` (env ODIA_WORK, ODIA_OUT, ODIA_REVIEW), as in `docs/agent/ODIA_PROMPT.md` section 7.
+
+## Unattended run (started 2026-10-13 15:01)
+`content/_localocr/run_pipeline.py` does everything for Skandha 6 to 12 in order and can be stopped and started at any time (every step skips finished work):
+wait for the GPU, finish model B, read all pages with model A, read all pages with model B, word consensus with stock Tesseract, assemble chapter `.md` files.
+
+- **Is it running?** `py content/_localocr/run_pipeline.py --status` (also `content/_localocr/work/pipeline_status.json`, log `work/pipeline.log`).
+- **Start or resume (no Claude needed):** `py content/_localocr/run_pipeline.py` (add `Start-Process -WindowStyle Hidden` in PowerShell to detach).
+- **Expected:** about 3 hours of machine time. Output: `content/_localocr/work/final/out/skandha-NN/chapter-NN.md`, structure report `work/final/review/report.md`, disputed words `work/verify/review_queue.csv` and `work/verify/verify_report.md`.
+- **After it says done (needs a person or an agent, not the PC):**
+  1. Read `work/final/review/report.md`: every chapter 6.1 to 12.13 present, no missing or repeated verse.
+  2. Settle disputes: `py content/_odia/odia_review.py queue` (needs someone who reads Odia), then `odia_verify.py apply`.
+  3. Audit 600 random accepted words against the page (`odia_verify.py audit-sample`, `odia_review.py audit`, `audit-score`); accept only if the 95% upper bound of the error is at most 1%.
+  4. Only then copy `work/final/out/*` to `content/or` and run `content/_build/add_odia.py` on BOTH `content.db` copies.
+
+## Paste this into any agent (Antigravity, Claude, Gemini) if Claude's quota ends
+```
+Read AGENTS.md (rule 6, section 9) and docs/agent/LOCAL_OCR.md. The Odia pipeline is content/_localocr/run_pipeline.py.
+1. Run: py content/_localocr/run_pipeline.py --status. If the step is not "done", run py content/_localocr/run_pipeline.py and keep
+   checking --status until it says done (about 3 hours). Do not retrain or change the tools. Do not read page images and type text.
+2. When done, open content/_localocr/work/final/review/report.md and content/_localocr/work/verify/verify_report.md and report the
+   numbers (chapters present, missing verses, agreed/disputed word shares). Do not copy anything into content/or or content.db.
+3. Commit only code and docs, never data (tools/agent/commit_check.sh). Write what you did to docs/agent/LOCAL_OCR.md. Do not push.
+```
