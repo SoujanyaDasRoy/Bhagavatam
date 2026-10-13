@@ -87,12 +87,14 @@ enum class SearchVerseLayer(val label: String, val font: FontFamily, val size: I
     EN("English", EnglishReading, 15, Lang.EN),
     HI("हिन्दी", TiroHindi, 16, Lang.HI),
     BN("বাংলা", NotoSerifBengali, 16, Lang.BN),
+    OR("ଓଡ଼ିଆ", androidx.compose.ui.text.font.FontFamily.Serif, 16, Lang.OR),
     SA("संस्कृत", NotoDevanagari, 18, Lang.SA);
 
     fun text(v: Verse): String = when (this) {
         EN -> v.en
         HI -> v.hi
         BN -> v.bn
+        OR -> v.or.replace("[?]", "")
         SA -> v.sa.joinToString(" ")
     }
 }
@@ -285,6 +287,7 @@ fun SearchResultsScreen(
                         Lang.EN -> SearchVerseLayer.EN
                         Lang.HI -> SearchVerseLayer.HI
                         Lang.BN -> SearchVerseLayer.BN
+                        Lang.OR -> SearchVerseLayer.OR
                         Lang.SA -> SearchVerseLayer.SA
                         else -> SearchVerseLayer.EN
                     }
@@ -293,6 +296,7 @@ fun SearchResultsScreen(
                 SearchScope.EN -> listOf(SearchVerseLayer.EN)
                 SearchScope.HI -> listOf(SearchVerseLayer.HI)
                 SearchScope.BN -> listOf(SearchVerseLayer.BN)
+                SearchScope.OR -> listOf(SearchVerseLayer.OR)
             }
 
             val cardList = ArrayList<VerseCardData>()
@@ -404,7 +408,8 @@ fun SearchResultsScreen(
                         SearchScope.ALL to s.tabAll,
                         SearchScope.EN to s.tabEnglish,
                         SearchScope.HI to s.tabHindi,
-                        SearchScope.BN to s.tabBangla
+                        SearchScope.BN to s.tabBangla,
+                        SearchScope.OR to "\u0b13\u0b21\u0b3c\u0b3f\u0b06"
                     )
                     tabs.forEach { (sc, label) ->
                         val on = activeScope == sc

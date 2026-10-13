@@ -84,7 +84,7 @@ import java.text.Normalizer
 
 data class Hit(val pre: String, val hit: String, val post: String)
 
-enum class SearchScope { ALL, EN, HI, BN }
+enum class SearchScope { ALL, EN, HI, BN, OR }
 
 private enum class SearchLayer(val label: String, val font: FontFamily, val size: Int, val lang: Lang) {
     EN("English", EnglishReading, 15, Lang.EN),

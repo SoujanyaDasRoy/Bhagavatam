@@ -84,9 +84,9 @@ def script_of(word: str) -> str:
     return "roman"
 
 
-def verse_words(sa, iast, hi, en, bn):
+def verse_words(sa, iast, hi, en, bn, or_=""):
     """Yield every word of a verse, the same words the prototype indexes."""
-    for lang, text in (("hi", hi), ("bn", bn), ("sa", sa)):
+    for lang, text in (("hi", hi), ("bn", bn), ("sa", sa), ("or", re.sub(r"\S*\[\?\]", " ", or_ or ""))):
         for w in p.WORD[lang].findall((text or "").replace("।", " ").replace("॥", " ")):
             yield w
     for text in (iast, en):
@@ -108,7 +108,7 @@ def load_groups():
 def scan(want_exact: set):
     cdb = sqlite3.connect(str(CONTENT_DB))
     meta = dict(cdb.execute("select key, value from meta").fetchall())
-    rows = cdb.execute("select rowid, skandha, chapter, num, sa, iast, hi, en, bn from verse order by rowid").fetchall()
+    rows = cdb.execute('select rowid, skandha, chapter, num, sa, iast, hi, en, bn, "or" from verse order by rowid').fetchall()
     titles = cdb.execute("select skandha, chapter, title_en, title_hi, title_bn from chapter order by skandha, chapter").fetchall()
     cdb.close()
 
@@ -124,8 +124,8 @@ def scan(want_exact: set):
     loose = collections.defaultdict(set)
     forms = collections.defaultdict(collections.Counter)
     exact = collections.defaultdict(set)
-    for vid, sk, ch, num, sa, iast, hi, en, bn in rows:
-        for w in verse_words(sa, iast, hi, en, bn):
+    for vid, sk, ch, num, sa, iast, hi, en, bn, or_ in rows:
+        for w in verse_words(sa, iast, hi, en, bn, or_):
             ex = exact_of(w)
             k = key_of(w)
             if len(k) >= MIN_KEY:
