@@ -162,8 +162,15 @@ val BengaliStrings = Strings(
     thematicLilaIndex = "নাম ও শব্দ",
 )
 
+/** Only the words printed with a chapter (Skandha, chapter, shloka, reading time) exist in Odia; the rest of the app is not translated into Odia. */
+val OdiaStrings = EnglishStrings.copy(
+    skandha = "ସ୍କନ୍ଧ", adhyaya = "ଅଧ୍ଯାୟ", shloka = "ଶ୍ଳୋକ", shlokas = "ଶ୍ଳୋକ",
+    mahatmya = "ମାହାତ୍ମ୍ୟ", minRead = "%d ମିନିଟ୍ ପାଠ",
+)
+
 fun stringsFor(ui: Lang) = when (ui) {
     Lang.HI -> HindiStrings
     Lang.BN -> BengaliStrings
+    Lang.OR -> OdiaStrings
     else -> EnglishStrings
 }

@@ -170,6 +170,7 @@ object SampleData {
     private val titlesEn = HashMap<String, String>()
     private val titlesHi = HashMap<String, String>()
     private val titlesBn = HashMap<String, String>()
+    private val titlesOr = HashMap<String, String>()
     private val bengaliChapters = HashSet<String>()
     @Volatile private var hasBn = false
     @Volatile private var hasOr = false
@@ -185,7 +186,7 @@ object SampleData {
     @Synchronized
     fun attach(d: SQLiteDatabase) {
         db = d
-        cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
+        cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); titlesOr.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
         // An older text database has no Bengali columns; the app must still open it.
         hasBn = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "bn") found = true; found }
         doubtByVerse.clear()
@@ -206,6 +207,11 @@ object SampleData {
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)
             }
         }
+        runCatching {
+            d.rawQuery("SELECT skandha, chapter, title_or FROM chapter WHERE title_or IS NOT NULL AND title_or <> ''", null).use { c ->
+                while (c.moveToNext()) titlesOr["${c.getInt(0)}.${c.getInt(1)}"] = c.getString(2).orEmpty().tidyDashes()
+            }
+        }
         if (hasBn) d.rawQuery("SELECT DISTINCT skandha, chapter FROM verse WHERE bn IS NOT NULL AND bn <> ''", null).use { c ->
             while (c.moveToNext()) bengaliChapters.add("${c.getInt(0)}.${c.getInt(1)}")
         }
@@ -221,6 +227,10 @@ object SampleData {
             Lang.HI, Lang.SA -> titlesHi[k].orEmpty().ifEmpty { titlesEn[k].orEmpty() }
             // A chapter without a Bengali title falls back to Hindi (the same script family), then English.
             Lang.BN -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }.ifEmpty { titlesEn[k].orEmpty() }
+            // A chapter without an Odia title shows the app language's title, then English (the rule's fallback order).
+            Lang.OR -> titlesOr[k].orEmpty().ifEmpty {
+                when (s10n) { HindiStrings -> titlesHi[k].orEmpty(); BengaliStrings -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }; else -> "" }
+            }.ifEmpty { titlesEn[k].orEmpty() }
             else -> titlesEn[k].orEmpty()
         }
         return t.ifEmpty { "${s10n.adhyaya} ${localDigits(a.toString(), lang)}" }
