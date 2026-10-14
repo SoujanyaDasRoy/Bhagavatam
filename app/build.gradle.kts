@@ -6,8 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// APK files are named Bhagavatam-v1.2.0-debug.apk and Bhagavatam-v1.2.0-release.apk.
-base { archivesName.set("Bhagavatam-v1.2.0") }
+// APK files are named Bhagavatam-v1.2.1-debug.apk and Bhagavatam-v1.2.1-release.apk.
+base { archivesName.set("Bhagavatam-v1.2.1") }
 
 // The maker's Telegram username, from local.properties (telegram.user=name). Blank hides the "Report an error" button.
 val telegramUser = rootProject.file("local.properties").takeIf { it.exists() }
@@ -27,8 +27,8 @@ android {
         applicationId = "com.bhagavatam.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 14
-        versionName = "1.2.0"
+        versionCode = 15
+        versionName = "1.2.1"
         buildConfigField("String", "TELEGRAM_USER", "\"" + telegramUser + "\"")
     }
 
