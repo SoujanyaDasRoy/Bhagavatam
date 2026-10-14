@@ -177,7 +177,9 @@ fun AppNav(state: AppState) {
             composable(Routes.SAVED) {
                 TabScaffold(state, nav, Tab.Me) { SavedScreen(state, onBack = { nav.popBackStack() }) { s, a -> nav.navigate(Routes.reader(s, a)) } }
             }
-            composable(Routes.GLOSSARY) { TabScaffold(state, nav, Tab.Me) { GlossaryScreen(state) { nav.popBackStack() } } }
+            composable(Routes.GLOSSARY) {
+                DictionaryScreen(state = state, initialWord = null, onBack = { nav.popBackStack() }, onOpenCredits = { nav.navigate(Routes.CREDITS) })
+            }
             composable(Routes.DICTIONARY) {
                 DictionaryScreen(
                     state = state,

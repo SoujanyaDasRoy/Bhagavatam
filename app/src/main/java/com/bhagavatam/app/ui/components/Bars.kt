@@ -106,7 +106,7 @@ fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifi
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(painterResource(tab.icon), contentDescription = null, tint = tint, modifier = Modifier.size(23.dp))
-                Text(labels.getValue(tab), fontSize = 12.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium, color = tint, maxLines = 1)
+                Text(labels.getValue(tab), fontSize = 13.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium, color = tint, maxLines = 1)
             }
         }
     }

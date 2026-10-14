@@ -123,7 +123,6 @@ fun SettingsScreen(
             listOf(
                 Entry(Ic.Bookmark, s.savedVerses, localDigits(savedCount.toString(), ui), onSaved),
                 Entry(Ic.Scroll, s.thematicLilaIndex, "", onGlossary),
-                Entry(Ic.MenuBook, tr(ui, "Dictionary", "शब्दकोश", "অভিধান"), "", onDictionary),
             ),
         )
 

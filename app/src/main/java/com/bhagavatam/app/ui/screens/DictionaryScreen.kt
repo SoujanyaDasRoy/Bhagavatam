@@ -1,5 +1,6 @@
 package com.bhagavatam.app.ui.screens
 
+import com.bhagavatam.app.data.SampleData
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -240,7 +241,7 @@ fun DictionaryScreen(
                 "en" to tr(ui, "English", "अंग्रेज़ी", "ইংরেজি"),
                 "hi" to tr(ui, "Hindi", "हिन्दी", "হিন্দি"),
                 "bn" to tr(ui, "Bengali", "বাংলা", "বাংলা"),
-                "or" to tr(ui, "Odia (Draft)", "ओड़िया (प्रारूप)", "ওড়িয়া (খসড়া)")
+                "or" to tr(ui, "Odia", "ओड़िया", "ওড়িয়া")
             )
             langs.forEach { (code, label) ->
                 val selected = selectedLang == code
@@ -270,6 +271,14 @@ fun DictionaryScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            val termQuery = query.trim().lowercase()
+            val termMatches = SampleData.glossary.filter {
+                termQuery.length >= 2 && (it.term.lowercase().contains(termQuery) || it.dev.contains(termQuery) || it.meaning.lowercase().contains(termQuery))
+            }
+            if (termMatches.isNotEmpty()) {
+                item { GlossaryHeading(ui) }
+                items(termMatches.size) { i -> GlossaryRow(termMatches[i]) }
+            }
             if (query.trim().length >= 2) {
                 // Active query mode
                 if (searchResults.isEmpty() && !isSearching) {
@@ -324,7 +333,9 @@ fun DictionaryScreen(
                     }
                 }
             } else {
-                // Idle mode: Saved words and info
+                // Idle mode: names and terms of the book, then saved words and info
+                item { GlossaryHeading(ui) }
+                items(SampleData.glossary.size) { i -> GlossaryRow(SampleData.glossary[i]) }
                 item {
                     Text(
                         tr(ui, "Saved words", "सहेजे गए शब्द", "সংরক্ষিত শব্দসমূহ"),
@@ -737,5 +748,30 @@ private fun SavedWordRow(
                 )
             }
         }
+    }
+}
+
+
+@Composable
+private fun GlossaryHeading(ui: com.bhagavatam.app.data.Lang) {
+    val app = LocalAppColors.current
+    Text(
+        tr(ui, "Names and terms of the book", "ग्रन्थ के नाम और शब्द", "গ্রন্থের নাম ও শব্দ"),
+        fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = app.inkSecondary, modifier = Modifier.padding(top = 8.dp),
+    )
+}
+
+@Composable
+private fun GlossaryRow(g: com.bhagavatam.app.data.GlossaryTerm) {
+    val app = LocalAppColors.current
+    Column(
+        Modifier.fillMaxWidth().clip(Radius.card).background(app.surface).border(1.dp, app.line, Radius.card).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(g.term, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = app.ink)
+            if (g.dev.isNotEmpty()) Text(g.dev, fontFamily = com.bhagavatam.app.ui.theme.NotoDevanagari, fontSize = 17.sp, color = app.accent)
+        }
+        Text(g.meaning, fontSize = 15.sp, lineHeight = 22.sp, color = app.inkSecondary)
     }
 }

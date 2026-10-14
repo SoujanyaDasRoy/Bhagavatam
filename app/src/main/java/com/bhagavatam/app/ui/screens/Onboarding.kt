@@ -183,7 +183,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
                 SwitchRow(s.hindiTr, state.showHi, state::updateShowHi); RowDivider()
                 if (BENGALI_READY) { SwitchRow(s.bengaliTr, state.showBn, state::updateShowBn); RowDivider() }
                 SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
-                if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation (machine-read)", "ओड़िया अनुवाद (मशीन से पढ़ा)", "ওড়িয়া অনুবাদ (যন্ত্রে পড়া)"), state.showOr, state::updateShowOr) }
+                if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ"), state.showOr, state::updateShowOr) }
             }
             VSpace(24)
             Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card)) {

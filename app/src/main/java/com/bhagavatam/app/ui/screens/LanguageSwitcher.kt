@@ -83,7 +83,7 @@ internal fun ownName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang
 internal fun nameIn(ui: Lang, l: Lang) = when (l) {
     Lang.HI -> tr(ui, "Hindi", "हिन्दी", "হিন্দি")
     Lang.BN -> tr(ui, "Bengali", "बंगाली", "বাংলা")
-    Lang.OR -> tr(ui, "Odia (machine-read)", "ओड़िया (मशीन से पढ़ा)", "ওড়িয়া (যন্ত্রে পড়া)")
+    Lang.OR -> tr(ui, "Odia", "ओड़िया", "ওড়িয়া")
     Lang.EN -> tr(ui, "English", "अंग्रेज़ी", "ইংরেজি")
     Lang.SA -> tr(ui, "Sanskrit", "संस्कृत", "সংস্কৃত")
 }
