@@ -241,8 +241,8 @@ fun HomeScreen(
             }
             // Shortcuts that are not already a tab
             val savedLabel = tr(ui, "Saved", "सहेजे गए", "সংরক্ষিত")
-            if (LocalDensity.current.fontScale > 1.3f) {
-                // At large text sizes two side-by-side labels break mid-word, so they stack.
+            if (LocalDensity.current.fontScale > 1.15f || androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp < 420) {
+                // On narrow screens and at larger text sizes two side-by-side labels break mid-word ("Dictiona / ry"), so they stack.
                 Column(Modifier.reveal(1, playIntro).padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     QuickAction(Ic.Bookmark, savedLabel, Modifier.fillMaxWidth(), onSaved)
                     QuickAction(Ic.Scroll, s.thematicLilaIndex, Modifier.fillMaxWidth(), onGlossary)

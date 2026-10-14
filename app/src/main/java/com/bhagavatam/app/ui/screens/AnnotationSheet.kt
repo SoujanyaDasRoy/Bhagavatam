@@ -342,6 +342,10 @@ fun MeaningCard(
                 }
                 else -> {
                     Text(tr(ui, "No dictionary entry found.", "कोई प्रविष्टि नहीं मिली।", "কোনো অর্থ পাওয়া যায়নি।"), fontSize = 15.sp, color = c.secondary)
+                    if (!state.onlineMeanings) Text(
+                        tr(ui, "Turn on online meanings in Settings > Words & notes to look it up.", "सेटिंग > शब्द और नोट में ऑनलाइन अर्थ चालू करके खोजें।", "সেটিংস > শব্দ ও নোট-এ অনলাইন অর্থ চালু করে খুঁজুন।"),
+                        fontSize = 15.sp, color = c.secondary,
+                    )
                 }
             }
         }

@@ -572,7 +572,7 @@ fun SearchResultsScreen(
                     // 3. Matching Stories (Divine Incidents)
                     if (data.matchingStories.isNotEmpty()) {
                         item {
-                            SectionHeading(tr(ui, "Matching Divine Incidents", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ"))
+                            SectionHeading(tr(ui, "Matching stories", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ"))
                         }
                         items(data.matchingStories, key = { "inc_${it.s}_${it.a}" }) { ep ->
                             Box(

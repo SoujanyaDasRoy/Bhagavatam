@@ -756,7 +756,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             // Playback Speed Selector
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Playback Speed", "प्लेबैक गति", "প্লেব্যাক গতি"),
+                    tr(ui, "Playback speed", "प्लेबैक गति", "প্লেব্যাক গতি"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextMuted,
@@ -790,7 +790,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             // Audio Mode Selector
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Audio Source", "ऑडियो स्रोत", "অডিও উৎস"),
+                    tr(ui, "Audio source", "ऑडियो स्रोत", "অডিও উৎস"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextMuted,
@@ -861,7 +861,7 @@ private fun SleepTimerSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                tr(ui, "Sleep Timer", "स्लीप टाइमर", "স্লিপ টাইমার"),
+                tr(ui, "Sleep timer", "स्लीप टाइमर", "স্লিপ টাইমার"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -924,7 +924,7 @@ private fun QueueSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                tr(ui, "Playback Queue", "प्लेबैक कतार", "প্লেব্যাক সারি"),
+                tr(ui, "Playback queue", "प्लेबैक कतार", "প্লেব্যাক সারি"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,

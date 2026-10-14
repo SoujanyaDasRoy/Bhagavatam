@@ -89,3 +89,13 @@ Every "not fixed" row in the language audit (A to F) and every "not closed" row 
 | 8 voice navigator, Odia meanings | **not done** |
 | 9 release | done: v1.2.2 published; update notification checked on the emulator |
 | extra | update notification (WorkManager) with a Settings switch |
+
+## Status update, second pass (phone connected, Samsung SM-A556E)
+| Task | State |
+|---|---|
+| 4 Odia titles | Still not done. The printed contents (pages 7 to 11 of volume 1) read well with both models, but the two-column layout with page numbers and leader dots is not parsed into chapter numbers yet. |
+| 5 | Title-case labels in the player, search and dictionary are now sentence case. |
+| 6 TalkBack | Accessibility tree dumped on the phone for Home and a chapter: all tap targets are 48 dp and have labels. A spoken TalkBack walk was not done. |
+| 7 | Animations at 0 on the phone: the app opens at once and shows Home, no stalled splash. The 48 dp spacing was measured from the tree (all controls 48 x 48 dp). |
+| 8 | Voice navigator: two real bugs fixed (Hindi and Bengali digits not read as numbers; "skandha 10 chapter 29" not matched), tested in `VoiceQueryTest`. The Odia "no entry" card now tells how to turn on online meanings. Not run with real speech. |
+| Found on the phone | "Dictionary" broke mid-word ("Dictiona / ry") in the two side-by-side shortcut cards on a 384 dp wide screen. They now stack under 420 dp. |

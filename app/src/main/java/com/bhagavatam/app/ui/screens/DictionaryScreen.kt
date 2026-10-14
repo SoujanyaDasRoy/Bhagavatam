@@ -394,7 +394,7 @@ fun DictionaryScreen(
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                tr(ui, "Offline Granth Dictionary", "ऑफ़लाइन ग्रंथ शब्दकोश", "অফলাইন গ্রন্থ অভিধান"),
+                                tr(ui, "Offline dictionary", "ऑफ़लाइन ग्रंथ शब्दकोश", "অফলাইন গ্রন্থ অভিধান"),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = app.ink,

@@ -53,6 +53,7 @@ import com.bhagavatam.app.data.Episode
 import com.bhagavatam.app.data.Episodes
 import com.bhagavatam.app.data.Lang
 import com.bhagavatam.app.data.SampleData
+import com.bhagavatam.app.data.digitsTo
 import com.bhagavatam.app.data.localDigits
 import com.bhagavatam.app.state.AppState
 import com.bhagavatam.app.ui.components.Ic
@@ -67,12 +68,13 @@ data class NavTarget(val skandha: Int, val chapter: Int, val label: String)
 
 /** Parses speech text to find either chapter numbers or episode titles. */
 fun parseVoiceQuery(text: String, ui: Lang): NavTarget? {
-    val raw = text.trim()
+    // Hindi and Bengali recognisers return Devanagari or Bengali digits; make them ASCII before looking for numbers.
+    val raw = digitsTo(text.trim(), Lang.EN)
     if (raw.isEmpty()) return null
     val lower = raw.lowercase()
 
     // 1. Check numeric pattern like "10.29" or "skandha 10 chapter 29"
-    val numRegex = Regex("(\\d+)[\\s.:/\\-_]+(\\d+)")
+    val numRegex = Regex("(\\d+)\\D{1,24}?(\\d+)")
     val match = numRegex.find(raw)
     if (match != null) {
         val s = match.groupValues[1].toIntOrNull() ?: 1
@@ -80,7 +82,7 @@ fun parseVoiceQuery(text: String, ui: Lang): NavTarget? {
         if (s in 0..12) {
             val maxA = SampleData.skandha(s).adhyayaCount
             val validC = c.coerceIn(1, maxA)
-            return NavTarget(s, validC, "${SampleData.skandha(s).title(ui)} · ${validC}")
+            return NavTarget(s, validC, "${SampleData.skandha(s).title(ui)} · ${localDigits(validC.toString(), ui)}")
         }
     }
 
@@ -88,7 +90,7 @@ fun parseVoiceQuery(text: String, ui: Lang): NavTarget? {
     if (lower.contains("mahatmya") || lower.contains("माहात्म्य") || lower.contains("মাহাত্ম্য")) {
         val chMatch = Regex("\\d+").find(raw)
         val c = chMatch?.value?.toIntOrNull()?.coerceIn(1, 6) ?: 1
-        return NavTarget(0, c, "Mahatmya · $c")
+        return NavTarget(0, c, com.bhagavatam.app.data.stringsFor(ui).mahatmya + " · " + localDigits(c.toString(), ui))
     }
 
     // 3. Check Episodes list
@@ -146,6 +148,7 @@ fun VoiceNavigatorSheet(
             val langTag = when (ui) {
                 Lang.BN -> "bn-IN"
                 Lang.HI -> "hi-IN"
+                Lang.OR -> "or-IN"
                 else -> Locale.getDefault().toLanguageTag()
             }
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, langTag)
