@@ -163,6 +163,8 @@ def blocks_from_units(units, rows):
 
 def apply(db_path, src_root=None, version=None):
     src_root = src_root or os.path.join(ROOT, 'or')
+    tf = os.path.join(src_root, 'titles.json')
+    TITLES = json.load(open(tf, encoding='utf-8')) if os.path.exists(tf) else {}
     db = sqlite3.connect(db_path)
     cols = {r[1] for r in db.execute('PRAGMA table_info(verse)')}
     if 'or' not in cols:
@@ -212,8 +214,10 @@ def apply(db_path, src_root=None, version=None):
         for num in unmatched:
             stats['odia_blocks_unmatched'] += 1
             issues.append((s, c, 'odia block with no verse in the database', num))
-        if title:
-            db.execute('UPDATE chapter SET title_or=? WHERE skandha=? AND chapter=?', (title, s, c))
+        # the boxed heading read from the page is often garbled; the printed contents (titles.json, two readers agreeing) is used instead
+        if TITLES.get(f'{s}.{c}'):
+            db.execute('UPDATE chapter SET title_or=? WHERE skandha=? AND chapter=?', (TITLES[f'{s}.{c}'], s, c))
+            stats['titles'] = stats.get('titles', 0) + 1
         stats['chapters'] += 1
     if version is not None:
         db.execute("UPDATE meta SET value=? WHERE key='content_version'", (str(version),))

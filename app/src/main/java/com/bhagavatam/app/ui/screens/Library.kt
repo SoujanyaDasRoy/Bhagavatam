@@ -216,7 +216,7 @@ fun HomeScreen(
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(localDigits(contRef, state.titleLang),
                         fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
-                    Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.contentLang, s),
+                    Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.titleLangFor(state.lastSkandha, state.lastAdhyaya), s),
                         fontFamily = readingFont(state.contentLang), fontSize = 24.sp, lineHeight = 38.sp, fontWeight = FontWeight.Medium, color = Color.White,
                         maxLines = 3, overflow = TextOverflow.Ellipsis)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -426,7 +426,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                 ) {
                     Text(localDigits(a.toString(), ui), Modifier.width(28.dp), fontFamily = numFont, fontSize = 17.sp, color = Brand.Secondary)
                     Column(Modifier.weight(1f)) {
-                        Text(SampleData.adhyayaTitle(skandha, a, state.contentLang, s), fontFamily = readingFont(state.contentLang), fontSize = 16.sp, lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(SampleData.adhyayaTitle(skandha, a, state.titleLangFor(skandha, a), s), fontFamily = readingFont(state.titleLangFor(skandha, a)), fontSize = 16.sp, lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 15.sp, color = Brand.Secondary)
                     }
                     when {

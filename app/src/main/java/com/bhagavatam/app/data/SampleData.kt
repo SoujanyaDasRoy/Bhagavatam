@@ -209,7 +209,12 @@ object SampleData {
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)
             }
         }
-        // title_or is not loaded: it holds the boxed Sanskrit heading read by software (often garbled), not the Odia chapter title.
+        // title_or holds the title printed in the contents list, only where two readers agreed on it.
+        runCatching {
+            d.rawQuery("SELECT skandha, chapter, title_or FROM chapter WHERE title_or IS NOT NULL AND title_or <> ''", null).use { c ->
+                while (c.moveToNext()) titlesOr["${c.getInt(0)}.${c.getInt(1)}"] = c.getString(2).orEmpty().tidyDashes()
+            }
+        }
         if (hasBn) d.rawQuery("SELECT DISTINCT skandha, chapter FROM verse WHERE bn IS NOT NULL AND bn <> ''", null).use { c ->
             while (c.moveToNext()) bengaliChapters.add("${c.getInt(0)}.${c.getInt(1)}")
         }
@@ -269,6 +274,7 @@ object SampleData {
     }
 
     fun hasTitle(s: Int, a: Int) = titlesEn.containsKey("$s.$a")
+    fun hasOdiaTitle(s: Int, a: Int) = !titlesOr["$s.$a"].isNullOrEmpty()
 
     @Synchronized
     private fun readVerses(where: String, args: Array<String>): List<Verse> {

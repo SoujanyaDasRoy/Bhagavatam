@@ -520,7 +520,7 @@ fun SearchResultsScreen(
                         item {
                             val skTitle = if (ref.skandha == 0) s.mahatmya else SampleData.skandha(ref.skandha).title(ui)
                             val jumpLabel = localDigits("${s.goTo} $skTitle · ${s.adhyaya} ${ref.chapter} · ${s.shloka} ${ref.verse}", ui)
-                            val adTitle = SampleData.adhyayaTitle(ref.skandha, ref.chapter, state.contentLang, s)
+                            val adTitle = SampleData.adhyayaTitle(ref.skandha, ref.chapter, state.titleLangFor(ref.skandha, ref.chapter), s)
 
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.card) { onOpenChapter(ref.skandha, ref.chapter) }
@@ -531,7 +531,7 @@ fun SearchResultsScreen(
                                     Icon(painterResource(Ic.MenuBook), null, tint = Brand.Kesari, modifier = Modifier.size(24.dp))
                                     Column(Modifier.weight(1f)) {
                                         Text(jumpLabel, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                                        Text(adTitle, fontFamily = readingFont(state.contentLang), fontSize = 15.sp, color = Brand.Secondary, maxLines = 1)
+                                        Text(adTitle, fontFamily = readingFont(state.titleLangFor(ref.skandha, ref.chapter)), fontSize = 15.sp, color = Brand.Secondary, maxLines = 1)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Kesari)
                                 }
@@ -601,7 +601,7 @@ fun SearchResultsScreen(
                         }
                         items(data.sameChapterMatches, key = { "ch_${it.first}_${it.second}" }) { (sk, ad) ->
                             val skLabel = if (sk == 0) s.mahatmya else "${s.skandha} $sk"
-                            val chTitle = SampleData.adhyayaTitle(sk, ad, state.contentLang, s)
+                            val chTitle = SampleData.adhyayaTitle(sk, ad, state.titleLangFor(sk, ad), s)
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.group) { onOpenChapter(sk, ad) }
                                     .background(Brand.Card).border(1.dp, Brand.Separator, Radius.group)
@@ -610,7 +610,7 @@ fun SearchResultsScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                         Text(localDigits("$skLabel · ${s.adhyaya} $ad", ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
-                                        Text(chTitle, fontFamily = readingFont(state.contentLang), fontSize = 15.sp, color = Brand.Ink)
+                                        Text(chTitle, fontFamily = readingFont(state.titleLangFor(sk, ad)), fontSize = 15.sp, color = Brand.Ink)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Secondary)
                                 }

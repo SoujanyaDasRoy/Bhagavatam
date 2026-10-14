@@ -564,6 +564,9 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** The language chapter, Skandha and story titles are shown in: the reading language, or the app language when Odia is read (Odia has no titles of its own). */
     val contentLang: Lang get() = if (titleLang == Lang.OR) uiLang else titleLang
 
+    /** The language a chapter's title is shown in: Odia where the contents list gave it, else the content language. */
+    fun titleLangFor(s: Int, a: Int): Lang = if (titleLang == Lang.OR && SampleData.hasOdiaTitle(s, a)) Lang.OR else contentLang
+
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()
     private fun planFor(i: Int): VersePlan = plans.getOrPut(i) { NarrationText.plan(queue[i], langFor(queue[i])) }
