@@ -43,6 +43,8 @@ data class Verse(
     val bnFrom: Int? = null,
     /** Same for the Odia translation. */
     val orFrom: Int? = null,
+    /** Words of this verse's translations that may be misread (see content/_build/flag_doubtful.py), by language code. */
+    val doubt: Map<String, Set<String>> = emptyMap(),
 ) {
     val ref get() = "$skandha.$adhyaya.$num"
 
@@ -171,6 +173,7 @@ object SampleData {
     private val bengaliChapters = HashSet<String>()
     @Volatile private var hasBn = false
     @Volatile private var hasOr = false
+    private val doubtByVerse = HashMap<Long, MutableMap<String, MutableSet<String>>>()
     @Volatile private var hasIastPlain = false
     private val cache = ConcurrentHashMap<String, List<Verse>>()
     private val verseCounts = HashMap<String, Int>()
@@ -185,6 +188,12 @@ object SampleData {
         cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
         // An older text database has no Bengali columns; the app must still open it.
         hasBn = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "bn") found = true; found }
+        doubtByVerse.clear()
+        runCatching {
+            d.rawQuery("SELECT verse_id, lang, word FROM doubt", null).use { c ->
+                while (c.moveToNext()) doubtByVerse.getOrPut(c.getLong(0)) { HashMap() }.getOrPut(c.getString(1)) { HashSet() }.add(c.getString(2))
+            }
+        }
         hasOr = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "or") found = true; found }
         hasIastPlain = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "iast_plain") found = true; found }
         val titleBn = if (hasBn) "title_bn" else "NULL"
@@ -260,7 +269,7 @@ object SampleData {
         var prevChapter = ""
         try {
             d.rawQuery(
-                "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"}, ${if (hasOr) "\"or\", or_from" else "NULL, NULL"} FROM verse $where ORDER BY skandha, chapter, num",
+                "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"}, ${if (hasOr) "\"or\", or_from" else "NULL, NULL"}, rowid FROM verse $where ORDER BY skandha, chapter, num",
                 args,
             ).use { c ->
                 while (c.moveToNext()) {
@@ -291,6 +300,7 @@ object SampleData {
                             hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
                             bnFrom = if (c.isNull(12)) null else c.getInt(12),
                             or = c.getString(13).orEmpty().tidyDashes(), orFrom = if (c.isNull(14)) null else c.getInt(14),
+                            doubt = doubtByVerse[c.getLong(15)] ?: emptyMap(),
                             enFrom = if (c.isNull(9)) null else c.getInt(9),
                             hiFrom = if (c.isNull(10)) null else c.getInt(10),
                         )

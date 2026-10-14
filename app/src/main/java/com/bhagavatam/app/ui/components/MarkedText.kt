@@ -49,10 +49,12 @@ fun MarkedText(
     prefix: AnnotatedString = AnnotatedString(""),
     onPrefixTap: (() -> Unit)? = null,
     onTextTap: (() -> Unit)? = null,
+    doubtWords: Set<String> = emptySet(),
 ) {
     val c = LocalReaderColors.current
     // Words the readers could not agree on carry "[?]" in the Odia text: shown without it, underlined in red, tappable.
-    val (text, doubtful) = remember(rawText) { splitDoubtful(rawText) }
+    val (text, marked) = remember(rawText) { splitDoubtful(rawText) }
+    val doubtful = remember(text, marked, doubtWords) { (marked + wordRanges(text, doubtWords)).sortedBy { it.first } }
     var asking by remember(text) { mutableStateOf<IntRange?>(null) }
     val anns = state.annotationsFor(ref, lang.code)
     val pl = prefix.length
@@ -174,9 +176,9 @@ private fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String, 
             Text(
                 com.bhagavatam.app.data.tr(
                     ui,
-                    "This book was read from the scan by a computer and this word is not certain. Is it spelled correctly?",
-                    "यह पुस्तक स्कैन से कंप्यूटर द्वारा पढ़ी गई है और यह शब्द निश्चित नहीं है। क्या वर्तनी सही है?",
-                    "এই বইটি স্ক্যান থেকে কম্পিউটার পড়েছে এবং এই শব্দটি নিশ্চিত নয়। বানান কি ঠিক?",
+                    "This word may have been misread when the book was typed from the scan. Is it spelled correctly?",
+                    "स्कैन से पुस्तक टाइप करते समय यह शब्द गलत पढ़ा गया हो सकता है। क्या वर्तनी सही है?",
+                    "স্ক্যান থেকে বইটি টাইপ করার সময় এই শব্দটি ভুল পড়া হয়ে থাকতে পারে। বানান কি ঠিক?",
                 )
             )
         },
@@ -189,4 +191,20 @@ private fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String, 
         },
         dismissButton = { TextButton(onClick = onDone) { Text(com.bhagavatam.app.data.tr(ui, "Yes, it is correct", "हाँ, सही है", "হ্যাঁ, ঠিক আছে")) } },
     )
+}
+
+/** Character ranges of whole-word occurrences of [words] in [text]. */
+private fun wordRanges(text: String, words: Set<String>): List<IntRange> {
+    if (words.isEmpty()) return emptyList()
+    val out = ArrayList<IntRange>()
+    for (w in words) {
+        var i = text.indexOf(w)
+        while (i >= 0) {
+            val before = if (i == 0) ' ' else text[i - 1]
+            val after = if (i + w.length >= text.length) ' ' else text[i + w.length]
+            if (!before.isLetterOrDigit() && !after.isLetterOrDigit() && before != '\u094d' && after !in '\u093e'..'\u094d' && after !in '\u09be'..'\u09cd') out.add(i until i + w.length)
+            i = text.indexOf(w, i + w.length)
+        }
+    }
+    return out
 }

@@ -558,7 +558,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                     val style = TextStyle(fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
                         lineHeight = ((if (big) 32 else 27) * scale * state.lineScale).sp, color = c.ink)
                     // Pointers such as "translated together with verse 5" are not text to mark.
-                    if (v.hasText(l)) MarkedText(state, v.ref, l, body, style, Modifier.fillMaxWidth())
+                    if (v.hasText(l)) MarkedText(state, v.ref, l, body, style, Modifier.fillMaxWidth(), doubtWords = v.doubt[l.code].orEmpty())
                     else Text(body, Modifier.fillMaxWidth(), style = style)
                 }
             }
@@ -621,6 +621,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
             },
             onPrefixTap = onToggle,
             onTextTap = onToggle,
+            doubtWords = v.doubt[lang.code].orEmpty(),
         )
         if (peek) {
             Column(
