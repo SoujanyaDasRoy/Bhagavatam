@@ -13,6 +13,12 @@ base { archivesName.set("Bhagavatam-v1.1.0") }
 val telegramUser = rootProject.file("local.properties").takeIf { it.exists() }
     ?.let { f -> Properties().apply { f.inputStream().use { load(it) } }.getProperty("telegram.user") }.orEmpty().trim().removePrefix("@")
 
+// Release signing key: release.storeFile / storePassword / keyAlias / keyPassword in local.properties (git-ignored).
+// Without them the release build falls back to the debug key, which cannot update an app signed with the release key.
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+
 android {
     namespace = "com.bhagavatam.app"
     compileSdk = 35
@@ -26,13 +32,23 @@ android {
         buildConfigField("String", "TELEGRAM_USER", "\"" + telegramUser + "\"")
     }
 
+    signingConfigs {
+        if (localProps.getProperty("release.storeFile") != null) {
+            create("bhagavatamRelease") {
+                storeFile = file(localProps.getProperty("release.storeFile"))
+                storePassword = localProps.getProperty("release.storePassword")
+                keyAlias = localProps.getProperty("release.keyAlias")
+                keyPassword = localProps.getProperty("release.keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Private app, not on the Play Store: sign with the local debug key so the APK installs directly.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("bhagavatamRelease") ?: signingConfigs.getByName("debug")
         }
     }
     packaging {
