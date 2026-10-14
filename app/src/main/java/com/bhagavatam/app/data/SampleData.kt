@@ -207,11 +207,7 @@ object SampleData {
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)
             }
         }
-        runCatching {
-            d.rawQuery("SELECT skandha, chapter, title_or FROM chapter WHERE title_or IS NOT NULL AND title_or <> ''", null).use { c ->
-                while (c.moveToNext()) titlesOr["${c.getInt(0)}.${c.getInt(1)}"] = c.getString(2).orEmpty().tidyDashes()
-            }
-        }
+        // title_or is not loaded: it holds the boxed Sanskrit heading read by software (often garbled), not the Odia chapter title.
         if (hasBn) d.rawQuery("SELECT DISTINCT skandha, chapter FROM verse WHERE bn IS NOT NULL AND bn <> ''", null).use { c ->
             while (c.moveToNext()) bengaliChapters.add("${c.getInt(0)}.${c.getInt(1)}")
         }
