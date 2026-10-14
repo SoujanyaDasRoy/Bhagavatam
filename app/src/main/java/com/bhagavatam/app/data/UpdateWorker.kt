@@ -11,6 +11,7 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -45,6 +46,10 @@ class UpdateWorker(private val ctx: Context, params: WorkerParameters) : Corouti
             val req = PeriodicWorkRequestBuilder<UpdateWorker>(12, TimeUnit.HOURS)
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build()
             WorkManager.getInstance(ctx).enqueueUniquePeriodicWork("update-check", ExistingPeriodicWorkPolicy.KEEP, req)
+            // and once now, so an update is noticed the day it is published and not only at the next 12-hour tick
+            val now = OneTimeWorkRequestBuilder<UpdateWorker>()
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build()
+            WorkManager.getInstance(ctx).enqueueUniqueWork("update-check-now", androidx.work.ExistingWorkPolicy.REPLACE, now)
         }
     }
 }
