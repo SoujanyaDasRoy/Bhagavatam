@@ -97,7 +97,7 @@ fun DownloadsScreen(state: AppState) {
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                     Text(localDigits(s.sanskritAudioPacks.format(done), ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                    Text(s.downloadsNote, fontSize = 13.sp, lineHeight = 18.sp, color = Brand.Secondary)
+                    Text(s.downloadsNote, fontSize = 13.sp, lineHeight = 21.sp, color = Brand.Secondary)
                 }
             }
         }
@@ -214,7 +214,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
                     Text(localDigits(v.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
                     ShlokaText(v, state.script, Brand.Sindoor, 17f, lines = 1)
                     val tr = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
-                    Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary, maxLines = 2)
+                    Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 15.sp, lineHeight = 24.sp, color = Brand.Secondary, maxLines = 2)
                 }
             }
             }
@@ -256,7 +256,7 @@ fun GlossaryScreen(state: AppState, onBack: () -> Unit) {
                             Text(g.term, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                             Text(g.dev, fontFamily = NotoDevanagari, fontSize = 15.sp, color = Brand.Sindoor)
                         }
-                        Text(g.meaning, fontSize = 14.sp, lineHeight = 19.sp, color = Brand.Secondary)
+                        Text(g.meaning, fontSize = 15.sp, lineHeight = 24.sp, color = Brand.Secondary)
                     }
                 }
             }

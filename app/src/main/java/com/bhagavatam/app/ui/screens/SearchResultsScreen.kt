@@ -391,7 +391,7 @@ fun SearchResultsScreen(
                     }
                 }
                 Box(
-                    Modifier.size(44.dp).clip(CircleShape).background(Brand.KesariTint).clickable { showVoiceSheet = true },
+                    Modifier.size(48.dp).clip(CircleShape).background(Brand.KesariTint).clickable { showVoiceSheet = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(painterResource(Ic.Mic), null, tint = Brand.Kesari, modifier = Modifier.size(20.dp))
@@ -525,7 +525,7 @@ fun SearchResultsScreen(
                                     Icon(painterResource(Ic.MenuBook), null, tint = Brand.Kesari, modifier = Modifier.size(24.dp))
                                     Column(Modifier.weight(1f)) {
                                         Text(jumpLabel, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                                        Text(adTitle, fontFamily = readingFont(state.titleLang), fontSize = 13.sp, color = Brand.Secondary, maxLines = 1)
+                                        Text(adTitle, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, color = Brand.Secondary, maxLines = 1)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Kesari)
                                 }
@@ -581,7 +581,7 @@ fun SearchResultsScreen(
                                         Text(localDigits("$skLabel · ${s.adhyaya} ${ep.a}", ui), fontSize = 12.sp, color = Brand.Gold)
                                     }
                                     if (ep.description(ui).isNotEmpty()) {
-                                        Text(ep.description(ui), fontSize = 13.sp, lineHeight = 18.sp, color = Brand.Secondary)
+                                        Text(ep.description(ui), fontSize = 13.sp, lineHeight = 21.sp, color = Brand.Secondary)
                                     }
                                 }
                             }
@@ -603,7 +603,7 @@ fun SearchResultsScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                        Text(localDigits("$skLabel · ${s.adhyaya} $ad", ui), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
+                                        Text(localDigits("$skLabel · ${s.adhyaya} $ad", ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
                                         Text(chTitle, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, color = Brand.Ink)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Secondary)
@@ -646,7 +646,7 @@ fun SearchResultsScreen(
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(refText, Modifier.weight(1f), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
-                                        Text(res.layer.label, fontSize = 11.sp, color = Brand.Secondary)
+                                        Text(res.layer.label, fontSize = 12.sp, color = Brand.Secondary)
                                     }
                                     val excerpt = buildAnnotatedString {
                                         append(res.hit.pre)

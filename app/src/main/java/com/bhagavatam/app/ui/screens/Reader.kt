@@ -307,7 +307,7 @@ fun ReaderScreen(
                     if (barAlpha > 0f) {
                         Column(Modifier.graphicsLayer { alpha = barAlpha; translationY = (1f - barAlpha) * 8.dp.toPx() }, horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(title, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Text(reference, fontSize = 12.sp, color = c.secondary, maxLines = 1)
+                            Text(reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
                         }
                     }
                 }
@@ -409,8 +409,8 @@ fun ReaderScreen(
                 item {
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
-                        Text(reference, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
-                        Text(title, fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 32.sp,
+                        Text(reference, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
+                        Text(title, fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 38.sp,
                             fontWeight = FontWeight.Medium, color = c.ink, textAlign = TextAlign.Center)
                         val count = SampleData.verseCount(skandha, adhyaya)
                         val totalWords = remember(verses, bookLang) {
@@ -530,13 +530,13 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
         ) {
             // Reference on the left, speaker on the right.
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(localDigits("${v.skandha}.${v.adhyaya}.${v.numLabel}", state.langFor(LangZone.PAGE)), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${v.skandha}.${v.adhyaya}.${v.numLabel}", state.langFor(LangZone.PAGE)), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 Box(Modifier.weight(1f))
-                if (v.speaker != null) Text(v.speaker, fontFamily = NotoDevanagari, fontSize = 13.sp, color = c.secondary)
+                if (v.speaker != null) Text(v.speaker, fontFamily = NotoDevanagari, fontSize = 15.sp, color = c.secondary)
                 if (isCurrent) Icon(painterResource(Ic.Headphones), null, tint = c.accent, modifier = Modifier.size(15.dp))
                 // Press and hold anywhere on the shloka saves it; the mark only shows once saved.
                 if (marked) {
-                    IconButton(onClick = { state.toggleBookmark(v.ref) }, modifier = Modifier.size(40.dp)) {
+                    IconButton(onClick = { state.toggleBookmark(v.ref) }, modifier = Modifier.size(48.dp)) {
                         Icon(painterResource(Ic.Bookmark), "Remove bookmark", tint = c.accent, modifier = Modifier.size(20.dp))
                     }
                 }
@@ -554,7 +554,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
             layers.forEach { l ->
                 val big = l == Lang.HI || l == Lang.BN
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    if (layers.size > 1) Text(layerName(l), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = c.gold)
+                    if (layers.size > 1) Text(layerName(l), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold)
                     val body = digitsTo(v.translation(l), l)
                     val style = TextStyle(fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
                         lineHeight = ((if (big) 32 else 27) * scale * state.lineScale).sp, color = c.ink)
@@ -698,10 +698,10 @@ private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>
         if (back) Icon(painterResource(Ic.ArrowBackIos), null, tint = ink, modifier = Modifier.size(18.dp))
         Column(Modifier.weight(1f)) {
             val number = target?.let { " · " + localDigits(it.second.toString(), state.titleLang) }.orEmpty()
-            Text(label + number, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1)
+            Text(label + number, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1)
             if (target != null) Text(
                 SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
-                fontFamily = readingFont(state.titleLang), fontSize = 15.sp, lineHeight = 20.sp, color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                fontFamily = readingFont(state.titleLang), fontSize = 15.sp, lineHeight = 24.sp, color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
         }
         if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(18.dp))

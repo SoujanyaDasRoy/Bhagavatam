@@ -169,7 +169,7 @@ fun AnnotationSheet(state: AppState) {
             )
             if (existing?.kind != AnnKind.BOOKMARK) Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 MarkColours.forEach { col ->
-                    Box(Modifier.size(44.dp).clickable(role = Role.RadioButton) { colour = col }, contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(48.dp).clickable(role = Role.RadioButton) { colour = col }, contentAlignment = Alignment.Center) {
                         Box(Modifier.size(26.dp).clip(CircleShape).background(Color(col)).then(if (col == colour) Modifier.border(2.dp, c.ink, CircleShape) else Modifier))
                     }
                 }
@@ -242,7 +242,7 @@ fun MeaningCard(
                     fontFamily = readingFont(w.lang)
                 )
                 if (term != null && term.dev.isNotEmpty() && term.dev != term.term) {
-                    Text(term.dev, fontSize = 12.sp, color = c.gold, fontWeight = FontWeight.Medium)
+                    Text(term.dev, fontSize = 15.sp, color = c.gold, fontWeight = FontWeight.Medium)
                 }
             }
             // Save word button
@@ -284,7 +284,7 @@ fun MeaningCard(
             if (!first.headword.equals(w.word, ignoreCase = true)) {
                 Text(
                     tr(ui, "Base word: ", "मूल शब्द: ", "মূল শব্দ: ") + first.headword,
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     color = c.gold,
                     fontWeight = FontWeight.Medium,
                     fontFamily = readingFont(w.lang)
@@ -296,8 +296,7 @@ fun MeaningCard(
                     if (first.pos.isNotBlank()) Text("[${first.pos}]", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
                     Text(
                         sense.gloss,
-                        fontSize = 13.sp,
-                        lineHeight = 18.sp,
+                        fontSize = 15.sp, lineHeight = 24.sp,
                         color = c.ink,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
@@ -308,13 +307,13 @@ fun MeaningCard(
             if (first.isCrossScript) {
                 Text(
                     tr(ui, "(Sanskrit origin - also in Hindi)", "(संस्कृत मूल - हिन्दी में भी)", "(সংস্কৃত মূল - হিন্দিতেও)"),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     color = c.secondary
                 )
             }
             Text(
                 (first.source?.name ?: "Wiktionary") + " · CC BY-SA 4.0",
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 color = c.secondary
             )
         } else {
@@ -330,10 +329,10 @@ fun MeaningCard(
                     m.entries.take(2).forEach { e ->
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             if (e.pos.isNotBlank()) Text("[${e.pos}]", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
-                            Text(e.defs.take(1).joinToString(" "), fontSize = 13.sp, lineHeight = 18.sp, color = c.ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            Text(e.defs.take(1).joinToString(" "), fontSize = 13.sp, lineHeight = 21.sp, color = c.ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
                     }
-                    Text("Wiktionary · CC BY-SA", fontSize = 11.sp, color = c.secondary)
+                    Text("Wiktionary · CC BY-SA", fontSize = 12.sp, color = c.secondary)
                 }
                 m is com.bhagavatam.app.data.Meaning.Offline -> {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -400,7 +399,7 @@ fun WordSheet(
         ) {
             Text(w.word, fontSize = 24.sp, fontWeight = FontWeight.Medium, color = c.ink, fontFamily = readingFont(w.lang))
             if (term != null) {
-                Text("${term.term} · ${term.dev}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text("${term.term} · ${term.dev}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 Text(term.meaning, fontSize = 16.sp, lineHeight = 24.sp, color = c.ink)
             }
             if (onOpenDictionary != null) {

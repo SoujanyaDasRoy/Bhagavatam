@@ -55,13 +55,13 @@ val HindSiliguri = FontFamily(
 )
 
 fun appTypography(ui: FontFamily) = Typography(
-    displaySmall = TextStyle(fontFamily = ui, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 40.sp, letterSpacing = (-0.6).sp),
-    titleLarge = TextStyle(fontFamily = ui, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 26.sp),
-    titleMedium = TextStyle(fontFamily = ui, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, lineHeight = 22.sp),
-    bodyLarge = TextStyle(fontFamily = ui, fontSize = 16.sp, lineHeight = 22.sp),
+    displaySmall = TextStyle(fontFamily = ui, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 54.sp, letterSpacing = (-0.6).sp),
+    titleLarge = TextStyle(fontFamily = ui, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 32.sp),
+    titleMedium = TextStyle(fontFamily = ui, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, lineHeight = 26.sp),
+    bodyLarge = TextStyle(fontFamily = ui, fontSize = 16.sp, lineHeight = 26.sp),
     bodyMedium = TextStyle(fontFamily = ui, fontSize = 14.sp, lineHeight = 20.sp),
-    bodySmall = TextStyle(fontFamily = ui, fontSize = 13.sp, lineHeight = 18.sp),
+    bodySmall = TextStyle(fontFamily = ui, fontSize = 13.sp, lineHeight = 21.sp),
     labelLarge = TextStyle(fontFamily = ui, fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
     labelMedium = TextStyle(fontFamily = ui, fontWeight = FontWeight.SemiBold, fontSize = 12.5.sp, letterSpacing = 0.6.sp),
-    labelSmall = TextStyle(fontFamily = ui, fontWeight = FontWeight.Medium, fontSize = 11.sp),
+    labelSmall = TextStyle(fontFamily = ui, fontWeight = FontWeight.Medium, fontSize = 12.sp),
 )

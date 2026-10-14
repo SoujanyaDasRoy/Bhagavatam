@@ -124,7 +124,7 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
                         else -> NotoDevanagari
                     }
                 } else readingFont(state.titleLang)
-                Text(subTitle, fontFamily = subFont, fontSize = 16.sp, lineHeight = 20.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(subTitle, fontFamily = subFont, fontSize = 16.sp, lineHeight = 26.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(localDigits("$read / ${sk.adhyayaCount} ${s.adhyayas}", state.uiLang), fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFFFFF4DC))
@@ -146,8 +146,8 @@ fun StoryCard(e: Episode, state: AppState, onOpen: (Int, Int) -> Unit) {
         ArtBackdrop(chArt(e.s, e.a), skGradient(hue), Modifier.matchParentSize(), petals = 12)
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Text(localDigits(refLabel, storyLang), Modifier.clip(CircleShape).background(Color(0x33FFFFFF)).padding(horizontal = 9.dp, vertical = 3.dp),
-                fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-            Text(e.title(storyLang), fontFamily = readingFont(storyLang), fontSize = 19.sp, lineHeight = 25.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+            Text(e.title(storyLang), fontFamily = readingFont(storyLang), fontSize = 19.sp, lineHeight = 30.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -198,7 +198,7 @@ fun HomeScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Crossfade(dark, animationSpec = tween(Motion.sheet), label = "themeIcon") { d ->
-                    Icon(painterResource(if (d) Ic.Sun else Ic.Bedtime), null, tint = Brand.Kesari, modifier = Modifier.size(22.dp))
+                    Icon(painterResource(if (d) Ic.Sun else Ic.Bedtime), tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন"), tint = Brand.Kesari, modifier = Modifier.size(22.dp))
                 }
             }
         }
@@ -212,12 +212,12 @@ fun HomeScreen(
             Box(
                 Modifier.reveal(0, playIntro).padding(horizontal = 16.dp).fillMaxWidth().tappable(Radius.large, s.resumeReading, onClick = onResume),
             ) {
-                ArtBackdrop(chArt(state.lastSkandha, state.lastAdhyaya), skGradient(skHue), Modifier.matchParentSize(), mandala = Color(0x26FFFFFF))
+                ArtBackdrop(chArt(state.lastSkandha, state.lastAdhyaya), skGradient(skHue), Modifier.matchParentSize(), mandala = Color(0x1AFFFFFF))
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(localDigits(contRef, state.titleLang),
                         fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
                     Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.titleLang, s),
-                        fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, color = Color.White,
+                        fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 38.sp, fontWeight = FontWeight.Medium, color = Color.White,
                         maxLines = 3, overflow = TextOverflow.Ellipsis)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -426,7 +426,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                 ) {
                     Text(localDigits(a.toString(), ui), Modifier.width(28.dp), fontFamily = numFont, fontSize = 17.sp, color = Brand.Secondary)
                     Column(Modifier.weight(1f)) {
-                        Text(SampleData.adhyayaTitle(skandha, a, state.titleLang, s), fontFamily = readingFont(state.titleLang), fontSize = 16.sp, lineHeight = 22.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(SampleData.adhyayaTitle(skandha, a, state.titleLang, s), fontFamily = readingFont(state.titleLang), fontSize = 16.sp, lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 15.sp, color = Brand.Secondary)
                     }
                     when {

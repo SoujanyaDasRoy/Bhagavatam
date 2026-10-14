@@ -116,8 +116,9 @@ fun VoiceNavigatorSheet(
     var isListening by remember { mutableStateOf(true) }
 
     val pulse = remember { Animatable(1f) }
-    LaunchedEffect(isListening) {
-        if (isListening) {
+    val motion = com.bhagavatam.app.ui.components.animationsOn()
+    LaunchedEffect(isListening, motion) {
+        if (isListening && motion) {
             pulse.animateTo(
                 1.25f,
                 infiniteRepeatable(tween(700, easing = LinearEasing), RepeatMode.Reverse)

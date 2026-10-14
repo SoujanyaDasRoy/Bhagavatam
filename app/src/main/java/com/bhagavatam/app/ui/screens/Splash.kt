@@ -65,7 +65,9 @@ fun SplashScreen(state: AppState? = null) {
     val name = remember { Animatable(0f) }
     val line = remember { Animatable(0f) }
     val greet = remember { Animatable(0f) }
+    val motion = com.bhagavatam.app.ui.components.animationsOn()
     LaunchedEffect(Unit) {
+        if (!motion) { logo.snapTo(1f); name.snapTo(1f); line.snapTo(1f); greet.snapTo(1f); return@LaunchedEffect }
         kotlinx.coroutines.coroutineScope {
             launch { logo.animateTo(1f, tween(700, easing = FastOutSlowInEasing)) }
             launch { delay(250); name.animateTo(1f, tween(650)) }
@@ -73,9 +75,10 @@ fun SplashScreen(state: AppState? = null) {
             launch { delay(750); greet.animateTo(1f, tween(650)) }
         }
     }
-    val breathe = rememberInfiniteTransition(label = "glow").animateFloat(
+    val breatheAnim = rememberInfiniteTransition(label = "glow").animateFloat(
         0.85f, 1.0f, infiniteRepeatable(tween(2600, easing = LinearEasing), RepeatMode.Reverse), label = "glow",
     )
+    val breathe = if (motion) breatheAnim else androidx.compose.runtime.mutableStateOf(1f)
     val ui = state?.uiLang ?: Lang.EN
     val s = stringsFor(ui)
     val bodyFont = when (ui) {

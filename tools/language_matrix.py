@@ -54,10 +54,12 @@ def main():
     ap.add_argument("--chapter", type=int, default=14)
     ap.add_argument("--themes", default="Prabhat,Sandhya")
     ap.add_argument("--wait", type=int, default=28, help="seconds to let the app start")
+    ap.add_argument("--fontscale", type=float, default=1.0, help="system font scale while taking the pictures (restored to 1.0 after)")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     tmp = out / "_prefs.xml"
+    run(a.serial, "shell", "settings", "put", "system", "font_scale", str(a.fontscale))
     for theme in a.themes.split(","):
         for ui in UIS:
             for read in READS:
@@ -78,6 +80,7 @@ def main():
                 shot(a.serial, out / f"{tag}_3end.png")
                 print("done", tag, flush=True)
     tmp.unlink(missing_ok=True)
+    run(a.serial, "shell", "settings", "put", "system", "font_scale", "1.0")
     try:
         from PIL import Image
     except ImportError:
