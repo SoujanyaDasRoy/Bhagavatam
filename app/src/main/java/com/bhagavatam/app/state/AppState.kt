@@ -277,6 +277,10 @@ class AppState(app: Application) : AndroidViewModel(app) {
     // ---------- first-use tips (shown one at a time, once each) ----------
     var tipsEnabled by mutableStateOf(prefs.getBoolean("tipsEnabled", true))
         private set
+    var updateAlerts by mutableStateOf(prefs.getBoolean("updateAlerts", true))
+    var askedNotify by mutableStateOf(prefs.getBoolean("askedNotify", false))
+    fun updateUpdateAlerts(on: Boolean) { updateAlerts = on; save { putBoolean("updateAlerts", on) } }
+    fun markAskedNotify() { askedNotify = true; save { putBoolean("askedNotify", true) } }
     val tipsSeen = mutableStateListOf<String>().apply { addAll(prefs.getStringSet("tipsSeen", emptySet()).orEmpty()) }
 
     /** The next tip to show, or null when tips are off or all were seen. */

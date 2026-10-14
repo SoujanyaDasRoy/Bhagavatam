@@ -410,6 +410,10 @@ fun ReaderScreen(
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
                         Text(reference, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
+                        if (state.titleLang == Lang.OR) Text(
+                            tr(ui, "Title shown in " + nameIn(ui, state.contentLang).substringBefore(" ("), "शीर्षक " + nameIn(ui, state.contentLang).substringBefore(" (") + " में दिखाया गया है", "শিরোনাম " + nameIn(ui, state.contentLang).substringBefore(" (") + "-এ দেখানো হয়েছে"),
+                            fontSize = 14.sp, color = c.secondary,
+                        )
                         Text(title, fontFamily = readingFont(state.contentLang), fontSize = 24.sp, lineHeight = 38.sp,
                             fontWeight = FontWeight.Medium, color = c.ink, textAlign = TextAlign.Center)
                         val count = SampleData.verseCount(skandha, adhyaya)

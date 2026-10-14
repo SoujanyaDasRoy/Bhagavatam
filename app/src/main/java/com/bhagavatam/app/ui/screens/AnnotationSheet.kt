@@ -77,7 +77,7 @@ internal fun TextAction(label: String, onClick: () -> Unit) {
             .padding(horizontal = 10.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Text(label, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1)
+        Text(label, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1)
     }
 }
 
@@ -159,7 +159,7 @@ fun AnnotationSheet(state: AppState) {
                 .padding(bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Text(localDigits(d.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+            Text(localDigits(d.ref, ui), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
             Text(d.quote, fontSize = 16.sp, lineHeight = 24.sp, fontStyle = FontStyle.Italic, color = c.secondary, maxLines = 5)
             OutlinedTextField(
                 value = note,
@@ -278,7 +278,7 @@ fun MeaningCard(
         }
 
         if (term != null) {
-            Text(term.meaning, fontSize = 14.sp, lineHeight = 20.sp, color = c.ink, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            Text(term.meaning, fontSize = 15.sp, lineHeight = 20.sp, color = c.ink, maxLines = 3, overflow = TextOverflow.Ellipsis)
         } else if (offlineEntries.isNotEmpty()) {
             val first = offlineEntries.first()
             if (!first.headword.equals(w.word, ignoreCase = true)) {
@@ -293,7 +293,7 @@ fun MeaningCard(
             val sensesToShow = first.senses.take(3)
             sensesToShow.forEach { sense ->
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    if (first.pos.isNotBlank()) Text("[${first.pos}]", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                    if (first.pos.isNotBlank()) Text("[${first.pos}]", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
                     Text(
                         sense.gloss,
                         fontSize = 15.sp, lineHeight = 24.sp,
@@ -307,41 +307,41 @@ fun MeaningCard(
             if (first.isCrossScript) {
                 Text(
                     tr(ui, "(Sanskrit origin - also in Hindi)", "(संस्कृत मूल - हिन्दी में भी)", "(সংস্কৃত মূল - হিন্দিতেও)"),
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     color = c.secondary
                 )
             }
             Text(
                 (first.source?.name ?: "Wiktionary") + " · CC BY-SA 4.0",
-                fontSize = 12.sp,
+                fontSize = 15.sp,
                 color = c.secondary
             )
         } else {
             val m = onlineMeaning
             when {
                 w.word.contains(' ') -> {
-                    Text(tr(ui, "Select a single word to see its dictionary meaning.", "शब्दकोश अर्थ के लिए एक शब्द चुनें।", "অভিধান অর্থের জন্য একটি শব্দ নির্বাচন করুন।"), fontSize = 13.sp, color = c.secondary)
+                    Text(tr(ui, "Select a single word to see its dictionary meaning.", "शब्दकोश अर्थ के लिए एक शब्द चुनें।", "অভিধান অর্থের জন্য একটি শব্দ নির্বাচন করুন।"), fontSize = 15.sp, color = c.secondary)
                 }
                 m == null && state.onlineMeanings -> {
-                    Text(tr(ui, "Looking up meaning...", "अर्थ खोज रहे हैं...", "অর্থ খোঁজা হচ্ছে..."), fontSize = 13.sp, color = c.secondary)
+                    Text(tr(ui, "Looking up meaning...", "अर्थ खोज रहे हैं...", "অর্থ খোঁজা হচ্ছে..."), fontSize = 15.sp, color = c.secondary)
                 }
                 m is com.bhagavatam.app.data.Meaning.Found -> {
                     m.entries.take(2).forEach { e ->
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            if (e.pos.isNotBlank()) Text("[${e.pos}]", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
-                            Text(e.defs.take(1).joinToString(" "), fontSize = 13.sp, lineHeight = 21.sp, color = c.ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            if (e.pos.isNotBlank()) Text("[${e.pos}]", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                            Text(e.defs.take(1).joinToString(" "), fontSize = 15.sp, lineHeight = 21.sp, color = c.ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
                     }
-                    Text("Wiktionary · CC BY-SA", fontSize = 12.sp, color = c.secondary)
+                    Text("Wiktionary · CC BY-SA", fontSize = 15.sp, color = c.secondary)
                 }
                 m is com.bhagavatam.app.data.Meaning.Offline -> {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(tr(ui, "Offline", "ऑफ़लाइन", "অফলাইন"), fontSize = 13.sp, color = c.secondary)
+                        Text(tr(ui, "Offline", "ऑफ़लाइन", "অফলাইন"), fontSize = 15.sp, color = c.secondary)
                         TextAction(tr(ui, "Retry", "पुन: प्रयास", "আবার চেষ্টা")) { retryKey++ }
                     }
                 }
                 else -> {
-                    Text(tr(ui, "No dictionary entry found.", "कोई प्रविष्टि नहीं मिली।", "কোনো অর্থ পাওয়া যায়নি।"), fontSize = 13.sp, color = c.secondary)
+                    Text(tr(ui, "No dictionary entry found.", "कोई प्रविष्टि नहीं मिली।", "কোনো অর্থ পাওয়া যায়নি।"), fontSize = 15.sp, color = c.secondary)
                 }
             }
         }
@@ -417,7 +417,7 @@ fun WordSheet(
                     f.first == 0 -> tr(ui, "Not found elsewhere in the granth in this form.", "इस रूप में ग्रंथ में और कहीं नहीं मिला।", "এই রূপে গ্রন্থের আর কোথাও পাওয়া যায়নি।")
                     else -> tr(ui, "In this granth (${f.first})", "इस ग्रंथ में (${localDigits("${f.first}", ui)})", "এই গ্রন্থে (${localDigits("${f.first}", ui)})")
                 },
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = c.secondary,
             )
@@ -429,7 +429,7 @@ fun WordSheet(
                         .clickable { close(); onOpenChapter(o.skandha, o.adhyaya) }
                         .padding(vertical = 8.dp),
                 ) {
-                    Text(localDigits(o.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                    Text(localDigits(o.ref, ui), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
                     Text(o.snippet, fontSize = 15.sp, lineHeight = 22.sp, color = c.ink)
                 }
             }

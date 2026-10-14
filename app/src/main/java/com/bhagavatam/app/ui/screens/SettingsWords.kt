@@ -128,7 +128,7 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
             Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
                 Text(
                     tr(ui, "Meaning language", "अर्थ की भाषा", "অর্থের ভাষা"),
-                    fontSize = 13.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = Brand.Secondary
                 )
@@ -153,6 +153,12 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
                     }
                 }
             }
+        }
+        SettingsGroup(
+            tr(ui, "App updates", "ऐप के अपडेट", "অ্যাপের আপডেট"),
+            tr(ui, "A notification when a new version is published. Nothing else is sent.", "नया संस्करण आने पर एक सूचना। और कुछ नहीं भेजा जाता।", "নতুন সংস্করণ এলে একটি বিজ্ঞপ্তি। আর কিছু পাঠানো হয় না।"),
+        ) {
+            SwitchRow(tr(ui, "Tell me about new versions", "नए संस्करण की सूचना दें", "নতুন সংস্করণের খবর দিন"), state.updateAlerts, state::updateUpdateAlerts)
         }
         SettingsGroup(
             tr(ui, "Back up your data", "अपना डेटा सुरक्षित रखें", "আপনার ডেটা ব্যাকআপ"),

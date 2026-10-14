@@ -92,6 +92,7 @@ dependencies {
 
     // Installs the Compose baseline profiles on sideloaded APKs, so scrolling is smooth from the first launch.
     implementation(libs.androidx.profileinstaller)
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation("junit:junit:4.13.2")
 }

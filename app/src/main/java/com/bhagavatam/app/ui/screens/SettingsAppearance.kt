@@ -127,7 +127,7 @@ internal fun ThemeSwitcher(state: AppState, labels: List<String>) {
                         }
                     }
                 }
-                Text(labels[i], fontSize = 14.sp, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium, color = if (on) Brand.Ink else Brand.Secondary, maxLines = 1)
+                Text(labels[i], fontSize = 15.sp, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium, color = if (on) Brand.Ink else Brand.Secondary, maxLines = 1)
             }
         }
     }
@@ -165,7 +165,7 @@ private fun LookRow(title: String, themes: List<ReaderTheme>, selected: ReaderTh
                         Modifier.size(48.dp).clip(CircleShape).background(th.colors.bg).border(if (on) 3.dp else 1.dp, ring, CircleShape),
                         contentAlignment = Alignment.Center,
                     ) { Text("Aa", fontFamily = EnglishReading, fontSize = 17.sp, color = th.colors.ink) }
-                    Text(name, fontSize = 12.sp, color = if (on) Brand.Ink else Brand.Secondary, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Normal)
+                    Text(name, fontSize = 15.sp, color = if (on) Brand.Ink else Brand.Secondary, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Normal)
                 }
             }
         }
