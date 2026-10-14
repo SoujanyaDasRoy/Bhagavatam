@@ -161,7 +161,7 @@ fun LanguageOption(native: String, sub: String, font: FontFamily, selected: Bool
 @Composable
 fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Unit) {
     val s = state.strings
-    val langs = listOf(Lang.SA, Lang.HI, Lang.BN, Lang.EN).filter { BENGALI_READY || it != Lang.BN }
+    val langs = listOf(Lang.SA, Lang.HI, Lang.BN, Lang.EN, Lang.OR).filter { (BENGALI_READY || it != Lang.BN) && (com.bhagavatam.app.data.ODIA_READY || it != Lang.OR) }
     Column(Modifier.fillMaxSize().background(Brand.Paper).navigationBarsPadding()) {
         NavBar(s.back, onBack) { Box(Modifier.padding(end = 12.dp)) { StepDots(2) } }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
@@ -171,10 +171,10 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
             }
             SectionLabel(s.paathLanguage)
             Segmented(
-                options = listOf("संस्कृत", "हिन्दी", "বাংলা", "English").filterIndexed { i, _ -> BENGALI_READY || i != 2 },
+                options = langs.map { when (it) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English"; Lang.OR -> "ଓଡ଼ିଆ" } },
                 selected = langs.indexOf(state.readLang),
                 onSelect = { state.updateReadLang(langs[it]) },
-                fonts = listOf(NotoDevanagari, TiroHindi, NotoSerifBengali, Jakarta).filterIndexed { i, _ -> BENGALI_READY || i != 2 },
+                fonts = langs.map { readingFont(it).let { f -> if (it == Lang.EN) Jakarta else f } },
             )
             VSpace(24)
             SectionLabel(s.showAlongside)
@@ -183,6 +183,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
                 SwitchRow(s.hindiTr, state.showHi, state::updateShowHi); RowDivider()
                 if (BENGALI_READY) { SwitchRow(s.bengaliTr, state.showBn, state::updateShowBn); RowDivider() }
                 SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
+                if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation (machine-read)", "ओड़िया अनुवाद (मशीन से पढ़ा)", "ওড়িয়া অনুবাদ (যন্ত্রে পড়া)"), state.showOr, state::updateShowOr) }
             }
             VSpace(24)
             Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card)) {

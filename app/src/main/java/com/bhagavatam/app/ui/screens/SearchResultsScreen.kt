@@ -576,7 +576,7 @@ fun SearchResultsScreen(
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(ep.title(ui), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                                        Text(ep.title(if (state.titleLang == Lang.OR) ui else state.titleLang), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
                                         val skLabel = if (ep.s == 0) s.mahatmya else "${s.skandha} ${ep.s}"
                                         Text(localDigits("$skLabel · ${s.adhyaya} ${ep.a}", ui), fontSize = 12.sp, color = Brand.Gold)
                                     }

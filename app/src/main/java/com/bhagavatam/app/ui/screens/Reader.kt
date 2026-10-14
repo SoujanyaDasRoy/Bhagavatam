@@ -151,7 +151,8 @@ fun ReaderScreen(
     val titleInBar by remember { derivedStateOf { list.firstVisibleItemIndex >= 2 } }
     // The words of the reference and the reading time are the page's (reading language); the digits are the app's.
     val rs = stringsFor(state.langFor(LangZone.PAGE))
-    val reference = localDigits(if (skandha == 0) "${rs.mahatmya} · ${rs.adhyaya} $adhyaya" else "${rs.skandha} $skandha · ${rs.adhyaya} $adhyaya", ui)
+    val pageLang = state.langFor(LangZone.PAGE)
+    val reference = localDigits(if (skandha == 0) "${rs.mahatmya} · ${rs.adhyaya} $adhyaya" else "${rs.skandha} $skandha · ${rs.adhyaya} $adhyaya", pageLang)
 
     var showFindBar by remember { mutableStateOf(false) }
     var findQuery by remember { mutableStateOf("") }
@@ -418,10 +419,10 @@ fun ReaderScreen(
                         val readMinutes = maxOf(1, totalWords / 150)
                         val readTimeBadge = String.format(rs.minRead, readMinutes)
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (count > 0) Text(localDigits("$count ${rs.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
+                            if (count > 0) Text(localDigits("$count ${rs.shlokas.lowercase()}", pageLang), fontSize = 13.sp, color = c.secondary)
                             if (state.showReadTime) {
                                 Text("·", fontSize = 13.sp, color = c.secondary)
-                                Text(localDigits(readTimeBadge, ui), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
+                                Text(localDigits(readTimeBadge, pageLang), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
                             }
                         }
                         Box(Modifier.padding(top = 4.dp).width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
@@ -529,7 +530,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
         ) {
             // Reference on the left, speaker on the right.
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(localDigits("${v.skandha}.${v.adhyaya}.${v.numLabel}", ui), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${v.skandha}.${v.adhyaya}.${v.numLabel}", state.langFor(LangZone.PAGE)), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 Box(Modifier.weight(1f))
                 if (v.speaker != null) Text(v.speaker, fontFamily = NotoDevanagari, fontSize = 13.sp, color = c.secondary)
                 if (isCurrent) Icon(painterResource(Ic.Headphones), null, tint = c.accent, modifier = Modifier.size(15.dp))
@@ -554,7 +555,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 val big = l == Lang.HI || l == Lang.BN
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (layers.size > 1) Text(layerName(l), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = c.gold)
-                    val body = digitsTo(v.translation(l), state.uiLang)
+                    val body = digitsTo(v.translation(l), l)
                     val style = TextStyle(fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
                         lineHeight = ((if (big) 32 else 27) * scale * state.lineScale).sp, color = c.ink)
                     // Pointers such as "translated together with verse 5" are not text to mark.
@@ -582,6 +583,7 @@ private fun AppState.titleStrings() = com.bhagavatam.app.data.stringsFor(titleLa
 private fun chapterLabels(ui: Lang) = when (ui) {
     Lang.HI -> "पिछला अध्याय" to "अगला अध्याय"
     Lang.BN -> "আগের অধ্যায়" to "পরের অধ্যায়"
+    Lang.OR -> "ପୂର୍ବ ଅଧ୍ୟାୟ" to "ପରବର୍ତ୍ତୀ ଅଧ୍ୟାୟ"
     else -> "Previous chapter" to "Next chapter"
 }
 
@@ -610,13 +612,13 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     ) {
         // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
-            state, v.ref, lang, digitsTo(v.translation(lang), ui),
+            state, v.ref, lang, digitsTo(v.translation(lang), lang),
             TextStyle(fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink,
                 textAlign = if (state.justifyText) androidx.compose.ui.text.style.TextAlign.Justify else androidx.compose.ui.text.style.TextAlign.Start),
             Modifier.fillMaxWidth(),
             prefix = buildAnnotatedString {
                 if (state.showVerseNumbers) withStyle(SpanStyle(color = c.gold, fontWeight = FontWeight.Bold, fontSize = 12.sp, baselineShift = BaselineShift.Superscript)) {
-                    append(localDigits(label, ui) + "  ")
+                    append(localDigits(label, lang) + "  ")
                 }
             },
             onPrefixTap = onToggle,
@@ -628,7 +630,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
                 Modifier.fillMaxWidth().clip(Radius.group).background(c.surface).border(1.dp, c.separator, Radius.group).padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(localDigits("${stringsFor(state.langFor(LangZone.PAGE)).shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${stringsFor(state.langFor(LangZone.PAGE)).shloka} ${skLabel}.${v.adhyaya}.${label}", state.langFor(LangZone.PAGE)), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 val script = if (ui == Lang.BN && state.script == SanskritScript.DEVANAGARI) SanskritScript.BENGALI else state.script
                 ShlokaText(v, script, c.shloka, 16f * scale, state = state, onWordLongPress = { word ->
                     state.lookup = com.bhagavatam.app.data.WordLookup(word, Lang.SA, v.ref)

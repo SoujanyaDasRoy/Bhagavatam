@@ -139,13 +139,15 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
 @Composable
 fun StoryCard(e: Episode, state: AppState, onOpen: (Int, Int) -> Unit) {
     val hue = skColor(e.s)
-    val refLabel = if (e.s == 0) "${state.strings.mahatmya}.${e.a}" else "${e.s}.${e.a}"
-    Box(Modifier.width(200.dp).height(128.dp).tappable(Radius.card, e.title(state.uiLang)) { onOpen(e.s, e.a) }) {
+    val refLabel = if (e.s == 0) "${stringsFor(state.titleLang).mahatmya}.${e.a}" else "${e.s}.${e.a}"
+    // Names of stories are part of the book: they follow the reading language (Odia has none, so the app language is used).
+    val storyLang = if (state.titleLang == Lang.OR) state.uiLang else state.titleLang
+    Box(Modifier.width(200.dp).height(128.dp).tappable(Radius.card, e.title(storyLang)) { onOpen(e.s, e.a) }) {
         ArtBackdrop(chArt(e.s, e.a), skGradient(hue), Modifier.matchParentSize(), petals = 12)
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
-            Text(localDigits(refLabel, state.uiLang), Modifier.clip(CircleShape).background(Color(0x33FFFFFF)).padding(horizontal = 9.dp, vertical = 3.dp),
+            Text(localDigits(refLabel, storyLang), Modifier.clip(CircleShape).background(Color(0x33FFFFFF)).padding(horizontal = 9.dp, vertical = 3.dp),
                 fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-            Text(e.title(state.uiLang), fontFamily = readingFont(state.uiLang), fontSize = 19.sp, lineHeight = 25.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(e.title(storyLang), fontFamily = readingFont(storyLang), fontSize = 19.sp, lineHeight = 25.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -211,7 +213,7 @@ fun HomeScreen(
             ) {
                 ArtBackdrop(chArt(state.lastSkandha, state.lastAdhyaya), skGradient(skHue), Modifier.matchParentSize(), mandala = Color(0x26FFFFFF))
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Text(localDigits(contRef, ui),
+                    Text(localDigits(contRef, state.titleLang),
                         fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
                     Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.titleLang, s),
                         fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 32.sp, fontWeight = FontWeight.Medium, color = Color.White,
@@ -354,7 +356,7 @@ fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
                     }
                     Column(Modifier.weight(1f)) {
                         Text(s.mahatmya, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-                        Text(localDigits("${m.title(state.titleLang)} · ${m.adhyayaCount} ${s.adhyayas}", ui), fontFamily = readingFont(state.titleLang), fontSize = 13.sp, color = Color(0xFFFFF1D0))
+                        Text(localDigits("${m.title(state.titleLang)} · ${m.adhyayaCount} ${s.adhyayas}", state.uiLang), fontFamily = readingFont(state.titleLang), fontSize = 13.sp, color = Color(0xFFFFF1D0))
                     }
                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Color.White)
                 }

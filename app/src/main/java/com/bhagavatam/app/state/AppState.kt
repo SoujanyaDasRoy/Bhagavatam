@@ -166,6 +166,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
     fun updateReadLang(l: Lang) {
         readLang = l; save { putString("readLang", l.name) }
+        // The language being read is always one of the shown translation layers.
+        when (l) { Lang.HI -> if (!showHi) updateShowHi(true); Lang.BN -> if (!showBn) updateShowBn(true); Lang.EN -> if (!showEn) updateShowEn(true); Lang.OR -> if (!showOr) updateShowOr(true); Lang.SA -> {} }
         if (l != Lang.SA) { showSanskrit = false; save { putBoolean("showSanskrit", false) } }
         else { showSanskrit = true; save { putBoolean("showSanskrit", true) } }
     }

@@ -405,16 +405,18 @@ object SampleData {
 
 private val devaDigits = "०१२३४५६७८९"
 private val bengDigits = "০১২৩৪৫৬৭৮৯"
+private val odiaDigits = "୦୧୨୩୪୫୬୭୮୯"
 
 /** Every digit in `s`, whichever script it was printed in, written in the digits of `ui` (1 for 1, so offsets in the text stay valid). */
 fun digitsTo(s: String, ui: Lang): String {
-    val target = when (ui) { Lang.HI -> devaDigits; Lang.BN -> bengDigits; else -> "0123456789" }
+    val target = when (ui) { Lang.HI -> devaDigits; Lang.BN -> bengDigits; Lang.OR -> odiaDigits; else -> "0123456789" }
     val sb = StringBuilder(s.length)
     for (ch in s) {
         val d = when (ch) {
             in '0'..'9' -> ch - '0'
             in '\u0966'..'\u096F' -> ch - '\u0966'
             in '\u09E6'..'\u09EF' -> ch - '\u09E6'
+            in '\u0B66'..'\u0B6F' -> ch - '\u0B66'
             else -> -1
         }
         sb.append(if (d >= 0) target[d] else ch)
@@ -426,5 +428,6 @@ fun digitsTo(s: String, ui: Lang): String {
 fun localDigits(s: String, ui: Lang): String = when (ui) {
     Lang.HI -> s.map { if (it in '0'..'9') devaDigits[it - '0'] else it }.joinToString("")
     Lang.BN -> s.map { if (it in '0'..'9') bengDigits[it - '0'] else it }.joinToString("")
+    Lang.OR -> s.map { if (it in '0'..'9') odiaDigits[it - '0'] else it }.joinToString("")
     else -> s
 }
