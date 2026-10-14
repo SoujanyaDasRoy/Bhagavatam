@@ -88,10 +88,10 @@ object NarrationText {
     }
 
     /** Speaking speed in characters per second at the narrator's base rate, measured on the engine's voices. Used to estimate time left. */
-    fun charsPerSecond(lang: Lang) = when (lang) { Lang.EN -> 16.5f; Lang.HI -> 13.5f; Lang.BN -> 13f; Lang.SA -> 10.2f }
+    fun charsPerSecond(lang: Lang) = when (lang) { Lang.EN -> 16.5f; Lang.HI -> 13.5f; Lang.BN -> 13f; Lang.OR -> 13f; Lang.SA -> 10.2f }
 
     /** The silence the engine itself leaves after each utterance, in ms, measured per language (English 790, Hindi 450, Bengali 550, Sanskrit 250). */
-    fun tailMs(lang: Lang) = when (lang) { Lang.EN -> 790; Lang.HI -> 450; Lang.BN -> 550; Lang.SA -> 250 }
+    fun tailMs(lang: Lang) = when (lang) { Lang.EN -> 790; Lang.HI -> 450; Lang.BN -> 550; Lang.OR -> 550; Lang.SA -> 250 }
 
     fun estimateSeconds(plan: VersePlan, pauseScale: Float = 1f, speed: Float = 1f): Float {
         val gaps = plan.segments.sumOf { maxOf(it.pauseMs * pauseScale, tailMs(plan.lang).toFloat()).toDouble() }.toFloat()

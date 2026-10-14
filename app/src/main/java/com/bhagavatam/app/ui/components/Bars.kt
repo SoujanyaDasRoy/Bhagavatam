@@ -106,7 +106,7 @@ fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifi
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(painterResource(tab.icon), contentDescription = null, tint = tint, modifier = Modifier.size(23.dp))
-                Text(labels.getValue(tab), fontSize = 12.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium, color = tint, maxLines = 1)
+                Text(labels.getValue(tab), fontSize = 13.sp, fontWeight = if (on) FontWeight.Bold else FontWeight.Medium, color = tint, maxLines = 1)
             }
         }
     }
@@ -116,7 +116,7 @@ fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifi
 @Composable
 fun BottomScrim(modifier: Modifier = Modifier, height: Dp = 140.dp) {
     val bg = Brand.Paper
-    Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(listOf(bg.copy(alpha = 0f), bg.copy(alpha = 0.92f), bg))))
+    Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(0f to bg.copy(alpha = 0f), 0.30f to bg.copy(alpha = 0.92f), 0.45f to bg, 1f to bg)))
 }
 
 /** Mini player: Modern Glassmorphic floating pill with album art, live status, playback controls, and dismiss button. */
@@ -124,7 +124,7 @@ fun BottomScrim(modifier: Modifier = Modifier, height: Dp = 140.dp) {
 fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifier) = CappedFontScale {
     val c = LocalReaderColors.current
     val v = state.current
-    val langLabel = when (state.audioLang) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English" }
+    val langLabel = when (state.audioLang) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.OR -> "ଓଡ଼ିଆ"; Lang.EN -> "English" }
     val title = SampleData.adhyayaTitle(v.skandha, v.adhyaya, state.titleLang, state.strings)
     val t = playerTextFor(state.uiLang)
     val artId = artRes(chArt(v.skandha, v.adhyaya)).takeIf { it != 0 } ?: artRes(skArt(v.skandha))

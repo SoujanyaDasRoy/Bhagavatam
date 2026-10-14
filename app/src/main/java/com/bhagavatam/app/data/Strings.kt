@@ -77,11 +77,11 @@ val EnglishStrings = Strings(
     continueBtn = "Continue", textsFrom = "Texts from the Gita Press, Gorakhpur editions",
     paathQuestion = "How will you do paath?", paathSub = "Pick the language you read and listen in. The others can sit alongside.",
     paathLanguage = "Paath language", startReading = "Start reading", stepOf = "2 of 2", preview = "Preview, 1.1.1",
-    glossaryHint = "Names and terms", themes = listOf("Prabhat", "Pothi", "Sandhya", "Ratri"),
+    glossaryHint = "Search the dictionary", themes = listOf("Prabhat", "Pothi", "Sandhya", "Ratri"),
     jaiShreeMadhav = "Jai Shree Madhav", shrimadBhagavatMahapuran = "Shrimad Bhagavat Mahapuran", minRead = "%d min read",
     tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bangla",
     voiceSearchHint = "Listening... Speak a story or chapter", openPrompt = "Open %s?", openAction = "Open", cancelAction = "Cancel",
-    thematicLilaIndex = "Names & Terms",
+    thematicLilaIndex = "Dictionary",
 )
 
 val HindiStrings = Strings(
@@ -116,11 +116,11 @@ val HindiStrings = Strings(
     continueBtn = "आगे बढ़ें", textsFrom = "पाठ गीताप्रेस, गोरखपुर के संस्करणों से",
     paathQuestion = "पाठ किस भाषा में करेंगे?", paathSub = "जिस भाषा में पढ़ना और सुनना है वह चुनें। बाकी साथ में दिख सकती हैं।",
     paathLanguage = "पाठ की भाषा", startReading = "पढ़ना शुरू करें", stepOf = "२ / २", preview = "झलक · १.१.१",
-    glossaryHint = "नाम और शब्द", themes = listOf("प्रभात", "पोथी", "सन्ध्या", "रात्रि"),
+    glossaryHint = "शब्दकोश में खोजें", themes = listOf("प्रभात", "पोथी", "सन्ध्या", "रात्रि"),
     jaiShreeMadhav = "जय श्री माधव", shrimadBhagavatMahapuran = "श्रीमद्भागवत महापुराण", minRead = "%d मिनट पाठ",
     tabAll = "सभी", tabEnglish = "अंग्रेज़ी", tabHindi = "हिन्दी", tabBangla = "বাংলা",
     voiceSearchHint = "सुन रहे हैं... कोई कथा या अध्याय बोलें", openPrompt = "%s खोलें?", openAction = "खोलें", cancelAction = "रद्द करें",
-    thematicLilaIndex = "नाम और शब्द",
+    thematicLilaIndex = "शब्दकोश",
 )
 
 val BengaliStrings = Strings(
@@ -155,15 +155,22 @@ val BengaliStrings = Strings(
     continueBtn = "এগিয়ে যান", textsFrom = "পাঠ গীতাপ্রেস, গোরক্ষপুরের সংস্করণ থেকে",
     paathQuestion = "কোন ভাষায় পাঠ করবেন?", paathSub = "যে ভাষায় পড়বেন ও শুনবেন সেটি বেছে নিন। বাকিগুলি পাশে দেখা যাবে।",
     paathLanguage = "পাঠের ভাষা", startReading = "পড়া শুরু করুন", stepOf = "২ / ২", preview = "ঝলক · ১.১.১",
-    glossaryHint = "নাম ও শব্দ", themes = listOf("প্রভাত", "পুঁথি", "সন্ধ্যা", "রাত্রি"),
+    glossaryHint = "অভিধানে খুঁজুন", themes = listOf("প্রভাত", "পুঁথি", "সন্ধ্যা", "রাত্রি"),
     jaiShreeMadhav = "জয় শ্রী মাধব", shrimadBhagavatMahapuran = "শ্রীমদ্ভাগবত মহাপুরাণ", minRead = "%d মিনিট পাঠ",
     tabAll = "সব", tabEnglish = "ইংরেজি", tabHindi = "হিন্দি", tabBangla = "বাংলা",
     voiceSearchHint = "শুনছি... কোনো ঘটনা বা অধ্যায় বলুন", openPrompt = "%s খুলবেন?", openAction = "খুলুন", cancelAction = "বাতিল",
-    thematicLilaIndex = "নাম ও শব্দ",
+    thematicLilaIndex = "অভিধান",
+)
+
+/** Only the words printed with a chapter (Skandha, chapter, shloka, reading time) exist in Odia; the rest of the app is not translated into Odia. */
+val OdiaStrings = EnglishStrings.copy(
+    skandha = "ସ୍କନ୍ଧ", adhyaya = "ଅଧ୍ଯାୟ", shloka = "ଶ୍ଳୋକ", shlokas = "ଶ୍ଳୋକ",
+    mahatmya = "ମାହାତ୍ମ୍ୟ", minRead = "%d ମିନିଟ୍ ପାଠ",
 )
 
 fun stringsFor(ui: Lang) = when (ui) {
     Lang.HI -> HindiStrings
     Lang.BN -> BengaliStrings
+    Lang.OR -> OdiaStrings
     else -> EnglishStrings
 }

@@ -1,0 +1,17 @@
+{
+  "_note": "Status values: verified (licence read from the source itself), unverified (do not use yet), rejected (do not use). Update after Task 0 of docs/superpowers/plans/2026-10-09-dictionary-db.md. Checked 2026-10-09.",
+  "sources": [
+    {"code": "orwikt", "name": "Odia Wiktionary", "url": "https://or.wiktionary.org", "licence": "CC BY-SA 4.0", "status": "verified", "size_note": "about 108,600 articles", "use": "Odia definitions in Odia"},
+    {"code": "bnwikt", "name": "Bengali Wiktionary", "url": "https://bn.wiktionary.org", "licence": "CC BY-SA 4.0", "status": "verified", "size_note": "about 164,500 articles", "use": "Bengali definitions, etymology, IPA"},
+    {"code": "hiwikt", "name": "Hindi Wiktionary", "url": "https://hi.wiktionary.org", "licence": "CC BY-SA 4.0", "status": "verified", "size_note": "about 185,100 articles; contains imported Shabdsagar text whose own status is unchecked", "use": "Hindi entries and translations"},
+    {"code": "enwikt", "name": "English Wiktionary", "url": "https://en.wiktionary.org", "licence": "CC BY-SA 4.0", "status": "verified", "size_note": "9.2 million articles; Hindi 35,881 words, Bengali 9,977, Odia 2,034, English 1.39 million", "use": "English definitions; English glosses for hi/bn/or words"},
+    {"code": "wiktextract", "name": "Wiktextract / kaikki.org", "url": "https://kaikki.org", "licence": "derived from Wiktionary (treat as CC BY-SA 4.0); no separate licence read", "status": "unverified", "size_note": "per-language JSONL marked deprecated on the site", "use": "optional pre-parsed English Wiktionary"},
+    {"code": "wikidata", "name": "Wikidata lexemes", "url": "https://www.wikidata.org", "licence": "CC0 (general knowledge, not read from the site)", "status": "unverified", "size_note": "Odia 286, Bengali 11,811 lexemes; Hindi count not obtained", "use": "optional extra forms"},
+    {"code": "praharaj", "name": "Purnachandra Odia Bhashakosha (DSAL)", "url": "https://dsal.uchicago.edu/dictionaries/praharaj/", "licence": "page says 'a Creative Commons License' without naming it", "status": "unverified", "size_note": "the standard Odia dictionary, 1931-40", "use": "best Odia source if the licence allows"},
+    {"code": "tatoeba", "name": "Tatoeba sentences", "url": "https://tatoeba.org/en/downloads", "licence": "CC BY 2.0 FR (some CC0)", "status": "verified", "size_note": "Odia coverage not checked", "use": "later: example sentences"},
+    {"code": "indowordnet", "name": "IndoWordNet", "url": "https://www.cfilt.iitb.ac.in/indowordnet/", "licence": "not found on the home page", "status": "unverified", "size_note": "", "use": "later: synonym sets"},
+    {"code": "pwn", "name": "Princeton WordNet", "url": "https://wordnet.princeton.edu", "licence": "permissive with notice (general knowledge, page did not load)", "status": "unverified", "size_note": "", "use": "optional English senses"},
+    {"code": "samsad", "name": "Samsad Bangla Abhidhan (via DSAL)", "url": "https://dsal.uchicago.edu/dictionaries/biswas-bangala/", "licence": "Copyright Shishu Sahitya Samsad, no reproduction without permission", "status": "rejected", "size_note": "", "use": "do not use"},
+    {"code": "mcgregor", "name": "Oxford Hindi-English Dictionary, McGregor (via DSAL)", "url": "https://dsal.uchicago.edu/dictionaries/mcgregor/", "licence": "Copyright 1993 R. S. McGregor / Oxford University Press", "status": "rejected", "size_note": "", "use": "do not use"}
+  ]
+}

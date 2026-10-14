@@ -15,8 +15,11 @@ import com.bhagavatam.app.audio.FocusController
 import com.bhagavatam.app.audio.NarrationText
 import com.bhagavatam.app.audio.PlaybackService
 import com.bhagavatam.app.audio.Narrator
+import com.bhagavatam.app.audio.RecitationStream
 import com.bhagavatam.app.audio.VersePlan
 import com.bhagavatam.app.audio.VoiceOption
+import com.bhagavatam.app.audio.stream.StreamStatus
+import com.bhagavatam.app.audio.stream.YouTubeStreamPlayer
 import com.bhagavatam.app.data.BENGALI_READY
 import com.bhagavatam.app.data.Annotation
 import com.bhagavatam.app.data.AnnDraft
@@ -37,6 +40,7 @@ import kotlinx.coroutines.launch
 
 enum class PlayThrough { ADHYAYA, SKANDHA, GRANTH }
 enum class PackState { DONE, DOWNLOADING, NONE }
+enum class MeaningLangMode { WORD_LANG, ENGLISH, APP_LANG }
 
 /** Where the voice is: not started, getting ready, speaking, stopped by the listener, or at the end of the chapter. */
 enum class AudioStatus { IDLE, PREPARING, PLAYING, PAUSED, ENDED }
@@ -49,6 +53,19 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
  * All app state for the prototype: settings, reading position, saved verses and the player.
  * Settings are kept in SharedPreferences; move to DataStore + Room when the real content lands.
  */
+/**
+ * Which language a piece of text is written in. FRAME is the app around the page (menus, buttons, tips, settings, counts);
+ * PAGE is the book and what names it (verse text, titles, the chapter-end block, references printed beside a title, lock-screen
+ * title). Digits are the exception: they follow the app language everywhere. See docs/superpowers/plans/2026-10-14-language-rules.md.
+ */
+enum class LangZone { FRAME, PAGE }
+
+/** `title` is the reading language, or the app language when the reading language is Sanskrit. */
+fun zoneLang(zone: LangZone, ui: Lang, title: Lang): Lang = if (zone == LangZone.FRAME) ui else title
+
+/** The order first-use tips are shown in, one at a time. Stored by id in `AppState.tipsSeen`. */
+val TIP_ORDER = listOf("listen", "holdWord", "languagePill")
+
 class AppState(app: Application) : AndroidViewModel(app) {
 
     private val prefs = app.getSharedPreferences("bhagavatam", Context.MODE_PRIVATE)
@@ -69,11 +86,16 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** Meanings of a tapped word are fetched from Wiktionary when this is on (only the word is sent). */
     var onlineMeanings by mutableStateOf(prefs.getBoolean("onlineMeanings", true))
         private set
+    var meaningLangMode by mutableStateOf(
+        runCatching { MeaningLangMode.valueOf(prefs.getString("meaningLangMode", MeaningLangMode.WORD_LANG.name) ?: MeaningLangMode.WORD_LANG.name) }.getOrDefault(MeaningLangMode.WORD_LANG)
+    )
+        private set
     /** The full word sheet (all places the word appears) on top of the compact meaning card. */
     var showWordSheet by mutableStateOf(false)
     var showHi by mutableStateOf(prefs.getBoolean("showHi", prefs.getString("uiLang", "EN") == "HI"))
         private set
     var showBn by mutableStateOf(prefs.getBoolean("showBn", prefs.getString("uiLang", "EN") == "BN") && BENGALI_READY)
+    var showOr by mutableStateOf(prefs.getBoolean("showOr", false) && com.bhagavatam.app.data.ODIA_READY)
         private set
     var showEn by mutableStateOf(prefs.getBoolean("showEn", prefs.getString("uiLang", "EN") == "EN" || (!prefs.getBoolean("showHi", false) && !prefs.getBoolean("showBn", false))))
         private set
@@ -130,6 +152,11 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateUiLang(l: Lang) {
         uiLang = l
         save { putString("uiLang", l.name) }
+        // First run: the translation shown under the shloka is the language the person chose, and no other, so the first
+        // page is not mixed. After onboarding the person's own switches are never touched here.
+        if (!onboarded && l != Lang.SA) {
+            updateShowHi(l == Lang.HI); updateShowBn(l == Lang.BN && BENGALI_READY); updateShowEn(l == Lang.EN)
+        }
         when (l) {
             Lang.HI -> if (!showHi && !showBn && !showEn) updateShowHi(true)
             Lang.BN -> if (!showHi && !showBn && !showEn) updateShowBn(true)
@@ -139,6 +166,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
     fun updateReadLang(l: Lang) {
         readLang = l; save { putString("readLang", l.name) }
+        // The language being read is always one of the shown translation layers.
+        when (l) { Lang.HI -> if (!showHi) updateShowHi(true); Lang.BN -> if (!showBn) updateShowBn(true); Lang.EN -> if (!showEn) updateShowEn(true); Lang.OR -> if (!showOr) updateShowOr(true); Lang.SA -> {} }
         if (l != Lang.SA) { showSanskrit = false; save { putBoolean("showSanskrit", false) } }
         else { showSanskrit = true; save { putBoolean("showSanskrit", true) } }
     }
@@ -146,8 +175,15 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateShowSanskrit(on: Boolean) { showSanskrit = on; save { putBoolean("showSanskrit", on) } }
     fun updateShowIast(on: Boolean) { showIast = on; save { putBoolean("showIast", on) } }
     fun updateOnlineMeanings(on: Boolean) { onlineMeanings = on; save { putBoolean("onlineMeanings", on) } }
+    fun updateMeaningLangMode(mode: MeaningLangMode) { meaningLangMode = mode; save { putString("meaningLangMode", mode.name) } }
+    fun preferredMeaningLang(wordLang: String): String = when (meaningLangMode) {
+        MeaningLangMode.WORD_LANG -> wordLang.lowercase()
+        MeaningLangMode.ENGLISH -> "en"
+        MeaningLangMode.APP_LANG -> uiLang.code
+    }
     fun updateShowHi(on: Boolean) { showHi = on; save { putBoolean("showHi", on) } }
     fun updateShowBn(on: Boolean) { showBn = on; save { putBoolean("showBn", on) } }
+    fun updateShowOr(on: Boolean) { showOr = on; save { putBoolean("showOr", on) } }
     fun updateShowEn(on: Boolean) { showEn = on; save { putBoolean("showEn", on) } }
     /** Picking one theme by hand turns off "match phone". */
     fun updateTheme(t: ReaderTheme) {
@@ -211,6 +247,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun alongsideLayers(): List<Lang> = buildList {
         if (showHi) add(Lang.HI)
         if (showBn && BENGALI_READY) add(Lang.BN)
+        if (showOr && com.bhagavatam.app.data.ODIA_READY) add(Lang.OR)
         if (showEn) add(Lang.EN)
     }.ifEmpty {
         when (uiLang) {
@@ -228,9 +265,33 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var lastVerse by mutableStateOf(prefs.getInt("lastV", 1))
         private set
 
+    /** False until the person has opened a chapter: Home then says "Start with Skandha 1" instead of "Resume". */
+    var hasRead by mutableStateOf(prefs.getBoolean("hasRead", false))
+        private set
+
     fun markRead(s: Int, a: Int, v: Int) {
-        lastSkandha = s; lastAdhyaya = a; lastVerse = v
-        save { putInt("lastS", s); putInt("lastA", a); putInt("lastV", v) }
+        lastSkandha = s; lastAdhyaya = a; lastVerse = v; hasRead = true
+        save { putInt("lastS", s); putInt("lastA", a); putInt("lastV", v); putBoolean("hasRead", true) }
+    }
+
+    // ---------- first-use tips (shown one at a time, once each) ----------
+    var tipsEnabled by mutableStateOf(prefs.getBoolean("tipsEnabled", true))
+        private set
+    val tipsSeen = mutableStateListOf<String>().apply { addAll(prefs.getStringSet("tipsSeen", emptySet()).orEmpty()) }
+
+    /** The next tip to show, or null when tips are off or all were seen. */
+    fun nextTip(): String? = if (!tipsEnabled) null else TIP_ORDER.firstOrNull { it !in tipsSeen }
+
+    fun markTipSeen(id: String) {
+        if (id !in tipsSeen) tipsSeen.add(id)
+        save { putStringSet("tipsSeen", tipsSeen.toSet()) }
+    }
+
+    /** Turning tips back on shows them again from the start. */
+    fun updateTipsEnabled(on: Boolean) {
+        tipsEnabled = on
+        if (on) tipsSeen.clear()
+        save { putBoolean("tipsEnabled", on); putStringSet("tipsSeen", tipsSeen.toSet()) }
     }
 
     /** Chapters whose last shloka has been reached, as "skandha.chapter" keys. */
@@ -299,8 +360,39 @@ class AppState(app: Application) : AndroidViewModel(app) {
         annotations.removeAll { it.id == id }
     }
 
-    /** Removes every bookmark, highlight and note. */
-    fun clearSaved() { bookmarks.clear(); highlights.clear(); saveSaved(); annotationStore.clear(); annotations.clear() }
+    // ---------- saved words (local only) ----------
+    private val savedWordStore = com.bhagavatam.app.data.SavedWordStore(annotationStore)
+    val savedWords = mutableStateListOf<com.bhagavatam.app.data.SavedWord>().apply {
+        addAll(runCatching { savedWordStore.all() }.getOrDefault(emptyList()))
+    }
+
+    fun isWordSaved(word: String, lang: String): Boolean =
+        savedWords.any { it.word.equals(word.trim(), ignoreCase = true) && it.lang.equals(lang, ignoreCase = true) }
+
+    fun toggleSavedWord(word: String, lang: String, ref: String) {
+        val trimmed = word.trim()
+        val l = lang.lowercase()
+        val existing = savedWords.firstOrNull { it.word.equals(trimmed, ignoreCase = true) && it.lang.equals(l, ignoreCase = true) }
+        if (existing != null) {
+            savedWordStore.remove(existing.word, existing.lang)
+            savedWords.removeAll { it.id == existing.id || (it.word.equals(trimmed, ignoreCase = true) && it.lang.equals(l, ignoreCase = true)) }
+        } else {
+            val id = savedWordStore.save(trimmed, l, ref)
+            savedWords.add(0, com.bhagavatam.app.data.SavedWord(id, trimmed, l, ref, System.currentTimeMillis()))
+        }
+    }
+
+    fun removeSavedWord(id: Long) {
+        savedWordStore.removeById(id)
+        savedWords.removeAll { it.id == id }
+    }
+
+    /** Removes every bookmark, highlight, note and saved word. */
+    fun clearSaved() {
+        bookmarks.clear(); highlights.clear(); saveSaved()
+        annotationStore.clear(); annotations.clear()
+        savedWordStore.clear(); savedWords.clear()
+    }
 
     /** Forgets finished chapters and the reading position. Saved verses are not touched. */
     fun clearProgress() {
@@ -314,12 +406,14 @@ class AppState(app: Application) : AndroidViewModel(app) {
         textScale = 1f; lineScale = 1f; showDaily = true
         justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true
         keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = true
+        meaningLangMode = MeaningLangMode.WORD_LANG
         keepPlaying = true; playThrough = PlayThrough.SKANDHA; keepScreenOn = true; speed = 1f; pauseScale = 1f
         save {
             putBoolean("followSystem", true); putString("lightTheme", "Prabhat"); putString("darkTheme", "Sandhya"); putString("theme", "Prabhat")
             putFloat("textScale", 1f); putFloat("lineScale", 1f); putBoolean("showDaily", true)
             putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true)
             putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", true)
+            putString("meaningLangMode", MeaningLangMode.WORD_LANG.name)
             putBoolean("keepPlaying", true); putString("playThrough", PlayThrough.SKANDHA.name); putBoolean("keepScreenOn", true); putFloat("speed", 1f); putFloat("pauseScale", 1f)
         }
         restartNarration()
@@ -339,6 +433,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun removePack(s: Int) { packs[s] = PackState.NONE }
 
     // ---------- player ----------
+    val ytPlayer by lazy { YouTubeStreamPlayer(getApplication()) }
+
     var queue by mutableStateOf(SampleData.adhyaya1)
         private set
     var index by mutableStateOf(0)
@@ -362,7 +458,27 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** The piece of the current shloka being said now (an index into its plan), or -1. */
     var activeSegment by mutableStateOf(-1)
         private set
-    val isPlaying: Boolean get() = audioStatus == AudioStatus.PREPARING || audioStatus == AudioStatus.PLAYING
+
+    val isPlaying: Boolean
+        get() = if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            ytPlayer.isPlaying
+        } else {
+            audioStatus == AudioStatus.PREPARING || audioStatus == AudioStatus.PLAYING
+        }
+
+    val effectiveAudioStatus: AudioStatus
+        get() = if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            when (ytPlayer.status) {
+                StreamStatus.IDLE -> AudioStatus.IDLE
+                StreamStatus.PREPARING -> AudioStatus.PREPARING
+                StreamStatus.PLAYING -> AudioStatus.PLAYING
+                StreamStatus.PAUSED -> AudioStatus.PAUSED
+                StreamStatus.ENDED -> AudioStatus.ENDED
+                StreamStatus.ERROR -> AudioStatus.IDLE
+            }
+        } else {
+            audioStatus
+        }
 
     // ---- narration settings ----
     /** 0.6 shorter, 1.0 normal, 1.5 longer: scales every pause between sentences, lines and verses. */
@@ -378,12 +494,12 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
 
     /** The chosen voice for a language; Sanskrit is read with the Hindi voice. */
-    fun voiceFor(lang: Lang): String? = when (lang) { Lang.HI, Lang.SA -> voiceHi; Lang.BN -> voiceBn; Lang.EN -> voiceEn }
+    fun voiceFor(lang: Lang): String? = when (lang) { Lang.HI, Lang.SA -> voiceHi; Lang.BN -> voiceBn; Lang.OR -> voiceBn; Lang.EN -> voiceEn }
 
     fun chooseVoice(lang: Lang, name: String?) {
         when (lang) {
             Lang.HI, Lang.SA -> { voiceHi = name; save { putString("voiceHi", name) } }
-            Lang.BN -> { voiceBn = name; save { putString("voiceBn", name) } }
+            Lang.BN, Lang.OR -> { voiceBn = name; save { putString("voiceBn", name) } }
             Lang.EN -> { voiceEn = name; save { putString("voiceEn", name) } }
         }
         restartNarration()
@@ -409,6 +525,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
         val sample = when (lang) {
             Lang.HI, Lang.SA -> "श्रीमद्भागवत महापुराण का पाठ सुनिए।"
             Lang.BN -> "শ্রীমদ্ভাগবত মহাপুরাণ শুনুন।"
+            Lang.OR -> "ଶ୍ରୀମଦ୍ଭାଗବତ ମହାପୁରାଣ ଶୁଣନ୍ତୁ।"
             Lang.EN -> "Listen to the Shrimad Bhagavat Mahapuran."
         }
         narrator.preview(lang, speed, name, sample)
@@ -437,6 +554,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
 
     /** Chapter and Skandha titles follow the reading language; with Sanskrit they follow the app language. Labels and menus always follow the app language. */
     val titleLang: Lang get() = if (readLang == Lang.SA) uiLang else readLang
+
+    fun langFor(zone: LangZone): Lang = zoneLang(zone, uiLang, titleLang)
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()
@@ -513,11 +632,54 @@ class AppState(app: Application) : AndroidViewModel(app) {
         if (verses.isEmpty()) return
         queue = verses; invalidatePlans()
         hasSession = true
-        startAt(startAt.coerceIn(0, verses.lastIndex), 0)
+        if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            playYouTubeStreamForCurrentChapter()
+        } else {
+            startAt(startAt.coerceIn(0, verses.lastIndex), 0)
+        }
+    }
+
+    fun playYouTubeStreamForCurrentChapter() {
+        val v = current
+        val title = SampleData.adhyayaTitle(v.skandha, v.adhyaya, titleLang, strings)
+        val exact = RecitationStream.getVideo(v.skandha, v.adhyaya, audioLang)
+        val query = RecitationStream.getQuery(v.skandha, v.adhyaya, audioLang)
+        audioMode = AudioMode.YOUTUBE_STREAM
+        hasSession = true
+        if (focus.acquire()) {
+            runCatching { PlaybackService.start(getApplication()) }
+            if (exact != null) {
+                ytPlayer.playVideo(exact.videoId, title, exact.author)
+            } else {
+                ytPlayer.playSearchQuery(query, title, query)
+            }
+        }
     }
 
     fun togglePlay() {
-        if (!hasSession) { playVerses(SampleData.adhyaya1, (lastVerse - 1).coerceAtLeast(0)); return }
+        if (!hasSession) {
+            if (audioMode == AudioMode.YOUTUBE_STREAM) {
+                playYouTubeStreamForCurrentChapter()
+            } else {
+                playVerses(SampleData.adhyaya1, (lastVerse - 1).coerceAtLeast(0))
+            }
+            return
+        }
+
+        if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            if (ytPlayer.isPlaying) {
+                ytPlayer.pause()
+            } else if (ytPlayer.status == StreamStatus.PAUSED) {
+                if (focus.acquire()) {
+                    runCatching { PlaybackService.start(getApplication()) }
+                    ytPlayer.resume()
+                }
+            } else {
+                playYouTubeStreamForCurrentChapter()
+            }
+            return
+        }
+
         when {
             isPlaying -> pause()
             audioStatus == AudioStatus.ENDED -> startAt(0, 0)
@@ -525,11 +687,18 @@ class AppState(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun pausePlayback() { if (isPlaying) pause() }
+    fun pausePlayback() {
+        if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            if (ytPlayer.isPlaying) ytPlayer.pause()
+        } else {
+            if (isPlaying) pause()
+        }
+    }
 
     /** Fully stops audio, cancels background narration, and removes the floating mini player. */
     fun dismissPlayer() {
         pause()
+        ytPlayer.stop()
         hasSession = false
         queue = emptyList()
         activeSegment = -1
@@ -538,7 +707,21 @@ class AppState(app: Application) : AndroidViewModel(app) {
     }
 
     fun updateAudioMode(mode: AudioMode) {
-        audioMode = mode
+        if (audioMode == mode) return
+        val wasPlaying = isPlaying
+        if (mode == AudioMode.YOUTUBE_STREAM) {
+            pause()
+            audioMode = AudioMode.YOUTUBE_STREAM
+            if (wasPlaying || hasSession) {
+                playYouTubeStreamForCurrentChapter()
+            }
+        } else {
+            ytPlayer.pause()
+            audioMode = AudioMode.KARAOKE_PAATH
+            if (wasPlaying || hasSession) {
+                resume()
+            }
+        }
     }
 
     /** Called when the app leaves the screen: honours "keep playing in the background". */
@@ -547,10 +730,26 @@ class AppState(app: Application) : AndroidViewModel(app) {
         if (!keepPlaying) pausePlayback()
     }
 
-    fun next() = moveTo(index + 1)
+    fun next() {
+        if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            playNextChapter()
+        } else {
+            moveTo(index + 1)
+        }
+    }
 
     /** Like any player: a second press goes back a shloka, but if the shloka is well under way it starts it over. */
-    fun previous() = moveTo(if (activeSegment > 0 || progress > 0.25f) index else index - 1)
+    fun previous() {
+        if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            val v = queue.firstOrNull() ?: return
+            SampleData.neighbour(v.skandha, v.adhyaya, -1)?.let { (s, a) ->
+                queue = SampleData.versesFor(s, a)
+                playYouTubeStreamForCurrentChapter()
+            }
+        } else {
+            moveTo(if (activeSegment > 0 || progress > 0.25f) index else index - 1)
+        }
+    }
 
     fun seekTo(i: Int) = moveTo(i)
 
@@ -559,17 +758,29 @@ class AppState(app: Application) : AndroidViewModel(app) {
 
     fun toggleLoop() { loop = !loop }
 
+    fun updateSpeed(newSpeed: Float) {
+        speed = newSpeed
+        save { putFloat("speed", speed) }
+        ytPlayer.setPlaybackSpeed(speed)
+        if (isPlaying && audioMode == AudioMode.KARAOKE_PAATH) startAt(index, activeSegment.coerceAtLeast(0))
+    }
+
     fun cycleSpeed() {
         val steps = listOf(0.75f, 1.0f, 1.25f, 1.5f)
         speed = steps[(steps.indexOf(speed) + 1) % steps.size]
         save { putFloat("speed", speed) }
-        if (isPlaying) startAt(index, activeSegment.coerceAtLeast(0))
+        ytPlayer.setPlaybackSpeed(speed)
+        if (isPlaying && audioMode == AudioMode.KARAOKE_PAATH) startAt(index, activeSegment.coerceAtLeast(0))
     }
 
     /** After the language, voice or pause length changes: rebuild the plans and carry on from the start of the shloka. */
     fun restartNarration() {
         invalidatePlans()
-        if (isPlaying) startAt(index, 0) else { activeSegment = -1; resumeSeg = 0 }
+        if (audioMode == AudioMode.YOUTUBE_STREAM) {
+            if (isPlaying) playYouTubeStreamForCurrentChapter()
+        } else {
+            if (isPlaying) startAt(index, 0) else { activeSegment = -1; resumeSeg = 0 }
+        }
     }
 
     /** At the end of a chapter: carries straight on into the next one. */
@@ -732,7 +943,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     override fun onCleared() {
         flushPendingSaves()
         silentJob?.cancel(); sleepJob?.cancel()
-        narrator.shutdown(); focus.release()
+        narrator.shutdown(); ytPlayer.release(); focus.release()
         super.onCleared()
     }
 }

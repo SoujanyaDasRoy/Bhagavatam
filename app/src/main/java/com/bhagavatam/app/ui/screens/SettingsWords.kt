@@ -94,6 +94,23 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
     val s = state.strings
     val ui = state.uiLang
     val ctx = LocalContext.current
+    val saveFile = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri != null) {
+            val r = com.bhagavatam.app.data.UserBackup.export(ctx, uri)
+            android.widget.Toast.makeText(ctx, if (r.isSuccess) tr(ui, "Backup saved.", "बैकअप सहेजा गया।", "ব্যাকআপ সংরক্ষিত হয়েছে।") else tr(ui, "Could not save the backup.", "बैकअप नहीं सहेजा जा सका।", "ব্যাকআপ সংরক্ষণ করা যায়নি।"), android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
+    val openFile = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            val r = com.bhagavatam.app.data.UserBackup.import(ctx, uri)
+            if (r.isSuccess) {
+                android.widget.Toast.makeText(ctx, tr(ui, "Restored. The app will close; open it again.", "वापस लाया गया। ऐप बंद होगा; फिर से खोलें।", "ফিরিয়ে আনা হয়েছে। অ্যাপ বন্ধ হবে; আবার খুলুন।"), android.widget.Toast.LENGTH_LONG).show()
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({ android.os.Process.killProcess(android.os.Process.myPid()) }, 1500)
+            } else {
+                android.widget.Toast.makeText(ctx, tr(ui, "That file is not a Bhagavatam backup.", "यह फ़ाइल Bhagavatam का बैकअप नहीं है।", "এটি Bhagavatam-এর ব্যাকআপ নয়।"), android.widget.Toast.LENGTH_LONG).show()
+            }
+        }
+    }
     SubPage(wordsTitle(ui), s.tabMe, onBack) {
         SettingsGroup(
             tr(ui, "Word meanings", "शब्दों के अर्थ", "শব্দের অর্থ"),
@@ -101,6 +118,26 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
                 "चालू होने पर किसी शब्द को दबाए रखने पर उसका अर्थ Wiktionary से मँगाया जाता है। केवल वही एक शब्द भेजा जाता है। बंद रखने पर ऐप पूरी तरह ऑफ़लाइन रहता है।",
                 "চালু থাকলে কোনো শব্দ চেপে ধরলে Wiktionary থেকে তার অর্থ আনা হয়। শুধু সেই একটি শব্দ পাঠানো হয়। বন্ধ রাখলে অ্যাপ পুরোপুরি অফলাইন থাকে।"),
         ) {
+            val meaningLangOptions = listOf(
+                tr(ui, "Word's language", "शब्द की भाषा", "শব্দের ভাষা"),
+                tr(ui, "English", "अंग्रेज़ी", "ইংরেজি"),
+                tr(ui, "App language", "ऐप की भाषा", "অ্যাপের ভাষা")
+            )
+            Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
+                Text(
+                    tr(ui, "Meaning language", "अर्थ की भाषा", "অর্থের ভাষা"),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Brand.Secondary
+                )
+                Spacer(Modifier.height(6.dp))
+                Segmented(
+                    meaningLangOptions,
+                    state.meaningLangMode.ordinal,
+                    { state.updateMeaningLangMode(com.bhagavatam.app.state.MeaningLangMode.entries[it]) }
+                )
+            }
+            RowDivider()
             SwitchRow(tr(ui, "Look up meanings online", "अर्थ ऑनलाइन खोजें", "অর্থ অনলাইনে খুঁজুন"), state.onlineMeanings, state::updateOnlineMeanings)
         }
         SettingsGroup(
@@ -114,6 +151,14 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
                     }
                 }
             }
+        }
+        SettingsGroup(
+            tr(ui, "Back up your data", "अपना डेटा सुरक्षित रखें", "আপনার ডেটা ব্যাকআপ"),
+            tr(ui, "One file with your notes, highlights, saved words, bookmarks, position and settings. Restore it on a new phone or after reinstalling.", "आपके नोट, हाइलाइट, सहेजे शब्द, बुकमार्क, स्थान और सेटिंग की एक फ़ाइल। नए फ़ोन पर या दोबारा इंस्टॉल करने के बाद वापस लाएँ।", "আপনার নোট, হাইলাইট, সংরক্ষিত শব্দ, বুকমার্ক, অবস্থান ও সেটিংসের একটি ফাইল। নতুন ফোনে বা আবার ইনস্টল করার পর ফিরিয়ে আনুন।"),
+        ) {
+            ValueRow(tr(ui, "Save a backup file", "बैकअप फ़ाइल सहेजें", "ব্যাকআপ ফাইল সংরক্ষণ"), "", Ic.Download) { saveFile.launch("Bhagavatam-backup.json") }
+            RowDivider()
+            ValueRow(tr(ui, "Restore from a backup file", "बैकअप फ़ाइल से वापस लाएँ", "ব্যাকআপ ফাইল থেকে ফিরিয়ে আনুন"), "", Ic.History) { openFile.launch(arrayOf("application/json", "*/*")) }
         }
         val count = state.annotations.size
         SettingsGroup(

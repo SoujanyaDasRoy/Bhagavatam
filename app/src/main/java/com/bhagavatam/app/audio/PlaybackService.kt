@@ -58,7 +58,7 @@ class PlaybackService : Service() {
         }
         // Follow the player: whenever what is playing, or whether it is, changes, refresh the notification and the session.
         scope.launch {
-            snapshotFlow { Triple(state.audioStatus, state.index, state.hasSession) }.collectLatest { (status, _, _) -> render(status) }
+            snapshotFlow { Triple(state.effectiveAudioStatus, state.index, state.hasSession) }.collectLatest { (status, _, _) -> render(status) }
         }
     }
 
@@ -70,7 +70,7 @@ class PlaybackService : Service() {
             ACTION_CLOSE -> { state.pausePlayback(); stopSelf() }
         }
         // Android requires startForeground soon after startForegroundService, even if there is nothing to show yet.
-        if (!foreground) render(state.audioStatus)
+        if (!foreground) render(state.effectiveAudioStatus)
         return START_NOT_STICKY
     }
 
@@ -84,8 +84,16 @@ class PlaybackService : Service() {
             return
         }
         val v = s.current
-        val title = SampleData.adhyayaTitle(v.skandha, v.adhyaya, s.titleLang, s.strings)
-        val line = if (v.skandha == 0) "${s.strings.mahatmya} ${v.adhyaya}.${v.numLabel}" else "${v.skandha}.${v.adhyaya}.${v.numLabel}"
+        val baseTitle = SampleData.adhyayaTitle(v.skandha, v.adhyaya, s.titleLang, s.strings)
+        val isYt = s.audioMode == AudioMode.YOUTUBE_STREAM
+        val title = if (isYt) "$baseTitle (Recitation)" else baseTitle
+        val line = if (isYt) {
+            s.ytPlayer.currentSubtitle.ifEmpty {
+                if (v.skandha == 0) "${s.strings.mahatmya} ${v.adhyaya}" else "${v.skandha}.${v.adhyaya}"
+            }
+        } else {
+            if (v.skandha == 0) "${s.strings.mahatmya} ${v.adhyaya}.${v.numLabel}" else "${v.skandha}.${v.adhyaya}.${v.numLabel}"
+        }
         session.setMetadata(MediaMetadata.Builder().putString(MediaMetadata.METADATA_KEY_TITLE, title).putString(MediaMetadata.METADATA_KEY_ARTIST, line).build())
         val actions = PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS
         session.setPlaybackState(PlaybackState.Builder().setActions(actions).setState(if (playing) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1f).build())

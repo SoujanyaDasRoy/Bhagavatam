@@ -121,4 +121,4 @@ internal fun EntryGroup(title: String, entries: List<Entry>) {
 }
 
 /** Name of a language in its own script. */
-internal fun langName(l: Lang) = when (l) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.EN -> "English" }
+internal fun langName(l: Lang) = when (l) { Lang.SA -> "संस्कृत"; Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.OR -> "ଓଡ଼ିଆ"; Lang.EN -> "English" }

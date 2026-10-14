@@ -38,7 +38,11 @@ class MainActivity : ComponentActivity() {
             var ready by remember { mutableStateOf(false) }
             LaunchedEffect(Unit) {
                 val t0 = System.currentTimeMillis()
-                withContext(Dispatchers.IO) { ContentDb.open(applicationContext) }
+                withContext(Dispatchers.IO) {
+                    ContentDb.open(applicationContext)
+                    com.bhagavatam.app.data.SearchIndex.open(applicationContext)
+                    com.bhagavatam.app.data.DictionaryDb.open(applicationContext)
+                }
                 val left = 700 - (System.currentTimeMillis() - t0)
                 if (left > 0) delay(left)
                 ready = true

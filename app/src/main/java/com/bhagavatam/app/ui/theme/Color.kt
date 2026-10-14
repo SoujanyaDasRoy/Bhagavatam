@@ -65,14 +65,14 @@ enum class ReaderTheme(val colors: ReaderColors) {
             Color(0x1A0F7075), Color(0xFFE3D4B6), Color(0xFF3B2F20), Color(0xFFFAF0DC), false)
     ),
     Sandhya(
-        ReaderColors("Sandhya", Color(0xFF12141C), Color(0xFF1C2030), Color(0xFFE9E4D8), Color(0xFFA8A294),
-            Color(0xFF2E3346), Color(0xFFF0A868), Color(0xFFD9B45E), Color(0xFFF2C38B), Color(0xFF6FD0D3),
-            Color(0x1F4FC3C7), Color(0xFF2E3346), Color(0xFFF0A868), Color(0xFF12141C), true)
+        ReaderColors("Sandhya", Color(0xFF151412), Color(0xFF211F1C), Color(0xFFEDE8DC), Color(0xFFB4AE9F),
+            Color(0xFF423E38), Color(0xFFF2B27A), Color(0xFFD9B45E), Color(0xFFF2C38B), Color(0xFF6FD0D3),
+            Color(0x1F4FC3C7), Color(0xFF2D2A26), Color(0xFFF2B27A), Color(0xFF151412), true)
     ),
     Ratri(
-        ReaderColors("Ratri", Color(0xFF000000), Color(0xFF0B0B0F), Color(0xFFD9D4C8), Color(0xFF8F8A7F),
-            Color(0xFF26262C), Color(0xFFF0A868), Color(0xFFD9B45E), Color(0xFFE6B67E), Color(0xFF6FD0D3),
-            Color(0x224FC3C7), Color(0xFF26262C), Color(0xFFF0A868), Color(0xFF000000), true)
+        ReaderColors("Ratri", Color(0xFF000000), Color(0xFF12110F), Color(0xFFE2DDD1), Color(0xFF9F9A8D),
+            Color(0xFF36322D), Color(0xFFF2B27A), Color(0xFFD9B45E), Color(0xFFE6B67E), Color(0xFF6FD0D3),
+            Color(0x224FC3C7), Color(0xFF1D1B18), Color(0xFFF2B27A), Color(0xFF000000), true)
     ),
 }
 

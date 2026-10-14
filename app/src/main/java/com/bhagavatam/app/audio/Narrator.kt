@@ -188,6 +188,7 @@ class Narrator(private val app: Application, private val listener: Listener) {
         fun localeFor(lang: Lang): Locale = when (lang) {
             Lang.HI, Lang.SA -> Locale("hi", "IN")
             Lang.BN -> Locale("bn", "IN")
+            Lang.OR -> Locale("or", "IN")
             Lang.EN -> Locale("en", "IN")
         }
 

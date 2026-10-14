@@ -1,11 +1,23 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
-// APK files are named Bhagavatam-debug.apk and Bhagavatam-release.apk.
-base { archivesName.set("Bhagavatam") }
+// APK files are named Bhagavatam-v1.2.1-debug.apk and Bhagavatam-v1.2.1-release.apk.
+base { archivesName.set("Bhagavatam-v1.2.1") }
+
+// The maker's Telegram username, from local.properties (telegram.user=name). Blank hides the "Report an error" button.
+val telegramUser = rootProject.file("local.properties").takeIf { it.exists() }
+    ?.let { f -> Properties().apply { f.inputStream().use { load(it) } }.getProperty("telegram.user") }.orEmpty().trim().removePrefix("@")
+
+// Release signing key: release.storeFile / storePassword / keyAlias / keyPassword in local.properties (git-ignored).
+// Without them the release build falls back to the debug key, which cannot update an app signed with the release key.
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
 
 android {
     namespace = "com.bhagavatam.app"
@@ -15,8 +27,20 @@ android {
         applicationId = "com.bhagavatam.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.6.0"
+        versionCode = 15
+        versionName = "1.2.1"
+        buildConfigField("String", "TELEGRAM_USER", "\"" + telegramUser + "\"")
+    }
+
+    signingConfigs {
+        if (localProps.getProperty("release.storeFile") != null) {
+            create("bhagavatamRelease") {
+                storeFile = file(localProps.getProperty("release.storeFile"))
+                storePassword = localProps.getProperty("release.storePassword")
+                keyAlias = localProps.getProperty("release.keyAlias")
+                keyPassword = localProps.getProperty("release.keyPassword")
+            }
+        }
     }
 
     buildTypes {
@@ -24,8 +48,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Private app, not on the Play Store: sign with the local debug key so the APK installs directly.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("bhagavatamRelease") ?: signingConfigs.getByName("debug")
         }
     }
     packaging {
@@ -59,6 +82,14 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
+
+    // Media3 / ExoPlayer & OkHttp for direct, ad-free streaming & caching
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.datasource.okhttp)
+    implementation(libs.androidx.media3.database)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.okhttp)
+
     // Installs the Compose baseline profiles on sideloaded APKs, so scrolling is smooth from the first launch.
     implementation(libs.androidx.profileinstaller)
     debugImplementation(libs.androidx.ui.tooling)

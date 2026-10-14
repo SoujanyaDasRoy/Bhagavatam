@@ -1,0 +1,27 @@
+{
+  "_note": "Name aliases and related words for search.db. 'forms' must all occur in the book: build_index.py refuses to build otherwise (aliases by loose key, related words by exact form). 'typed' lists spellings people type that need not occur in the book; they only point at the group. Aliases join spellings of one name (matched by loose key). Related words join words for the same thing (matched by exact form, never by loose key: the loose key would join मगर with नगर and ग्राह with ग्रह). The first form of a group is the one shown to people.",
+  "aliases": [
+    {"id": "narasimha", "forms": ["Narasiṃha", "Nṛsiṃha", "नृसिंह", "नरसिंह", "নৃসিংহ", "নরসিংহ"], "typed": ["Narasimha", "Nrisimha", "Nrisingha", "Narasingha", "Nrusimha", "Narsimha", "Nrisinha"]},
+    {"id": "prahlada", "forms": ["Prahlāda", "प्रह्लाद", "প্রহ্লাদ"], "typed": ["Prahlada", "Prahlad", "Pralhad", "Prahalad", "Prahlaad", "Pralad"]},
+    {"id": "krishna", "forms": ["Kṛṣṇa", "कृष्ण", "কৃষ্ণ"], "typed": ["Krishna", "Krsna", "Krshna", "Krishn", "Krushna", "Kishna", "Krisna"]},
+    {"id": "vishnu", "forms": ["Viṣṇu", "विष्णु", "বিষ্ণু"], "typed": ["Vishnu", "Visnu", "Bishnu", "Vishnoo"]},
+    {"id": "brahma", "forms": ["Brahmā", "ब्रह्मा", "ব্রহ্মা"], "typed": ["Brahma", "Bramha", "Brahmaa", "Bramma"]},
+    {"id": "shiva", "forms": ["Śiva", "शिव", "শিব"], "typed": ["Shiva", "Siva", "Shiv", "Sib"]},
+    {"id": "parikshit", "forms": ["Parīkṣit", "परीक्षित", "পরীক্ষিত"], "typed": ["Parikshit", "Pariksit", "Parikshita", "Parikchit"]},
+    {"id": "yudhishthira", "forms": ["Yudhiṣṭhira", "युधिष्ठिर", "যুধিষ্ঠির"], "typed": ["Yudhishthira", "Yudhisthira", "Yudhisthir", "Yudhishtir", "Yudishtir"]},
+    {"id": "arjuna", "forms": ["Arjuna", "अर्जुन", "অর্জুন"], "typed": ["Arjun", "Orjun"]},
+    {"id": "hiranyakashipu", "forms": ["Hiraṇyakaśipu", "हिरण्यकशिपु", "হিরণ্যকশিপু"], "typed": ["Hiranyakashipu", "Hiranyakasipu", "Hiranyakashyap", "Hiranyakashipu"]},
+    {"id": "dhruva", "forms": ["Dhruva", "ध्रुव", "ধ্রুব"], "typed": ["Dhruv", "Dhrub", "Dhruba"]},
+    {"id": "kapila", "forms": ["Kapila", "कपिल", "কপিল"], "typed": ["Kapil"]},
+    {"id": "gajendra", "forms": ["Gajendra", "गजेन्द्र", "গজেন্দ্র"], "typed": ["Gajender", "Gajendar", "Gojendro"]},
+    {"id": "uddhava", "forms": ["Uddhava", "उद्धव", "উদ্ধব"], "typed": ["Uddhav", "Udhav", "Uddhab"]},
+    {"id": "vamana", "forms": ["Vāmana", "वामन", "বামন"], "typed": ["Vamana", "Vaman", "Bamon"]},
+    {"id": "varaha", "forms": ["Varāha", "वराह", "বরাহ"], "typed": ["Varaha", "Varah", "Baraha"]},
+    {"id": "bhishma", "forms": ["Bhīṣma", "भीष्म", "ভীষ্ম"], "typed": ["Bhishma", "Bhisma", "Bhishm"]},
+    {"id": "narada", "forms": ["Nārada", "नारद", "নারদ"], "typed": ["Narada", "Narad"]}
+  ],
+  "related": [
+    {"id": "crocodile", "forms": ["crocodile", "crocodiles", "alligator", "alligators", "मगर", "मगरमच्छ", "ग्राह", "ग्राहः", "কুমীর", "গ্রাহ"], "typed": ["কুমির", "crocodil", "aligator"]},
+    {"id": "elephant", "forms": ["elephant", "elephants", "हाथी", "हाथियों", "হাতি", "গজ", "गज", "गजराज", "গজরাজ"], "typed": ["elephent", "हाथि", "হাতী"]}
+  ]
+}

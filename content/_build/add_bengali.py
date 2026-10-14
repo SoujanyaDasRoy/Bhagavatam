@@ -208,5 +208,9 @@ if __name__ == '__main__':
     path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'content.db')
     stats, issues = apply(path, version=int(sys.argv[2]) if len(sys.argv) > 2 else None)
     print(stats, 'issues', len(issues))
+    # Make the Bengali text look like the Hindi: translation only (no speaker line, Sanskrit chunk, footnote line or trailing number).
+    import clean_bn_text
+    total, changed, kinds, _ = clean_bn_text.run(path, backup=False)
+    print('cleaned Bengali text:', changed, 'of', total, kinds)
     for i in issues[:20]:
         print('  ', i)

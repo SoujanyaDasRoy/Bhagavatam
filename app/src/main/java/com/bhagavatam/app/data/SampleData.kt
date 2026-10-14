@@ -12,7 +12,10 @@ import java.util.concurrent.ConcurrentHashMap
  * so far; elsewhere `bn` is empty and the app says so (see [SampleData.hasBengali]).
  */
 
-enum class Lang(val code: String) { SA("sa"), HI("hi"), BN("bn"), EN("en") }
+enum class Lang(val code: String) { SA("sa"), HI("hi"), BN("bn"), EN("en"), OR("or") }
+
+/** Odia is machine-read from the Gita Press scan and not yet reviewed by an Odia reader; words the readers disagreed on are marked and shown underlined in red. */
+const val ODIA_READY = true
 
 /** Bengali is offered as a reading layer. It is partial (see [SampleData.hasBengali]); chapters without it fall back to Hindi for listening and say so when read. */
 const val BENGALI_READY = true
@@ -28,6 +31,7 @@ data class Verse(
     val en: String,
     val hi: String,
     val bn: String = "",
+    val or: String = "",
     val speaker: String? = null,
     /** Last shloka number when one block covers a range, e.g. 5-6. */
     val numEnd: Int = num,
@@ -37,18 +41,23 @@ data class Verse(
     val hiFrom: Int? = null,
     /** Same for the Bengali translation: for a joint verse, the verse that carries it. */
     val bnFrom: Int? = null,
+    /** Same for the Odia translation. */
+    val orFrom: Int? = null,
+    /** Words of this verse's translations that may be misread (see content/_build/flag_doubtful.py), by language code. */
+    val doubt: Map<String, Set<String>> = emptyMap(),
 ) {
     val ref get() = "$skandha.$adhyaya.$num"
 
     /** True when this block carries its own text in [lang] (grouped verses print the translation only once). */
-    fun hasText(lang: Lang) = when (lang) { Lang.HI -> hi; Lang.BN -> bn; Lang.EN -> en; else -> "x" }.isNotEmpty()
+    fun hasText(lang: Lang) = when (lang) { Lang.HI -> hi; Lang.BN -> bn; Lang.EN -> en; Lang.OR -> or; else -> "x" }.isNotEmpty()
 
     val numLabel get() = if (numEnd > num) "$num-$numEnd" else "$num"
 
     fun translation(lang: Lang): String {
-        val t = when (lang) { Lang.HI -> hi; Lang.BN -> bn; else -> en }
+        val t = when (lang) { Lang.HI -> hi; Lang.BN -> bn; Lang.OR -> or; else -> en }
         if (t.isNotEmpty()) return t
         return when (lang) {
+            Lang.OR -> if (orFrom != null) "→ ଶ୍ଳୋକ $orFrom ଅନୁବାଦ ସହିତ" else "ଓଡ଼ିଆ ଅନୁବାଦ ଏବେ ଉପଲବ୍ଧ ନାହିଁ।"
             Lang.BN -> if (bnFrom != null) "→ শ্লোক $bnFrom-এর অনুবাদের সঙ্গে" else "বাংলা অনুবাদ এখনও যোগ করা হয়নি।"
             Lang.HI -> if (hiFrom != null) "\u2192 \u0936\u094d\u0932\u094b\u0915 $hiFrom \u0915\u0947 \u092d\u093e\u0935\u093e\u0930\u094d\u0925 \u0915\u0947 \u0938\u093e\u0925" else "\u092d\u093e\u0935\u093e\u0930\u094d\u0925 \u0909\u092a\u0932\u092c\u094d\u0927 \u0928\u0939\u0940\u0902\u0964"
             else -> if (enFrom != null) "\u2192 Translated together with verse $enFrom" else "No English translation is printed for this verse."
@@ -85,7 +94,8 @@ data class Skandha(
 }
 
 /** Colophon ("Thus ends ...") and Gita Press notes printed after the last shloka of a chapter. */
-data class ChapterEnd(val colophon: String, val notes: String)
+/** `sanskrit` is the printed closing line ("iti shrimad bhagavate ...") when the book has it for this chapter, else empty. */
+data class ChapterEnd(val colophon: String, val notes: String, val sanskrit: String = "")
 
 data class GlossaryTerm(val term: String, val dev: String, val meaning: String)
 
@@ -160,8 +170,11 @@ object SampleData {
     private val titlesEn = HashMap<String, String>()
     private val titlesHi = HashMap<String, String>()
     private val titlesBn = HashMap<String, String>()
+    private val titlesOr = HashMap<String, String>()
     private val bengaliChapters = HashSet<String>()
     @Volatile private var hasBn = false
+    @Volatile private var hasOr = false
+    private val doubtByVerse = HashMap<Long, MutableMap<String, MutableSet<String>>>()
     @Volatile private var hasIastPlain = false
     private val cache = ConcurrentHashMap<String, List<Verse>>()
     private val verseCounts = HashMap<String, Int>()
@@ -173,9 +186,16 @@ object SampleData {
     @Synchronized
     fun attach(d: SQLiteDatabase) {
         db = d
-        cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
+        cache.clear(); titlesEn.clear(); titlesHi.clear(); titlesBn.clear(); titlesOr.clear(); bengaliChapters.clear(); verseCounts.clear(); endCache.clear()
         // An older text database has no Bengali columns; the app must still open it.
         hasBn = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "bn") found = true; found }
+        doubtByVerse.clear()
+        runCatching {
+            d.rawQuery("SELECT verse_id, lang, word FROM doubt", null).use { c ->
+                while (c.moveToNext()) doubtByVerse.getOrPut(c.getLong(0)) { HashMap() }.getOrPut(c.getString(1)) { HashSet() }.add(c.getString(2))
+            }
+        }
+        hasOr = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "or") found = true; found }
         hasIastPlain = d.rawQuery("PRAGMA table_info(verse)", null).use { c -> var found = false; while (c.moveToNext()) if (c.getString(1) == "iast_plain") found = true; found }
         val titleBn = if (hasBn) "title_bn" else "NULL"
         d.rawQuery("SELECT skandha, chapter, title_en, title_hi, verse_count, $titleBn FROM chapter", null).use { c ->
@@ -187,6 +207,7 @@ object SampleData {
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)
             }
         }
+        // title_or is not loaded: it holds the boxed Sanskrit heading read by software (often garbled), not the Odia chapter title.
         if (hasBn) d.rawQuery("SELECT DISTINCT skandha, chapter FROM verse WHERE bn IS NOT NULL AND bn <> ''", null).use { c ->
             while (c.moveToNext()) bengaliChapters.add("${c.getInt(0)}.${c.getInt(1)}")
         }
@@ -202,6 +223,10 @@ object SampleData {
             Lang.HI, Lang.SA -> titlesHi[k].orEmpty().ifEmpty { titlesEn[k].orEmpty() }
             // A chapter without a Bengali title falls back to Hindi (the same script family), then English.
             Lang.BN -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }.ifEmpty { titlesEn[k].orEmpty() }
+            // A chapter without an Odia title shows the app language's title, then English (the rule's fallback order).
+            Lang.OR -> titlesOr[k].orEmpty().ifEmpty {
+                when (s10n) { HindiStrings -> titlesHi[k].orEmpty(); BengaliStrings -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }; else -> "" }
+            }.ifEmpty { titlesEn[k].orEmpty() }
             else -> titlesEn[k].orEmpty()
         }
         return t.ifEmpty { "${s10n.adhyaya} ${localDigits(a.toString(), lang)}" }
@@ -227,60 +252,69 @@ object SampleData {
             if (!c.moveToFirst()) return ChapterEnd("", "")
             val notesEn = c.getString(0).orEmpty(); val notesHi = c.getString(1).orEmpty(); val colEn = c.getString(2).orEmpty()
             fun clean(t: String) = t.lines().map { it.removePrefix("- ").trim() }.filter { it.isNotEmpty() && it != "*" && !legacyGlyphs.containsMatchIn(it) }.joinToString("\n").tidyDashes()
+            val sanskritLine = Regex("इति श्रीमद्.*?॥\\s*[०-९0-9]+\\s*॥")
+                .find(notesHi.lines().joinToString(" ") { it.removePrefix("- ").trim() }.replace(Regex("\\s+"), " "))?.value.orEmpty().tidyDashes()
             if (lang == Lang.HI || lang == Lang.SA) {
                 val flat = notesHi.lines().joinToString(" ") { it.removePrefix("- ").trim() }.replace(Regex("\\s+"), " ")
                 val m = Regex("इति श्रीमद्.*?॥\\s*[०-९0-9]+\\s*॥").find(flat)
                 val colophon = m?.value.orEmpty()
                 val rest = if (m != null) notesHi.lines().joinToString("\n").replace(Regex("(?s)- \\*\\s*\\n- इति श्रीमद्.*?॥\\s*[०-९0-9]+\\s*॥\\s*\\n?"), "") else notesHi
-                return ChapterEnd(colophon.tidyDashes(), clean(rest))
+                return ChapterEnd(colophon.tidyDashes(), clean(rest), sanskritLine)
             }
             val colophon = colEn.substringBefore("\n\n### Notes").removeSuffix("*").trim()
-            return ChapterEnd(colophon.tidyDashes(), clean(notesEn))
+            return ChapterEnd(colophon.tidyDashes(), clean(notesEn), sanskritLine)
         }
     }
 
     fun hasTitle(s: Int, a: Int) = titlesEn.containsKey("$s.$a")
 
+    @Synchronized
     private fun readVerses(where: String, args: Array<String>): List<Verse> {
         val d = db ?: return emptyList()
         val out = ArrayList<Verse>()
         var prevChapter = ""
-        d.rawQuery(
-            "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"} FROM verse $where ORDER BY skandha, chapter, num",
-            args,
-        ).use { c ->
-            while (c.moveToNext()) {
-                val key = "${c.getInt(0)}.${c.getInt(1)}"
-                val firstOfChapter = key != prevChapter
-                prevChapter = key
-                var sa = c.getString(5).orEmpty()
-                var hi = c.getString(7).orEmpty()
-                var speaker = c.getString(4)?.takeIf { it.isNotBlank() }
-                if (firstOfChapter) {
-                    // In the source PDFs the chapter heading ran into the first shloka. The reader shows the title once, above the text.
-                    val title = titlesHi[key].orEmpty()
-                    val cleanSa = stripLeadingTitle(sa, title)
-                    if (cleanSa != sa) {
-                        sa = cleanSa
-                        // What is left on top is the speaker line, which every other shloka keeps in its own field.
-                        val head = sa.substringBefore('\n')
-                        if (head.contains("उवाच")) { if (speaker == null) speaker = head.trim(); sa = sa.substringAfter('\n', "") }
+        try {
+            d.rawQuery(
+                "SELECT skandha, chapter, num, num_end, speaker, sa, iast, hi, en, en_from, hi_from, ${if (hasBn) "bn, bn_from" else "NULL, NULL"}, ${if (hasOr) "\"or\", or_from" else "NULL, NULL"}, rowid FROM verse $where ORDER BY skandha, chapter, num",
+                args,
+            ).use { c ->
+                while (c.moveToNext()) {
+                    val key = "${c.getInt(0)}.${c.getInt(1)}"
+                    val firstOfChapter = key != prevChapter
+                    prevChapter = key
+                    var sa = c.getString(5).orEmpty()
+                    var hi = c.getString(7).orEmpty()
+                    var speaker = c.getString(4)?.takeIf { it.isNotBlank() }
+                    if (firstOfChapter) {
+                        // In the source PDFs the chapter heading ran into the first shloka. The reader shows the title once, above the text.
+                        val title = titlesHi[key].orEmpty()
+                        val cleanSa = stripLeadingTitle(sa, title)
+                        if (cleanSa != sa) {
+                            sa = cleanSa
+                            // What is left on top is the speaker line, which every other shloka keeps in its own field.
+                            val head = sa.substringBefore('\n')
+                            if (head.contains("उवाच")) { if (speaker == null) speaker = head.trim(); sa = sa.substringAfter('\n', "") }
+                        }
+                        hi = stripLeadingTitle(hi, title)
                     }
-                    hi = stripLeadingTitle(hi, title)
-                }
-                out.add(
-                    Verse(
-                        skandha = c.getInt(0), adhyaya = c.getInt(1), num = c.getInt(2), numEnd = c.getInt(3),
-                        speaker = speaker,
-                        sa = if (sa.isEmpty()) emptyList() else sa.split('\n'),
-                        iast = c.getString(6).orEmpty().tidyDashes().let { if (it.isEmpty()) emptyList() else it.split('\n') },
-                        hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
-                        bnFrom = if (c.isNull(12)) null else c.getInt(12),
-                        enFrom = if (c.isNull(9)) null else c.getInt(9),
-                        hiFrom = if (c.isNull(10)) null else c.getInt(10),
+                    out.add(
+                        Verse(
+                            skandha = c.getInt(0), adhyaya = c.getInt(1), num = c.getInt(2), numEnd = c.getInt(3),
+                            speaker = speaker,
+                            sa = if (sa.isEmpty()) emptyList() else sa.split('\n'),
+                            iast = c.getString(6).orEmpty().tidyDashes().let { if (it.isEmpty()) emptyList() else it.split('\n') },
+                            hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
+                            bnFrom = if (c.isNull(12)) null else c.getInt(12),
+                            or = c.getString(13).orEmpty().tidyDashes(), orFrom = if (c.isNull(14)) null else c.getInt(14),
+                            doubt = doubtByVerse[c.getLong(15)] ?: emptyMap(),
+                            enFrom = if (c.isNull(9)) null else c.getInt(9),
+                            hiFrom = if (c.isNull(10)) null else c.getInt(10),
+                        )
                     )
-                )
+                }
             }
+        } catch (_: Throwable) {
+            return emptyList()
         }
         return out
     }
@@ -288,7 +322,20 @@ object SampleData {
     fun versesFor(s: Int, a: Int): List<Verse> =
         cache.getOrPut("$s.$a") { readVerses("WHERE skandha = ? AND chapter = ?", arrayOf(s.toString(), a.toString())) }
 
+    /** Fetch verses by rowids (used by SearchIndex results). */
+    @Synchronized
+    fun versesByIds(ids: List<Int>): List<Verse> {
+        if (ids.isEmpty()) return emptyList()
+        val out = ArrayList<Verse>()
+        for (chunk in ids.chunked(400)) {
+            val list = chunk.joinToString(",")
+            out.addAll(readVerses("WHERE rowid IN ($list)", emptyArray()))
+        }
+        return out
+    }
+
     /** Targeted SQLite search matching any relevant language column. */
+    @Synchronized
     fun searchVerses(query: String, scope: String = "ALL", limit: Int = 100): List<Verse> {
         val q = query.trim()
         if (q.length < 2) return emptyList()
@@ -358,10 +405,29 @@ object SampleData {
 
 private val devaDigits = "०१२३४५६७८९"
 private val bengDigits = "০১২৩৪৫৬৭৮৯"
+private val odiaDigits = "୦୧୨୩୪୫୬୭୮୯"
+
+/** Every digit in `s`, whichever script it was printed in, written in the digits of `ui` (1 for 1, so offsets in the text stay valid). */
+fun digitsTo(s: String, ui: Lang): String {
+    val target = when (ui) { Lang.HI -> devaDigits; Lang.BN -> bengDigits; Lang.OR -> odiaDigits; else -> "0123456789" }
+    val sb = StringBuilder(s.length)
+    for (ch in s) {
+        val d = when (ch) {
+            in '0'..'9' -> ch - '0'
+            in '\u0966'..'\u096F' -> ch - '\u0966'
+            in '\u09E6'..'\u09EF' -> ch - '\u09E6'
+            in '\u0B66'..'\u0B6F' -> ch - '\u0B66'
+            else -> -1
+        }
+        sb.append(if (d >= 0) target[d] else ch)
+    }
+    return sb.toString()
+}
 
 /** Swap ASCII digits for Devanagari or Bengali digits to match the interface language. */
 fun localDigits(s: String, ui: Lang): String = when (ui) {
     Lang.HI -> s.map { if (it in '0'..'9') devaDigits[it - '0'] else it }.joinToString("")
     Lang.BN -> s.map { if (it in '0'..'9') bengDigits[it - '0'] else it }.joinToString("")
+    Lang.OR -> s.map { if (it in '0'..'9') odiaDigits[it - '0'] else it }.joinToString("")
     else -> s
 }

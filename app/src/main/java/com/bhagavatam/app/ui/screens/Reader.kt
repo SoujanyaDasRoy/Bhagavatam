@@ -8,6 +8,9 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -86,16 +89,22 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import com.bhagavatam.app.data.BENGALI_READY
 import com.bhagavatam.app.data.Lang
+import com.bhagavatam.app.data.LooseKey
+import com.bhagavatam.app.data.Normalise
 import com.bhagavatam.app.data.SampleData
 import com.bhagavatam.app.data.SanskritScript
 import com.bhagavatam.app.data.Verse
 import com.bhagavatam.app.data.localDigits
+import com.bhagavatam.app.data.digitsTo
+import com.bhagavatam.app.data.stringsFor
+import com.bhagavatam.app.state.LangZone
 import com.bhagavatam.app.data.tr
 import com.bhagavatam.app.state.AppState
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.semantics.Role
 import com.bhagavatam.app.ui.components.AppSlider
 import com.bhagavatam.app.ui.components.BottomScrim
+import com.bhagavatam.app.ui.components.TipBanner
 import com.bhagavatam.app.ui.theme.Radius
 import com.bhagavatam.app.ui.components.MiniPlayer
 import com.bhagavatam.app.ui.components.MarkedText
@@ -115,13 +124,23 @@ import com.bhagavatam.app.ui.theme.NotoDevanagari
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit, onOpenPlayer: () -> Unit, onNextChapter: (Int, Int) -> Unit = { _, _ -> }, onPrevChapter: (Int, Int) -> Unit = { _, _ -> }) {
+fun ReaderScreen(
+    state: AppState,
+    skandha: Int,
+    adhyaya: Int,
+    onBack: () -> Unit,
+    onOpenPlayer: () -> Unit,
+    onOpenDictionary: () -> Unit = {},
+    onNextChapter: (Int, Int) -> Unit = { _, _ -> },
+    onPrevChapter: (Int, Int) -> Unit = { _, _ -> }
+) {
     val c = LocalReaderColors.current
     val s = state.strings
     val ui = state.uiLang
     val verses = remember(skandha, adhyaya) { SampleData.versesFor(skandha, adhyaya) }
     val title = SampleData.adhyayaTitle(skandha, adhyaya, state.titleLang, s)
     var showSheet by remember { mutableStateOf(false) }
+    var showLangSheet by remember { mutableStateOf(false) }
     val peeked = remember { mutableStateListOf<String>() }
     val list = rememberLazyListState()
     val scale = state.textScale
@@ -130,7 +149,14 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
     val swipePx = with(LocalDensity.current) { 96.dp.toPx() }
     // The chapter title sits once, in the text. It moves up into the bar only after it has scrolled out of view.
     val titleInBar by remember { derivedStateOf { list.firstVisibleItemIndex >= 2 } }
-    val reference = localDigits(if (skandha == 0) "${s.mahatmya} · ${s.adhyaya} $adhyaya" else "${s.skandha} $skandha · ${s.adhyaya} $adhyaya", ui)
+    // The words of the reference and the reading time are the page's (reading language); the digits are the app's.
+    val rs = stringsFor(state.langFor(LangZone.PAGE))
+    val pageLang = state.langFor(LangZone.PAGE)
+    val reference = localDigits(if (skandha == 0) "${rs.mahatmya} · ${rs.adhyaya} $adhyaya" else "${rs.skandha} $skandha · ${rs.adhyaya} $adhyaya", pageLang)
+
+    var showFindBar by remember { mutableStateOf(false) }
+    var findQuery by remember { mutableStateOf("") }
+    var currentMatchIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(skandha, adhyaya) {
         if (verses.isNotEmpty() && !(state.lastSkandha == skandha && state.lastAdhyaya == adhyaya)) state.markRead(skandha, adhyaya, 1)
@@ -181,6 +207,52 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
         out
     }
     val rowVerses = remember(verses, bookRows, state.showSanskrit) { if (state.showSanskrit) verses else bookRows.map { it.verse } }
+
+    // In-chapter find matches supporting Roman and Indic spellings across scripts
+    val matchingVerseIndices = remember(findQuery, rowVerses) {
+        val q = findQuery.trim()
+        if (q.length < 2) return@remember emptyList<Int>()
+        val qWords = q.split(Regex("\\s+")).filter { it.isNotBlank() }
+        val qKeys = qWords.map { LooseKey.keyOf(it) }.filter { it.length >= 3 }.toSet()
+        val qExacts = qWords.map { Normalise.exactOf(it) }.toSet()
+
+        val out = ArrayList<Int>()
+        for (i in rowVerses.indices) {
+            val v = rowVerses[i]
+            val layers = listOf(v.sa.joinToString(" "), v.iast.joinToString(" "), v.hi, v.en, v.bn)
+            var matched = false
+            for (text in layers) {
+                if (text.isBlank()) continue
+                if (text.contains(q, ignoreCase = true) || SearchFinder.find(text, q) != null) {
+                    matched = true
+                    break
+                }
+                val words = Regex("[\\p{L}\\p{M}\\p{N}]+").findAll(text)
+                for (match in words) {
+                    val w = match.value
+                    val looseW = LooseKey.keyOf(w)
+                    val exactW = Normalise.exactOf(w)
+                    if (qKeys.any { k -> k == looseW || (looseW.length >= 3 && looseW.contains(k)) } ||
+                        qExacts.any { e -> e == exactW || (exactW.length >= 3 && exactW.contains(e)) }) {
+                        matched = true
+                        break
+                    }
+                }
+                if (matched) break
+            }
+            if (matched) out.add(i)
+        }
+        out
+    }
+
+    LaunchedEffect(matchingVerseIndices, currentMatchIndex) {
+        if (matchingVerseIndices.isNotEmpty()) {
+            val safeIndex = currentMatchIndex.coerceIn(0, matchingVerseIndices.size - 1)
+            val verseItemOffset = if (state.showChapterArt) 2 else 1
+            val targetItem = verseItemOffset + matchingVerseIndices[safeIndex]
+            list.animateScrollToItem(targetItem)
+        }
+    }
 
     // Resume where the reader stopped.
     LaunchedEffect(skandha, adhyaya) {
@@ -239,6 +311,17 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                         }
                     }
                 }
+                // The language pill shows words while the title is out of the bar, and shrinks to its icon once the title moves in.
+                LanguagePill(state, compact = titleInBar) { showLangSheet = true }
+                Box(
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন")) {
+                        showFindBar = !showFindBar
+                        if (!showFindBar) findQuery = ""
+                    },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(painterResource(Ic.Search), tr(ui, "Find", "खोज", "খুঁজুন"), tint = if (showFindBar) Brand.Kesari else c.accent, modifier = Modifier.size(20.dp))
+                }
                 Box(
                     Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস")) { showSheet = true },
                     contentAlignment = Alignment.Center
@@ -246,13 +329,82 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                     Text("Aa", fontFamily = EnglishReading, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
                 }
             }
-            LayerChips(state)
+
+            AnimatedVisibility(visible = showFindBar) {
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
+                        .shadow(4.dp, Radius.bar).clip(Radius.bar).background(c.surface)
+                        .border(1.dp, Brand.Kesari.copy(alpha = 0.5f), Radius.bar)
+                        .padding(start = 12.dp, end = 6.dp, top = 4.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(painterResource(Ic.Search), null, tint = Brand.Kesari, modifier = Modifier.size(18.dp))
+                    BasicTextField(
+                        value = findQuery,
+                        onValueChange = {
+                            findQuery = it
+                            currentMatchIndex = 0
+                        },
+                        singleLine = true,
+                        textStyle = TextStyle(fontSize = 15.sp, color = c.ink),
+                        cursorBrush = SolidColor(Brand.Kesari),
+                        modifier = Modifier.weight(1f),
+                        decorationBox = { inner ->
+                            if (findQuery.isEmpty()) {
+                                Text(tr(ui, "Find in chapter...", "अध्याय में खोजें...", "অধ্যায়ে খুঁজুন..."), fontSize = 14.sp, color = c.secondary)
+                            }
+                            inner()
+                        }
+                    )
+                    if (findQuery.isNotEmpty()) {
+                        val matchCountStr = if (matchingVerseIndices.isNotEmpty()) {
+                            localDigits("${currentMatchIndex + 1}/${matchingVerseIndices.size}", ui)
+                        } else {
+                            localDigits("0/0", ui)
+                        }
+                        Text(matchCountStr, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = if (matchingVerseIndices.isNotEmpty()) c.gold else c.secondary)
+
+                        IconButton(
+                            onClick = {
+                                if (matchingVerseIndices.isNotEmpty()) {
+                                    currentMatchIndex = (currentMatchIndex - 1 + matchingVerseIndices.size) % matchingVerseIndices.size
+                                }
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(painterResource(Ic.KeyboardArrowUp), tr(ui, "Previous", "पिछला", "পূর্ববর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                        }
+
+                        IconButton(
+                            onClick = {
+                                if (matchingVerseIndices.isNotEmpty()) {
+                                    currentMatchIndex = (currentMatchIndex + 1) % matchingVerseIndices.size
+                                }
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(painterResource(Ic.KeyboardArrowDown), tr(ui, "Next", "अगला", "পরবর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                        }
+                    }
+                    IconButton(
+                        onClick = {
+                            showFindBar = false
+                            findQuery = ""
+                        },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(painterResource(Ic.Close), s.back, tint = c.secondary, modifier = Modifier.size(18.dp))
+                    }
+                }
+            }
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxHeight().widthIn(max = 600.dp).fillMaxWidth(),
                 contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 140.dp),
                 verticalArrangement = Arrangement.spacedBy(if (state.showSanskrit) 0.dp else 20.dp),
             ) {
+                if (!state.hasSession && state.nextTip() != null) item(key = "tip") { TipBanner(state, Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) }
                 if (state.showChapterArt) item { com.bhagavatam.app.ui.components.ChapterBanner(skandha, adhyaya) }
                 item {
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -265,12 +417,12 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                             verses.sumOf { v -> v.translation(bookLang).split("\\s+".toRegex()).size }
                         }
                         val readMinutes = maxOf(1, totalWords / 150)
-                        val readTimeBadge = String.format(s.minRead, readMinutes)
+                        val readTimeBadge = String.format(rs.minRead, readMinutes)
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 13.sp, color = c.secondary)
+                            if (count > 0) Text(localDigits("$count ${rs.shlokas.lowercase()}", pageLang), fontSize = 13.sp, color = c.secondary)
                             if (state.showReadTime) {
                                 Text("·", fontSize = 13.sp, color = c.secondary)
-                                Text(localDigits(readTimeBadge, ui), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
+                                Text(localDigits(readTimeBadge, pageLang), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = c.gold)
                             }
                         }
                         Box(Modifier.padding(top = 4.dp).width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
@@ -290,12 +442,16 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
                 }
                 if (state.showSanskrit) {
                     items(verses, key = { it.ref }) { v ->
-                        VerseBlock(state, v, playingHere && state.current.ref == v.ref, scale)
+                        val isFindMatch = showFindBar && matchingVerseIndices.isNotEmpty() && matchingVerseIndices.getOrNull(currentMatchIndex)?.let { rowVerses.getOrNull(it)?.ref == v.ref } == true
+                        VerseBlock(state, v, (playingHere && state.current.ref == v.ref) || isFindMatch, scale)
                     }
                 } else {
                     items(bookRows, key = { it.verse.ref }) { r ->
-                        BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked) {
-                            if (r.verse.ref in peeked) peeked.remove(r.verse.ref) else peeked.add(r.verse.ref)
+                        val isFindMatch = showFindBar && matchingVerseIndices.isNotEmpty() && matchingVerseIndices.getOrNull(currentMatchIndex)?.let { rowVerses.getOrNull(it)?.ref == r.verse.ref } == true
+                        Box(modifier = if (isFindMatch) Modifier.clip(Radius.group).background(c.playing) else Modifier) {
+                            BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked) {
+                                if (r.verse.ref in peeked) peeked.remove(r.verse.ref) else peeked.add(r.verse.ref)
+                            }
                         }
                     }
                 }
@@ -303,13 +459,13 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
             }
         }
 
-        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 120.dp else 100.dp)
+        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 150.dp else 130.dp)
         // Action bar while text is selected: sits just above the play controls.
         Column(
             Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (state.hasSession) 96.dp else 76.dp).padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SelectionPanel(state)
+            SelectionPanel(state, onOpenDictionary = onOpenDictionary)
         }
         Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 10.dp)) {
             Crossfade(state.hasSession, animationSpec = tween(Motion.sheet), label = "playControl") { session ->
@@ -340,58 +496,9 @@ fun ReaderScreen(state: AppState, skandha: Int, adhyaya: Int, onBack: () -> Unit
             ReaderSettings(state)
         }
     }
+    if (showLangSheet) LanguageSheet(state, verses) { showLangSheet = false }
     AnnotationSheet(state)
-    WordSheet(state) { sk, a -> onNextChapter(sk, a) }
-}
-
-@Composable
-private fun LayerChips(state: AppState) {
-    val c = LocalReaderColors.current
-    // One rule for the chips: they show what the page is in. With the shloka on they toggle layers under it; with the shloka off
-    // (translation-only reading) they pick the single language being read, the same one the audio and the titles use.
-    val book = !state.showSanskrit
-    val firstTranslation = state.alongsideLayers().first()
-    fun pick(l: Lang) {
-        when (l) { Lang.HI -> state.updateShowHi(true); Lang.BN -> state.updateShowBn(true); else -> state.updateShowEn(true) }
-        state.updateReadLang(l)
-        state.restartNarration()
-    }
-    val all = listOf(
-        Triple(state.strings.mool, state.showSanskrit, {
-            if (state.showSanskrit) { state.updateReadLang(firstTranslation) } else state.updateReadLang(Lang.SA)
-            state.restartNarration()
-        }),
-        Triple("Roman", state.showIast && state.showSanskrit, {
-            if (book) { state.updateReadLang(Lang.SA); state.updateShowIast(true) } else state.updateShowIast(!state.showIast)
-            state.restartNarration()
-        }),
-        Triple("हिन्दी", if (book) state.readLang == Lang.HI else state.showHi, { if (book) pick(Lang.HI) else state.updateShowHi(!state.showHi) }),
-        Triple("বাংলা", if (book) state.readLang == Lang.BN else state.showBn, { if (book) pick(Lang.BN) else state.updateShowBn(!state.showBn) }),
-        Triple("English", if (book) state.readLang == Lang.EN else state.showEn, { if (book) pick(Lang.EN) else state.updateShowEn(!state.showEn) }),
-    )
-    val allFonts = listOf(null, null, TiroHindi, NotoSerifBengali, null)
-    val keep = all.indices.filter { BENGALI_READY || it != 3 }
-    val chips = keep.map { all[it] }
-    val fonts = keep.map { allFonts[it] }
-    Row(
-        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        chips.forEachIndexed { i, (label, on, click) ->
-            val fill by animateColorAsState(if (on) c.chipOn else c.chipOn.copy(alpha = 0f), tween(Motion.press), label = "chipFill")
-            val edge by animateColorAsState(if (on) c.chipOn else c.separator, tween(Motion.press), label = "chipEdge")
-            Box(Modifier.heightIn(min = 38.dp).clip(CircleShape).clickable(onClick = click), contentAlignment = Alignment.Center) {
-                Box(
-                    Modifier.clip(CircleShape)
-                        .background(fill)
-                        .border(1.dp, edge, CircleShape)
-                        .padding(horizontal = 13.dp, vertical = 6.dp),
-                ) {
-                    Text(label, Modifier.opticallyCentred(fonts[i]), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, fontFamily = fonts[i], color = if (on) c.chipOnText else c.secondary)
-                }
-            }
-        }
-    }
+    WordSheet(state, { sk, a -> onNextChapter(sk, a) }, onOpenDictionary = onOpenDictionary)
 }
 
 private data class BookRow(val verse: Verse, val label: String)
@@ -423,7 +530,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
         ) {
             // Reference on the left, speaker on the right.
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(localDigits("${v.skandha}.${v.adhyaya}.${v.numLabel}", ui), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${v.skandha}.${v.adhyaya}.${v.numLabel}", state.langFor(LangZone.PAGE)), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 Box(Modifier.weight(1f))
                 if (v.speaker != null) Text(v.speaker, fontFamily = NotoDevanagari, fontSize = 13.sp, color = c.secondary)
                 if (isCurrent) Icon(painterResource(Ic.Headphones), null, tint = c.accent, modifier = Modifier.size(15.dp))
@@ -435,7 +542,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 }
             }
             // The shloka and its transliteration are centred, like a printed verse.
-            ShlokaText(v, state.script, c.shloka, 20f * scale, center = true, onWordLongPress = { word ->
+            ShlokaText(v, state.script, c.shloka, 20f * scale, center = true, state = state, onWordLongPress = { word ->
                 state.lookup = com.bhagavatam.app.data.WordLookup(word, Lang.SA, v.ref)
             })
             if (showIast) {
@@ -448,11 +555,11 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 val big = l == Lang.HI || l == Lang.BN
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (layers.size > 1) Text(layerName(l), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = c.gold)
-                    val body = v.translation(l)
+                    val body = digitsTo(v.translation(l), l)
                     val style = TextStyle(fontFamily = readingFont(l), fontSize = ((if (big) 18 else 17) * scale).sp,
                         lineHeight = ((if (big) 32 else 27) * scale * state.lineScale).sp, color = c.ink)
                     // Pointers such as "translated together with verse 5" are not text to mark.
-                    if (v.hasText(l)) MarkedText(state, v.ref, l, body, style, Modifier.fillMaxWidth())
+                    if (v.hasText(l)) MarkedText(state, v.ref, l, body, style, Modifier.fillMaxWidth(), doubtWords = v.doubt[l.code].orEmpty())
                     else Text(body, Modifier.fillMaxWidth(), style = style)
                 }
             }
@@ -461,11 +568,22 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
     }
 }
 
-private fun layerName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.SA -> "संस्कृत"; Lang.EN -> "English" }
+private fun layerName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang.BN -> "বাংলা"; Lang.OR -> "ଓଡ଼ିଆ"; Lang.SA -> "संस्कृत"; Lang.EN -> "English" }
+
+/** The standard opening of the closing line for chapters whose own line is not in the database. Empty for the Mahatmya. */
+private fun genericColophon(skandha: Int, adhyaya: Int): String {
+    val ord = listOf("", "प्रथम", "द्वितीय", "तृतीय", "चतुर्थ", "पञ्चम", "षष्ठ", "सप्तम", "अष्टम", "नवम", "दशम", "एकादश", "द्वादश")
+    if (skandha !in 1..12) return ""
+    val n = adhyaya.toString().map { '०' + (it - '0') }.joinToString("")
+    return "इति श्रीमद्भागवते महापुराणे पारमहंस्यां संहितायां ${ord[skandha]}स्कन्धे ॥ $n ॥"
+}
+
+private fun AppState.titleStrings() = com.bhagavatam.app.data.stringsFor(titleLang)
 
 private fun chapterLabels(ui: Lang) = when (ui) {
     Lang.HI -> "पिछला अध्याय" to "अगला अध्याय"
     Lang.BN -> "আগের অধ্যায়" to "পরের অধ্যায়"
+    Lang.OR -> "ପୂର୍ବ ଅଧ୍ୟାୟ" to "ପରବର୍ତ୍ତୀ ଅଧ୍ୟାୟ"
     else -> "Previous chapter" to "Next chapter"
 }
 
@@ -494,26 +612,27 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     ) {
         // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
-            state, v.ref, lang, v.translation(lang),
+            state, v.ref, lang, digitsTo(v.translation(lang), lang),
             TextStyle(fontFamily = readingFont(lang), fontSize = ((if (big) 19 else 18) * scale).sp, lineHeight = ((if (big) 36 else 31) * scale * state.lineScale).sp, color = c.ink,
                 textAlign = if (state.justifyText) androidx.compose.ui.text.style.TextAlign.Justify else androidx.compose.ui.text.style.TextAlign.Start),
             Modifier.fillMaxWidth(),
             prefix = buildAnnotatedString {
                 if (state.showVerseNumbers) withStyle(SpanStyle(color = c.gold, fontWeight = FontWeight.Bold, fontSize = 12.sp, baselineShift = BaselineShift.Superscript)) {
-                    append(localDigits(label, ui) + "  ")
+                    append(localDigits(label, lang) + "  ")
                 }
             },
             onPrefixTap = onToggle,
             onTextTap = onToggle,
+            doubtWords = v.doubt[lang.code].orEmpty(),
         )
         if (peek) {
             Column(
-                Modifier.fillMaxWidth().clip(Radius.group).background(c.playing).padding(14.dp),
+                Modifier.fillMaxWidth().clip(Radius.group).background(c.surface).border(1.dp, c.separator, Radius.group).padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Text(localDigits("${state.strings.shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                Text(localDigits("${stringsFor(state.langFor(LangZone.PAGE)).shloka} ${skLabel}.${v.adhyaya}.${label}", state.langFor(LangZone.PAGE)), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 val script = if (ui == Lang.BN && state.script == SanskritScript.DEVANAGARI) SanskritScript.BENGALI else state.script
-                ShlokaText(v, script, c.shloka, 16f * scale, onWordLongPress = { word ->
+                ShlokaText(v, script, c.shloka, 16f * scale, state = state, onWordLongPress = { word ->
                     state.lookup = com.bhagavatam.app.data.WordLookup(word, Lang.SA, v.ref)
                 })
             }
@@ -521,72 +640,71 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     }
 }
 
-/** After the last shloka: the "Thus ends ..." colophon, the Gita Press notes (collapsed), then previous and next chapter. */
 @Composable
 private fun ChapterEndBlock(
     state: AppState, skandha: Int, adhyaya: Int, prev: Pair<Int, Int>?, next: Pair<Int, Int>?,
     onPrev: (Int, Int) -> Unit, onNext: (Int, Int) -> Unit,
 ) {
     val c = LocalReaderColors.current
-    val ui = state.uiLang
-    val lang = state.titleLang
-    val end = remember(skandha, adhyaya, lang) { SampleData.chapterEnd(skandha, adhyaya, lang) }
-    val font = if (lang == Lang.HI) TiroHindi else EnglishReading
-    var showNotes by remember(skandha, adhyaya) { mutableStateOf(false) }
-    val notesLabel = when (ui) { Lang.HI -> "\u091f\u093f\u092a\u094d\u092a\u0923\u093f\u092f\u093e\u0901"; Lang.BN -> "\u099f\u09c0\u0995\u09be"; else -> "Notes" }
-    val (prevLabel, nextLabel) = chapterLabels(ui)
-    Column(Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    val (prevLabel, nextLabel) = chapterLabels(state.titleLang)
+    Column(Modifier.fillMaxWidth().padding(top = 20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Box(Modifier.width(40.dp).height(1.dp).background(c.gold.copy(alpha = 0.6f)))
-        if (end.colophon.isNotEmpty()) {
-            Text(end.colophon, Modifier.padding(horizontal = 8.dp), fontFamily = font, fontSize = (14 * state.textScale).sp, lineHeight = (22 * state.textScale).sp,
-                color = c.secondary, textAlign = TextAlign.Center)
-        }
-        if (end.notes.isNotEmpty()) {
-            Row(
-                Modifier.heightIn(min = 48.dp).clip(RoundedCornerShape(12.dp)).clickable { showNotes = !showNotes }.padding(horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(notesLabel, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
-                Text(if (showNotes) "\u25b4" else "\u25be", fontSize = 14.sp, color = c.accent)
-            }
-            if (showNotes) {
-                Text(end.notes, Modifier.fillMaxWidth().clip(Radius.group).background(c.surface).padding(14.dp),
-                    fontFamily = font, fontSize = (14 * state.textScale).sp, lineHeight = (22 * state.textScale).sp, color = c.secondary)
-            }
-        }
-        Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            ChapterButton(state, prevLabel, prev, filled = false, back = true, modifier = Modifier.weight(1f)) { prev?.let { onPrev(it.first, it.second) } }
-            ChapterButton(state, nextLabel, next, filled = true, back = false, modifier = Modifier.weight(1f)) { next?.let { onNext(it.first, it.second) } }
+        ClosingLine(state, skandha, adhyaya)
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            ChapterButton(state, nextLabel, next, filled = true, back = false) { next?.let { onNext(it.first, it.second) } }
+            ChapterButton(state, prevLabel, prev, filled = false, back = true) { prev?.let { onPrev(it.first, it.second) } }
         }
         Spacer(Modifier.height(8.dp))
     }
 }
 
-/** Previous or next chapter at the end of the text: what it is, and the chapter's own title. */
 @Composable
-private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>?, filled: Boolean, back: Boolean, modifier: Modifier, onClick: () -> Unit) {
+private fun ClosingLine(state: AppState, skandha: Int, adhyaya: Int) {
+    val c = LocalReaderColors.current
+    val lang = state.titleLang
+    val end = remember(skandha, adhyaya, lang) { SampleData.chapterEnd(skandha, adhyaya, lang) }
+    val line = end.sanskrit.ifEmpty { genericColophon(skandha, adhyaya) }
+    val shown = when (lang) {
+        Lang.BN -> com.bhagavatam.app.util.Transliterate.toBengali(line)
+        Lang.EN -> com.bhagavatam.app.util.Transliterate.toIast(line)
+        else -> line
+    }
+    val font = when (lang) { Lang.BN -> NotoSerifBengali; Lang.EN -> EnglishReading; else -> NotoDevanagari }
+    if (shown.isNotEmpty()) {
+        Text(shown, Modifier.padding(horizontal = 8.dp), fontFamily = font, fontSize = (16 * state.textScale).sp, lineHeight = (26 * state.textScale).sp,
+            fontWeight = FontWeight.Medium, color = c.shloka, textAlign = TextAlign.Center)
+    }
+    if (lang == Lang.EN && end.colophon.isNotEmpty()) {
+        Text(end.colophon, Modifier.padding(horizontal = 8.dp), fontFamily = EnglishReading, fontSize = (14 * state.textScale).sp,
+            lineHeight = (22 * state.textScale).sp, color = c.secondary, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>?, filled: Boolean, back: Boolean, onClick: () -> Unit) {
     val c = LocalReaderColors.current
     val enabled = target != null
     val ink = if (filled) Brand.OnKesari else c.ink
     val sub = if (filled) Brand.OnKesari else c.secondary
     Row(
-        modifier.heightIn(min = 64.dp)
+        Modifier.fillMaxWidth().heightIn(min = 56.dp)
             .then(if (enabled) Modifier.tappable(Radius.group, label, onClick = onClick) else Modifier.clip(Radius.group))
             .background(if (filled) Brand.Kesari else c.surface)
             .border(1.dp, if (filled) Brand.Kesari else c.separator, Radius.group)
-            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
             .alpha(if (enabled) 1f else 0.4f),
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (back) Icon(painterResource(Ic.ArrowBackIos), null, tint = ink, modifier = Modifier.size(20.dp))
-        Column(Modifier.weight(1f), horizontalAlignment = if (back) Alignment.Start else Alignment.End) {
-            Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = ink, maxLines = 1)
+        if (back) Icon(painterResource(Ic.ArrowBackIos), null, tint = ink, modifier = Modifier.size(18.dp))
+        Column(Modifier.weight(1f)) {
+            val number = target?.let { " · " + localDigits(it.second.toString(), state.titleLang) }.orEmpty()
+            Text(label + number, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1)
             if (target != null) Text(
                 SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
-                fontFamily = readingFont(state.titleLang), fontSize = 12.sp, color = sub, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                fontFamily = readingFont(state.titleLang), fontSize = 15.sp, lineHeight = 20.sp, color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
         }
-        if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(20.dp))
+        if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(18.dp))
     }
 }
 

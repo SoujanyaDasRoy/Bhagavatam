@@ -61,6 +61,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -315,6 +316,7 @@ fun ShlokaText(
     center: Boolean = false,
     lines: Int = Int.MAX_VALUE,
     onWordLongPress: ((String) -> Unit)? = null,
+    state: com.bhagavatam.app.state.AppState? = null,
 ) {
     val (text, font) = when (script) {
         SanskritScript.DEVANAGARI -> verse.sa.take(lines).joinToString("\n") to NotoDevanagari
@@ -323,6 +325,16 @@ fun ShlokaText(
     }
     val processed = keepMarkerTogether(text)
     var layoutResult by remember(processed) { mutableStateOf<TextLayoutResult?>(null) }
+    // Words of the shloka that may be misread: underlined in red; a tap asks whether the spelling is right (Devanagari and Bengali script).
+    val doubtWords = remember(verse, script) {
+        val raw = verse.doubt["sa"].orEmpty()
+        if (script == SanskritScript.BENGALI) raw.map { Transliterate.toBengali(it) }.toSet() else if (script == SanskritScript.DEVANAGARI) raw else emptySet()
+    }
+    val doubtRanges = remember(processed, doubtWords) { wordRanges(processed, doubtWords) }
+    var asking by remember(processed) { mutableStateOf<IntRange?>(null) }
+    if (state != null) asking?.let { r ->
+        DoubtDialog(state, verse.ref, com.bhagavatam.app.data.Lang.SA, processed.substring(r.first, r.last + 1)) { asking = null }
+    }
     Text(
         processed,
         fontFamily = font,
@@ -330,17 +342,29 @@ fun ShlokaText(
         lineHeight = (size * 1.8f).sp,
         color = color,
         textAlign = if (center) TextAlign.Center else TextAlign.Start,
-        modifier = Modifier.fillMaxWidth().then(
-            if (onWordLongPress != null) {
-                Modifier.pointerInput(processed) {
+        modifier = Modifier.fillMaxWidth().drawBehind {
+            val layout = layoutResult ?: return@drawBehind
+            for (r in doubtRanges) for (i in r) {
+                if (i >= layout.layoutInput.text.length) continue
+                val b = layout.getBoundingBox(i)
+                drawLine(Color(0xFFD32F2F), androidx.compose.ui.geometry.Offset(b.left, b.bottom - 1f), androidx.compose.ui.geometry.Offset(b.right, b.bottom - 1f), strokeWidth = 2.5f)
+            }
+        }.then(
+            if (onWordLongPress != null || (state != null && doubtRanges.isNotEmpty())) {
+                Modifier.pointerInput(processed, doubtRanges) {
                     detectTapGestures(
+                        onTap = { offset ->
+                            val layout = layoutResult ?: return@detectTapGestures
+                            val o = layout.getOffsetForPosition(offset)
+                            doubtRanges.firstOrNull { o in it }?.let { asking = it }
+                        },
                         onLongPress = { offset ->
                             val layout = layoutResult ?: return@detectTapGestures
                             val charOffset = layout.getOffsetForPosition(offset).coerceIn(0, processed.length)
                             val range = wordAt(processed, charOffset)
                             if (range != null) {
                                 val w = processed.substring(range).trim()
-                                if (w.isNotEmpty()) onWordLongPress(w)
+                                if (w.isNotEmpty()) onWordLongPress?.invoke(w)
                             }
                         }
                     )

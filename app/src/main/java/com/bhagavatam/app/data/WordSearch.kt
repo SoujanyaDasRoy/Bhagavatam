@@ -9,6 +9,7 @@ private fun haystacks(v: Verse, lang: Lang): List<String> = when (lang) {
     Lang.SA -> v.sa + v.sa.map { Transliterate.toBengali(it) } + v.iast
     Lang.HI -> listOf(v.hi)
     Lang.BN -> listOf(v.bn)
+    Lang.OR -> listOf(v.or)
     Lang.EN -> listOf(v.en)
 }
 

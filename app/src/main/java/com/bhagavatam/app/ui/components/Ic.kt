@@ -49,4 +49,10 @@ object Ic {
     val Sunrise = R.drawable.ic_sunrise
     val Mic = R.drawable.ic_mic
     val Copy = R.drawable.ic_copy
+    val MoreVertical = R.drawable.ic_more_vertical
+    val Smartphone = R.drawable.ic_smartphone
+    val MessageSquare = R.drawable.ic_message_square
+    val Sliders = R.drawable.ic_sliders
+    val ListMusic = R.drawable.ic_list_music
+    val Shuffle = R.drawable.ic_shuffle
 }
