@@ -1,83 +1,64 @@
 # Bhagavatam
 
-A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran**, in Sanskrit, Hindi, Bengali and English. Built with pure Jetpack Compose for Android. It lives on your phone, has no ads, no accounts, and does not track you.
+A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran** on Android. Sanskrit with Hindi, Bengali, English and (in beta) Odia translations, Kangra-style art, audio narration, and search that works in every script. It lives on your phone: no ads, no account, no tracking, and everything you read or search works offline.
 
-- **The Mahatmya and all 12 Skandhas**: 341 chapters, 14,580 verses
-- **Multi-Language**: Sanskrit *mool* with Hindi, Bengali, and English translations
-- **Spotify-Inspired Audio Player**: Minimal, functional Now Playing experience with synchronized karaoke lyrics
-- **Zero-Download YouTube Streams**: Instant full-chapter audio streams in Hindi, Bengali, English, and Sanskrit
-- **Fully Local & Offline-First**: Scripture text bundled on-device with zero internet required
+## Download
 
----
+| | |
+|---|---|
+| **Latest APK** | <https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest/download/Bhagavatam.apk> |
+| **All releases and notes** | <https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest> |
 
-## Why it exists
+1. Open one of the links above on your phone and download the file.
+2. Open it and tap **Install**. If Android asks, allow "Install unknown apps" for your browser, once.
+3. Open the app. The whole text is already inside, so no internet is needed.
 
-Scripture apps often come with missing verses, broken text, intrusive ads, and a constant need for an internet connection. This app is built for the opposite: a complete, sacred text you can open on a train, in a temple, or at dawn, and read or listen to without being interrupted.
+Android 8.0 (API 26) or newer. The app is not on the Play Store.
 
----
+**Updating:** install the new APK over the old one. Your notes, highlights, bookmarks, saved words and settings stay, as long as the new APK is signed with the same key. If a release ever changes the signing key, use **Settings > Words & notes > Save a backup file** first and **Restore** afterwards.
 
-## Features
+## What is in it
 
-### 📖 Reading & Study
-- **Layered Translations**: Switch smoothly between Sanskrit shlokas (in Devanagari, Bengali, or IAST Roman script) and translations in Hindi, Bengali, or English. Read them side-by-side or translation-only.
-- **Bengali Typography**: Native Bengali numerals and canonical titles rendered with `NotoSerifBengali`.
-- **Customizable Reader**: Pinch-to-zoom text scaling, adjustable line height, and fast chapter navigation.
-- **Four Sacred Themes**: *Prabhat* (daylight), *Pothi* (manuscript sepia), *Sandhya* (twilight), and *Ratri* (pure dark mode).
-- **Highlights & Notes**: Long-press any verse or select text to bookmark, highlight in sacred hues, or attach personal notes stored safely on your device.
-- **Omni Search**: Search across verses, characters, story arcs (*Gajendra Moksha*, *Dhruva Charitra*, *Rasa Lila*), or jump straight to any reference (e.g. `10.29.1`).
+- **The whole book:** the Mahatmya and all 12 Skandhas, 341 chapters, 14,580 verses.
+- **Layers you can mix:** Sanskrit in Devanagari, Bengali or Roman script, with Hindi, Bengali, English or Odia translation under it, or the translation alone.
+- **Two language settings:** the app language (menus) and the reading language (the text) are separate.
+- **Search:** words, names, stories (Gajendra Moksha, Rasa Lila, ...) or a reference such as `10.29.1`. Spelling variants across scripts find the same verse (Krishna, कृष्ण, কৃষ্ণ, କୃଷ୍ଣ).
+- **Dictionary:** press and hold a word for its meaning, offline, with an optional online fallback you can turn off.
+- **Notes:** bookmarks, highlights in four colours, personal notes, saved words, all kept on your device, with a one-file backup.
+- **Listening:** sentence-by-sentence narration with pauses, background and lock-screen playback, sleep timer, speed control, optional YouTube recitation streams.
+- **Themes:** Prabhat (light), Pothi (sepia), Sandhya (warm dark), Ratri (black).
 
-### 🎧 Listening & Recitation
-- **Spotify-Inspired Minimal Player**:
-  - **Floating Mini Player**: Glassmorphic pill with artwork thumbnail, playback transport, horizontal swipe-to-dismiss, and one-tap close (`✕`) button.
-  - **Expanded Now Playing View**: Square hero artwork, Spotify 5-control transport bar (PlayThrough, Previous, Hero Play/Pause, Next, Loop), thin seekbar scrubber, and live synchronized lyrics sheet.
-- **Line-by-Line Karaoke Paath**: Real-time line-by-line Sanskrit karaoke and sentence-level translation highlight. Tap any line to immediately jump recitation there.
-- **YouTube Recitation Stream (Zero Download)**: Seamlessly toggle between local TTS recitation and curated YouTube recitation streams for all 12 Skandhas in Hindi, Bengali, English, and Sanskrit.
-- **Background & Lock Screen Playback**: Full Android MediaSession integration with Bluetooth headset and notification controls.
-- **Sleep Timer & Speed Control**: Set automatic timers (15m, 30m, 45m, 60m) and adjust narration speed (0.75× – 2.0×).
+## About the text
 
----
+The Sanskrit and the Hindi, Bengali and English translations follow the Gita Press, Gorakhpur editions.
 
-## Download and Install (Android)
+**Odia is a beta.** It was read from page scans by software running on one PC, not typed by a person. Words the readers could not agree on are underlined in red. Tap one to say whether it is spelled correctly, and if not, send the right word. About 99 verses and 64 chapter titles have no Odia yet, and no Odia reader has checked the text. Please treat it as unreviewed.
 
-1. Open the **Releases** page of this repository on your phone: <https://github.com/SoujanyaDasRoy/Bhagavatam/releases>
-2. Under the latest release, download `Bhagavatam-release.apk` (or `Bhagavatam-debug.apk`).
-3. Open the downloaded file and tap **Install**.
-4. Open the app — the entire scripture text is already included offline.
+Bengali is complete except 232 verses that have no Bengali translation yet.
 
-> **Requirements**: Android 8.0 (API 26) or newer.
+## Report a mistake
 
-### Better Voices
-Android's built-in text-to-speech engine varies across devices. For high-quality recitation:
-- Go to Android **Settings › Accessibility › Text-to-speech output**.
-- Set the Preferred engine to **Speech Recognition and Synthesis by Google**.
-- Download the high-quality voice packs for Hindi, Bengali, and English.
-- You can switch voices anytime via the **Voices** (`🎧`) button in the player.
+Press and hold a word, then tap the speech-bubble icon. The verse and word are copied and Telegram opens a chat with the maker, where you paste them and type the correct word. For a red-underlined Odia word, tap it and choose "No, send the correct word".
 
----
+## For developers
 
-## About the Text
+- **Stack:** Kotlin, Jetpack Compose, Media3, SQLite. `minSdk 26`, `targetSdk 35`, JDK 17.
+- **Layout:** `app/` is the Android app; `content/` holds the data pipeline (Bengali and Odia extraction, database build, search index); `docs/` has the architecture, data pipeline and decisions; `tools/` has helper scripts.
+- **Not in the repository:** the scanned page images, the extracted translation text and the built databases (`content.db`) are not stored here because the Gita Press translations are copyrighted. A fresh clone therefore cannot build a complete APK. Put a `content.db` in `app/src/main/assets/` first (see `docs/DATA_PIPELINE.md`).
+- **Build:**
 
-The Sanskrit scripture and translations follow the canonical **Gita Press, Gorakhpur** editions.
+  ```powershell
+  .\gradlew.bat assembleDebug      # apk\Bhagavatam-v<version>-debug.apk
+  .\gradlew.bat assembleRelease    # signed with the key named in local.properties
+  .\gradlew.bat test
+  ```
 
----
-
-## For Developers
-
-Built with modern Android standards:
-- **Language**: Kotlin 2.0+
-- **UI Framework**: Jetpack Compose with custom design tokens
-- **Audio Engine**: Android TTS + ExoPlayer / Media3 MediaSession + AndroidView Web Streams
-- **Database**: Bundled SQLite database (`content.db`)
-
-### Build locally:
-```powershell
-# Set Java JDK 17+
-$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
-
-# Compile and assemble
-.\gradlew.bat compileDebugKotlin
-.\gradlew.bat assembleDebug
-```
+- **Local settings (`local.properties`, never committed):**
+  - `sdk.dir`: the Android SDK.
+  - `telegram.user`: the maker's Telegram username for the "report a mistake" button. Left out, the button is hidden.
+  - `release.storeFile`, `release.storePassword`, `release.keyAlias`, `release.keyPassword`: the release signing key. Left out, release builds use the debug key and cannot update an app signed with the release key.
+- **Publishing a release:** attach the APK to a GitHub release under the file name `Bhagavatam.apk`, so the "Latest APK" link above keeps working.
+- **Where decisions live:** `docs/agent/DECISIONS.md` (owner decisions and rules), `AGENTS.md` (how automated agents work here).
 
 ---
 
