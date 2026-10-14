@@ -75,3 +75,17 @@ Needs the phone.
 
 ## Self-review
 Every "not fixed" row in the language audit (A to F) and every "not closed" row in the UI audit (small text, capitalisation, TalkBack, reduced motion, spacing) has a task: A is 3, B and C are 2, D is 1 and 4, E is not ours (system dialogs), F is 6 and 8; small text and capitalisation are 5; TalkBack is 6; motion and spacing are 7.
+
+## Status (end of 2026-10-14)
+| Task | State |
+|---|---|
+| 1 fallback note | done (Odia reading shows "Title shown in <language>") |
+| 2 values and notification | notification explained and asked once; the Settings values were already translated |
+| 3 Odia headings | done: 57 first verses cleaned, content version 12 |
+| 4 Odia titles from contents | **not done**: the contents pages were not extracted |
+| 5 small text and capitalisation | small text raised in Settings, Me and annotation sheet; sentence case not swept |
+| 6 TalkBack | **not done** (phone not connected at the end) |
+| 7 reduced motion, spacing | **not done on a device** |
+| 8 voice navigator, Odia meanings | **not done** |
+| 9 release | done: v1.2.2 published; update notification checked on the emulator |
+| extra | update notification (WorkManager) with a Settings switch |
