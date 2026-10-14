@@ -88,10 +88,10 @@ fun ReadingSettings(state: AppState, onBack: () -> Unit) {
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(t.textSize, Modifier.weight(1f), fontSize = 16.sp, color = Brand.Ink)
-                    Text(localDigits("${(state.textScale * 100).toInt()}%", ui), fontSize = 14.sp, color = Brand.Secondary)
+                    Text(localDigits("${(state.textScale * 100).toInt()}%", ui), fontSize = 15.sp, color = Brand.Secondary)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("A", fontSize = 14.sp, color = Brand.Secondary)
+                    Text("A", fontSize = 15.sp, color = Brand.Secondary)
                     AppSlider(value = state.textScale, onValueChange = state::updateTextScale, valueRange = 0.8f..1.6f, modifier = Modifier.weight(1f))
                     Text("A", fontSize = 24.sp, color = Brand.Secondary)
                 }

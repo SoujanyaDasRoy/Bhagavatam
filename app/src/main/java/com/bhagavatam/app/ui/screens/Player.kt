@@ -285,7 +285,7 @@ private fun SpotifyHeader(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         // Down chevron to minimize
-        IconButton(onClick = onClose, Modifier.size(40.dp)) {
+        IconButton(onClick = onClose, Modifier.size(48.dp)) {
             Icon(
                 painterResource(Ic.KeyboardArrowDown),
                 contentDescription = t.closePlayer,
@@ -300,7 +300,7 @@ private fun SpotifyHeader(
         ) {
             Text(
                 tr(ui, "PLAYING FROM", "प्रसारित हो रहा है", "সম্প্রচারিত হচ্ছে"),
-                fontSize = 10.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextMuted,
                 letterSpacing = 1.5.sp,
@@ -309,7 +309,7 @@ private fun SpotifyHeader(
             Text(
                 tr(ui, "Where you left off", "जहाँ आपने छोड़ा था", "যেখান থেকে শেষ করেছিলেন"),
                 fontFamily = if (state.titleLang == Lang.BN || ui == Lang.BN) NotoSerifBengali else Jakarta,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
                 maxLines = 1,
@@ -318,7 +318,7 @@ private fun SpotifyHeader(
         }
 
         // 3-dots overflow options menu
-        IconButton(onClick = onOptions, Modifier.size(40.dp)) {
+        IconButton(onClick = onOptions, Modifier.size(48.dp)) {
             Icon(
                 painterResource(Ic.MoreVertical),
                 contentDescription = "Options",
@@ -409,7 +409,7 @@ private fun TrackMetadataRow(state: AppState, v: Verse) {
             Text(
                 subtitle,
                 fontFamily = if (ui == Lang.BN) NotoSerifBengali else Jakarta,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
                 color = TextTerracotta,
                 maxLines = 1,
@@ -699,7 +699,7 @@ private fun UtilityItem(
         )
         Text(
             label,
-            fontSize = 11.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             color = if (active) AccentTerracotta else TextMuted,
             maxLines = 1,
@@ -756,7 +756,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             // Playback Speed Selector
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Playback Speed", "प्लेबैक गति", "প্লেব্যাক গতি"),
+                    tr(ui, "Playback speed", "प्लेबैक गति", "প্লেব্যাক গতি"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextMuted,
@@ -790,7 +790,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             // Audio Mode Selector
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Audio Source", "ऑडियो स्रोत", "অডিও উৎস"),
+                    tr(ui, "Audio source", "ऑडियो स्रोत", "অডিও উৎস"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextMuted,
@@ -861,7 +861,7 @@ private fun SleepTimerSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                tr(ui, "Sleep Timer", "स्लीप टाइमर", "স্লিপ টাইমার"),
+                tr(ui, "Sleep timer", "स्लीप टाइमर", "স্লিপ টাইমার"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -924,7 +924,7 @@ private fun QueueSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                tr(ui, "Playback Queue", "प्लेबैक कतार", "প্লেব্যাক সারি"),
+                tr(ui, "Playback queue", "प्लेबैक कतार", "প্লেব্যাক সারি"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -1125,7 +1125,7 @@ private fun SpotifyLyricsCard(state: AppState, idx: Int, active: Int) {
                 )
                 Text(
                     tr(ui, "LYRICS & SYNCHRONIZED PAATH", "गीत और समकालिक पाठ", "শ্লোক ও সমकालिक পাঠ"),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = c.gold,
                     letterSpacing = 1.sp,
@@ -1135,7 +1135,7 @@ private fun SpotifyLyricsCard(state: AppState, idx: Int, active: Int) {
                 Text(
                     verse.speaker,
                     fontFamily = if (ui == Lang.BN) NotoSerifBengali else NotoDevanagari,
-                    fontSize = 12.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = c.secondary,
                 )
@@ -1398,13 +1398,13 @@ private fun YouTubeStreamCard(state: AppState, v: Verse) {
             ) {
                 Text(
                     formatStreamTime(if (scrubDrag != null) (yt.durationMs * scrubDrag!!).toLong() else yt.positionMs),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = c.secondary
                 )
                 Text(
                     formatStreamTime(yt.durationMs),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = c.secondary
                 )
@@ -1591,7 +1591,7 @@ private fun StatusArea(state: AppState, t: PlayerText) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(text, Modifier.weight(1f), fontSize = 12.sp, lineHeight = 16.sp, color = c.ink)
+            Text(text, Modifier.weight(1f), fontSize = 12.sp, lineHeight = 19.sp, color = c.ink)
             if (issue != AudioIssue.NO_ENGINE) Box(
                 Modifier
                     .heightIn(min = 36.dp)

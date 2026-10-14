@@ -6,8 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// APK files are named Bhagavatam-v1.2.1-debug.apk and Bhagavatam-v1.2.1-release.apk.
-base { archivesName.set("Bhagavatam-v1.2.1") }
+// APK files are named Bhagavatam-v1.2.3-debug.apk and Bhagavatam-v1.2.3-release.apk.
+base { archivesName.set("Bhagavatam-v1.2.3") }
 
 // The maker's Telegram username, from local.properties (telegram.user=name). Blank hides the "Report an error" button.
 val telegramUser = rootProject.file("local.properties").takeIf { it.exists() }
@@ -27,8 +27,8 @@ android {
         applicationId = "com.bhagavatam.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 15
-        versionName = "1.2.1"
+        versionCode = 17
+        versionName = "1.2.3"
         buildConfigField("String", "TELEGRAM_USER", "\"" + telegramUser + "\"")
     }
 
@@ -92,6 +92,7 @@ dependencies {
 
     // Installs the Compose baseline profiles on sideloaded APKs, so scrolling is smooth from the first launch.
     implementation(libs.androidx.profileinstaller)
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation("junit:junit:4.13.2")
 }

@@ -81,3 +81,4 @@ __pycache__/
 
 # Local OCR work (models, line images, audits): derived from the printed book
 /content/_localocr/work/
+docs/agent/ODIA_SKANDHA_05_REPORT.md

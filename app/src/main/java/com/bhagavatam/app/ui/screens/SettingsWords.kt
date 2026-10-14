@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -126,7 +128,7 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
             Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
                 Text(
                     tr(ui, "Meaning language", "अर्थ की भाषा", "অর্থের ভাষা"),
-                    fontSize = 13.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = Brand.Secondary
                 )
@@ -146,11 +148,17 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
         ) {
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 MarkColours.forEachIndexed { i, col ->
-                    Box(Modifier.size(48.dp).selectable(selected = state.defaultMark == i, role = Role.RadioButton) { state.updateDefaultMark(i) }, contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(48.dp).semantics { contentDescription = listOf(tr(ui, "Yellow", "पीला", "হলুদ"), tr(ui, "Green", "हरा", "সবুজ"), tr(ui, "Blue", "नीला", "নীল"), tr(ui, "Pink", "गुलाबी", "গোলাপি")).getOrElse(i) { "" } }.selectable(selected = state.defaultMark == i, role = Role.RadioButton) { state.updateDefaultMark(i) }, contentAlignment = Alignment.Center) {
                         Box(Modifier.size(30.dp).clip(CircleShape).background(Color(col)).then(if (state.defaultMark == i) Modifier.border(3.dp, Brand.Ink, CircleShape) else Modifier))
                     }
                 }
             }
+        }
+        SettingsGroup(
+            tr(ui, "App updates", "ऐप के अपडेट", "অ্যাপের আপডেট"),
+            tr(ui, "A notification when a new version is published. Nothing else is sent.", "नया संस्करण आने पर एक सूचना। और कुछ नहीं भेजा जाता।", "নতুন সংস্করণ এলে একটি বিজ্ঞপ্তি। আর কিছু পাঠানো হয় না।"),
+        ) {
+            SwitchRow(tr(ui, "Tell me about new versions", "नए संस्करण की सूचना दें", "নতুন সংস্করণের খবর দিন"), state.updateAlerts, state::updateUpdateAlerts)
         }
         SettingsGroup(
             tr(ui, "Back up your data", "अपना डेटा सुरक्षित रखें", "আপনার ডেটা ব্যাকআপ"),

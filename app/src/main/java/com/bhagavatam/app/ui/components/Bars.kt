@@ -75,16 +75,16 @@ enum class Tab(val route: String, val icon: Int) {
     Me("me", Ic.Settings),
 }
 
-/** Chrome that must stay one line (tab labels, mini player) grows with the user's text size, but only up to [max]. */
+/** Chrome grows with the user's text size up to [max]: 200% for the mini player; 160% for the four tab labels, which share one row. */
 @Composable
-private fun CappedFontScale(max: Float = 1.3f, content: @Composable () -> Unit) {
+private fun CappedFontScale(max: Float = 2.0f, content: @Composable () -> Unit) {
     val d = LocalDensity.current
     CompositionLocalProvider(LocalDensity provides Density(d.density, d.fontScale.coerceAtMost(max)), content = content)
 }
 
 /** Floating frosted capsule tab bar; the active tab sits in a saffron pill. */
 @Composable
-fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifier: Modifier = Modifier) = CappedFontScale {
+fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifier: Modifier = Modifier) = CappedFontScale(1.6f) {
     val s = state.strings
     val labels = mapOf(Tab.Home to s.tabHome, Tab.Granth to s.tabGranth, Tab.Search to s.tabSearch, Tab.Downloads to s.tabDownloads, Tab.Me to s.tabMe)
     Row(
@@ -213,7 +213,7 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
                         "${state.strings.shloka} ${localDigits(v.ref, state.uiLang)}",
-                        fontSize = 14.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 1,
+                        fontSize = 14.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Box(
@@ -224,7 +224,7 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                     ) {
                         Text(
                             langLabel,
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = c.accent
                         )
@@ -233,7 +233,7 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
                 Text(
                     line,
                     fontFamily = if (v.speaker == null && state.audioIssue == null) com.bhagavatam.app.ui.screens.readingFont(state.titleLang) else null,
-                    fontSize = 12.sp, color = c.secondary, maxLines = 1,
+                    fontSize = 15.sp, color = c.secondary, maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -264,7 +264,7 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
             }
 
             // Next Track Button
-            IconButton(onClick = state::next, modifier = Modifier.size(36.dp)) {
+            IconButton(onClick = state::next, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painterResource(Ic.SkipNext),
                     contentDescription = t.nextShloka,

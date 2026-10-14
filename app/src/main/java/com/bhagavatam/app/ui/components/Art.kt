@@ -46,7 +46,7 @@ private fun contrastWithCream(c: Color): Float = (0.9113f + 0.05f) / (c.luminanc
 
 /** Fills its parent: the gradient, then the artwork under a scrim if it exists, else a mandala. */
 @Composable
-fun ArtBackdrop(art: String, colors: List<Color>, modifier: Modifier = Modifier, petals: Int = 16, mandala: Color = Color(0x30FFFFFF)) {
+fun ArtBackdrop(art: String, colors: List<Color>, modifier: Modifier = Modifier, petals: Int = 16, mandala: Color = Color(0x1AFFFFFF)) {
     val id = artRes(art)
     Box(modifier.background(Brush.linearGradient(colors))) {
         if (id != 0) {

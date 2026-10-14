@@ -277,6 +277,10 @@ class AppState(app: Application) : AndroidViewModel(app) {
     // ---------- first-use tips (shown one at a time, once each) ----------
     var tipsEnabled by mutableStateOf(prefs.getBoolean("tipsEnabled", true))
         private set
+    var updateAlerts by mutableStateOf(prefs.getBoolean("updateAlerts", true))
+    var askedNotify by mutableStateOf(prefs.getBoolean("askedNotify", false))
+    fun updateUpdateAlerts(on: Boolean) { updateAlerts = on; save { putBoolean("updateAlerts", on) } }
+    fun markAskedNotify() { askedNotify = true; save { putBoolean("askedNotify", true) } }
     val tipsSeen = mutableStateListOf<String>().apply { addAll(prefs.getStringSet("tipsSeen", emptySet()).orEmpty()) }
 
     /** The next tip to show, or null when tips are off or all were seen. */
@@ -556,6 +560,12 @@ class AppState(app: Application) : AndroidViewModel(app) {
     val titleLang: Lang get() = if (readLang == Lang.SA) uiLang else readLang
 
     fun langFor(zone: LangZone): Lang = zoneLang(zone, uiLang, titleLang)
+
+    /** The language chapter, Skandha and story titles are shown in: the reading language, or the app language when Odia is read (Odia has no titles of its own). */
+    val contentLang: Lang get() = if (titleLang == Lang.OR) uiLang else titleLang
+
+    /** The language a chapter's title is shown in: Odia where the contents list gave it, else the content language. */
+    fun titleLangFor(s: Int, a: Int): Lang = if (titleLang == Lang.OR && SampleData.hasOdiaTitle(s, a)) Lang.OR else contentLang
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

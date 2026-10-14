@@ -152,7 +152,7 @@ fun LanguageOption(native: String, sub: String, font: FontFamily, selected: Bool
         Column(Modifier.weight(1f)) {
             Text(native, fontFamily = font, fontSize = 20.sp, lineHeight = 28.sp, color = Brand.Ink, fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal)
             // English reads the same twice; skip the repeat.
-            if (sub != native) Text(sub, fontSize = 13.sp, lineHeight = 18.sp, color = Brand.Secondary)
+            if (sub != native) Text(sub, fontSize = 13.sp, lineHeight = 21.sp, color = Brand.Secondary)
         }
         if (selected) Icon(painterResource(Ic.Check), contentDescription = null, tint = Brand.Kesari)
     }
@@ -166,7 +166,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
         NavBar(s.back, onBack) { Box(Modifier.padding(end = 12.dp)) { StepDots(2) } }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 4.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(s.paathQuestion, fontSize = 30.sp, lineHeight = 36.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                Text(s.paathQuestion, fontSize = 30.sp, lineHeight = 48.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
                 Text(s.paathSub, style = MaterialTheme.typography.bodyLarge, color = Brand.Secondary)
             }
             SectionLabel(s.paathLanguage)
@@ -193,7 +193,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
                 Text(s.preview, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold, letterSpacing = 0.6.sp)
                 if (state.readLang == Lang.SA) ShlokaText(v, state.script, Brand.Sindoor, 16f, lines = 2)
                 val tr = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
-                Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 14.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
               }
             }
             Spacer(Modifier.heightIn(min = 24.dp))

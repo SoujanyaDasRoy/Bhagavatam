@@ -125,6 +125,22 @@ def parse_blocks(t):
     return front_title(t), blocks
 
 
+SPEAKER_VERB = re.compile(r'କହି|ପଚାରି|ଉବାଚ|କହନ୍ତି')
+TWO_SPACES = re.compile(r'^(.{3,70}?)\s{2,}(?=\S+(?:\s\S+){0,3}\s\S*(?:କହି|ପଚାରି))')
+
+
+def drop_heading(text):
+    """The boxed chapter heading is printed above the first verse and the reader keeps it at the start of verse 1,
+    either as a short paragraph of its own or as a few words followed by two spaces and the speaker line. Cut it."""
+    parts = text.split(chr(10) * 2)
+    if len(parts) > 1 and len(parts[0]) <= 110 and not SPEAKER_VERB.search(parts[0]) and SPEAKER_VERB.search(parts[1][:120]):
+        return (chr(10) * 2).join(parts[1:])
+    m = TWO_SPACES.match(text)
+    if m and not SPEAKER_VERB.search(m.group(1)):
+        return text[m.end():]
+    return text
+
+
 def blocks_from_units(units, rows):
     """Map Odia units onto database rows. rows: list of (num, num_end). Returns (blocks, unmatched unit starts)."""
     blocks = {}
@@ -147,6 +163,8 @@ def blocks_from_units(units, rows):
 
 def apply(db_path, src_root=None, version=None):
     src_root = src_root or os.path.join(ROOT, 'or')
+    tf = os.path.join(src_root, 'titles.json')
+    TITLES = json.load(open(tf, encoding='utf-8')) if os.path.exists(tf) else {}
     db = sqlite3.connect(db_path)
     cols = {r[1] for r in db.execute('PRAGMA table_info(verse)')}
     if 'or' not in cols:
@@ -180,6 +198,11 @@ def apply(db_path, src_root=None, version=None):
                 issues.append((s, c, 'no odia block for verse', num))
                 continue
             if b['text']:
+                if num == 1:
+                    cleaned = drop_heading(b['text'])
+                    if cleaned != b['text'] and len(cleaned) >= 20:
+                        stats['headings_cut'] = stats.get('headings_cut', 0) + 1
+                        b['text'] = cleaned
                 db.execute('UPDATE verse SET "or"=?, or_from=NULL WHERE skandha=? AND chapter=? AND num=?', (b['text'], s, c, num))
                 stats['verses_with_text'] += 1
             elif b['frm'] is not None:
@@ -191,8 +214,10 @@ def apply(db_path, src_root=None, version=None):
         for num in unmatched:
             stats['odia_blocks_unmatched'] += 1
             issues.append((s, c, 'odia block with no verse in the database', num))
-        if title:
-            db.execute('UPDATE chapter SET title_or=? WHERE skandha=? AND chapter=?', (title, s, c))
+        # the boxed heading read from the page is often garbled; the printed contents (titles.json, two readers agreeing) is used instead
+        if TITLES.get(f'{s}.{c}'):
+            db.execute('UPDATE chapter SET title_or=? WHERE skandha=? AND chapter=?', (TITLES[f'{s}.{c}'], s, c))
+            stats['titles'] = stats.get('titles', 0) + 1
         stats['chapters'] += 1
     if version is not None:
         db.execute("UPDATE meta SET value=? WHERE key='content_version'", (str(version),))

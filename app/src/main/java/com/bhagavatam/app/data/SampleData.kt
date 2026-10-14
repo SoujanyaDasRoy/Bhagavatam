@@ -97,7 +97,9 @@ data class Skandha(
 /** `sanskrit` is the printed closing line ("iti shrimad bhagavate ...") when the book has it for this chapter, else empty. */
 data class ChapterEnd(val colophon: String, val notes: String, val sanskrit: String = "")
 
-data class GlossaryTerm(val term: String, val dev: String, val meaning: String)
+data class GlossaryTerm(val term: String, val dev: String, val meaning: String, val meaningHi: String = "", val meaningBn: String = "") {
+    fun meaning(ui: Lang) = when (ui) { Lang.HI -> meaningHi.ifEmpty { meaning }; Lang.BN -> meaningBn.ifEmpty { meaning }; else -> meaning }
+}
 
 private val digitRange = Regex("(?<=\\d)[ \\t\u00a0]*[\u2013\u2014][ \\t\u00a0]*(?=\\d)")
 private val longDash = Regex("[ \\t\u00a0]*(?:[\u2013\u2014]+|--+)[ \\t\u00a0]*")
@@ -207,7 +209,12 @@ object SampleData {
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)
             }
         }
-        // title_or is not loaded: it holds the boxed Sanskrit heading read by software (often garbled), not the Odia chapter title.
+        // title_or holds the title printed in the contents list, only where two readers agreed on it.
+        runCatching {
+            d.rawQuery("SELECT skandha, chapter, title_or FROM chapter WHERE title_or IS NOT NULL AND title_or <> ''", null).use { c ->
+                while (c.moveToNext()) titlesOr["${c.getInt(0)}.${c.getInt(1)}"] = c.getString(2).orEmpty().tidyDashes()
+            }
+        }
         if (hasBn) d.rawQuery("SELECT DISTINCT skandha, chapter FROM verse WHERE bn IS NOT NULL AND bn <> ''", null).use { c ->
             while (c.moveToNext()) bengaliChapters.add("${c.getInt(0)}.${c.getInt(1)}")
         }
@@ -267,6 +274,7 @@ object SampleData {
     }
 
     fun hasTitle(s: Int, a: Int) = titlesEn.containsKey("$s.$a")
+    fun hasOdiaTitle(s: Int, a: Int) = !titlesOr["$s.$a"].isNullOrEmpty()
 
     @Synchronized
     private fun readVerses(where: String, args: Array<String>): List<Verse> {
@@ -390,16 +398,16 @@ object SampleData {
         }
 
     val glossary = listOf(
-        GlossaryTerm("Adhyaya", "अध्याय", "A chapter within a Skandha."),
-        GlossaryTerm("Kunti", "कुन्ती", "Mother of the Pandavas, whose prayers fill Adhyaya 1.8."),
-        GlossaryTerm("Naimisharanya", "नैमिषारण्य", "The forest where the sages gathered to hear the Bhagavatam."),
-        GlossaryTerm("Narada", "नारद", "The divine sage who urges Vyasa to write the Bhagavatam."),
-        GlossaryTerm("Parikshit", "परीक्षित्", "The king to whom Shuka told the Bhagavatam."),
-        GlossaryTerm("Rasa", "रास", "Krishna’s circle dance with the gopis, in Skandha 10."),
-        GlossaryTerm("Shaunaka", "शौनक", "Leader of the sages at Naimisharanya."),
-        GlossaryTerm("Shuka", "शुक", "Son of Vyasa, who recites the Bhagavatam."),
-        GlossaryTerm("Skandha", "स्कन्ध", "One of the twelve books of the Bhagavatam."),
-        GlossaryTerm("Suta", "सूत", "The narrator who retells it to the sages."),
+        GlossaryTerm("Adhyaya", "अध्याय", "A chapter within a Skandha.", "एक स्कन्ध के भीतर का अध्याय।", "স্কন্ধের ভিতরের একটি অধ্যায়।"),
+        GlossaryTerm("Kunti", "कुन्ती", "Mother of the Pandavas, whose prayers fill Adhyaya 1.8.", "पाण्डवों की माता, जिनकी स्तुति अध्याय १.८ में है।", "পাণ্ডবদের মাতা, যাঁর স্তুতি ১.৮ অধ্যায়ে আছে।"),
+        GlossaryTerm("Naimisharanya", "नैमिषारण्य", "The forest where the sages gathered to hear the Bhagavatam.", "वह वन जहाँ ऋषि भागवत सुनने एकत्र हुए।", "যে বনে ঋষিরা ভাগবত শুনতে সমবেত হয়েছিলেন।"),
+        GlossaryTerm("Narada", "नारद", "The divine sage who urges Vyasa to write the Bhagavatam.", "वे देवर्षि जिन्होंने व्यास को भागवत रचने की प्रेरणा दी।", "দেবর্ষি, যিনি ব্যাসদেবকে ভাগবত রচনায় প্রেরণা দেন।"),
+        GlossaryTerm("Parikshit", "परीक्षित्", "The king to whom Shuka told the Bhagavatam.", "वे राजा जिन्हें शुकदेव ने भागवत सुनाई।", "যে রাজাকে শুকদেব ভাগবত শুনিয়েছিলেন।"),
+        GlossaryTerm("Rasa", "रास", "Krishna’s circle dance with the gopis, in Skandha 10.", "गोपियों के साथ श्रीकृष्ण का मण्डलाकार नृत्य, दशम स्कन्ध में।", "গোপীদের সঙ্গে শ্রীকৃষ্ণের মণ্ডলাকার নৃত্য, দশম স্কন্ধে।"),
+        GlossaryTerm("Shaunaka", "शौनक", "Leader of the sages at Naimisharanya.", "नैमिषारण्य के ऋषियों के प्रमुख।", "নৈমিষারণ্যের ঋষিদের প্রধান।"),
+        GlossaryTerm("Shuka", "शुक", "Son of Vyasa, who recites the Bhagavatam.", "व्यासजी के पुत्र, जो भागवत सुनाते हैं।", "ব্যাসদেবের পুত্র, যিনি ভাগবত শোনান।"),
+        GlossaryTerm("Skandha", "स्कन्ध", "One of the twelve books of the Bhagavatam.", "भागवत के बारह खण्डों में से एक।", "ভাগবতের বারোটি খণ্ডের একটি।"),
+        GlossaryTerm("Suta", "सूत", "The narrator who retells it to the sages.", "वे वक्ता जो इसे ऋषियों को फिर सुनाते हैं।", "যিনি এটি ঋষিদের পুনরায় শোনান।"),
     )
 }
 

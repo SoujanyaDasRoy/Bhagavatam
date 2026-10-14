@@ -111,8 +111,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
                         "भागवतम में उपलब्ध ऑफ़लाइन शब्दकोश विकिमीडिया डेटा से निर्मित है। सभी अर्थ और परिभाषाएँ CC BY-SA 4.0 के अंतर्गत समुदाय के योगदानकर्ताओं द्वारा तैयार की गई हैं। यह लाइसेंस केवल शब्दकोश डेटाबेस पर लागू होता है, ऐप के मुख्य कोड पर नहीं।",
                         "ভাগবতমে অন্তর্ভুক্ত অফলাইন অভিধান উইকিমিডিয়া ডাম্প থেকে তৈরি। সমস্ত সংজ্ঞা এবং অর্থ CC BY-SA 4.0 লাইসেন্সের অধীনে সম্প্রদায়ের অবদানকারীদের দ্বারা লিখিত। এই শেয়ার-অ্যালাইক লাইসেন্সটি কেবল অভিধান ডাটাবেজের ক্ষেত্রে প্রযোজ্য, মূল অ্যাপ কোডের ক্ষেত্রে নয়।"
                     ),
-                    fontSize = 13.sp,
-                    lineHeight = 19.sp,
+                    fontSize = 15.sp, lineHeight = 24.sp,
                     color = app.inkSecondary,
                     fontFamily = readingFont(ui)
                 )
@@ -164,7 +163,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
                         ) {
                             Text(
                                 s.licence,
-                                fontSize = 11.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = app.accent
                             )
@@ -232,8 +231,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
                     "सूचना: ओड़िया विक्षनरी के अर्थ प्रारंभिक प्रविष्टियों पर आधारित हैं और वर्तमान में अपरीक्षित प्रारूप हैं।",
                     "উল্লেখ্য: ওড়িয়া উইকিঅভিধানের কভারেজ প্রাথমিক তথ্যের ওপর ভিত্তি করে তৈরি এবং এটি বর্তমানে একটি অপ্রমাণিত খসড়া।"
                 ),
-                fontSize = 12.sp,
-                lineHeight = 17.sp,
+                fontSize = 15.sp, lineHeight = 24.sp,
                 color = app.inkSecondary,
                 fontFamily = readingFont(ui)
             )

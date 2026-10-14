@@ -248,7 +248,7 @@ fun DictionaryScreen(
                 FilterChip(
                     selected = selected,
                     onClick = { selectedLang = code },
-                    label = { Text(label, fontSize = 13.sp, fontFamily = readingFont(ui)) },
+                    label = { Text(label, fontSize = 15.sp, fontFamily = readingFont(ui)) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = app.accent.copy(alpha = 0.15f),
                         selectedLabelColor = app.accent,
@@ -277,7 +277,7 @@ fun DictionaryScreen(
             }
             if (termMatches.isNotEmpty()) {
                 item { GlossaryHeading(ui) }
-                items(termMatches.size) { i -> GlossaryRow(termMatches[i]) }
+                items(termMatches.size) { i -> GlossaryRow(termMatches[i], ui) }
             }
             if (query.trim().length >= 2) {
                 // Active query mode
@@ -294,7 +294,7 @@ fun DictionaryScreen(
                         ) {
                             Text(
                                 tr(ui, "No dictionary entry found for this prefix.", "इस शब्द के लिए कोई प्रविष्टि नहीं मिली।", "এই শব্দের জন্য কোনো অভিধান অর্থ পাওয়া যায়নি।"),
-                                fontSize = 14.sp,
+                                fontSize = 15.sp,
                                 color = app.inkSecondary,
                                 fontFamily = readingFont(ui)
                             )
@@ -318,7 +318,7 @@ fun DictionaryScreen(
                     item {
                         Text(
                             tr(ui, "Matching entries", "मिलती-जुलती प्रविष्टियाँ", "অনুরূপ প্রবিষ্টসমূহ"),
-                            fontSize = 14.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = app.inkSecondary,
                             fontFamily = readingFont(ui),
@@ -335,7 +335,7 @@ fun DictionaryScreen(
             } else {
                 // Idle mode: names and terms of the book, then saved words and info
                 item { GlossaryHeading(ui) }
-                items(SampleData.glossary.size) { i -> GlossaryRow(SampleData.glossary[i]) }
+                items(SampleData.glossary.size) { i -> GlossaryRow(SampleData.glossary[i], ui) }
                 item {
                     Text(
                         tr(ui, "Saved words", "सहेजे गए शब्द", "সংরক্ষিত শব্দসমূহ"),
@@ -365,8 +365,7 @@ fun DictionaryScreen(
                                     "अभी कोई सहेजा हुआ शब्द नहीं है। पढ़ते समय किसी भी शब्द को दबाकर रखें।",
                                     "এখনও কোনো সংরক্ষিত শব্দ নেই। পড়ার সময় যেকোনো শব্দ চেপে ধরে সংরক্ষণ করুন।"
                                 ),
-                                fontSize = 13.sp,
-                                lineHeight = 19.sp,
+                                fontSize = 15.sp, lineHeight = 24.sp,
                                 color = app.inkSecondary,
                                 fontFamily = readingFont(ui)
                             )
@@ -395,8 +394,8 @@ fun DictionaryScreen(
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                tr(ui, "Offline Granth Dictionary", "ऑफ़लाइन ग्रंथ शब्दकोश", "অফলাইন গ্রন্থ অভিধান"),
-                                fontSize = 13.sp,
+                                tr(ui, "Offline dictionary", "ऑफ़लाइन ग्रंथ शब्दकोश", "অফলাইন গ্রন্থ অভিধান"),
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = app.ink,
                                 fontFamily = readingFont(ui)
@@ -408,8 +407,7 @@ fun DictionaryScreen(
                                     "पूरी तरह ऑफ़लाइन काम करता है। विक्षनरी (CC BY-SA 4.0) से संस्कृत, हिन्दी, बंगाली और अंग्रेज़ी अर्थ शामिल हैं।",
                                     "সম্পূর্ণ অফলাইনে কাজ করে। উইকিঅভিধান (CC BY-SA 4.0) থেকে সংস্কৃত, হিন্দি, বাংলা ও ইংরেজি অর্থ যুক্ত।"
                                 ),
-                                fontSize = 12.sp,
-                                lineHeight = 17.sp,
+                                fontSize = 15.sp, lineHeight = 24.sp,
                                 color = app.inkSecondary,
                                 fontFamily = readingFont(ui)
                             )
@@ -471,7 +469,7 @@ private fun DictionaryEntryDetailCard(
                             ) {
                                 Text(
                                     "[${entry.pos}]",
-                                    fontSize = 11.sp,
+                                    fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = app.accent
                                 )
@@ -494,7 +492,7 @@ private fun DictionaryEntryDetailCard(
                                 "(संस्कृत मूल - ${entry.originLang?.uppercase() ?: "हिन्दी"} में भी)",
                                 "(সংস্কৃত মূল - ${entry.originLang?.uppercase() ?: "হিন্দি"}তেও)"
                             ),
-                            fontSize = 12.sp,
+                            fontSize = 15.sp,
                             color = app.accent,
                             fontFamily = readingFont(ui)
                         )
@@ -559,7 +557,7 @@ private fun DictionaryEntryDetailCard(
                 if (entry.senses.isEmpty()) {
                     Text(
                         tr(ui, "No specific definitions recorded.", "कोई विशिष्ट अर्थ दर्ज नहीं है।", "কোনো নির্দিষ্ট অর্থ নথিভুক্ত নেই।"),
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = app.inkSecondary,
                         fontFamily = readingFont(ui)
                     )
@@ -610,12 +608,12 @@ private fun DictionaryEntryDetailCard(
             ) {
                 Text(
                     (entry.source?.name ?: "Wiktionary") + " · CC BY-SA 4.0",
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     color = app.inkSecondary
                 )
                 Text(
                     tr(ui, "Credits", "आभार", "স্বীকার"),
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = app.accent
                 )
@@ -662,7 +660,7 @@ private fun DictionaryResultRow(
                     if (entry.pos.isNotBlank()) {
                         Text(
                             "[${entry.pos}]",
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = app.accent
                         )
@@ -762,16 +760,21 @@ private fun GlossaryHeading(ui: com.bhagavatam.app.data.Lang) {
 }
 
 @Composable
-private fun GlossaryRow(g: com.bhagavatam.app.data.GlossaryTerm) {
+private fun GlossaryRow(g: com.bhagavatam.app.data.GlossaryTerm, ui: com.bhagavatam.app.data.Lang) {
     val app = LocalAppColors.current
     Column(
         Modifier.fillMaxWidth().clip(Radius.card).background(app.surface).border(1.dp, app.line, Radius.card).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(g.term, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = app.ink)
-            if (g.dev.isNotEmpty()) Text(g.dev, fontFamily = com.bhagavatam.app.ui.theme.NotoDevanagari, fontSize = 17.sp, color = app.accent)
+            val shown = when (ui) {
+                com.bhagavatam.app.data.Lang.HI -> g.dev
+                com.bhagavatam.app.data.Lang.BN -> com.bhagavatam.app.util.Transliterate.toBengali(g.dev)
+                else -> g.term
+            }
+            Text(shown, fontFamily = com.bhagavatam.app.ui.screens.readingFont(ui), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = app.ink)
+            if (ui == com.bhagavatam.app.data.Lang.EN && g.dev.isNotEmpty()) Text(g.dev, fontFamily = com.bhagavatam.app.ui.theme.NotoDevanagari, fontSize = 17.sp, color = app.accent)
         }
-        Text(g.meaning, fontSize = 15.sp, lineHeight = 22.sp, color = app.inkSecondary)
+        Text(g.meaning(ui), fontSize = 15.sp, lineHeight = 22.sp, color = app.inkSecondary)
     }
 }

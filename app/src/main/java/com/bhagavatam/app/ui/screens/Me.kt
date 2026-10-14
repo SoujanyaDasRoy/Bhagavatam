@@ -97,7 +97,7 @@ fun DownloadsScreen(state: AppState) {
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                     Text(localDigits(s.sanskritAudioPacks.format(done), ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                    Text(s.downloadsNote, fontSize = 13.sp, lineHeight = 18.sp, color = Brand.Secondary)
+                    Text(s.downloadsNote, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Secondary)
                 }
             }
         }
@@ -116,7 +116,7 @@ fun DownloadsScreen(state: AppState) {
                             Text(if (sk.num == 0) s.mahatmya else "${localDigits("${s.skandha} ${sk.num}", ui)} · ${sk.title(ui)}", fontSize = 16.sp)
                             Text(
                                 when (st) { PackState.DONE -> s.onPhone; PackState.DOWNLOADING -> s.downloading; PackState.NONE -> s.sanskritAudio },
-                                fontSize = 13.sp, color = Brand.Secondary,
+                                fontSize = 15.sp, color = Brand.Secondary,
                             )
                         }
                         when (st) {
@@ -157,7 +157,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
         item { Text(s.saved, Modifier.padding(horizontal = 20.dp), style = MaterialTheme.typography.displaySmall) }
         item { Segmented(listOf(s.all, s.bookmarks, s.highlights), filter, { filter = it }) }
         if (marks.isNotEmpty()) {
-            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Secondary) }
+            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Secondary) }
             items(marks, key = { "m${it.id}" }) { a ->
                 val v = SampleData.verse(a.ref)
                 Column(
@@ -167,12 +167,12 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Box(Modifier.size(10.dp).clip(CircleShape).background(if (a.colour == 0L) Brand.Gold else Color(a.colour)))
-                        Text(localDigits(a.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
+                        Text(localDigits(a.ref, ui), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
                         Box(Modifier.weight(1f))
-                        if (v != null) Text(tr(ui, "Open chapter", "अध्याय खोलें", "অধ্যায় খুলুন"), Modifier.clickable { onOpen(v.skandha, v.adhyaya) }.padding(8.dp), fontSize = 13.sp, fontWeight = FontWeight.Medium, color = Brand.Kesari)
+                        if (v != null) Text(tr(ui, "Open chapter", "अध्याय खोलें", "অধ্যায় খুলুন"), Modifier.clickable { onOpen(v.skandha, v.adhyaya) }.padding(8.dp), fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Brand.Kesari)
                     }
                     Text(a.quote, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 15.sp, lineHeight = 22.sp, color = Brand.Ink, maxLines = 3)
-                    if (a.note.isNotBlank()) Text(a.note, fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary)
+                    if (a.note.isNotBlank()) Text(a.note, fontSize = 15.sp, lineHeight = 20.sp, color = Brand.Secondary)
                 }
             }
         }
@@ -181,7 +181,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
             Column(Modifier.fillMaxWidth().padding(horizontal = 40.dp, vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(painterResource(Ic.Bookmark), null, tint = Brand.Secondary, modifier = Modifier.size(32.dp))
                 Text(t.nothingSaved, fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Brand.Ink)
-                Text(t.savedHint, fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text(t.savedHint, fontSize = 15.sp, lineHeight = 20.sp, color = Brand.Secondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
         }
         items(refs, key = { it }) { ref ->
@@ -211,10 +211,10 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
                 if (mark != null) Box(Modifier.width(4.dp).height(64.dp).clip(CircleShape).background(Color(mark)))
                 else Icon(painterResource(Ic.Bookmark), null, tint = Brand.Kesari, modifier = Modifier.size(18.dp))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(localDigits(v.ref, ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
+                    Text(localDigits(v.ref, ui), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
                     ShlokaText(v, state.script, Brand.Sindoor, 17f, lines = 1)
                     val tr = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
-                    Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 14.sp, lineHeight = 20.sp, color = Brand.Secondary, maxLines = 2)
+                    Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 15.sp, lineHeight = 24.sp, color = Brand.Secondary, maxLines = 2)
                 }
             }
             }
@@ -256,7 +256,7 @@ fun GlossaryScreen(state: AppState, onBack: () -> Unit) {
                             Text(g.term, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                             Text(g.dev, fontFamily = NotoDevanagari, fontSize = 15.sp, color = Brand.Sindoor)
                         }
-                        Text(g.meaning, fontSize = 14.sp, lineHeight = 19.sp, color = Brand.Secondary)
+                        Text(g.meaning, fontSize = 15.sp, lineHeight = 24.sp, color = Brand.Secondary)
                     }
                 }
             }
@@ -275,7 +275,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
             GroupCard {
                 listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri)).forEachIndexed { i, (l, n, f) ->
                     if (i > 0) RowDivider()
-                    LanguageOption(n, mapOf(Lang.EN to "English", Lang.HI to "Hindi", Lang.BN to "Bengali").getValue(l), f, state.uiLang == l) { state.updateUiLang(l) }
+                    LanguageOption(n, nameIn(state.uiLang, l), f, state.uiLang == l) { state.updateUiLang(l) }
                 }
             }
             Note(s.appLanguageNote)
