@@ -541,7 +541,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 }
             }
             // The shloka and its transliteration are centred, like a printed verse.
-            ShlokaText(v, state.script, c.shloka, 20f * scale, center = true, onWordLongPress = { word ->
+            ShlokaText(v, state.script, c.shloka, 20f * scale, center = true, state = state, onWordLongPress = { word ->
                 state.lookup = com.bhagavatam.app.data.WordLookup(word, Lang.SA, v.ref)
             })
             if (showIast) {
@@ -630,7 +630,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
             ) {
                 Text(localDigits("${stringsFor(state.langFor(LangZone.PAGE)).shloka} ${skLabel}.${v.adhyaya}.${label}", ui), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = c.gold)
                 val script = if (ui == Lang.BN && state.script == SanskritScript.DEVANAGARI) SanskritScript.BENGALI else state.script
-                ShlokaText(v, script, c.shloka, 16f * scale, onWordLongPress = { word ->
+                ShlokaText(v, script, c.shloka, 16f * scale, state = state, onWordLongPress = { word ->
                     state.lookup = com.bhagavatam.app.data.WordLookup(word, Lang.SA, v.ref)
                 })
             }

@@ -3,6 +3,10 @@ package com.bhagavatam.app.ui.screens
 import androidx.compose.ui.res.painterResource
 import com.bhagavatam.app.ui.components.Ic
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -58,45 +62,77 @@ import com.bhagavatam.app.ui.theme.NotoSerifBengali
 import com.bhagavatam.app.ui.theme.TiroHindi
 import com.bhagavatam.app.ui.theme.NotoDevanagari
 
+/** Two dots: where the person is in the two first-run steps. */
+@Composable
+internal fun StepDots(current: Int, total: Int = 2, onDark: Boolean = false) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        for (i in 1..total) {
+            val on = i == current
+            Box(
+                Modifier.height(6.dp).width(if (on) 22.dp else 6.dp).clip(RoundedCornerShape(3.dp))
+                    .background(if (on) Brand.Kesari else if (onDark) Color.White.copy(alpha = 0.45f) else Brand.Separator)
+            )
+        }
+    }
+}
+
 @Composable
 fun OnboardingLanguageScreen(state: AppState, onContinue: () -> Unit) {
     val s = state.strings
-    Column(Modifier.fillMaxSize().background(Brand.Paper).statusBarsPadding().navigationBarsPadding()) {
+    val ui = state.uiLang
+    Column(Modifier.fillMaxSize().background(Brand.Paper).navigationBarsPadding()) {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp), horizontalArrangement = Arrangement.End) {
-                Text(tr(state.uiLang, "1 of 2", "१ / २", "১ / ২"), fontSize = 13.sp, color = Brand.Secondary)
+            // Hero: the Kangra painting, fading into the page, with the name of the book on it.
+            Box(Modifier.fillMaxWidth().height(300.dp)) {
+                androidx.compose.foundation.Image(
+                    painterResource(com.bhagavatam.app.R.drawable.ch_0_1), null, Modifier.matchParentSize(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                )
+                Box(
+                    Modifier.matchParentSize().background(
+                        androidx.compose.ui.graphics.Brush.verticalGradient(
+                            0f to Color(0x66000000), 0.35f to Color(0x11000000), 0.78f to Brand.Paper.copy(alpha = 0.85f), 1f to Brand.Paper,
+                        )
+                    )
+                )
+                Box(Modifier.align(Alignment.TopEnd).statusBarsPadding().padding(top = 14.dp, end = 20.dp)) { StepDots(1, onDark = true) }
+                Column(Modifier.align(Alignment.BottomCenter).padding(bottom = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("श्रीमद्भागवतम्", fontFamily = NotoDevanagari, fontSize = 24.sp, color = Brand.Sindoor)
+                    Text("Bhagavatam", fontFamily = EnglishReading, fontSize = 34.sp, fontWeight = FontWeight.Medium, color = Brand.Ink)
+                }
             }
-            VSpace(40)
-            Column(Modifier.fillMaxWidth().padding(horizontal = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                AppTile(size = 72, fontSize = 36)
-                VSpace(18)
-                Text("श्रीमद्भागवतम्", fontFamily = NotoDevanagari, fontSize = 22.sp, color = Brand.Sindoor)
-                Text("Bhagavatam", fontFamily = EnglishReading, fontSize = 36.sp, fontWeight = FontWeight.Medium, color = Brand.Ink)
-                VSpace(4)
-                Text(s.chooseLanguage, style = MaterialTheme.typography.bodyLarge, color = Brand.Secondary, textAlign = TextAlign.Center)
+            VSpace(14)
+            Text(
+                s.chooseLanguage, Modifier.fillMaxWidth().padding(horizontal = 32.dp), textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge, color = Brand.Secondary,
+            )
+            VSpace(18)
+            Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri)).forEach { (lang, native, font) ->
+                    LanguageOption(
+                        native, mapOf("EN" to "English", "HI" to "Hindi", "BN" to "Bengali")[lang.name]!!, font, state.uiLang == lang,
+                    ) { state.updateUiLang(lang) }
+                }
             }
-            VSpace(36)
-            GroupCard {
-                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri))
-                    .forEachIndexed { i, (lang, native, font) ->
-                        if (i > 0) RowDivider()
-                        LanguageOption(native, lang.name.let { mapOf("EN" to "English", "HI" to "Hindi", "BN" to "Bengali")[it]!! }, font, state.uiLang == lang) {
-                            state.updateUiLang(lang)
-                        }
-                    }
-            }
-            Text(s.changeLater, Modifier.padding(start = 36.dp, end = 36.dp, top = 10.dp), style = MaterialTheme.typography.bodySmall, color = Brand.Secondary)
-            Text(tr(state.uiLang, "Works fully offline. No sign-in.", "पूरी तरह ऑफ़लाइन। साइन-इन की ज़रूरत नहीं।", "সম্পূর্ণ অফলাইন। সাইন-ইন লাগে না।"),
-                Modifier.padding(start = 36.dp, end = 36.dp, top = 6.dp), style = MaterialTheme.typography.bodySmall, color = Brand.Secondary)
-            VSpace(20)
+            Text(
+                s.changeLater + "  " + tr(ui, "Works fully offline. No sign-in.", "पूरी तरह ऑफ़लाइन। साइन-इन की ज़रूरत नहीं।", "সম্পূর্ণ অফলাইন। সাইন-ইন লাগে না।"),
+                Modifier.padding(start = 28.dp, end = 28.dp, top = 14.dp), style = MaterialTheme.typography.bodySmall, color = Brand.Secondary,
+            )
+            VSpace(16)
             // The same verse in the chosen language, so the choice is visible and not only a name in a list.
-            Column(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card).padding(16.dp)) {
+            Row(
+                Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card),
+            ) {
+                Box(Modifier.width(4.dp).fillMaxHeight().background(Brand.Gold))
                 val v = SampleData.adhyaya1.first()
-                Text(v.translation(state.uiLang), fontFamily = readingFont(state.uiLang), fontSize = 15.sp, lineHeight = 23.sp, color = Brand.Ink,
-                    maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                Text(
+                    v.translation(state.uiLang), Modifier.padding(16.dp), fontFamily = readingFont(state.uiLang), fontSize = 15.sp, lineHeight = 23.sp,
+                    color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                )
             }
+            VSpace(16)
         }
-        Column(Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        Column(Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp, top = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             PrimaryButton(s.continueBtn, onContinue)
             Text(s.textsFrom, Modifier.fillMaxWidth(), textAlign = TextAlign.Center, fontSize = 12.sp, color = Brand.Secondary)
         }
@@ -105,13 +141,16 @@ fun OnboardingLanguageScreen(state: AppState, onContinue: () -> Unit) {
 
 @Composable
 fun LanguageOption(native: String, sub: String, font: FontFamily, selected: Boolean, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(16.dp)
     Row(
-        Modifier.fillMaxWidth().background(if (selected) Brand.KesariTint else Color.Transparent)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick).heightIn(min = 64.dp).padding(horizontal = 16.dp, vertical = 8.dp),
+        Modifier.fillMaxWidth().clip(shape)
+            .background(if (selected) Brand.KesariTint else Brand.Card)
+            .border(if (selected) 2.dp else 1.dp, if (selected) Brand.Kesari else Brand.Separator, shape)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick).heightIn(min = 68.dp).padding(horizontal = 18.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text(native, fontFamily = font, fontSize = 18.sp, lineHeight = 26.sp, color = Brand.Ink)
+            Text(native, fontFamily = font, fontSize = 20.sp, lineHeight = 28.sp, color = Brand.Ink, fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal)
             // English reads the same twice; skip the repeat.
             if (sub != native) Text(sub, fontSize = 13.sp, lineHeight = 18.sp, color = Brand.Secondary)
         }
@@ -124,7 +163,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
     val s = state.strings
     val langs = listOf(Lang.SA, Lang.HI, Lang.BN, Lang.EN).filter { BENGALI_READY || it != Lang.BN }
     Column(Modifier.fillMaxSize().background(Brand.Paper).navigationBarsPadding()) {
-        NavBar(s.back, onBack) { Text(s.stepOf, fontSize = 13.sp, color = Brand.Secondary, modifier = Modifier.padding(end = 8.dp)) }
+        NavBar(s.back, onBack) { Box(Modifier.padding(end = 12.dp)) { StepDots(2) } }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             Column(Modifier.padding(start = 20.dp, end = 20.dp, top = 4.dp, bottom = 20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(s.paathQuestion, fontSize = 30.sp, lineHeight = 36.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
@@ -146,15 +185,15 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
                 SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
             }
             VSpace(24)
-            Column(
-                Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card).padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
+            Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card)) {
+              Box(Modifier.width(4.dp).fillMaxHeight().background(Brand.Gold))
+              Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 val v = SampleData.adhyaya1.first()
                 Text(s.preview, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold, letterSpacing = 0.6.sp)
                 if (state.readLang == Lang.SA) ShlokaText(v, state.script, Brand.Sindoor, 16f, lines = 2)
                 val tr = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
                 Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 14.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+              }
             }
             Spacer(Modifier.heightIn(min = 24.dp))
         }

@@ -166,7 +166,7 @@ private fun splitDoubtful(t: String): Pair<String, List<IntRange>> {
 
 /** Asked when a reader taps a red-underlined word: is it spelled correctly? If not, the correction goes to the maker. */
 @Composable
-private fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String, onDone: () -> Unit) {
+internal fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String, onDone: () -> Unit) {
     val ui = state.uiLang
     val context = LocalContext.current
     AlertDialog(
@@ -194,7 +194,7 @@ private fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String, 
 }
 
 /** Character ranges of whole-word occurrences of [words] in [text]. */
-private fun wordRanges(text: String, words: Set<String>): List<IntRange> {
+internal fun wordRanges(text: String, words: Set<String>): List<IntRange> {
     if (words.isEmpty()) return emptyList()
     val out = ArrayList<IntRange>()
     for (w in words) {

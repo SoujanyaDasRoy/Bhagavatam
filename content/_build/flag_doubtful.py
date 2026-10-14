@@ -16,14 +16,15 @@ import unicodedata
 
 MAX_COUNT = 2
 MIN_NEIGHBOUR = 25
-MIN_LEN = {"hi": 4, "bn": 4, "en": 5}
+MIN_LEN = {"hi": 4, "bn": 4, "en": 5, "sa": 5}
 # Particles and case endings that attach to a word: "भागवतके", "ভাগবতই", "ঋষিগণও" are spellings, not slips.
 ATTACH = {
     "hi": ["के", "की", "का", "को", "में", "मे", "से", "ने", "पर", "ही", "भी", "तो", "तक", "सा", "सी", "से", "ोंके", "ोंकी", "ोंका", "ोंको", "ोंमें", "ोंसे", "ोंने", "ों", "ें", "ो", "े", "ी", "ा", "ें", "जी", "गण", "रूप", "मय", "वत्", "वान्", "युक्त", "हीन", "रहित"],
     "bn": ["ই", "ও", "ের", "েরই", "েও", "কে", "কেই", "তে", "তেই", "র", "রই", "রও", "রা", "দের", "ে", "েই", "টি", "টা", "গণ", "গণের", "গুলি", "গুলো", "ময়", "রূপ", "হীন", "যুক্ত", "মাত্র", "ন", "েন", "নি", "ছে", "ল", "লে", "ও"],
     "en": [],
+    "sa": [],
 }
-WORD = {"hi": re.compile(r"[ऀ-ॿ]+"), "bn": re.compile(r"[ঀ-৿]+"), "en": re.compile(r"[A-Za-zÀ-ɏ]+")}
+WORD = {"sa": re.compile(r"[ऀ-ॿ]+"), "hi": re.compile(r"[ऀ-ॿ]+"), "bn": re.compile(r"[ঀ-৿]+"), "en": re.compile(r"[A-Za-zÀ-ɏ]+")}
 
 
 def nfc(s):
@@ -59,7 +60,7 @@ def main():
     except Exception:
         pass
     flagged = []
-    for lang in ("hi", "bn", "en"):
+    for lang in ("hi", "bn", "en", "sa"):
         cnt = collections.Counter()
         where = collections.defaultdict(set)
         for vid, text in db.execute(f"select rowid, {lang} from verse"):
@@ -70,7 +71,7 @@ def main():
         alphabet = sorted({ch for w in cnt for ch in w if cnt[w] >= MIN_NEIGHBOUR})
         n = 0
         for w, c in cnt.items():
-            if c > MAX_COUNT or len(w) < MIN_LEN[lang] or w in dic:
+            if c > (1 if lang == "sa" else MAX_COUNT) or len(w) < MIN_LEN[lang] or w in dic or re.search(r"[०-९]", w):
                 continue
             if any(w.endswith(a) and len(w) > len(a) + 1 and (cnt.get(w[:-len(a)], 0) >= 3 or w[:-len(a)] in dic) for a in ATTACH[lang]):
                 continue
