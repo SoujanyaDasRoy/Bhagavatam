@@ -138,7 +138,7 @@ fun ReaderScreen(
     val s = state.strings
     val ui = state.uiLang
     val verses = remember(skandha, adhyaya) { SampleData.versesFor(skandha, adhyaya) }
-    val title = SampleData.adhyayaTitle(skandha, adhyaya, state.titleLang, s)
+    val title = SampleData.adhyayaTitle(skandha, adhyaya, state.contentLang, s)
     var showSheet by remember { mutableStateOf(false) }
     var showLangSheet by remember { mutableStateOf(false) }
     val peeked = remember { mutableStateListOf<String>() }
@@ -192,7 +192,7 @@ fun ReaderScreen(
         for (v in verses) {
             if (!v.hasText(bookLang)) {
                 // A translation that sits on an earlier verse (English and Bengali joint verses): widen that row's label to cover this one.
-                val from = when (bookLang) { Lang.EN -> v.enFrom; Lang.BN -> v.bnFrom; else -> null }
+                val from = when (bookLang) { Lang.EN -> v.enFrom; Lang.BN -> v.bnFrom; Lang.OR -> v.orFrom; else -> null }
                 val last = out.lastOrNull()
                 if (from != null && from < v.num && last != null && last.verse.num == from) {
                     out[out.lastIndex] = last.copy(label = "$from-${v.numEnd}")
@@ -306,7 +306,7 @@ fun ReaderScreen(
                     val barAlpha by animateFloatAsState(if (titleInBar) 1f else 0f, tween(Motion.sheet), label = "barTitle")
                     if (barAlpha > 0f) {
                         Column(Modifier.graphicsLayer { alpha = barAlpha; translationY = (1f - barAlpha) * 8.dp.toPx() }, horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(title, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(title, fontFamily = readingFont(state.contentLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             Text(reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
                         }
                     }
@@ -410,7 +410,7 @@ fun ReaderScreen(
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
                         Text(reference, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
-                        Text(title, fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 38.sp,
+                        Text(title, fontFamily = readingFont(state.contentLang), fontSize = 24.sp, lineHeight = 38.sp,
                             fontWeight = FontWeight.Medium, color = c.ink, textAlign = TextAlign.Center)
                         val count = SampleData.verseCount(skandha, adhyaya)
                         val totalWords = remember(verses, bookLang) {
@@ -700,8 +700,8 @@ private fun ChapterButton(state: AppState, label: String, target: Pair<Int, Int>
             val number = target?.let { " · " + localDigits(it.second.toString(), state.titleLang) }.orEmpty()
             Text(label + number, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = sub, maxLines = 1)
             if (target != null) Text(
-                SampleData.adhyayaTitle(target.first, target.second, state.titleLang, state.strings),
-                fontFamily = readingFont(state.titleLang), fontSize = 15.sp, lineHeight = 24.sp, color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                SampleData.adhyayaTitle(target.first, target.second, state.contentLang, state.strings),
+                fontFamily = readingFont(state.contentLang), fontSize = 15.sp, lineHeight = 24.sp, color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
         }
         if (!back) Icon(painterResource(Ic.KeyboardArrowRight), null, tint = ink, modifier = Modifier.size(18.dp))

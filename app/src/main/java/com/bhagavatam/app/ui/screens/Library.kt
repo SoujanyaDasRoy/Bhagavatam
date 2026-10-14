@@ -116,14 +116,14 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Column {
                 Text(numeralLabel, fontFamily = numeralFont, fontSize = numeralSize, fontWeight = FontWeight.SemiBold, color = Color.White)
-                val subTitle = if (state.titleLang == Lang.EN) sk.name(state.uiLang) else sk.title(state.titleLang)
-                val subFont = if (state.titleLang == Lang.EN) {
+                val subTitle = if (state.contentLang == Lang.EN) sk.name(state.uiLang) else sk.title(state.contentLang)
+                val subFont = if (state.contentLang == Lang.EN) {
                     when (state.uiLang) {
                         Lang.BN -> NotoSerifBengali
                         Lang.HI -> NotoDevanagari
                         else -> NotoDevanagari
                     }
-                } else readingFont(state.titleLang)
+                } else readingFont(state.contentLang)
                 Text(subTitle, fontFamily = subFont, fontSize = 16.sp, lineHeight = 26.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -141,7 +141,7 @@ fun StoryCard(e: Episode, state: AppState, onOpen: (Int, Int) -> Unit) {
     val hue = skColor(e.s)
     val refLabel = if (e.s == 0) "${stringsFor(state.titleLang).mahatmya}.${e.a}" else "${e.s}.${e.a}"
     // Names of stories are part of the book: they follow the reading language (Odia has none, so the app language is used).
-    val storyLang = if (state.titleLang == Lang.OR) state.uiLang else state.titleLang
+    val storyLang = state.contentLang
     Box(Modifier.width(200.dp).height(128.dp).tappable(Radius.card, e.title(storyLang)) { onOpen(e.s, e.a) }) {
         ArtBackdrop(chArt(e.s, e.a), skGradient(hue), Modifier.matchParentSize(), petals = 12)
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
@@ -216,8 +216,8 @@ fun HomeScreen(
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(localDigits(contRef, state.titleLang),
                         fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
-                    Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.titleLang, s),
-                        fontFamily = readingFont(state.titleLang), fontSize = 24.sp, lineHeight = 38.sp, fontWeight = FontWeight.Medium, color = Color.White,
+                    Text(SampleData.adhyayaTitle(state.lastSkandha, state.lastAdhyaya, state.contentLang, s),
+                        fontFamily = readingFont(state.contentLang), fontSize = 24.sp, lineHeight = 38.sp, fontWeight = FontWeight.Medium, color = Color.White,
                         maxLines = 3, overflow = TextOverflow.Ellipsis)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -389,19 +389,19 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                     Text(localDigits("${sk.adhyayaCount} ${s.adhyayas}", ui), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
                     Text(headerTitle, fontFamily = headerFont, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     if (skandha > 0) {
-                        val skName = when (state.titleLang) {
+                        val skName = when (state.contentLang) {
                             Lang.BN -> sk.nameBn
                             Lang.HI -> sk.nameSa
                             else -> sk.nameSa
                         }
-                        val skFont = when (state.titleLang) {
+                        val skFont = when (state.contentLang) {
                             Lang.BN -> NotoSerifBengali
                             Lang.HI, Lang.SA -> NotoDevanagari
                             else -> NotoDevanagari
                         }
                         Text(skName, fontFamily = skFont, fontSize = 19.sp, color = Color.White)
                     }
-                    Text(sk.title(state.titleLang), fontFamily = readingFont(state.titleLang), fontSize = 16.sp, color = Color(0xFFFFF4DC))
+                    Text(sk.title(state.contentLang), fontFamily = readingFont(state.contentLang), fontSize = 16.sp, color = Color(0xFFFFF4DC))
                 }
             }
         }
@@ -426,7 +426,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                 ) {
                     Text(localDigits(a.toString(), ui), Modifier.width(28.dp), fontFamily = numFont, fontSize = 17.sp, color = Brand.Secondary)
                     Column(Modifier.weight(1f)) {
-                        Text(SampleData.adhyayaTitle(skandha, a, state.titleLang, s), fontFamily = readingFont(state.titleLang), fontSize = 16.sp, lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(SampleData.adhyayaTitle(skandha, a, state.contentLang, s), fontFamily = readingFont(state.contentLang), fontSize = 16.sp, lineHeight = 26.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
                         if (count > 0) Text(localDigits("$count ${s.shlokas.lowercase()}", ui), fontSize = 15.sp, color = Brand.Secondary)
                     }
                     when {

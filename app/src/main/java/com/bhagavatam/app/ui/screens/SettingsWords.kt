@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -146,7 +148,7 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
         ) {
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 MarkColours.forEachIndexed { i, col ->
-                    Box(Modifier.size(48.dp).selectable(selected = state.defaultMark == i, role = Role.RadioButton) { state.updateDefaultMark(i) }, contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(48.dp).semantics { contentDescription = listOf(tr(ui, "Yellow", "पीला", "হলুদ"), tr(ui, "Green", "हरा", "সবুজ"), tr(ui, "Blue", "नीला", "নীল"), tr(ui, "Pink", "गुलाबी", "গোলাপি")).getOrElse(i) { "" } }.selectable(selected = state.defaultMark == i, role = Role.RadioButton) { state.updateDefaultMark(i) }, contentAlignment = Alignment.Center) {
                         Box(Modifier.size(30.dp).clip(CircleShape).background(Color(col)).then(if (state.defaultMark == i) Modifier.border(3.dp, Brand.Ink, CircleShape) else Modifier))
                     }
                 }

@@ -46,7 +46,7 @@ object NarrationProbe {
             for (v in all) {
                 val plan = NarrationText.plan(v, lang)
                 if (lang != Lang.SA && v.hasText(lang)) {
-                    val text = when (lang) { Lang.HI -> v.hi; Lang.BN -> v.bn; else -> v.en }
+                    val text = when (lang) { Lang.HI -> v.hi; Lang.BN -> v.bn; Lang.OR -> v.or; else -> v.en }
                     dropped += NarrationText.sentences(text, lang).size - plan.segments.size
                 }
                 if (plan.isEmpty) { empty++; continue }

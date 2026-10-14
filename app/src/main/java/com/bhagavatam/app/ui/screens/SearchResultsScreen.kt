@@ -202,7 +202,13 @@ fun SearchResultsScreen(
     var showVoiceSheet by remember { mutableStateOf(false) }
 
     var recentSearches by rememberSaveable {
-        mutableStateOf(listOf("Krishna", "Gajendra", "Rasa Lila", "Dhruva", "Prahlada"))
+        mutableStateOf(
+            when (ui) {
+                Lang.HI -> listOf("\u0915\u0943\u0937\u094d\u0923", "\u0917\u091c\u0947\u0928\u094d\u0926\u094d\u0930", "\u0930\u093e\u0938 \u0932\u0940\u0932\u093e", "\u0927\u094d\u0930\u0941\u0935", "\u092a\u094d\u0930\u0939\u094d\u0932\u093e\u0926")
+                Lang.BN -> listOf("\u0995\u09c3\u09b7\u09cd\u09a3", "\u0997\u099c\u09c7\u09a8\u09cd\u09a6\u09cd\u09b0", "\u09b0\u09be\u09b8\u09b2\u09c0\u09b2\u09be", "\u09a7\u09cd\u09b0\u09c1\u09ac", "\u09aa\u09cd\u09b0\u09b9\u09cd\u09b2\u09be\u09a6")
+                else -> listOf("Krishna", "Gajendra", "Rasa Lila", "Dhruva", "Prahlada")
+            }
+        )
     }
 
     var searchData by remember { mutableStateOf<SearchUiData?>(null) }
@@ -514,7 +520,7 @@ fun SearchResultsScreen(
                         item {
                             val skTitle = if (ref.skandha == 0) s.mahatmya else SampleData.skandha(ref.skandha).title(ui)
                             val jumpLabel = localDigits("${s.goTo} $skTitle · ${s.adhyaya} ${ref.chapter} · ${s.shloka} ${ref.verse}", ui)
-                            val adTitle = SampleData.adhyayaTitle(ref.skandha, ref.chapter, state.titleLang, s)
+                            val adTitle = SampleData.adhyayaTitle(ref.skandha, ref.chapter, state.contentLang, s)
 
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.card) { onOpenChapter(ref.skandha, ref.chapter) }
@@ -525,7 +531,7 @@ fun SearchResultsScreen(
                                     Icon(painterResource(Ic.MenuBook), null, tint = Brand.Kesari, modifier = Modifier.size(24.dp))
                                     Column(Modifier.weight(1f)) {
                                         Text(jumpLabel, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                                        Text(adTitle, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, color = Brand.Secondary, maxLines = 1)
+                                        Text(adTitle, fontFamily = readingFont(state.contentLang), fontSize = 15.sp, color = Brand.Secondary, maxLines = 1)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Kesari)
                                 }
@@ -576,7 +582,7 @@ fun SearchResultsScreen(
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(ep.title(if (state.titleLang == Lang.OR) ui else state.titleLang), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                                        Text(ep.title(state.contentLang), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
                                         val skLabel = if (ep.s == 0) s.mahatmya else "${s.skandha} ${ep.s}"
                                         Text(localDigits("$skLabel · ${s.adhyaya} ${ep.a}", ui), fontSize = 12.sp, color = Brand.Gold)
                                     }
@@ -595,7 +601,7 @@ fun SearchResultsScreen(
                         }
                         items(data.sameChapterMatches, key = { "ch_${it.first}_${it.second}" }) { (sk, ad) ->
                             val skLabel = if (sk == 0) s.mahatmya else "${s.skandha} $sk"
-                            val chTitle = SampleData.adhyayaTitle(sk, ad, state.titleLang, s)
+                            val chTitle = SampleData.adhyayaTitle(sk, ad, state.contentLang, s)
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.group) { onOpenChapter(sk, ad) }
                                     .background(Brand.Card).border(1.dp, Brand.Separator, Radius.group)
@@ -604,7 +610,7 @@ fun SearchResultsScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                         Text(localDigits("$skLabel · ${s.adhyaya} $ad", ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
-                                        Text(chTitle, fontFamily = readingFont(state.titleLang), fontSize = 15.sp, color = Brand.Ink)
+                                        Text(chTitle, fontFamily = readingFont(state.contentLang), fontSize = 15.sp, color = Brand.Ink)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Secondary)
                                 }

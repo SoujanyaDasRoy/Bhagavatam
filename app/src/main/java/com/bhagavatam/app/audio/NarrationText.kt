@@ -51,7 +51,7 @@ object NarrationText {
     fun plan(v: Verse, lang: Lang): VersePlan {
         if (lang == Lang.SA) return sanskritPlan(v)
         if (!v.hasText(lang)) return VersePlan(lang, emptyList())
-        val text = when (lang) { Lang.HI -> v.hi; Lang.BN -> v.bn; else -> v.en }
+        val text = when (lang) { Lang.HI -> v.hi; Lang.BN -> v.bn; Lang.OR -> v.or; else -> v.en }
         val segs = sentences(text, lang).mapNotNull { sp ->
             val said = speech(text.substring(sp.start, sp.end), lang)
             if (said.isBlank()) null else Segment(withTerminal(said, lang, sp.intro), sp.start, sp.end, sp.pauseMs, SegKind.SENTENCE)

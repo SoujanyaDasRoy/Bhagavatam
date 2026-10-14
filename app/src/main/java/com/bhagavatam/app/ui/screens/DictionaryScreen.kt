@@ -277,7 +277,7 @@ fun DictionaryScreen(
             }
             if (termMatches.isNotEmpty()) {
                 item { GlossaryHeading(ui) }
-                items(termMatches.size) { i -> GlossaryRow(termMatches[i]) }
+                items(termMatches.size) { i -> GlossaryRow(termMatches[i], ui) }
             }
             if (query.trim().length >= 2) {
                 // Active query mode
@@ -335,7 +335,7 @@ fun DictionaryScreen(
             } else {
                 // Idle mode: names and terms of the book, then saved words and info
                 item { GlossaryHeading(ui) }
-                items(SampleData.glossary.size) { i -> GlossaryRow(SampleData.glossary[i]) }
+                items(SampleData.glossary.size) { i -> GlossaryRow(SampleData.glossary[i], ui) }
                 item {
                     Text(
                         tr(ui, "Saved words", "सहेजे गए शब्द", "সংরক্ষিত শব্দসমূহ"),
@@ -760,16 +760,21 @@ private fun GlossaryHeading(ui: com.bhagavatam.app.data.Lang) {
 }
 
 @Composable
-private fun GlossaryRow(g: com.bhagavatam.app.data.GlossaryTerm) {
+private fun GlossaryRow(g: com.bhagavatam.app.data.GlossaryTerm, ui: com.bhagavatam.app.data.Lang) {
     val app = LocalAppColors.current
     Column(
         Modifier.fillMaxWidth().clip(Radius.card).background(app.surface).border(1.dp, app.line, Radius.card).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(g.term, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = app.ink)
-            if (g.dev.isNotEmpty()) Text(g.dev, fontFamily = com.bhagavatam.app.ui.theme.NotoDevanagari, fontSize = 17.sp, color = app.accent)
+            val shown = when (ui) {
+                com.bhagavatam.app.data.Lang.HI -> g.dev
+                com.bhagavatam.app.data.Lang.BN -> com.bhagavatam.app.util.Transliterate.toBengali(g.dev)
+                else -> g.term
+            }
+            Text(shown, fontFamily = com.bhagavatam.app.ui.screens.readingFont(ui), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = app.ink)
+            if (ui == com.bhagavatam.app.data.Lang.EN && g.dev.isNotEmpty()) Text(g.dev, fontFamily = com.bhagavatam.app.ui.theme.NotoDevanagari, fontSize = 17.sp, color = app.accent)
         }
-        Text(g.meaning, fontSize = 15.sp, lineHeight = 22.sp, color = app.inkSecondary)
+        Text(g.meaning(ui), fontSize = 15.sp, lineHeight = 22.sp, color = app.inkSecondary)
     }
 }

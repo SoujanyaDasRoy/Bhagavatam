@@ -275,7 +275,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
             GroupCard {
                 listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri)).forEachIndexed { i, (l, n, f) ->
                     if (i > 0) RowDivider()
-                    LanguageOption(n, mapOf(Lang.EN to "English", Lang.HI to "Hindi", Lang.BN to "Bengali").getValue(l), f, state.uiLang == l) { state.updateUiLang(l) }
+                    LanguageOption(n, nameIn(state.uiLang, l), f, state.uiLang == l) { state.updateUiLang(l) }
                 }
             }
             Note(s.appLanguageNote)
