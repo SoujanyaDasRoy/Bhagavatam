@@ -202,6 +202,7 @@ fun HomeScreen(
                 }
             }
         }
+        com.bhagavatam.app.ui.components.UpdateBanner(state, Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp))
         // Rows of cards run edge to edge, so each section carries its own side padding.
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             // Continue reading: tinted with the colour of the Skandha you are in.
