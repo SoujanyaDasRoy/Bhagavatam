@@ -383,3 +383,21 @@ fun VSpace(h: Int) = Spacer(Modifier.height(h.dp))
 
 @Composable
 fun HSpace(w: Int) = Spacer(Modifier.width(w.dp))
+
+/** One line of text that shrinks (down to [minSize]) instead of wrapping when it does not fit the width. */
+@androidx.compose.runtime.Composable
+fun FitText(
+    text: String,
+    modifier: Modifier = Modifier,
+    size: Float = 16f,
+    minSize: Float = 11f,
+    color: Color = Color.Unspecified,
+    fontWeight: FontWeight? = null,
+    fontFamily: androidx.compose.ui.text.font.FontFamily? = null,
+) {
+    var s by androidx.compose.runtime.remember(text, size) { androidx.compose.runtime.mutableFloatStateOf(size) }
+    Text(
+        text, modifier, color = color, fontSize = s.sp, fontWeight = fontWeight, fontFamily = fontFamily, maxLines = 1, softWrap = false,
+        onTextLayout = { if (it.hasVisualOverflow && s > minSize) s = (s - 0.5f).coerceAtLeast(minSize) },
+    )
+}

@@ -103,16 +103,19 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
     val read = state.finished.count { it.startsWith("$n.") }
     val frac by animateFloatAsState(read.toFloat() / sk.adhyayaCount, tween(Motion.screen), label = "skandhaProgress")
     val cardAccessibility = if (n == 0) s.mahatmya else "${s.skandha} $n"
-    val numeralLabel = if (n == 0) s.mahatmya else localDigits(n.toString(), state.uiLang)
+    // Every card has the same three lines: a big mark (the Skandha number, or Om for the Mahatmya), its name, its chapters.
+    val numeralLabel = if (n == 0) "ॐ" else localDigits(n.toString(), state.uiLang)
     val numeralFont = when (state.uiLang) {
         Lang.BN -> NotoSerifBengali
         Lang.HI -> NotoDevanagari
         else -> EnglishReading
     }
-    val numeralSize = if (n == 0) 22.sp else 36.sp
+    val numeralSize = 36.sp
 
     Box(modifier.tappable(Radius.card, cardAccessibility, onClick = onClick)) {
         ArtBackdrop(skArt(n), skGradient(hue), Modifier.matchParentSize())
+        // a darker lower half so the name and the count are readable on any picture or colour
+        Box(Modifier.matchParentSize().background(androidx.compose.ui.graphics.Brush.verticalGradient(0.35f to Color.Transparent, 1f to Color(0xCC000000))))
         Column(Modifier.fillMaxSize().padding(14.dp), verticalArrangement = Arrangement.SpaceBetween) {
             Column {
                 Text(numeralLabel, fontFamily = numeralFont, fontSize = numeralSize, fontWeight = FontWeight.SemiBold, color = Color.White)
@@ -124,10 +127,13 @@ fun SkandhaCard(n: Int, state: AppState, modifier: Modifier, onClick: () -> Unit
                         else -> NotoDevanagari
                     }
                 } else readingFont(state.contentLang)
-                Text(subTitle, fontFamily = subFont, fontSize = 16.sp, lineHeight = 26.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(subTitle, fontFamily = subFont, fontSize = 16.sp, lineHeight = 22.sp, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                // what the Skandha is about, in the reading language: this is the line that tells the cards apart
+                val about = sk.title(state.contentLang)
+                if (about.isNotEmpty() && about != subTitle) Text(about, fontFamily = readingFont(state.contentLang), fontSize = 14.sp, lineHeight = 19.sp, color = Color(0xFFFFF4DC), maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(localDigits("$read / ${sk.adhyayaCount} ${s.adhyayas}", state.uiLang), fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color(0xFFFFF4DC))
+                Text(localDigits("$read / ${sk.adhyayaCount} ${s.adhyayas}", state.uiLang), fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.White, maxLines = 1)
                 Box(Modifier.fillMaxWidth().height(4.dp).clip(CircleShape).background(Color(0x40FFFFFF))) {
                     if (frac > 0f) Box(Modifier.fillMaxWidth(frac).height(4.dp).background(Color(0xFFFFE2A3)))
                 }
@@ -182,11 +188,14 @@ fun HomeScreen(
         Row(Modifier.statusBarsPadding().padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             AppTile(size = 46, fontSize = 20)
             Column(Modifier.weight(1f)) {
-                Text(s.jaiShreeMadhav, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                Text(
-                    s.shrimadBhagavatMahapuran,
-                    fontFamily = when (ui) { Lang.HI -> NotoDevanagari; Lang.BN -> NotoSerifBengali; else -> null },
-                    fontSize = 16.sp, fontWeight = FontWeight.Medium, color = Brand.Gold,
+                // the book's name and the greeting are the page's: they follow the reading language
+                val ps = stringsFor(state.titleLang)
+                val pf = if (state.titleLang == Lang.EN || state.titleLang == Lang.SA) null else readingFont(state.titleLang)
+                com.bhagavatam.app.ui.components.FitText(ps.jaiShreeMadhav, size = 26f, minSize = 18f, color = Brand.Ink, fontWeight = FontWeight.Bold, fontFamily = pf)
+                com.bhagavatam.app.ui.components.FitText(
+                    ps.shrimadBhagavatMahapuran,
+                    fontFamily = pf,
+                    size = 16f, color = Brand.Gold, fontWeight = FontWeight.Medium,
                 )
             }
             // One tap between the light and the dark look; the full choice lives in Settings.
@@ -285,7 +294,7 @@ fun HomeScreen(
             Column(Modifier.reveal(4, playIntro), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 SectionHeading(s.tabGranth, Modifier.padding(start = 20.dp, end = 12.dp), action = s.all, onAction = onOpenGranth)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    items((0..12).toList(), key = { it }) { n -> SkandhaCard(n, state, Modifier.width(150.dp).height(124.dp)) { onOpenSkandha(n) } }
+                    items((0..12).toList(), key = { it }) { n -> SkandhaCard(n, state, Modifier.width(184.dp).height(184.dp)) { onOpenSkandha(n) } }
                 }
             }
             // Shloka of the day
@@ -318,14 +327,14 @@ fun HomeScreen(
 fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
     val s = state.strings
     val ui = state.uiLang
-    val headerTitle = when (ui) {
-        Lang.BN -> "॥ শ্রীমদ্ভাগবত মহাপুরাণ ॥"
-        Lang.HI -> "॥ श्रीमद्भागवत महापुराण ॥"
-        else -> "॥ Shrimad Bhagavat Mahapuran ॥"
-    }
-    val headerFont = when (ui) {
+    // the name of the book and the count line follow the reading language, not the app language
+    val pageLang = state.titleLang
+    val ps = stringsFor(pageLang)
+    val headerTitle = "॥ " + ps.shrimadBhagavatMahapuran + " ॥"
+    val headerFont = when (pageLang) {
         Lang.BN -> NotoSerifBengali
-        Lang.HI -> NotoDevanagari
+        Lang.HI, Lang.SA -> NotoDevanagari
+        Lang.OR -> readingFont(Lang.OR)
         else -> EnglishReading
     }
 
@@ -338,15 +347,16 @@ fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
     ) {
         item(span = { GridItemSpan(2) }) {
             Column(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalAlignment = Alignment.Start) {
-                LargeTitle(s.tabGranth, s.granthSub, horizontalPadding = 4.dp)
+                LargeTitle(s.tabGranth, ps.granthSub, horizontalPadding = 4.dp)
                 Text(headerTitle, fontFamily = headerFont, fontSize = 20.sp, color = Brand.Sindoor, modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 8.dp))
             }
         }
         item(span = { GridItemSpan(2) }) {
             val m = SampleData.skandha(0)
-            val iconLetter = when (ui) {
+            val iconLetter = when (pageLang) {
                 Lang.BN -> "মা"
-                Lang.HI -> "मा"
+                Lang.HI, Lang.SA -> "मा"
+                Lang.OR -> "ମା"
                 else -> "M"
             }
             Box(Modifier.fillMaxWidth().tappable(Radius.card) { onOpen(0) }) {
@@ -356,8 +366,8 @@ fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
                         Text(iconLetter, fontFamily = headerFont, fontSize = 20.sp, color = Color.White)
                     }
                     Column(Modifier.weight(1f)) {
-                        Text(s.mahatmya, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
-                        Text(localDigits("${m.title(state.titleLang)} · ${m.adhyayaCount} ${s.adhyayas}", state.uiLang), fontFamily = readingFont(state.titleLang), fontSize = 15.sp, color = Color(0xFFFFF1D0))
+                        Text(ps.mahatmya, fontFamily = headerFont, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                        Text(localDigits("${m.title(state.contentLang)} · ${m.adhyayaCount} ${ps.adhyayas}", pageLang), fontFamily = readingFont(state.titleLang), fontSize = 15.sp, color = Color(0xFFFFF1D0))
                     }
                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Color.White)
                 }
