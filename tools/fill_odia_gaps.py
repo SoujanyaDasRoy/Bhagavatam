@@ -23,6 +23,8 @@ ODIA = ROOT / "content" / "_odia"
 DBS = [ROOT / "content" / "content.db", ROOT / "app" / "src" / "main" / "assets" / "content.db"]
 OUT = ODIA / "work_v" / "gaps_filled.json"
 DRY = "--dry" in sys.argv
+# the model the Bengali extractor already uses with this key; override with ODIA_GEMINI_MODEL
+MODEL = os.environ.get("ODIA_GEMINI_MODEL", "gemini-3.1-flash-lite")
 sys.path.insert(0, str(ODIA))
 sys.path.insert(0, str(ROOT / "content" / "_build"))
 sys.stdout.reconfigure(encoding="utf-8")
@@ -99,10 +101,12 @@ def main():
     filled = {}
     for (vol, p), vs in sorted(todo.items()):
         try:
-            res = ov.transcribe_gemini(cl, ov.GEMINI_MODEL, ov.page_image(vol, p))
+            res = ov.transcribe_gemini(cl, MODEL, ov.page_image(vol, p))
             d = res[0] if isinstance(res, tuple) else res
         except Exception as e:
-            print(f"v{vol} p{p}: failed ({str(e)[:80]})")
+            print(f"v{vol} p{p}: failed ({str(e)[:160]})")
+            if "NOT_FOUND" in str(e) or "404" in str(e):
+                sys.exit(f"model {MODEL} is not available for this key; set ODIA_GEMINI_MODEL to one that is")
             continue
         nums, paras = d.get("sanskrit_verse_numbers") or [], d.get("paragraphs") or []
         skip = d.get("paragraphs_before_chapter_heading") or 0
