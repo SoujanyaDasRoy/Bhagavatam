@@ -11,6 +11,7 @@ import json
 import os
 import re
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -22,16 +23,65 @@ HERE = Path(__file__).resolve().parent
 WORK = HERE / "work"
 VISION_DIR = WORK / "vision"
 
+
+class KeyPool:
+    def __init__(self, raw_keys: str):
+        if not raw_keys:
+            self.keys = []
+        else:
+            self.keys = [k.strip() for k in re.split(r'[,;\s]+', raw_keys) if k.strip()]
+        self.lock = threading.Lock()
+        self.state_file = WORK / ".active_key_idx"
+        self.idx = 0
+        if self.state_file.exists():
+            try:
+                saved_idx = int(self.state_file.read_text(encoding="utf-8").strip())
+                if 0 <= saved_idx < len(self.keys):
+                    self.idx = saved_idx
+            except Exception:
+                pass
+
+    def get(self) -> str:
+        with self.lock:
+            return self.keys[self.idx] if self.keys else ""
+
+    def advance(self, failed_key: str, reason: str = "") -> bool:
+        with self.lock:
+            if not self.keys:
+                return False
+            is_daily = "limit: 1500" in reason.lower() or "perday" in reason.lower() or "daily" in reason.lower()
+            if is_daily and failed_key in self.keys:
+                print(f"\n[KeyPool] Key {failed_key[:12]}... reached daily quota. Deactivating.", flush=True)
+                self.keys.remove(failed_key)
+                if not self.keys:
+                    return False
+                self.idx = self.idx % len(self.keys)
+                return True
+
+            self.idx = (self.idx + 1) % len(self.keys)
+            print(f"\n[KeyPool] Rotating to key #{self.idx + 1} of {len(self.keys)} ({reason})", flush=True)
+            return True
+
+    def has_more(self) -> bool:
+        with self.lock:
+            return self.idx < len(self.keys) - 1
+
+
 def _get_api_key():
+    keys = []
     k = os.environ.get("GEMINI_API_KEY", "").strip()
     if k:
-        return k
+        keys.extend([x.strip() for x in re.split(r'[,;\s]+', k) if x.strip()])
     env_file = HERE / ".env"
     if env_file.exists():
         for line in env_file.read_text(encoding="utf-8").splitlines():
             if line.startswith("GEMINI_API_KEY="):
-                return line.split("=", 1)[1].strip().strip('"').strip("'")
-    return ""
+                val = line.split("=", 1)[1].strip().strip('"').strip("'")
+                for x in re.split(r'[,;\s]+', val):
+                    x = x.strip()
+                    if x and x not in keys:
+                        keys.append(x)
+    return ",".join(keys)
 
 DEFAULT_GEMINI_KEY = _get_api_key()
 
@@ -131,7 +181,12 @@ def parse_json_safely(raw_text: str) -> dict:
     raise ValueError(f"Could not parse JSON output: {raw_text[:200]}")
 
 
-def transcribe_gemini(image_path: Path, api_key: str, model_name: str = "gemini-2.5-flash-lite") -> dict:
+def transcribe_gemini(image_path: Path, key_pool: KeyPool | str, model_name: str = "gemini-2.5-flash-lite") -> dict:
+    if isinstance(key_pool, str):
+        pool = KeyPool(key_pool)
+    else:
+        pool = key_pool
+
     b64_img = base64.b64encode(image_path.read_bytes()).decode("utf-8")
     
     # Priority rotation of active supported models
@@ -148,42 +203,69 @@ def transcribe_gemini(image_path: Path, api_key: str, model_name: str = "gemini-
         models_pool.insert(0, model_name)
     
     last_err = None
-    for m in models_pool:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={api_key}"
-        payload = {
-            "contents": [{
-                "parts": [
-                    {"text": SYSTEM_PROMPT + "\nTranscribe this page into a single JSON object. Do NOT truncate."},
-                    {"inlineData": {"mimeType": "image/png", "data": b64_img}}
-                ]
-            }],
-            "generationConfig": {
-                "temperature": 0.0,
-                "responseMimeType": "application/json",
-                "maxOutputTokens": 8192
+    while True:
+        current_key = pool.get()
+        if not current_key:
+            raise RuntimeError(f"No API key available for {image_path.name}")
+
+        key_switched = False
+        for m in models_pool:
+            if key_switched:
+                break
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={current_key}"
+            payload = {
+                "contents": [{
+                    "parts": [
+                        {"text": SYSTEM_PROMPT + "\nTranscribe this page into a single JSON object. Do NOT truncate."},
+                        {"inlineData": {"mimeType": "image/png", "data": b64_img}}
+                    ]
+                }],
+                "generationConfig": {
+                    "temperature": 0.0,
+                    "responseMimeType": "application/json",
+                    "maxOutputTokens": 8192
+                }
             }
-        }
-        for attempt in range(4):
-            try:
-                resp = requests.post(url, json=payload, timeout=90)
-                if resp.status_code == 200:
-                    raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-                    data = parse_json_safely(raw_text)
-                    rec = normalize_record(data)
-                    rec["_model_used"] = m
-                    return rec
-                elif resp.status_code == 429:
-                    last_err = f"429 Rate limit on {m}"
-                    wait_time = (attempt + 1) * 6
-                    time.sleep(wait_time)
-                elif resp.status_code in (500, 503, 504):
-                    time.sleep((attempt + 1) * 3)
-                else:
-                    last_err = f"HTTP {resp.status_code}: {resp.text[:200]}"
-                    break
-            except Exception as e:
-                last_err = str(e)
-                time.sleep(2)
+            for attempt in range(3):
+                try:
+                    resp = requests.post(url, json=payload, timeout=90)
+                    if resp.status_code == 200:
+                        raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                        data = parse_json_safely(raw_text)
+                        rec = normalize_record(data)
+                        rec["_model_used"] = m
+                        return rec
+                    elif resp.status_code == 429:
+                        last_err = f"429 Rate limit on {m}: {resp.text[:160]}"
+                        err_text = resp.text.lower()
+                        if "quota" in err_text or "resource_exhausted" in err_text or attempt >= 2:
+                            if pool.advance(current_key, reason=f"429 quota on {m}"):
+                                key_switched = True
+                                break
+                        wait_time = (attempt + 1) * 4
+                        time.sleep(wait_time)
+                    elif resp.status_code in (400, 403):
+                        last_err = f"HTTP {resp.status_code}: {resp.text[:160]}"
+                        if pool.advance(current_key, reason=f"HTTP {resp.status_code}"):
+                            key_switched = True
+                            break
+                        break
+                    elif resp.status_code in (500, 503, 504):
+                        time.sleep((attempt + 1) * 3)
+                    else:
+                        last_err = f"HTTP {resp.status_code}: {resp.text[:160]}"
+                        break
+                except Exception as e:
+                    last_err = str(e)
+                    time.sleep(2)
+
+        if key_switched:
+            continue
+        elif pool.advance(current_key, reason=f"all models failed on key: {last_err}"):
+            continue
+        else:
+            break
+
     raise RuntimeError(f"Gemini failed on {image_path.name}: {last_err}")
 
 
@@ -214,7 +296,7 @@ def normalize_record(data: dict) -> dict:
     }
 
 
-def process_page(cfg: dict, vol: str, page: int, provider: str, model_name: str, api_key: str, force: bool = False) -> tuple[str, int, str]:
+def process_page(cfg: dict, vol: str, page: int, provider: str, model_name: str, key_pool: KeyPool | str, force: bool = False) -> tuple[str, int, str]:
     key = b.page_key(vol, page)
     out_json = VISION_DIR / f"{key}.json"
     if out_json.exists() and not force:
@@ -224,7 +306,7 @@ def process_page(cfg: dict, vol: str, page: int, provider: str, model_name: str,
     img_path = b.prepared_image(cfg, vol, page)
 
     if provider == "gemini":
-        record = transcribe_gemini(img_path, api_key, model_name)
+        record = transcribe_gemini(img_path, key_pool, model_name)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
@@ -241,7 +323,8 @@ def process_page(cfg: dict, vol: str, page: int, provider: str, model_name: str,
 def cmd_run(args) -> None:
     cfg = b.load_config()
     VISION_DIR.mkdir(parents=True, exist_ok=True)
-    api_key = get_api_key(args.provider, args.api_key)
+    raw_keys = get_api_key(args.provider, args.api_key)
+    pool = KeyPool(raw_keys)
 
     def parse_page_spec(spec: str | None, max_p: int) -> list[int]:
         if not spec:
@@ -283,7 +366,7 @@ def cmd_run(args) -> None:
     failed = 0
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
         futures = {
-            executor.submit(process_page, cfg, v, p, args.provider, args.model, api_key, args.force): (v, p)
+            executor.submit(process_page, cfg, v, p, args.provider, args.model, pool, args.force): (v, p)
             for v, p in todo
         }
         for future in as_completed(futures):
@@ -297,6 +380,8 @@ def cmd_run(args) -> None:
                 failed += 1
 
     print(f"\nCompleted: {success} succeeded, {failed} failed.", flush=True)
+    if failed > 0:
+        sys.exit(1)
     print("Next step: Run `python bn_extract.py assemble` to build chapter files and verify review/index.html", flush=True)
 
 
