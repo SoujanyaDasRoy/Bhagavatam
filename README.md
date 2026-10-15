@@ -1,6 +1,6 @@
 # Bhagavatam
 
-A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran** on Android. Sanskrit with Hindi, Bengali, English and (in beta) Odia translations, Kangra-style art, audio narration, and search that works in every script. It lives on your phone: no ads, no account, no tracking, and everything you read or search works offline.
+A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran** on Android. Sanskrit with Hindi, Bengali, English and (in beta) Odia translations, Indian miniature paintings, audio narration, and search that works in every script. It lives on your phone: no ads, no account, no tracking, and everything you read or search works offline.
 
 ## Download
 
@@ -15,6 +15,8 @@ A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran** on A
 
 Android 8.0 (API 26) or newer. The app is not on the Play Store.
 
+**Version 1.2.3.** The app checks GitHub for a newer release (Settings has a switch for update notifications) and shows a card with the notes when there is one.
+
 **Updating:** install the new APK over the old one. Your notes, highlights, bookmarks, saved words and settings stay, as long as the new APK is signed with the same key. If a release ever changes the signing key, use **Settings > Words & notes > Save a backup file** first and **Restore** afterwards.
 
 ## What is in it
@@ -26,13 +28,14 @@ Android 8.0 (API 26) or newer. The app is not on the Play Store.
 - **Dictionary:** press and hold a word for its meaning, offline, with an optional online fallback you can turn off.
 - **Notes:** bookmarks, highlights in four colours, personal notes, saved words, all kept on your device, with a one-file backup.
 - **Listening:** sentence-by-sentence narration with pauses, background and lock-screen playback, sleep timer, speed control, optional YouTube recitation streams.
+- **Art:** the Mahatmya and every Skandha card carries a public-domain Indian miniature painting (Pahari, Guler, Basholi). Sources are in [docs/ART_CREDITS.md](docs/ART_CREDITS.md).
 - **Themes:** Prabhat (light), Pothi (sepia), Sandhya (warm dark), Ratri (black).
 
 ## About the text
 
 The Sanskrit and the Hindi, Bengali and English translations follow the Gita Press, Gorakhpur editions.
 
-**Odia is a beta.** It was read from page scans by software running on one PC, not typed by a person. Words the readers could not agree on are underlined in red. Tap one to say whether it is spelled correctly, and if not, send the right word. About 99 verses and 64 chapter titles have no Odia yet, and no Odia reader has checked the text. Please treat it as unreviewed.
+**Odia is a beta.** It was read from page scans by software running on one PC, not typed by a person. Words the readers could not agree on are underlined in red. Tap one to say whether it is spelled correctly, and if not, send the right word. About 122 verses have no Odia yet, and only 210 of 341 chapter titles are read from the printed contents (the others show the title in another language, with a note). No Odia reader has checked the text. Please treat it as unreviewed.
 
 Bengali is complete except 232 verses that have no Bengali translation yet.
 
