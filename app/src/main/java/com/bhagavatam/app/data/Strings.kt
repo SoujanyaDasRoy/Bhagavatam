@@ -166,6 +166,7 @@ val BengaliStrings = Strings(
 val OdiaStrings = EnglishStrings.copy(
     skandha = "ସ୍କନ୍ଧ", adhyaya = "ଅଧ୍ଯାୟ", shloka = "ଶ୍ଳୋକ", shlokas = "ଶ୍ଳୋକ",
     mahatmya = "ମାହାତ୍ମ୍ୟ", minRead = "%d ମିନିଟ୍ ପାଠ",
+    jaiShreeMadhav = "ଜୟ ଶ୍ରୀ ମାଧବ", shrimadBhagavatMahapuran = "ଶ୍ରୀମଦ୍ଭାଗବତ ମହାପୁରାଣ", granthSub = "ମାହାତ୍ମ୍ୟ ଓ ୧୨ ସ୍କନ୍ଧ",
 )
 
 fun stringsFor(ui: Lang) = when (ui) {

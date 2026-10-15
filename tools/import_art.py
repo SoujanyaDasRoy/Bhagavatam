@@ -9,7 +9,7 @@ from PIL import Image
 
 RAW = "content/art/raw"
 OUT = "app/src/main/res/drawable-nodpi"
-W, H = 1280, 800
+W, H = 1920, 1200
 OK = re.compile(r"^(sk_\d{2}|home_hero|ch_\d{1,2}_\d{1,3})$")
 
 def main():
@@ -32,7 +32,7 @@ def main():
             nh = int(w / r); im = im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
         im = im.resize((W, H), Image.LANCZOS)
         dst = os.path.join(OUT, stem + ".webp")
-        im.save(dst, "WEBP", quality=80, method=6)
+        im.save(dst, "WEBP", quality=82, method=6)
         print(f"{stem}: {os.path.getsize(dst) // 1024} KB"); done += 1
     print(f"{done} imported, {skipped} skipped. Rebuild the app to see them.")
 
