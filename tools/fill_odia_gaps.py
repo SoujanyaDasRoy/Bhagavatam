@@ -24,7 +24,10 @@ DBS = [ROOT / "content" / "content.db", ROOT / "app" / "src" / "main" / "assets"
 OUT = ODIA / "work_v" / "gaps_filled.json"
 DRY = "--dry" in sys.argv
 # the model the Bengali extractor already uses with this key; override with ODIA_GEMINI_MODEL
-MODEL = os.environ.get("ODIA_GEMINI_MODEL", "gemini-3.1-flash-lite")
+MODELS = [m for m in [os.environ.get("ODIA_GEMINI_MODEL")] if m] + [
+    "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3-flash-preview",
+    "gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash"]
+MODEL = MODELS[0]
 sys.path.insert(0, str(ODIA))
 sys.path.insert(0, str(ROOT / "content" / "_build"))
 sys.stdout.reconfigure(encoding="utf-8")
@@ -100,13 +103,20 @@ def main():
     cl = ov.client("gemini")
     filled = {}
     for (vol, p), vs in sorted(todo.items()):
-        try:
-            res = ov.transcribe_gemini(cl, MODEL, ov.page_image(vol, p))
-            d = res[0] if isinstance(res, tuple) else res
-        except Exception as e:
-            print(f"v{vol} p{p}: failed ({str(e)[:160]})")
-            if "NOT_FOUND" in str(e) or "404" in str(e):
-                sys.exit(f"model {MODEL} is not available for this key; set ODIA_GEMINI_MODEL to one that is")
+        d = None
+        for m in MODELS:
+            try:
+                res = ov.transcribe_gemini(cl, m, ov.page_image(vol, p))
+                d = res[0] if isinstance(res, tuple) else res
+                if m != MODELS[0]:
+                    MODELS.remove(m); MODELS.insert(0, m)   # keep the one that works
+                break
+            except Exception as e:
+                if "NOT_FOUND" in str(e) or "404" in str(e):
+                    continue
+                print(f"v{vol} p{p}: failed ({str(e)[:160]})")
+                break
+        if d is None:
             continue
         nums, paras = d.get("sanskrit_verse_numbers") or [], d.get("paragraphs") or []
         skip = d.get("paragraphs_before_chapter_heading") or 0
