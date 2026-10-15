@@ -129,7 +129,7 @@ def main():
         a, b = (open(p, "rb").read() for p in DBS)
         print("\ncontent.db copies identical:", a == b)
     run([PY, os.path.join("tools", "missing_report.py"), "--readme"])
-    print("\nStill to do by hand: rebuild search.db with the new content_version, then commit.")
+    print("\nDone. search.db was rebuilt and copied; build the APK to ship the new text.")
 
 
 if __name__ == "__main__":
