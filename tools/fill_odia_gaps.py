@@ -88,6 +88,11 @@ def main():
     if not key:
         sys.exit("GEMINI_API_KEY is not set")
     os.environ["GEMINI_API_KEY"] = key
+    for v in (1, 2):   # config.json points at an upload folder that only exists elsewhere
+        f = Path.home() / "Downloads" / f"Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-{v}.pdf"
+        os.environ.setdefault(f"ODIA_PDF_{v}", str(f))
+        if not Path(os.environ[f"ODIA_PDF_{v}"]).exists():
+            sys.exit(f"PDF not found: {os.environ[f'ODIA_PDF_{v}']} (set ODIA_PDF_{v})")
     import odia_vision as ov
     import add_odia
     cl = ov.client("gemini")
