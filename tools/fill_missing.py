@@ -85,12 +85,46 @@ def odia():
         run([PY, os.path.join("content", "_build", "add_odia.py"), db, str(int(ver) + 1)])
 
 
+def snapshot():
+    """Copy of every translation column before anything runs, so a re-read can never make a verse worse."""
+    db = sqlite3.connect(DBS[0])
+    return {(s, c, n): (b, bf, o, of) for s, c, n, b, bf, o, of in
+            db.execute('SELECT skandha, chapter, num, bn, bn_from, "or", or_from FROM verse')}
+
+
+def protect(before, version):
+    """Put the earlier text back where the new run left a verse empty; keep new text where it filled a gap. Both copies, then search.db."""
+    if DRY:
+        return
+    for path in DBS:
+        db = sqlite3.connect(path)
+        back = 0
+        for s, c, n, b, bf, o, of in db.execute('SELECT skandha, chapter, num, bn, bn_from, "or", or_from FROM verse').fetchall():
+            ob, obf, oo, oof = before.get((s, c, n), (None,) * 4)
+            if not (b or "").strip() and bf is None and ((ob or "").strip() or obf is not None):
+                db.execute("UPDATE verse SET bn=?, bn_from=? WHERE skandha=? AND chapter=? AND num=?", (ob, obf, s, c, n)); back += 1
+            if not (o or "").strip() and of is None and ((oo or "").strip() or oof is not None):
+                db.execute('UPDATE verse SET "or"=?, or_from=? WHERE skandha=? AND chapter=? AND num=?', (oo, oof, s, c, n)); back += 1
+        db.execute("UPDATE meta SET value=? WHERE key='content_version'", (str(version),))
+        db.commit(); db.close()
+        print(f"{os.path.relpath(path, ROOT)}: {back} verses put back from the earlier text")
+    run([PY, os.path.join("content", "_search", "build_index.py")])
+    import shutil
+    shutil.copy(os.path.join(ROOT, "content", "_search", "search.db"), os.path.join(ROOT, "app", "src", "main", "assets", "search.db"))
+
+
 def main():
+    before = None if DRY else snapshot()
+    ver0 = 0 if DRY else int(sqlite3.connect(DBS[0]).execute("SELECT value FROM meta WHERE key='content_version'").fetchone()[0])
     want_bn, want_or = "--or" not in sys.argv, "--bn" not in sys.argv
     if want_bn:
         bengali()
     if want_or:
         odia()
+    if before is not None:
+        protect(before, ver0 + 1)
+        import shutil
+        shutil.copy(DBS[0], DBS[1])
     if not DRY:
         a, b = (open(p, "rb").read() for p in DBS)
         print("\ncontent.db copies identical:", a == b)
