@@ -2,6 +2,20 @@
 
 A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran** on Android. Sanskrit with Hindi, Bengali, English and (in beta) Odia translations, Indian miniature paintings, audio narration, and search that works in every script. It lives on your phone: no ads, no account, no tracking, and everything you read or search works offline.
 
+[Download the latest APK](https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest/download/Bhagavatam.apk) | [Features](#features) | [Missing verses](#missing-translation-verses) | [Report a mistake](#report-a-mistake)
+
+## Features
+
+- **The whole book:** the Mahatmya and all 12 Skandhas, 341 chapters, 14,580 verses.
+- **Layers you can mix:** Sanskrit in Devanagari, Bengali or Roman script, with Hindi, Bengali, English or Odia translation under it, or the translation alone.
+- **Two language settings:** the app language (menus) and the reading language (the text) are separate.
+- **Search:** words, names, stories (Gajendra Moksha, Rasa Lila, ...) or a reference such as `10.29.1`. Spelling variants across scripts find the same verse (Krishna, कृष्ण, কৃষ্ণ, କୃଷ୍ଣ).
+- **Dictionary:** press and hold a word for its meaning, offline, with an optional online fallback you can turn off.
+- **Notes:** bookmarks, highlights in four colours, personal notes, saved words, all kept on your device, with a one-file backup.
+- **Listening:** sentence-by-sentence narration with pauses, background and lock-screen playback, sleep timer, speed control, optional YouTube recitation streams.
+- **Art:** the Mahatmya and every Skandha card carries a public-domain Indian miniature painting (Pahari, Guler, Basholi). Sources are in [docs/ART_CREDITS.md](docs/ART_CREDITS.md).
+- **Themes:** Prabhat (light), Pothi (sepia), Sandhya (warm dark), Ratri (black).
+
 ## Download
 
 | | |
@@ -18,18 +32,6 @@ Android 8.0 (API 26) or newer. The app is not on the Play Store.
 **Version 1.2.3.** The app checks GitHub for a newer release (Settings has a switch for update notifications) and shows a card with the notes when there is one.
 
 **Updating:** install the new APK over the old one. Your notes, highlights, bookmarks, saved words and settings stay, as long as the new APK is signed with the same key. If a release ever changes the signing key, use **Settings > Words & notes > Save a backup file** first and **Restore** afterwards.
-
-## What is in it
-
-- **The whole book:** the Mahatmya and all 12 Skandhas, 341 chapters, 14,580 verses.
-- **Layers you can mix:** Sanskrit in Devanagari, Bengali or Roman script, with Hindi, Bengali, English or Odia translation under it, or the translation alone.
-- **Two language settings:** the app language (menus) and the reading language (the text) are separate.
-- **Search:** words, names, stories (Gajendra Moksha, Rasa Lila, ...) or a reference such as `10.29.1`. Spelling variants across scripts find the same verse (Krishna, कृष्ण, কৃষ্ণ, କୃଷ୍ଣ).
-- **Dictionary:** press and hold a word for its meaning, offline, with an optional online fallback you can turn off.
-- **Notes:** bookmarks, highlights in four colours, personal notes, saved words, all kept on your device, with a one-file backup.
-- **Listening:** sentence-by-sentence narration with pauses, background and lock-screen playback, sleep timer, speed control, optional YouTube recitation streams.
-- **Art:** the Mahatmya and every Skandha card carries a public-domain Indian miniature painting (Pahari, Guler, Basholi). Sources are in [docs/ART_CREDITS.md](docs/ART_CREDITS.md).
-- **Themes:** Prabhat (light), Pothi (sepia), Sandhya (warm dark), Ratri (black).
 
 ## About the text
 
