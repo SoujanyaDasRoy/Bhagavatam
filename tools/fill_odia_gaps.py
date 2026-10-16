@@ -33,15 +33,45 @@ sys.path.insert(0, str(ROOT / "content" / "_build"))
 sys.stdout.reconfigure(encoding="utf-8")
 
 
-def api_key():
+def api_keys():
+    keys = []
     k = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not k:
-        env = ROOT / "content" / "_bengali" / "bn_extract" / ".env"
-        if env.exists():
-            for line in env.read_text(encoding="utf-8").splitlines():
-                if line.startswith("GEMINI_API_KEY="):
-                    k = line.split("=", 1)[1].strip().strip('"')
-    return re.split(r"[,;\s]+", k)[0] if k else ""
+    if k:
+        keys.extend([x.strip() for x in re.split(r"[,;\s]+", k) if x.strip()])
+    env = ROOT / "content" / "_bengali" / "bn_extract" / ".env"
+    if env.exists():
+        for line in env.read_text(encoding="utf-8").splitlines():
+            if line.startswith("GEMINI_API_KEY="):
+                val = line.split("=", 1)[1].strip().strip('"')
+                for x in re.split(r"[,;\s]+", val):
+                    x = x.strip()
+                    if x and x not in keys:
+                        keys.append(x)
+    return keys
+
+
+CACHE = ODIA / "work_v" / "gaps_pages"
+LOG = ODIA / "work_v" / "gaps_log.txt"
+
+
+def log(msg):
+    print(msg, flush=True)
+    LOG.parent.mkdir(exist_ok=True)
+    with open(LOG, "a", encoding="utf-8") as f:
+        f.write(msg + chr(10))
+
+
+def ask_verse(cl, model, img, n):
+    """Fallback when a page's verse numbers and paragraphs do not line up: ask for one verse's translation only."""
+    from google.genai import types
+    q = (f"This is a page of the Gita Press Odia Shrimad Bhagavata Mahapurana. Find the ODIA TRANSLATION paragraph that belongs to "
+         f"Sanskrit verse number {n} (the paragraph after the Sanskrit shloka that ends with the marker ॥ {n} ॥, or the one carrying "
+         f"the number {n}). Answer ONE JSON object: {{\"found\": true or false, \"text\": \"the Odia translation exactly as printed\"}}. "
+         f"If verse {n} is not on this page, found is false and text is empty. Never guess or complete text that is not on the page.")
+    r = cl.models.generate_content(model=model, contents=[types.Part.from_bytes(data=img.read_bytes(), mime_type="image/png"), q],
+                                   config=types.GenerateContentConfig(temperature=0, response_mime_type="application/json"))
+    d = json.loads(re.sub(r"^```(?:json)?\s*|\s*```$", "", (r.text or "").strip()))
+    return (d.get("text") or "").strip() if d.get("found") else ""
 
 
 def chapter_file(s, c):
@@ -89,10 +119,10 @@ def main():
             print(f"  v{vol} page {p}: verses {sorted(vs)[:4]}")
         print("  ...")
         return
-    key = api_key()
-    if not key:
+    keys = api_keys()
+    if not keys:
         sys.exit("GEMINI_API_KEY is not set")
-    os.environ["GEMINI_API_KEY"] = key
+    os.environ["GEMINI_API_KEY"] = keys[0]
     for v in (1, 2):   # config.json points at an upload folder that only exists elsewhere
         f = Path.home() / "Downloads" / f"Srimad-Bhagavata-Mahapurana-Gita-Press-Odia-Part-{v}.pdf"
         os.environ.setdefault(f"ODIA_PDF_{v}", str(f))
@@ -100,34 +130,71 @@ def main():
             sys.exit(f"PDF not found: {os.environ[f'ODIA_PDF_{v}']} (set ODIA_PDF_{v})")
     import odia_vision as ov
     import add_odia
-    cl = ov.client("gemini")
+    from google import genai
+    clients = [genai.Client(api_key=k) for k in keys]
+    key_idx = 0
     filled = {}
     for (vol, p), vs in sorted(todo.items()):
         d = None
-        for m in MODELS:
-            try:
-                res = ov.transcribe_gemini(cl, m, ov.page_image(vol, p))
-                d = res[0] if isinstance(res, tuple) else res
-                if m != MODELS[0]:
-                    MODELS.remove(m); MODELS.insert(0, m)   # keep the one that works
+        cf = CACHE / f"v{vol}_p{p:04d}.json"
+        if cf.exists():
+            d = json.loads(cf.read_text(encoding="utf-8"))
+        for attempt in (range(len(keys) * 2) if d is None else ()):
+            cl = clients[key_idx]
+            key_failed = False
+            for m in MODELS:
+                try:
+                    res = ov.transcribe_gemini(cl, m, ov.page_image(vol, p))
+                    d = res[0] if isinstance(res, tuple) else res
+                    if m != MODELS[0]:
+                        MODELS.remove(m); MODELS.insert(0, m)   # keep the one that works
+                    break
+                except ov.QuotaExhausted:
+                    print(f"[KeyPool] Key #{key_idx + 1} daily quota exhausted, rotating...")
+                    key_idx = (key_idx + 1) % len(keys)
+                    key_failed = True
+                    break
+                except Exception as e:
+                    if "NOT_FOUND" in str(e) or "404" in str(e):
+                        continue
+                    if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                        key_idx = (key_idx + 1) % len(keys)
+                        print(f"[KeyPool] Rate limit on key, rotating to key #{key_idx + 1}...")
+                        key_failed = True
+                        break
+                    print(f"v{vol} p{p}: failed ({str(e)[:160]})")
+                    break
+            if d is not None:
+                CACHE.mkdir(parents=True, exist_ok=True)
+                cf.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
                 break
-            except Exception as e:
-                if "NOT_FOUND" in str(e) or "404" in str(e):
-                    continue
-                print(f"v{vol} p{p}: failed ({str(e)[:160]})")
+            if not key_failed:
                 break
         if d is None:
+            log(f"v{vol} p{p}: no reading (quota or error)")
             continue
         nums, paras = d.get("sanskrit_verse_numbers") or [], d.get("paragraphs") or []
         skip = d.get("paragraphs_before_chapter_heading") or 0
         paras = paras[skip:] if len(paras) - skip == len(nums) else paras
-        if len(nums) != len(paras):
-            print(f"v{vol} p{p}: {len(nums)} verse numbers but {len(paras)} paragraphs, not used")
-            continue
-        for s, c, n in vs:
-            if n in nums:
-                filled[f"{s}.{c}.{n}"] = add_odia.clean_translation(paras[nums.index(n)])
-                print(f"v{vol} p{p}: verse {s}.{c}.{n} read")
+        aligned = len(nums) == len(paras)
+        for s, c, n in sorted(vs):
+            key = f"{s}.{c}.{n}"
+            if key in filled:
+                continue
+            if aligned and n in nums:
+                filled[key] = add_odia.clean_translation(paras[nums.index(n)])
+                log(f"v{vol} p{p}: verse {key} read from the page")
+                continue
+            try:
+                txt = ask_verse(clients[key_idx], MODELS[0], ov.page_image(vol, p), n)
+            except Exception as e:
+                log(f"v{vol} p{p}: verse {key} ask failed ({str(e)[:80]})")
+                continue
+            if txt:
+                filled[key] = add_odia.clean_translation(txt)
+                log(f"v{vol} p{p}: verse {key} read by a direct question")
+            else:
+                log(f"v{vol} p{p}: verse {key} not on this page ({len(nums)} verse numbers, {len(paras)} paragraphs)")
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text(json.dumps(filled, ensure_ascii=False, indent=1), encoding="utf-8")
     if not filled:
