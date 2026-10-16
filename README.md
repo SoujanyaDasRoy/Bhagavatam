@@ -74,13 +74,34 @@ Every verse below has the Sanskrit and the Hindi and English text, but no Bengal
 | 9 | 22 | 26 | 1 | - | 26 |
 | 9 | 24 | 45, 59-60 | 3 | - | 45, 59-60 |
 
-**Odia (beta): 15 verses without a translation** (0 of them printed inside a joint group, 15 not found in the print).
+**Odia (beta): 44 verses without a translation** (0 of them printed inside a joint group, 44 not found in the print).
 
 | Skandha | Chapter | Missing verses | Count | Joint group in the print | Not found |
 |---|---|---|---|---|---|
 | Mahatmya | 6 | 16-17, 39 | 3 | - | 16-17, 39 |
+| 5 | 4 | 19 | 1 | - | 19 |
+| 5 | 9 | 11-12 | 2 | - | 11-12 |
+| 5 | 10 | 24 | 1 | - | 24 |
 | 6 | 1 | 22 | 1 | - | 22 |
-| 9 | 16 | 16 | 1 | - | 16 |
+| 6 | 4 | 54 | 1 | - | 54 |
+| 6 | 6 | 28 | 1 | - | 28 |
+| 7 | 14 | 17 | 1 | - | 17 |
+| 8 | 5 | 31 | 1 | - | 31 |
+| 8 | 22 | 36 | 1 | - | 36 |
+| 9 | 3 | 33 | 1 | - | 33 |
+| 9 | 14 | 48 | 1 | - | 48 |
+| 9 | 16 | 16, 37 | 2 | - | 16, 37 |
+| 9 | 24 | 14, 17-18 | 3 | - | 14, 17-18 |
+| 10 | 9 | 16 | 1 | - | 16 |
+| 10 | 11 | 53 | 1 | - | 53 |
+| 10 | 15 | 6, 46, 48-49 | 4 | - | 6, 46, 48-49 |
+| 10 | 24 | 38 | 1 | - | 38 |
+| 10 | 33 | 27 | 1 | - | 27 |
+| 10 | 56 | 6 | 1 | - | 6 |
+| 10 | 63 | 3 | 1 | - | 3 |
+| 11 | 1 | 7 | 1 | - | 7 |
+| 11 | 10 | 31-32 | 2 | - | 31-32 |
+| 11 | 12 | 3 | 1 | - | 3 |
 | 11 | 25 | 30 | 1 | - | 30 |
 | 11 | 28 | 14-15 | 2 | - | 14-15 |
 | 11 | 30 | 38 | 1 | - | 38 |
