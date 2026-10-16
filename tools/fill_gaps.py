@@ -1,6 +1,7 @@
 """Last pass on the verses that still have no Bengali or Odia translation: one direct question per verse, with strict checks.
 
     py tools/fill_gaps.py --dry                  list the pages that would be read
+    py tools/fill_gaps.py --cache-only           judge the readings already saved, no API call
     py tools/fill_gaps.py                        Bengali and Odia
     py tools/fill_gaps.py --bn   |   --or        one language
 
@@ -28,6 +29,7 @@ DBS = [ROOT / "content" / "content.db", ROOT / "app" / "src" / "main" / "assets"
 WORK = ROOT / "content" / "_odia" / "work_v"
 CACHE = WORK / "gaps2"
 DRY = "--dry" in sys.argv
+CACHE_ONLY = "--cache-only" in sys.argv   # judge the readings already saved, no API call
 BN_IMAGES = ROOT / "content" / "_bengali" / "bn_extract" / "work" / "images"
 MODELS = [m for m in [os.environ.get("GAPS_MODEL")] if m] + [
     "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3-flash-preview",
@@ -119,18 +121,34 @@ def ask(cl, model, img, name, s, c, n):
     return (d.get("text") or "").strip() if d.get("found") else ""
 
 
-def clean(text):
-    t = re.sub(r"\s*\n\s*", " ", text).strip()
-    t = re.sub(r"\s*॥\s*[0-9০-৯୦-୯]+(?:\s*[-–]\s*[0-9০-৯୦-୯]+)?\s*॥\s*$", "", t)   # trailing printed marker is not part of the text
-    return t
+def clean(text, n=None, digits="0123456789"):
+    """One line of text. When the model returned several verses, keep the one that ends with the printed marker for verse n."""
+    t = re.sub(r"\s+", " ", text).strip()
+    mark = re.compile(r"[।॥]{1,2}\s*([" + digits + r"0-9]+)\s*[।॥]{1,2}")
+    marks = list(mark.finditer(t))
+    if n is not None and marks:
+        tr = str.maketrans(digits, "0123456789")
+        start = 0
+        for m in marks:
+            if int(m.group(1).translate(tr)) == n:
+                t = t[start:m.start()].strip() + "।"
+                break
+            start = m.end()
+        else:
+            t = mark.sub(" ", t)
+    else:
+        t = mark.sub(" ", t)
+    return re.sub(r"\s+", " ", t).strip()
 
 
 def verdict(text, lang, hi, neighbours, others):
     L = LANGS[lang]
     if not text or len(text) < 20:
         return "empty or too short"
-    if "॥" in text or re.search(r"[ऀ-ॿ]", text):
+    if "॥" in text or re.search(r"[ऀ-ॣ०-ॿ]", text):   # the danda (U+0964) is part of Bengali and Odia too
         return "Sanskrit or marker text"
+    if len(re.findall(r"[ঃଃ](?=[\s।,;]|$)", text)) >= 2:   # word-final visarga is Sanskrit, not Bengali or Odia prose
+        return "Sanskrit text (visarga)"
     script = {"bn": r"[ঀ-৿]", "or": r"[଀-୿]"}[lang]
     if len(re.findall(script, text)) < 0.7 * len(re.sub(r"[\s\d.,;:!?'\"‘’“”()\-—–।]", "", text)):
         return "not mostly " + L["name"]
@@ -163,6 +181,8 @@ def run_lang(lang, clients, st):
             if key in done:
                 continue
             cf = CACHE / f"{lang}_{key}_p{p}.json"
+            if not cf.exists() and CACHE_ONLY:
+                continue
             if cf.exists():
                 r = json.loads(cf.read_text(encoding="utf-8"))
             else:
@@ -191,7 +211,7 @@ def run_lang(lang, clients, st):
                     print(f"  {key} p{p}: no reading (quota)", flush=True)
                     continue
                 cf.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
-            text = clean(r.get("text", ""))
+            text = clean(r.get("text", ""), n, L["digits"])
             if not text:
                 continue
             hi = (db.execute("SELECT hi FROM verse WHERE skandha=? AND chapter=? AND num=?", (s, c, n)).fetchone() or [""])[0] or ""
@@ -210,10 +230,10 @@ def run_lang(lang, clients, st):
 def main():
     langs = [l for l, f in (("bn", "--or"), ("or", "--bn")) if f not in sys.argv]
     ks = keys()
-    if not DRY and not ks:
+    if not DRY and not CACHE_ONLY and not ks:
         sys.exit("GEMINI_API_KEY is not set")
     clients = []
-    if not DRY:
+    if not DRY and not CACHE_ONLY:
         from google import genai
         clients = [genai.Client(api_key=k) for k in ks]
     st = {"i": 0}
