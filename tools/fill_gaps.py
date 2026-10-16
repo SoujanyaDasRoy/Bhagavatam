@@ -244,7 +244,12 @@ def main():
         allgot[lang], allrej[lang] = got, rej
     if DRY:
         return
-    (WORK / "gaps2_filled.json").write_text(json.dumps(allgot, ensure_ascii=False, indent=1), encoding="utf-8")
+    old = WORK / "gaps2_filled.json"
+    if old.exists():   # keep the verses filled by earlier runs in the list
+        prev = json.loads(old.read_text(encoding="utf-8"))
+        for lang, g in prev.items():
+            allgot.setdefault(lang, {}).update({k: v for k, v in g.items() if k not in allgot.get(lang, {})})
+    old.write_text(json.dumps(allgot, ensure_ascii=False, indent=1), encoding="utf-8")
     (WORK / "gaps2_rejected.json").write_text(json.dumps(allrej, ensure_ascii=False, indent=1), encoding="utf-8")
     n = sum(len(v) for v in allgot.values())
     if not n:
