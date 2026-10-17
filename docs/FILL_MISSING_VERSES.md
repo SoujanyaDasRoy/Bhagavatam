@@ -32,3 +32,6 @@ python tools\content\missing_report.py --readme
 ```
 
 After each run: `content/content.db` and `app/src/main/assets/content.db` must be identical, and `search.db` must carry the same `content_version`.
+
+## Check every fill
+After any fill run `py tools/content/check_alignment.py`. The gap-filling scripts once put a neighbouring verse's text under the missing verse (see [audits/ALIGNMENT_2026-10-17.md](audits/ALIGNMENT_2026-10-17.md)); `verify_gaps.py` cannot see that, because the words are on the page.
