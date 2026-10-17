@@ -346,11 +346,21 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var lookup by mutableStateOf<WordLookup?>(null)
     var selBar by mutableStateOf<SelBar?>(null)
 
+    /** The verse whose action sheet is open (a reference such as "10.29.1"), and a verse the reader should scroll to when it opens. */
+    var verseSheet by mutableStateOf<String?>(null)
+    var scrollToVerse by mutableStateOf<String?>(null)
+
+    /** A short message with an optional action (Undo), shown above the reader controls for a few seconds. */
+    class Snack(val text: String, val action: String? = null, val onAction: (() -> Unit)? = null)
+    var snack by mutableStateOf<Snack?>(null)
+    fun toast(text: String, action: String? = null, onAction: (() -> Unit)? = null) { snack = Snack(text, action, onAction) }
+
     fun annotationsFor(ref: String, layer: String) = annotations.filter { it.ref == ref && it.layer == layer }
 
-    fun addAnnotation(a: Annotation) {
+    fun addAnnotation(a: Annotation): Long {
         val id = annotationStore.insert(a)
         annotations.add(0, a.copy(id = id))
+        return id
     }
 
     fun updateAnnotation(a: Annotation) {

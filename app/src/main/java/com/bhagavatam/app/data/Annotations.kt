@@ -79,7 +79,30 @@ data class AnnDraft(val existing: Annotation?, val ref: String, val layer: Strin
 data class WordLookup(val word: String, val lang: Lang, val ref: String)
 
 /** A live text selection in one verse: where it is, and how to clear it. Shown as the action bar above the reader controls. */
-class SelBar(val ref: String, val lang: Lang, val start: Int, val end: Int, val quote: String, val clear: () -> Unit)
+class SelBar(val ref: String, val lang: Lang, val start: Int, val end: Int, val quote: String, val text: String = "", val clear: () -> Unit)
+
+private const val STOPS = "।॥.?!"
+
+/** The sentence around [s, e) in [text] (a danda, double danda, full stop, question or exclamation mark ends it), without edge spaces. */
+fun sentenceAround(text: String, s: Int, e: Int): IntRange {
+    var a = s.coerceIn(0, text.length)
+    while (a > 0 && text[a - 1] !in STOPS) a--
+    var b = e.coerceIn(0, text.length)
+    if (b == 0 || text[b - 1] !in STOPS) {
+        while (b < text.length && text[b] !in STOPS) b++
+        if (b < text.length) b++
+    }
+    return trimRange(text, a, b)
+}
+
+/** [a, b) without the white space at both ends, as an inclusive range of character indexes (empty text gives an empty range). */
+fun trimRange(text: String, a: Int, b: Int): IntRange {
+    var s = a.coerceIn(0, text.length)
+    var e = b.coerceIn(s, text.length)
+    while (s < e && text[s].isWhitespace()) s++
+    while (e > s && text[e - 1].isWhitespace()) e--
+    return s until e
+}
 
 /** The word around [i] in [text]: letters, digits and the combining marks of Devanagari and Bengali stay together. */
 fun wordAt(text: String, i: Int): IntRange? {

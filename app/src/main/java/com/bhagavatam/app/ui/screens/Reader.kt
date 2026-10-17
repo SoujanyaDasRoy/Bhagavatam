@@ -254,6 +254,25 @@ fun ReaderScreen(
         }
     }
 
+    // A verse asked for from outside (the word sheet's list of places): scroll to it once this chapter's text is on screen.
+    LaunchedEffect(state.scrollToVerse, rowVerses) {
+        val target = state.scrollToVerse ?: return@LaunchedEffect
+        val p = target.split(".").mapNotNull { it.toIntOrNull() }
+        if (p.size < 3 || p[0] != skandha || p[1] != adhyaya) return@LaunchedEffect
+        val i = rowVerses.indexOfLast { it.num <= p[2] }
+        if (i >= 0) {
+            val head = (if (!state.hasSession && state.nextTip() != null) 1 else 0) + (if (state.showChapterArt) 1 else 0) + 1
+            list.animateScrollToItem(head + i)
+        }
+        state.scrollToVerse = null
+    }
+    // A short message (Undo for a bookmark or a highlight) leaves by itself.
+    LaunchedEffect(state.snack) {
+        val s0 = state.snack ?: return@LaunchedEffect
+        delay(4000)
+        if (state.snack === s0) state.snack = null
+    }
+
     // Resume where the reader stopped.
     LaunchedEffect(skandha, adhyaya) {
         if (state.lastSkandha == skandha && state.lastAdhyaya == adhyaya && state.lastVerse > 1 && rowVerses.isNotEmpty()) {
@@ -470,6 +489,19 @@ fun ReaderScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SelectionPanel(state, onOpenDictionary = onOpenDictionary)
+            state.snack?.let { sn ->
+                Row(
+                    Modifier.shadow(6.dp, CircleShape).clip(CircleShape).background(c.ink).padding(start = 18.dp, end = 6.dp).heightIn(min = 48.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(sn.text, fontSize = 15.sp, color = c.bg)
+                    if (sn.action != null && sn.onAction != null) {
+                        Box(Modifier.heightIn(min = 48.dp).clip(CircleShape).clickable(role = Role.Button) { sn.onAction.invoke(); state.snack = null }.padding(horizontal = 12.dp), contentAlignment = Alignment.Center) {
+                            Text(sn.action, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                        }
+                    }
+                }
+            }
         }
         Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 10.dp)) {
             Crossfade(state.hasSession, animationSpec = tween(Motion.sheet), label = "playControl") { session ->
@@ -502,6 +534,7 @@ fun ReaderScreen(
     }
     if (showLangSheet) LanguageSheet(state, verses) { showLangSheet = false }
     AnnotationSheet(state)
+    VerseSheet(state)
     WordSheet(state, { sk, a -> onNextChapter(sk, a) }, onOpenDictionary = onOpenDictionary)
 }
 
@@ -528,7 +561,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
     Column(Modifier.fillMaxWidth()) {
         Column(
             Modifier.fillMaxWidth().clip(Radius.group).background(tint)
-                .combinedClickable(onClick = {}, onLongClickLabel = if (marked) "Remove bookmark" else "Bookmark this shloka", onLongClick = { state.toggleBookmark(v.ref) })
+                .combinedClickable(onClick = {}, onLongClickLabel = tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প"), onLongClick = { state.verseSheet = v.ref })
                 .padding(horizontal = 14.dp, vertical = 18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
@@ -538,11 +571,23 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 Box(Modifier.weight(1f))
                 if (v.speaker != null) Text(v.speaker, fontFamily = NotoDevanagari, fontSize = 15.sp, color = c.secondary)
                 if (isCurrent) Icon(painterResource(Ic.Headphones), null, tint = c.accent, modifier = Modifier.size(15.dp))
-                // Press and hold anywhere on the shloka saves it; the mark only shows once saved.
-                if (marked) {
-                    IconButton(onClick = { state.toggleBookmark(v.ref) }, modifier = Modifier.size(48.dp)) {
-                        Icon(painterResource(Ic.Bookmark), "Remove bookmark", tint = c.accent, modifier = Modifier.size(20.dp))
-                    }
+                // Bookmark with one tap; the other verse actions (highlight, note, share, listen) open with the dots, or by holding the shloka.
+                IconButton(onClick = {
+                    state.toggleBookmark(v.ref)
+                    val now = v.ref in state.bookmarks
+                    state.toast(
+                        if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে"),
+                        tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন"),
+                    ) { state.toggleBookmark(v.ref) }
+                }, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        painterResource(if (marked) Ic.Bookmark else Ic.BookmarkOutline),
+                        if (marked) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন"),
+                        tint = if (marked) c.accent else c.secondary, modifier = Modifier.size(20.dp),
+                    )
+                }
+                IconButton(onClick = { state.verseSheet = v.ref }, modifier = Modifier.size(48.dp)) {
+                    Icon(painterResource(Ic.MoreVertical), tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প"), tint = c.secondary, modifier = Modifier.size(20.dp))
                 }
             }
             // The shloka and its transliteration are centred, like a printed verse.
