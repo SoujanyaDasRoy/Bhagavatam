@@ -1,6 +1,6 @@
 # Open findings: plan to close all of them
 
-**Goal:** close every item left open in `docs/agent/LANGUAGE_AUDIT_2026-10-14.md` and `docs/agent/UI_AUDIT_2026-10-14.md` ("Not done" rows), then ship 1.2.2.
+**Goal:** close every item left open in `docs/audits/LANGUAGE_AUDIT_2026-10-14.md` and `docs/audits/UI_AUDIT_2026-10-14.md` ("Not done" rows), then ship 1.2.2.
 
 **Spec:** the two audit files. **Order:** cheap and certain first, then items that need the phone or a person.
 

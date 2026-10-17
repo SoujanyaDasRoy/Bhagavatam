@@ -67,7 +67,7 @@ App language (English, Hindi, Bengali) x reading language (Sanskrit, English, Hi
 - **Method:** a script sets the app's preferences through `adb` (the same way the emulator test used `run-as`), opens a fixed chapter, and takes a screenshot of the reader, the Home screen, the chapter end and the language sheet in light and dark. 15 combinations x 4 screens x 2 themes = 120 screenshots, taken unattended.
 - **What is checked on each:** no line mixes the two languages where the rule says one (reference line, reading time, digits, tips, chapter end), no missing glyph boxes, no text cut off at 1.3x font scale, nothing under 15 sp for Indic text.
 - **Output:** a contact sheet per app language in `docs/agent/` and a short table of failures. Failures become fixes in `LangZone` use, not special cases.
-- **Also in this task:** the fallback-language label (when a verse has no text in the reading language, say which language is shown), and the `DESIGN_SYSTEM.md` section for the rule.
+- **Also in this task:** the fallback-language label (when a verse has no text in the reading language, say which language is shown), and the `docs/DESIGN_SYSTEM.md` section for the rule.
 
 ## 5. Order and effort
 1. Dictionary tasks 1 and 2 (measure with the real lookup): short, no owner input.

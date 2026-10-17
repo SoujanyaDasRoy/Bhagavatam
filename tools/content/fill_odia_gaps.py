@@ -1,7 +1,7 @@
 """Fills the Odia verses that the local readers never found, by reading only the pages around each gap with Gemini vision.
 
-    py tools/fill_odia_gaps.py --dry       list the pages that would be read, no API call
-    py tools/fill_odia_gaps.py             read them, fill the empty verses in both content.db copies, rebuild search.db
+    py tools/content/fill_odia_gaps.py --dry       list the pages that would be read, no API call
+    py tools/content/fill_odia_gaps.py             read them, fill the empty verses in both content.db copies, rebuild search.db
 
 Needs GEMINI_API_KEY (environment, or the first key in content/_bengali/bn_extract/.env).
 Rules it follows:
@@ -18,7 +18,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 ODIA = ROOT / "content" / "_odia"
 DBS = [ROOT / "content" / "content.db", ROOT / "app" / "src" / "main" / "assets" / "content.db"]
 OUT = ODIA / "work_v" / "gaps_filled.json"

@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * Legacy colour names, now backed by the design-system tokens so every screen follows the active theme
- * (Prabhat, Pothi, Sandhya, Ratri). Only readable inside composables. See DESIGN_SYSTEM.md.
+ * (Prabhat, Pothi, Sandhya, Ratri). Only readable inside composables. See docs/DESIGN_SYSTEM.md.
  */
 object Brand {
     val Paper: Color @Composable @ReadOnlyComposable get() = LocalAppColors.current.bg

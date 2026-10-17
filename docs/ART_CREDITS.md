@@ -1,6 +1,6 @@
 # Art credits (Home and Content cards)
 
-Public-domain Indian miniature paintings (Pahari, Guler, Basholi, Rajput) from Wikimedia Commons, each marked "Public domain" or CC0 on its file page (retrieved 2026-10-15). Cropped to 16:10 and resized to 1920x1200 WebP by `tools/import_art.py`.
+Public-domain Indian miniature paintings (Pahari, Guler, Basholi, Rajput) from Wikimedia Commons, each marked "Public domain" or CC0 on its file page (retrieved 2026-10-15). Cropped to 16:10 and resized to 1920x1200 WebP by `tools/art/import_art.py`.
 
 | Card | Commons file |
 |---|---|

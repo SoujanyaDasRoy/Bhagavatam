@@ -2,7 +2,7 @@
 """Language audit: walks the main screens of the debug app in a chosen app and reading language and lists every visible
 string that is written in the wrong script (Latin letters in a Hindi or Bengali app, and so on) plus clickable items with no label.
 
-    py tools/lang_audit.py --ui HI --read HI --out work_audit [--serial emulator-5554]
+    py tools/qa/lang_audit.py --ui HI --read HI --out work_audit [--serial emulator-5554]
 
 Method: set the preferences with `run-as`, start the app, press each tab, press each row of Settings in turn, and read the screen
 with `uiautomator dump`. It cannot tell a brand or a book name that is meant to stay Latin (Bhagavatam, Wiktionary, CC BY-SA, Gita

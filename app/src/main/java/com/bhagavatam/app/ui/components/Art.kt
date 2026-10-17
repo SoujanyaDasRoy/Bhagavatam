@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 
 /**
  * Optional artwork. Drop a WebP named e.g. `sk_03.webp` or `ch_10_29.webp` into res/drawable-nodpi
- * (tools/import_art.py does the resizing and naming) and it appears; with no file the card keeps its
+ * (tools/art/import_art.py does the resizing and naming) and it appears; with no file the card keeps its
  * gradient and mandala. Looked up by name, so nothing breaks when an image is missing.
  */
 @Composable

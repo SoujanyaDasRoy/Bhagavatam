@@ -1,9 +1,9 @@
 """One command that works on the missing Bengali and Odia verses.
 
-    python tools/fill_missing.py              Bengali and Odia
-    python tools/fill_missing.py --bn         Bengali only
-    python tools/fill_missing.py --or         Odia only
-    python tools/fill_missing.py --dry        only print what would run
+    python tools/content/fill_missing.py              Bengali and Odia
+    python tools/content/fill_missing.py --bn         Bengali only
+    python tools/content/fill_missing.py --or         Odia only
+    python tools/content/fill_missing.py --dry        only print what would run
 
 Bengali: finds the chapters that still have empty verses, re-reads their PDF pages with the Gemini vision extractor
 (needs GEMINI_API_KEY in the environment), assembles, promotes the complete chapters, loads them into both content.db copies.
@@ -17,7 +17,7 @@ import sqlite3
 import subprocess
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PY = sys.executable
 DBS = [os.path.join(ROOT, "content", "content.db"), os.path.join(ROOT, "app", "src", "main", "assets", "content.db")]
 DRY = "--dry" in sys.argv

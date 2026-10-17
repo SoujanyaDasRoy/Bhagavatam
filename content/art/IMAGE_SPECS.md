@@ -18,7 +18,7 @@ This document outlines the image pipeline, technical specifications, and compres
 ## 2. Image Pipeline Workflow
 
 ```
-[ AI Image Generation ] ──> [ content/art/raw/ ] ──> [ python tools/import_art.py ] ──> [ app/src/main/res/drawable-nodpi/ ]
+[ AI Image Generation ] ──> [ content/art/raw/ ] ──> [ python tools/art/import_art.py ] ──> [ app/src/main/res/drawable-nodpi/ ]
    (1600 × 1000 PNG/JPG)      (sk_00.png, ch_10_29.png)   (Resize to 1024x640, WebP Q78)         (Instant offline loading)
 ```
 
@@ -35,7 +35,7 @@ This document outlines the image pipeline, technical specifications, and compres
   * Home Screen Hero: `home_hero.png`
   * Chapter Illustrations: `ch_<skandha>_<chapter>.png` (e.g. `ch_10_29.png`)
 
-### B. App Production Phase (Processed by `tools/import_art.py`)
+### B. App Production Phase (Processed by `tools/art/import_art.py`)
 
 | Parameter | Specification | Purpose |
 |---|---|---|
@@ -56,7 +56,7 @@ This document outlines the image pipeline, technical specifications, and compres
    ```
 2. Run the import script from the project root:
    ```bash
-   python tools/import_art.py
+   python tools/art/import_art.py
    ```
 3. The script automatically crops to 16:10, resizes, converts to WebP, and places the files into:
    ```

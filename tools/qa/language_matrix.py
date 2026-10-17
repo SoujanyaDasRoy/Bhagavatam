@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Language matrix: app language (EN, HI, BN) x reading language (SA, EN, HI, BN, OR), light and dark, on a running emulator or phone.
 
-    py tools/language_matrix.py --out <folder> [--serial emulator-5554] [--skandha 8 --chapter 14] [--themes Prabhat,Sandhya]
+    py tools/qa/language_matrix.py --out <folder> [--serial emulator-5554] [--skandha 8 --chapter 14] [--themes Prabhat,Sandhya]
 
 For each combination it writes the app's preferences with `adb run-as` (debug build only), starts the app, opens the resume card and
 saves three screenshots: the Home screen, the top of the chapter and the end of the chapter. Then a contact sheet per app language
 and theme is made with Pillow, and a plain list of what to look at. It does not judge the pictures: read the sheets, or run
-tools/language_matrix.py --check on the saved texts (the uiautomator dump of every screen is saved next to the picture and is searched
+tools/qa/language_matrix.py --check on the saved texts (the uiautomator dump of every screen is saved next to the picture and is searched
 for the strings the rule says must be in one language).
 """
 import argparse

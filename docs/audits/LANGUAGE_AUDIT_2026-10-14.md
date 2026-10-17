@@ -1,6 +1,6 @@
 # Language and feature audit, 2026-10-14
 
-Method: `tools/lang_audit.py` sets the app and reading language, walks Home, Content, Search, Settings and every Settings row, a chapter and its language sheet, and reads each screen with `uiautomator dump`; it lists Latin text in a Hindi or Bengali app and unlabelled tap targets. Run on the emulator for app/reading: HI/HI, BN/BN, HI/OR, BN/EN. Plus source greps for places that handle Hindi, Bengali and English but not Odia.
+Method: `tools/qa/lang_audit.py` sets the app and reading language, walks Home, Content, Search, Settings and every Settings row, a chapter and its language sheet, and reads each screen with `uiautomator dump`; it lists Latin text in a Hindi or Bengali app and unlabelled tap targets. Run on the emulator for app/reading: HI/HI, BN/BN, HI/OR, BN/EN. Plus source greps for places that handle Hindi, Bengali and English but not Odia.
 
 ## Bugs found and fixed (commit with this file)
 | # | Bug | Fix |

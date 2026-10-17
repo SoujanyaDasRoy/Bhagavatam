@@ -2,13 +2,13 @@
 
 > **For agentic workers:** execute task by task. Steps use checkboxes. One commit per task, no co-author lines, no em dashes in readable text.
 
-**Goal:** close the High and Medium findings of `docs/agent/UI_AUDIT_2026-10-14.md` without changing the look of the app.
+**Goal:** close the High and Medium findings of `docs/audits/UI_AUDIT_2026-10-14.md` without changing the look of the app.
 
 **Architecture:** one type scale object and one touch-target modifier replace hand-typed sizes; the font-scale cap and reduced-motion check become small helpers used in the two places that need them.
 
 **Tech stack:** Kotlin, Jetpack Compose, existing `ui/theme` tokens, emulator and the Samsung SM-A556E for checks.
 
-**Spec:** `docs/agent/UI_AUDIT_2026-10-14.md` (findings), `CLAUDE.md` section 5 (rules).
+**Spec:** `docs/audits/UI_AUDIT_2026-10-14.md` (findings), `CLAUDE.md` section 5 (rules).
 
 ## Global constraints
 - Indic text at or above 15 sp with line height 1.8; Latin metadata at or above 12 sp; nothing below 11 sp (Apple floor).
@@ -28,12 +28,12 @@
 | `ui/screens/Library.kt` | one dark hero (resume), quiet cards; mandala off tiles (optional, last) |
 | `ui/screens/{Player,DictionaryScreen,AnnotationSheet,Reader,Me,SearchResultsScreen,CreditsScreen,Onboarding}.kt` | replace small hard-coded sizes |
 | `app/src/test/.../ContrastTest.kt` (new) | tile gradient contrast and text-token contrast |
-| `tools/language_matrix.py` | add `--fontscale` to take the matrix at 1.0, 1.3, 2.0 |
+| `tools/qa/language_matrix.py` | add `--fontscale` to take the matrix at 1.0, 1.3, 2.0 |
 
 ---
 
 ## Task 1: Measure first (no code change to the app)
-- [ ] Add `--fontscale <x>` to `tools/language_matrix.py` (sets `settings put system font_scale x` before each run and restores 1.0 at the end).
+- [ ] Add `--fontscale <x>` to `tools/qa/language_matrix.py` (sets `settings put system font_scale x` before each run and restores 1.0 at the end).
 - [ ] Take the Home, Content, reader top, dictionary and player screens at 1.0 and 2.0 in English and Odia; save to `docs/agent/ui_before/`. This is the "before" evidence.
 - [ ] Sample real pixel colours of one Skandha tile at four points (top-left, centre behind the number, bottom-left behind the count, bottom-right) with Pillow and compute contrast against the text colour. Write the numbers in the audit file.
 - [ ] Commit: `ui audit: before-screenshots and tile contrast measured`.
@@ -109,7 +109,7 @@
 - [ ] Turn TalkBack on the phone; walk Home, Content, a chapter (read, bookmark, long press word, red underline popup), search, dictionary, settings. Write what is read aloud wrongly into the audit file.
 - [ ] Re-take the 1.0 and 2.0 screenshots into `docs/agent/ui_after/`; add the contact sheets to the audit file.
 - [ ] Re-run `gradlew test`, the search tests, the language matrix at 1.0, then `assembleRelease`, `versionCode` +1, install on the phone and check the updater card still shows for the next tag.
-- [ ] Update `docs/agent/UI_AUDIT_2026-10-14.md` with an "After" table: each finding, closed or why not.
+- [ ] Update `docs/audits/UI_AUDIT_2026-10-14.md` with an "After" table: each finding, closed or why not.
 - [ ] Commit and push.
 
 ## Order and effort

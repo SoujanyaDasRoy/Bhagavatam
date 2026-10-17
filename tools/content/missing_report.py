@@ -2,8 +2,8 @@
 
 Read-only for the databases and the chapter files. Run from the project root:
 
-    python tools/missing_report.py            # print the report
-    python tools/missing_report.py --readme   # also rewrite the tables between the README markers
+    python tools/content/missing_report.py            # print the report
+    python tools/content/missing_report.py --readme   # also rewrite the tables between the README markers
 
 For every verse with an empty translation it looks in the chapter's source markdown (content/bn, content/or) for a printed
 group that covers it ("### শ্লোক ২৮-৩০", "॥ ৪-৫ ॥", "[শ্লোক ১২-১৫ একান্বয়ে অনুবাদিত]"):
@@ -16,7 +16,7 @@ import sqlite3
 import sys
 from itertools import groupby
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DB = os.path.join(ROOT, "content", "content.db")
 DIG = str.maketrans("০১২৩৪৫৬৭৮৯୦୧୨୩୪୫୬୭୮୯", "01234567890123456789")
 RANGE = re.compile(r"([0-9০-৯୦-୯]{1,3})\s*[-–—]\s*([0-9০-৯୦-୯]{1,3})(?:\s*[-–—]\s*([0-9০-৯୦-୯]{1,3}))?")
@@ -77,15 +77,22 @@ def report(db, col, frm, folder):
 
 
 def table(name, res):
+    """Four plain columns. Joint-group details are added only when some missing verse sits inside a printed group."""
     total = sum(len(r[2]) for r in res)
     n_grp = sum(len(v) for r in res for v in r[3].values())
-    lines = [f"**{name}: {total} verses without a translation** ({n_grp} of them printed inside a joint group, "
-             f"{total - n_grp} not found in the print).", "",
-             "| Skandha | Chapter | Missing verses | Count | Joint group in the print | Not found |", "|---|---|---|---|---|---|"]
+    head = f"**{name}: {total} verses without a translation.**"
+    if not total:
+        return head
+    if n_grp:
+        head += f" {n_grp} of them are printed inside a joint group (see the last column)."
+    cols = "| Skandha | Chapter | Missing verses | Count |" + (" Joint group |" if n_grp else "")
+    lines = [head, "", cols, "|---|---|---|---|" + ("---|" if n_grp else "")]
     for s, c, nums, grouped, loose in res:
-        grp = "; ".join(f"{a}-{b}" for a, b in sorted(grouped)) or "-"
-        lines.append(f"| {'Mahatmya' if s == 0 else s} | {c} | {ranges(nums)} | {len(nums)} | {grp} | {ranges(loose) if loose else '-'} |")
-    return "\n".join(lines)
+        row = f"| {'Mahatmya' if s == 0 else s} | {c} | {ranges(nums)} | {len(nums)} |"
+        if n_grp:
+            row += " " + ("; ".join(f"{a}-{b}" for a, b in sorted(grouped)) or "-") + " |"
+        lines.append(row)
+    return chr(10).join(lines)
 
 
 def main():

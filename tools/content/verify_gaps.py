@@ -1,6 +1,6 @@
 """Independent check of the verses filled by fill_odia_gaps.py and fill_gaps.py.
 
-    py tools/verify_gaps.py
+    py tools/content/verify_gaps.py
 
 The fill scripts used a vision model. This check uses a different reader: stock Tesseract (ben / ori, tessdata_best) reads the same
 pages, and every filled verse is scored by how many of its words appear (allowing small spelling differences) in that page text.
@@ -18,7 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 W = ROOT / "content" / "_odia" / "work_v"
 TESS = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 os.environ.setdefault("TESSDATA_PREFIX", str(ROOT / "content" / "_localocr" / "work" / "tessdata_best"))
