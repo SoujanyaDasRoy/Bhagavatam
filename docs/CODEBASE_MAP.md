@@ -83,7 +83,7 @@ AppState (single state holder)
 
 - `content/art/` stores chapter prompts, image specifications, generated art metadata, and raw/generated artwork.
 - `tools/` contains SVG conversion, prompt generation, art import/grading, icon generation, graph generation, and batch utilities.
-- `tools/make_code_map.py` builds a filtered Graphify snapshot of the app source, Gradle files, content build scripts, Bengali extractor, and database schema.
+- `tools/dev/make_code_map.py` builds a filtered Graphify snapshot of the app source, Gradle files, content build scripts, Bengali extractor, and database schema.
 - `graphify-out/graph.html` is the interactive generated dependency graph; `graphify-out/GRAPH_REPORT.md` is its summary report; `graphify-out/graph.json` is the machine-readable graph.
 
 ## Tests
@@ -101,7 +101,7 @@ AppState (single state holder)
 | Change background/stream playback | `audio/PlaybackService.kt`, `audio/stream/`, `audio/RecitationStream.kt` |
 | Add notes/highlights/search | `data/Annotations.kt`, `data/WordSearch.kt` |
 | Add multilingual scripture content | `content/{en,hi,bn}/`, `content/index.json`, then rebuild `content.db` |
-| Rebuild the visual code graph | `python tools/make_code_map.py` |
+| Rebuild the visual code graph | `python tools/dev/make_code_map.py` |
 
 ## Build and verification
 
@@ -110,4 +110,4 @@ AppState (single state holder)
 .\gradlew.bat assembleDebug
 ```
 
-The Gradle build copies completed APKs into `apk/`. The repository also includes architecture and design references in `docs/ARCHITECTURE.md`, `docs/DATA_PIPELINE.md`, `docs/ART_AND_ASSETS.md`, and `DESIGN_SYSTEM.md`.
+The Gradle build copies completed APKs into `apk/`. The repository also includes architecture and design references in `docs/ARCHITECTURE.md`, `docs/DATA_PIPELINE.md`, `docs/ART_AND_ASSETS.md`, and `docs/DESIGN_SYSTEM.md`.

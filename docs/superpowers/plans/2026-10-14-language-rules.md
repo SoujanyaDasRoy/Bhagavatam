@@ -64,7 +64,7 @@ One sentence: **the page shows the language you read in; the frame around the pa
 2. **Audit and fix** the rows of the table above that break the rule: verse-number digits (prefix and end), the chapter-end "Notes" heading, the shloka caption, the lock-screen text. Do not touch the frame.
 3. **Fallback label.** Where text is shown in a fallback language, show a small label with that language's own name.
 4. **Screenshot matrix.** App language (English, Hindi, Bengali) by reading language (Sanskrit, English, Hindi, Bengali): 12 reader screens, 12 Home screens, light and dark. Look for mixed lines.
-5. **Document** the rule in `DESIGN_SYSTEM.md` and as one comment next to `LangZone`, so new features follow it.
+5. **Document** the rule in `docs/DESIGN_SYSTEM.md` and as one comment next to `LangZone`, so new features follow it.
 
 Tasks 1 and 2 are the work; 3 to 5 make it stick. Odia fits the rule unchanged (R = Odia needs the font and the text; A stays English, Hindi or Bengali).
 
@@ -80,4 +80,4 @@ Also built: `LangZone { FRAME, PAGE }`, `zoneLang()` and `AppState.langFor(zone)
 
 Interpretation to confirm: "digits in the reading text: app language" was applied to the translation text of verses (including the number at the end of a paragraph). The Sanskrit shloka layer keeps its own printed digits.
 
-Not done: the 12-screen screenshot matrix (3 app languages by 4 reading languages), the fallback label for text missing in the reading language, and a `DESIGN_SYSTEM.md` section.
+Not done: the 12-screen screenshot matrix (3 app languages by 4 reading languages), the fallback label for text missing in the reading language, and a `docs/DESIGN_SYSTEM.md` section.

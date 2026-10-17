@@ -1,6 +1,6 @@
 """Turns generated images into app resources.
   Put files in content/art/raw/ named sk_01.png, sk_00.jpg, home_hero.png, ch_10_29.png ...
-  Run from the project root:  python tools/import_art.py
+  Run from the project root:  python tools/art/import_art.py
 Each is cropped to 16:10, resized to 1280x800 and saved as WebP into app/src/main/res/drawable-nodpi/.
 Needs Pillow:  pip install pillow
 """

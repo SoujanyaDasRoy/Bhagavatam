@@ -1,6 +1,6 @@
 # AGENTS.md - how to work on Bhagavatam
 
-For any coding agent (Antigravity, Claude Code, others). This file is the working agreement. `CLAUDE.md` describes the architecture, `DESIGN_SYSTEM.md` the visual rules, `docs/agent/RUNBOOKS.md` the step-by-step procedures. Read this file first, every session.
+For any coding agent (Antigravity, Claude Code, others). This file is the working agreement. `CLAUDE.md` describes the architecture, `docs/DESIGN_SYSTEM.md` the visual rules, `docs/agent/RUNBOOKS.md` the step-by-step procedures. Read this file first, every session.
 
 ## 0. The five rules that matter most
 

@@ -22,9 +22,9 @@ Why these choices
 - "No text" matters. Image models spell Sanskrit badly; the app draws all lettering itself.
 - Each Skandha has one colour. Mention it in the prompt and the card, gradient and image will agree.
 
-Sizes: generate at 1600 × 1000 (or the nearest 16:10). `tools/import_art.py` resizes and converts to WebP (about 50–70 KB each). See [IMAGE_SPECS.md](IMAGE_SPECS.md) for full technical optimization specifications.
+Sizes: generate at 1600 × 1000 (or the nearest 16:10). `tools/art/import_art.py` resizes and converts to WebP (about 50–70 KB each). See [IMAGE_SPECS.md](IMAGE_SPECS.md) for full technical optimization specifications.
 Naming: `sk_01` … `sk_12`, `sk_00` (Mahatmya), `home_hero`, and `ch_<skandha>_<chapter>` (for example `ch_10_29`).
-Save the files in `content/art/raw/` with those names (.png or .jpg), then run `python tools/import_art.py`.
+Save the files in `content/art/raw/` with those names (.png or .jpg), then run `python tools/art/import_art.py`.
 
 Respectful depiction: show the Lord and sages in the traditional, devotional manner of the miniature school. If a tool refuses or
 produces something that feels wrong, prefer symbols (lotus, conch, flute, peacock feather, pillar, ocean, flame) over faces.
@@ -55,7 +55,7 @@ Each line is the **scene**; add the style block after it.
 Generate the full list from the book itself:
 
 ```
-python tools/make_chapter_prompts.py
+python tools/art/make_chapter_prompts.py
 ```
 
 It writes `content/art/chapter_prompts.csv` with columns `file, skandha, chapter, title, prompt`. Each prompt uses the chapter's own English

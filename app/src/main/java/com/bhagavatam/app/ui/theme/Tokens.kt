@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 
 /**
  * Bhagavatam design system tokens. Light = Prabhat, dark = Sandhya.
- * Ratri (OLED) and Pothi (sepia) are variants below. Fonts: see Type.kt. See DESIGN_SYSTEM.md.
+ * Ratri (OLED) and Pothi (sepia) are variants below. Fonts: see Type.kt. See docs/DESIGN_SYSTEM.md.
  * Text tokens reach 4.5:1 against bg in every mode; `line` is decorative only.
  */
 @Immutable

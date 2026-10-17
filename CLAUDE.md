@@ -55,20 +55,21 @@ Bhagavatam/
 │   ├── hi/                             # Canonical Hindi chapter markdown files
 │   └── content.db                      # Master canonical SQLite database
 │
-├── docs/                               # Comprehensive Documentation & Architecture Specs
-│   ├── ARCHITECTURE.md                 # Deep-dive into Android client & Audio subsystem
-│   ├── DATA_PIPELINE.md                # Bengali & Hindi extraction & verification guide
-│   ├── ART_AND_ASSETS.md               # Kangra art prompt guidelines & asset pipeline
-│   └── superpowers/plans/              # Detailed feature implementation plans
+├── docs/                               # Documentation (index: docs/README.md)
+│   ├── ARCHITECTURE.md, DATA_PIPELINE.md, DESIGN_SYSTEM.md, ART_AND_ASSETS.md, ART_CREDITS.md, CODEBASE_MAP.md
+│   ├── releases/                       # Notes of the early releases (later ones are on GitHub)
+│   ├── audits/                         # Dated UI, language and app audits
+│   ├── agent/                          # Owner decisions, runbooks, hand-over notes
+│   └── superpowers/plans/              # Dated implementation plans
 │
-├── tools/                              # Automation Scripts
-│   ├── generate_graphify.py            # AST Knowledge Graph generator (graphify-out/)
-│   ├── import_art.py                   # Art converter (PNG -> 16:10 WebP -> res/drawable-nodpi)
-│   └── make_chapter_prompts.py         # Batch art prompt generator
+├── tools/                              # Helper scripts, grouped by job (tools/README.md)
+│   ├── content/                        # missing_report, fill_gaps, fill_missing, fill_odia_gaps, verify_gaps
+│   ├── art/                            # import_art, make_chapter_prompts, batch_generate_art, grade_art, icons
+│   ├── qa/                             # lang_audit, language_matrix
+│   └── dev/                            # generate_graphify, make_code_map
 │
 ├── graphify-out/                       # Repository Knowledge Graph & Visualizer
-├── DESIGN_SYSTEM.md                    # Kesari Deep UI Tokens & Typography Rules
-└── CLAUDE.md                           # This Developer & AI Guide
+├── └── CLAUDE.md                           # This Developer & AI Guide
 ```
 
 ---
@@ -147,13 +148,13 @@ python ../../_build/add_bengali.py ../../../app/src/main/assets/content.db
 ### C. Art Asset Ingestion
 ```powershell
 # Convert generated PNG art (16:10, 1280x800) to WebP and install in app
-python tools/import_art.py path/to/image.png --name ch_0_1 --install
+python tools/art/import_art.py path/to/image.png --name ch_0_1 --install
 ```
 
 ### D. Knowledge Graph Scan
 ```powershell
 # Regenerate full AST knowledge graph in graphify-out/
-python tools/generate_graphify.py
+python tools/dev/generate_graphify.py
 ```
 
 ---

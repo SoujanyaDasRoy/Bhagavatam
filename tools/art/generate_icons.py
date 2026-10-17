@@ -7,7 +7,7 @@ from assets/logo/bhagavatam.png.
 from pathlib import Path
 from PIL import Image, ImageOps
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 SRC_LOGO = ROOT / "assets" / "logo" / "bhagavatam.png"
 RES_DIR = ROOT / "app" / "src" / "main" / "res"
 

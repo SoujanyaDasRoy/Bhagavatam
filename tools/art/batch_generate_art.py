@@ -15,7 +15,7 @@ PRIMARY_MODEL = "black-forest-labs/FLUX.1-schnell"
 def load_prompts():
     if not os.path.exists(PROMPTS_JSON):
         print("Generating prompts first...")
-        subprocess.run([sys.executable, "tools/make_chapter_prompts.py"], check=True)
+        subprocess.run([sys.executable, "tools/art/make_chapter_prompts.py"], check=True)
     with open(PROMPTS_JSON, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -85,7 +85,7 @@ def run_batch(token, workers=2, limit=None, skandha_filter=None):
 
     # Run Color Grading & WebP Optimization
     print("\n--- Running Color Grading & WebP Optimization Pipeline ---")
-    subprocess.run([sys.executable, "tools/grade_art.py"], check=True)
+    subprocess.run([sys.executable, "tools/art/grade_art.py"], check=True)
 
 def main():
     parser = argparse.ArgumentParser(description="Parallel Art Generation Worker")
@@ -101,7 +101,7 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
 
     if args.grade_only:
-        subprocess.run([sys.executable, "tools/grade_art.py"], check=True)
+        subprocess.run([sys.executable, "tools/art/grade_art.py"], check=True)
         if args.rebuild:
             subprocess.run('cmd /c "set JAVA_HOME=C:\\Program Files\\Android\\Android Studio\\jbr&& gradlew.bat assembleRelease"', shell=True, check=True)
         return

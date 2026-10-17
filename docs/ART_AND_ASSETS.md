@@ -32,13 +32,13 @@ All artwork in the Bhagavatam application adheres to the classical **Kangra / Pa
 ### 3.1 Prompt Generation
 Chapter-by-chapter prompts are curated in `content/art/PROMPTS.md` and can be automatically templated with:
 ```powershell
-python tools/make_chapter_prompts.py
+python tools/art/make_chapter_prompts.py
 ```
 
 ### 3.2 Converting and Importing Art
 Convert generated PNG/JPEG images into optimized WebP and install directly into the Android resource directory:
 ```powershell
-python tools/import_art.py path/to/generated_image.png --name ch_0_1 --install
+python tools/art/import_art.py path/to/generated_image.png --name ch_0_1 --install
 ```
 
 ### 3.3 Prompt Template Standard

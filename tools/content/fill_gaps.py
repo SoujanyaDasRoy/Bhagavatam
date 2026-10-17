@@ -1,9 +1,9 @@
 """Last pass on the verses that still have no Bengali or Odia translation: one direct question per verse, with strict checks.
 
-    py tools/fill_gaps.py --dry                  list the pages that would be read
-    py tools/fill_gaps.py --cache-only           judge the readings already saved, no API call
-    py tools/fill_gaps.py                        Bengali and Odia
-    py tools/fill_gaps.py --bn   |   --or        one language
+    py tools/content/fill_gaps.py --dry                  list the pages that would be read
+    py tools/content/fill_gaps.py --cache-only           judge the readings already saved, no API call
+    py tools/content/fill_gaps.py                        Bengali and Odia
+    py tools/content/fill_gaps.py --bn   |   --or        one language
 
 Needs GEMINI_API_KEY (environment and/or the keys in content/_bengali/bn_extract/.env; several keys are rotated).
 For each empty verse it looks at the pages around the gap (the pages of the verse before and the verse after) and asks the model
@@ -24,7 +24,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 DBS = [ROOT / "content" / "content.db", ROOT / "app" / "src" / "main" / "assets" / "content.db"]
 WORK = ROOT / "content" / "_odia" / "work_v"
 CACHE = WORK / "gaps2"

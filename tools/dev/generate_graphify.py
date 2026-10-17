@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-tools/generate_graphify.py - Full codebase knowledge graph generator.
+tools/dev/generate_graphify.py - Full codebase knowledge graph generator.
 Scans Kotlin frontend, Python pipeline & tools, and SQLite schema to produce graphify-out.
 """
 import os, sys, re, json, sqlite3, ast
 from pathlib import Path
 from datetime import datetime
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "graphify-out"
 OUT_DIR.mkdir(exist_ok=True)
 

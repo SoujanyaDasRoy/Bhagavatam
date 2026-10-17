@@ -1,100 +1,81 @@
 # Bhagavatam
 
-A quiet, private reader and listener for the **Shrimad Bhagavat Mahapuran** on Android. Sanskrit with Hindi, Bengali, English and (in beta) Odia translations, Indian miniature paintings, audio narration, and search that works in every script. It lives on your phone: no ads, no account, no tracking, and everything you read or search works offline.
+A private, offline reader and listener for the **Shrimad Bhagavat Mahapuran** on Android. Sanskrit with Hindi, Bengali, English and Odia (beta) translations. No ads, no account, no tracking.
 
-[Download the latest APK](https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest/download/Bhagavatam.apk) | [Features](#features) | [Missing verses](#missing-translation-verses) | [Report a mistake](#report-a-mistake)
+**[Download the latest APK](https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest/download/Bhagavatam.apk)**
 
 ## Features
 
-- **The whole book:** the Mahatmya and all 12 Skandhas, 341 chapters, 14,580 verses.
-- **Layers you can mix:** Sanskrit in Devanagari, Bengali or Roman script, with Hindi, Bengali, English or Odia translation under it, or the translation alone.
-- **Two language settings:** the app language (menus) and the reading language (the text) are separate.
-- **Search:** words, names, stories (Gajendra Moksha, Rasa Lila, ...) or a reference such as `10.29.1`. Spelling variants across scripts find the same verse (Krishna, कृष्ण, কৃষ্ণ, କୃଷ୍ଣ).
-- **Dictionary:** press and hold a word for its meaning, offline, with an optional online fallback you can turn off.
-- **Notes:** bookmarks, highlights in four colours, personal notes, saved words, all kept on your device, with a one-file backup.
-- **Listening:** sentence-by-sentence narration with pauses, background and lock-screen playback, sleep timer, speed control, optional YouTube recitation streams.
-- **Art:** the Mahatmya and every Skandha card carries a public-domain Indian miniature painting (Pahari, Guler, Basholi). Sources are in [docs/ART_CREDITS.md](docs/ART_CREDITS.md).
-- **Themes:** Prabhat (light), Pothi (sepia), Sandhya (warm dark), Ratri (black).
+- **The whole book:** Mahatmya and 12 Skandhas, 341 chapters, 14,580 verses, all inside the app.
+- **Five languages:** read the Sanskrit (in Devanagari, Bengali or Roman script) with a translation under it, or the translation alone. Menus and reading text have separate language settings.
+- **Search:** by word, name, story ("Gajendra Moksha") or reference (`10.29.1`). Spellings in different scripts find the same verse.
+- **Dictionary:** press and hold a word for its meaning, offline.
+- **Notes:** bookmarks, four highlight colours, notes and saved words, with a one-file backup.
+- **Listening:** narration with pauses, lock-screen playback, sleep timer and speed control.
+- **Paintings:** each Skandha card shows a public-domain Indian miniature ([credits](docs/ART_CREDITS.md)).
+- **Four themes:** light, sepia, dark and black.
+- **Updates:** the app tells you when a new version is out.
 
 ## Download
 
-| | |
-|---|---|
-| **Latest APK** | <https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest/download/Bhagavatam.apk> |
-| **All releases and notes** | <https://github.com/SoujanyaDasRoy/Bhagavatam/releases/latest> |
+1. Open the link above on your phone and download the file.
+2. Open it and tap **Install** (allow "Install unknown apps" once if asked).
+3. Open the app. No internet needed.
 
-1. Open one of the links above on your phone and download the file.
-2. Open it and tap **Install**. If Android asks, allow "Install unknown apps" for your browser, once.
-3. Open the app. The whole text is already inside, so no internet is needed.
+Android 8.0 or newer. New versions install over the old one and keep your notes and settings. All releases: <https://github.com/SoujanyaDasRoy/Bhagavatam/releases>
 
-Android 8.0 (API 26) or newer. The app is not on the Play Store.
+## Text and gaps
 
-**Version 1.2.3.** The app checks GitHub for a newer release (Settings has a switch for update notifications) and shows a card with the notes when there is one.
+The Sanskrit and the Hindi, Bengali and English translations follow the Gita Press, Gorakhpur editions. **Odia is a beta:** it was read from page scans by software, and no Odia reader has checked it. Words the software was unsure about are underlined in red. The same goes for the Bengali verses filled in later.
 
-**Updating:** install the new APK over the old one. Your notes, highlights, bookmarks, saved words and settings stay, as long as the new APK is signed with the same key. If a release ever changes the signing key, use **Settings > Words & notes > Save a backup file** first and **Restore** afterwards.
-
-## About the text
-
-The Sanskrit and the Hindi, Bengali and English translations follow the Gita Press, Gorakhpur editions.
-
-**Odia is a beta.** It was read from page scans by software running on one PC, not typed by a person. Words the readers could not agree on are underlined in red. Tap one to say whether it is spelled correctly, and if not, send the right word. About 122 verses have no Odia yet, and only 210 of 341 chapter titles are read from the printed contents (the others show the title in another language, with a note). No Odia reader has checked the text. Please treat it as unreviewed.
-
-Bengali is complete except 232 verses that have no Bengali translation yet; the lists are in [Missing translation verses](#missing-translation-verses).
-
-## Missing translation verses
-
-Every verse below has the Sanskrit and the Hindi and English text, but no Bengali or Odia translation yet. Numbers are the verse numbers printed in the chapter. Gita Press sometimes translates several verses together (printed like 5-8); such a verse is listed under "Joint group in the print", and its text sits on the first verse of the group. Tables are generated by `tools/missing_report.py`. Counts are from the shipped database (`content.db`, content version 12 and later).
+These verses still have no Bengali or Odia translation (the list is generated by `tools/content/missing_report.py`):
 
 <!-- missing-verses:start -->
-**Bengali: 2 verses without a translation** (0 of them printed inside a joint group, 2 not found in the print).
+**Bengali: 2 verses without a translation.**
 
-| Skandha | Chapter | Missing verses | Count | Joint group in the print | Not found |
-|---|---|---|---|---|---|
-| 7 | 9 | 15 | 1 | - | 15 |
-| 9 | 9 | 30 | 1 | - | 30 |
+| Skandha | Chapter | Missing verses | Count |
+|---|---|---|---|
+| 7 | 9 | 15 | 1 |
+| 9 | 9 | 30 | 1 |
 
-**Odia (beta): 18 verses without a translation** (0 of them printed inside a joint group, 18 not found in the print).
+**Odia (beta): 18 verses without a translation.**
 
-| Skandha | Chapter | Missing verses | Count | Joint group in the print | Not found |
-|---|---|---|---|---|---|
-| Mahatmya | 6 | 16-17, 39 | 3 | - | 16-17, 39 |
-| 5 | 9 | 12 | 1 | - | 12 |
-| 6 | 1 | 22 | 1 | - | 22 |
-| 6 | 6 | 28 | 1 | - | 28 |
-| 7 | 14 | 17 | 1 | - | 17 |
-| 9 | 3 | 33 | 1 | - | 33 |
-| 9 | 24 | 14, 18 | 2 | - | 14, 18 |
-| 10 | 11 | 53 | 1 | - | 53 |
-| 11 | 1 | 7 | 1 | - | 7 |
-| 11 | 12 | 3 | 1 | - | 3 |
-| 11 | 28 | 15 | 1 | - | 15 |
-| 11 | 31 | 1-3 | 3 | - | 1-3 |
-| 12 | 10 | 18 | 1 | - | 18 |
+| Skandha | Chapter | Missing verses | Count |
+|---|---|---|---|
+| Mahatmya | 6 | 16-17, 39 | 3 |
+| 5 | 9 | 12 | 1 |
+| 6 | 1 | 22 | 1 |
+| 6 | 6 | 28 | 1 |
+| 7 | 14 | 17 | 1 |
+| 9 | 3 | 33 | 1 |
+| 9 | 24 | 14, 18 | 2 |
+| 10 | 11 | 53 | 1 |
+| 11 | 1 | 7 | 1 |
+| 11 | 12 | 3 | 1 |
+| 11 | 28 | 15 | 1 |
+| 11 | 31 | 1-3 | 3 |
+| 12 | 10 | 18 | 1 |
 <!-- missing-verses:end -->
 
 ## Report a mistake
 
-Press and hold a word, then tap the speech-bubble icon. The verse and word are copied and Telegram opens a chat with the maker, where you paste them and type the correct word. For a red-underlined Odia word, tap it and choose "No, send the correct word".
+Press and hold a word, then tap the speech-bubble icon. Telegram opens a chat with the maker. For a red-underlined Odia word, tap it and choose "No, send the correct word".
 
 ## For developers
 
-- **Stack:** Kotlin, Jetpack Compose, Media3, SQLite. `minSdk 26`, `targetSdk 35`, JDK 17.
-- **Layout:** `app/` is the Android app; `content/` holds the data pipeline (Bengali and Odia extraction, database build, search index); `docs/` has the architecture, data pipeline and decisions; `tools/` has helper scripts.
-- **Not in the repository:** the scanned page images, the extracted translation text and the built databases (`content.db`) are not stored here because the Gita Press translations are copyrighted. A fresh clone therefore cannot build a complete APK. Put a `content.db` in `app/src/main/assets/` first (see `docs/DATA_PIPELINE.md`).
-- **Build:**
+- **Stack:** Kotlin, Jetpack Compose, Media3, SQLite. `minSdk 26`, JDK 17.
+- **Build:** `.\gradlew.bat assembleDebug`, `assembleRelease`, `test`. Release signing and the Telegram name come from `local.properties` (never committed).
+- **Folders:**
 
-  ```powershell
-  .\gradlew.bat assembleDebug      # apk\Bhagavatam-v<version>-debug.apk
-  .\gradlew.bat assembleRelease    # signed with the key named in local.properties
-  .\gradlew.bat test
-  ```
+  | Folder | What is in it |
+  |---|---|
+  | `app/` | the Android app |
+  | `content/` | data pipeline: extraction, database build, search index, dictionary |
+  | `docs/` | architecture, data pipeline, design system, audits, plans (start at [docs/README.md](docs/README.md)) |
+  | `tools/` | helper scripts, grouped by job (see [tools/README.md](tools/README.md)) |
 
-- **Local settings (`local.properties`, never committed):**
-  - `sdk.dir`: the Android SDK.
-  - `telegram.user`: the maker's Telegram username for the "report a mistake" button. Left out, the button is hidden.
-  - `release.storeFile`, `release.storePassword`, `release.keyAlias`, `release.keyPassword`: the release signing key. Left out, release builds use the debug key and cannot update an app signed with the release key.
-- **Publishing a release:** attach the APK to a GitHub release under the file name `Bhagavatam.apk`, so the "Latest APK" link above keeps working.
-- **Where decisions live:** `docs/agent/DECISIONS.md` (owner decisions and rules), `AGENTS.md` (how automated agents work here).
+- **Not in the repository:** the scanned pages, the translation text and the built `content.db`, because the Gita Press translations are copyrighted. A fresh clone cannot build a complete APK until a `content.db` is placed in `app/src/main/assets/` (see [docs/DATA_PIPELINE.md](docs/DATA_PIPELINE.md)).
+- **Releasing:** attach the APK to a GitHub release as `Bhagavatam.apk`, so the download link keeps working.
 
 ---
 

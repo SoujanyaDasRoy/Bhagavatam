@@ -73,7 +73,7 @@ gantt
   - `app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp` (432x432)
   - `app/src/main/res/drawable-nodpi/logo_mark.webp` (Optimized for splash/about)
   - `app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml` (Adaptive icon configuration)
-- **Script:** Create `tools/generate_icons.py` using Pillow to automatically resize with safe-area padding and generate lossless WebP icons.
+- **Script:** Create `tools/art/generate_icons.py` using Pillow to automatically resize with safe-area padding and generate lossless WebP icons.
 
 ---
 

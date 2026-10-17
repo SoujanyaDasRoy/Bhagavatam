@@ -11,7 +11,7 @@ You are working on the Bhagavatam Android app (Kotlin, Jetpack Compose): an offl
 2. `docs/superpowers/plans/2026-10-09-search.md`
 3. `docs/superpowers/plans/2026-10-09-dictionary-db.md`
 4. `docs/agent/RUNBOOKS.md` - step-by-step procedures (verify a UI change, check a database, commit).
-5. `CLAUDE.md` and `DESIGN_SYSTEM.md` - architecture and visual rules.
+5. `CLAUDE.md` and `docs/DESIGN_SYSTEM.md` - architecture and visual rules.
 6. `content/_search/gold_queries.json` and `content/_dict/sources.json`.
 
 ## 2. Permissions for this job

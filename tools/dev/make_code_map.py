@@ -2,7 +2,7 @@
 """Rebuild the Bhagavatam code map with Graphify (code only: no API key, no LLM).
 
 One-time:   pip install "graphifyy[sql]"
-Each time:  python tools/make_code_map.py
+Each time:  python tools/dev/make_code_map.py
 Output:     graphify-out/graph.html (open in a browser), graph.json, GRAPH_REPORT.md
 It copies only the code into a temporary folder (app source, build scripts, Bengali tool, DB schema) so the
 12,000+ content files, fonts and APKs are not scanned.
@@ -10,7 +10,7 @@ It copies only the code into a temporary folder (app source, build scripts, Beng
 import shutil, sqlite3, subprocess, sys, tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "graphify-out"
 tmp = Path(tempfile.mkdtemp(prefix="bhagavatam_map_"))
 
