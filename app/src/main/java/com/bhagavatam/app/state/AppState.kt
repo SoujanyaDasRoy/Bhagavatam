@@ -22,6 +22,9 @@ import com.bhagavatam.app.audio.stream.StreamStatus
 import com.bhagavatam.app.audio.stream.YouTubeStreamPlayer
 import com.bhagavatam.app.data.BENGALI_READY
 import com.bhagavatam.app.data.Annotation
+import com.bhagavatam.app.data.ReviewCard
+import com.bhagavatam.app.data.ReviewScheduler
+import com.bhagavatam.app.data.ReviewStore
 import com.bhagavatam.app.data.AnnDraft
 import com.bhagavatam.app.data.AnnotationStore
 import com.bhagavatam.app.data.SelBar
@@ -383,6 +386,26 @@ class AppState(app: Application) : AndroidViewModel(app) {
         annotationStore.delete(id)
         annotations.removeAll { it.id == id }
     }
+
+    // ---------- review: verses and words to be asked again (local only) ----------
+    private val reviewStore = ReviewStore(annotationStore)
+    val reviewCards = mutableStateListOf<ReviewCard>().apply { addAll(reviewStore.all()) }
+
+    fun addReview(kind: String, key: String) {
+        val id = reviewStore.add(kind, key, System.currentTimeMillis())
+        if (id != -1L && reviewCards.none { it.id == id }) reviewCards.add(ReviewCard(id, kind, key, 0, ReviewScheduler.dueAt(System.currentTimeMillis(), 0), System.currentTimeMillis()))
+    }
+    fun isInReview(kind: String, key: String) = reviewCards.any { it.kind == kind && it.key == key }
+    fun answerReview(card: ReviewCard, remembered: Boolean, now: Long = System.currentTimeMillis()) {
+        val stage = ReviewScheduler.after(card.stage, remembered)
+        val next = card.copy(stage = stage, dueAt = ReviewScheduler.dueAt(now, stage))
+        reviewStore.update(next)
+        val i = reviewCards.indexOfFirst { it.id == card.id }
+        if (i >= 0) reviewCards[i] = next
+    }
+    fun removeReview(card: ReviewCard) { reviewStore.remove(card.id); reviewCards.removeAll { it.id == card.id } }
+    fun dueReviewCards(now: Long = System.currentTimeMillis()) = reviewCards.filter { ReviewScheduler.isDue(now, it.dueAt, it.stage) }
+    fun dueReviewCount(now: Long = System.currentTimeMillis()): Int = dueReviewCards(now).size
 
     // ---------- saved words (local only) ----------
     private val savedWordStore = com.bhagavatam.app.data.SavedWordStore(annotationStore)

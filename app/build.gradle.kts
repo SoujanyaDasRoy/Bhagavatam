@@ -95,6 +95,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20231013")
 }
 
 // Copy finished APKs to <project>/apk so they are easy to find (the build folder lives outside OneDrive).

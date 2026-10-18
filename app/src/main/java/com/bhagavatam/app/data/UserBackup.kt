@@ -27,6 +27,9 @@ object UserBackup {
             items.put(o)
         }
         val root = JSONObject().put("format", FORMAT).put("items", items)
+        // notes, saved words and review cards live in annotations.db, not in the preferences
+        val db = AnnotationStore(ctx).readableDatabase
+        for (table in TABLES) root.put(table, BackupRows.toJson(dump(db, table)))
         ctx.contentResolver.openOutputStream(to)!!.use { it.write(root.toString().toByteArray(Charsets.UTF_8)) }
         items.length()
     }
@@ -51,6 +54,39 @@ object UserBackup {
             }
         }
         check(ed.commit()) { "could not save" }
+        // a table the file does not have (a backup from an older version) is left as it is
+        val db = AnnotationStore(ctx).writableDatabase
+        for (table in TABLES) BackupRows.fromRoot(root, table)?.let { restore(db, table, it) }
         items.length()
+    }
+
+    private val TABLES = listOf("annotation", "saved_word", "review")
+
+    private fun dump(db: android.database.sqlite.SQLiteDatabase, table: String): List<Map<String, Any?>> = runCatching {
+        db.rawQuery("SELECT * FROM $table", null).use { c ->
+            buildList {
+                while (c.moveToNext()) add((0 until c.columnCount).associate { i ->
+                    c.getColumnName(i) to when (c.getType(i)) {
+                        android.database.Cursor.FIELD_TYPE_INTEGER -> c.getLong(i)
+                        android.database.Cursor.FIELD_TYPE_FLOAT -> c.getDouble(i)
+                        android.database.Cursor.FIELD_TYPE_NULL -> null
+                        else -> c.getString(i)
+                    }
+                })
+            }
+        }
+    }.getOrDefault(emptyList())
+
+    private fun restore(db: android.database.sqlite.SQLiteDatabase, table: String, rows: List<Map<String, Any?>>) {
+        db.beginTransaction()
+        try {
+            db.delete(table, null, null)
+            for (r in rows) {
+                val v = android.content.ContentValues()
+                for ((k, x) in r) when (x) { null -> v.putNull(k); is Long -> v.put(k, x); is Double -> v.put(k, x); else -> v.put(k, x.toString()) }
+                db.insert(table, null, v)
+            }
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
     }
 }
