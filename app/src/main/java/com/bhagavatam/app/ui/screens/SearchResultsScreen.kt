@@ -426,7 +426,7 @@ fun SearchResultsScreen(
                         SearchScope.EN to s.tabEnglish,
                         SearchScope.HI to s.tabHindi,
                         SearchScope.BN to s.tabBangla,
-                        SearchScope.OR to "\u0b13\u0b21\u0b3c\u0b3f\u0b06"
+                        SearchScope.OR to nameIn(ui, Lang.OR)
                     )
                     tabs.forEach { (sc, label) ->
                         val on = activeScope == sc
