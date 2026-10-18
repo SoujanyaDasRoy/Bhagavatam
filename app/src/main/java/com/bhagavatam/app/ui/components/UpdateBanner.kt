@@ -55,18 +55,18 @@ fun UpdateBanner(state: AppState, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
-            tr(ui, "Version ${r.tagName.trimStart('v', 'V')} is available", "संस्करण ${r.tagName.trimStart('v', 'V')} उपलब्ध है", "সংস্করণ ${r.tagName.trimStart('v', 'V')} পাওয়া যাচ্ছে"),
+            tr(ui, "Version ${r.tagName.trimStart('v', 'V')} is available", "संस्करण ${r.tagName.trimStart('v', 'V')} उपलब्ध है", "সংস্করণ ${r.tagName.trimStart('v', 'V')} পাওয়া যাচ্ছে", "ସଂସ୍କରଣ ${r.tagName.trimStart('v', 'V')} ଉପଲବ୍ଧ"),
             fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Brand.Ink,
         )
         if (failed) Text(
-            tr(ui, "Could not install. Allow installs from this app, then try again.", "इंस्टॉल नहीं हो सका। इस ऐप को इंस्टॉल की अनुमति दें, फिर दोबारा करें।", "ইনস্টল করা যায়নি। এই অ্যাপকে ইনস্টলের অনুমতি দিয়ে আবার চেষ্টা করুন।"),
+            tr(ui, "Could not install. Allow installs from this app, then try again.", "इंस्टॉल नहीं हो सका। इस ऐप को इंस्टॉल की अनुमति दें, फिर दोबारा करें।", "ইনস্টল করা যায়নি। এই অ্যাপকে ইনস্টলের অনুমতি দিয়ে আবার চেষ্টা করুন।", "ଇନ୍‌ଷ୍ଟଲ୍ ହୋଇପାରିଲା ନାହିଁ। ଏହି ଆପ୍‌ରୁ ଇନ୍‌ଷ୍ଟଲ୍ ଅନୁମତି ଦିଅନ୍ତୁ, ତା'ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"),
             fontSize = 14.sp, color = Brand.Secondary,
         )
         val p = progress
         if (p != null && !failed) LinearProgressIndicator(progress = { p }, Modifier.fillMaxWidth())
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                tr(ui, "Install", "इंस्टॉल करें", "ইনস্টল করুন"),
+                tr(ui, "Install", "इंस्टॉल करें", "ইনস্টল করুন", "ଇନ୍‌ଷ୍ଟଲ୍ କରନ୍ତୁ"),
                 Modifier.heightIn(min = 48.dp).clip(Radius.group).background(Brand.Kesari).clickable(enabled = p == null || failed) {
                     failed = false
                     progress = 0f
@@ -78,7 +78,7 @@ fun UpdateBanner(state: AppState, modifier: Modifier = Modifier) {
                 fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Brand.OnKesari,
             )
             Text(
-                tr(ui, "Your notes and settings stay.", "आपके नोट और सेटिंग बनी रहेंगी।", "আপনার নোট ও সেটিংস থাকবে।"),
+                tr(ui, "Your notes and settings stay.", "आपके नोट और सेटिंग बनी रहेंगी।", "আপনার নোট ও সেটিংস থাকবে।", "ଆପଣଙ୍କ ନୋଟ୍ ଓ ସେଟିଂସ୍ ରହିବ।"),
                 fontSize = 14.sp, color = Brand.Secondary,
             )
         }

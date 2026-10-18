@@ -72,14 +72,22 @@ object Dictionary {
         word: String,
         lang: String,
         preferredGlossLang: String? = null
+    ): List<DictEntry> =
+        // a Sanskrit word is looked up among the Sanskrit entries first, then among the Hindi ones (many words are the same)
+        if (lang == "sa") lookupAs(word, lang, "sa", preferredGlossLang).ifEmpty { lookupAs(word, lang, "hi", preferredGlossLang) }
+        else lookupAs(word, lang, lang.lowercase(), preferredGlossLang)
+
+    private fun lookupAs(
+        word: String,
+        lang: String,
+        lCode: String,
+        preferredGlossLang: String?
     ): List<DictEntry> {
         val d = DictionaryDb.rawDb ?: return emptyList()
         if (!DictionaryDb.isOpen) return emptyList()
 
         val clean = Normalise.word(word, lang)
         if (clean.isBlank()) return emptyList()
-
-        val lCode = if (lang == "sa") "hi" else lang.lowercase()
 
         // 1. Exact match in entry
         var entries = findEntriesByNorm(d, lCode, clean)

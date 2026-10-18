@@ -15,6 +15,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
+import com.bhagavatam.app.ui.screens.ReviewScreen
 import com.bhagavatam.app.ui.screens.AppearanceSettings
 import com.bhagavatam.app.ui.screens.ListeningSettings
 import com.bhagavatam.app.ui.screens.ReadingSettings
@@ -71,6 +72,7 @@ object Routes {
     const val READER = "reader/{s}/{a}"
     const val PLAYER = "player"
     const val SAVED = "saved"
+    const val REVIEW = "review"
     const val GLOSSARY = "glossary"
     const val DICTIONARY = "dictionary"
     const val CREDITS = "credits"
@@ -85,7 +87,7 @@ object Routes {
 
 @Composable
 fun AppNav(state: AppState) {
-    val uiFont = when (state.uiLang) { Lang.HI -> Mukta; Lang.BN -> HindSiliguri; else -> Jakarta }
+    val uiFont = when (state.uiLang) { Lang.HI -> Mukta; Lang.BN -> HindSiliguri; Lang.OR -> com.bhagavatam.app.ui.theme.NotoSansOriya; else -> Jakarta }
     val sysDark = isSystemInDarkTheme()
     val theme = if (state.followSystem) (if (sysDark) state.darkTheme else state.lightTheme) else state.readerTheme
     val app = appColorsFor(theme)
@@ -118,6 +120,7 @@ fun AppNav(state: AppState) {
                         onOpenGranth = { nav.go(Tab.Granth) },
                         onOpenChapter = { s, a -> nav.navigate(Routes.reader(s, a)) },
                         onSaved = { nav.navigate(Routes.SAVED) },
+                        onReview = { nav.navigate(Routes.REVIEW) },
                         onGlossary = { nav.navigate(Routes.GLOSSARY) })
                 }
             }
@@ -152,7 +155,8 @@ fun AppNav(state: AppState) {
                 TabScaffold(state, nav, Tab.Search) {
                     SearchScreen(state,
                         onOpenVerse = { s, a -> nav.navigate(Routes.reader(s, a)) },
-                        onOpenGlossary = { nav.navigate(Routes.GLOSSARY) })
+                        onOpenGlossary = { nav.navigate(Routes.GLOSSARY) },
+                        onOpenDictionary = { nav.navigate(Routes.DICTIONARY) })
                 }
             }
             tabComposable(Tab.Downloads.route) { TabScaffold(state, nav, Tab.Downloads) { DownloadsScreen(state) } }
@@ -177,6 +181,7 @@ fun AppNav(state: AppState) {
             composable(Routes.SAVED) {
                 TabScaffold(state, nav, Tab.Me) { SavedScreen(state, onBack = { nav.popBackStack() }) { s, a -> nav.navigate(Routes.reader(s, a)) } }
             }
+            composable(Routes.REVIEW) { TabScaffold(state, nav, Tab.Home) { ReviewScreen(state) { nav.popBackStack() } } }
             composable(Routes.GLOSSARY) {
                 DictionaryScreen(state = state, initialWord = null, onBack = { nav.popBackStack() }, onOpenCredits = { nav.navigate(Routes.CREDITS) })
             }

@@ -99,35 +99,35 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
     val saveFile = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) {
             val r = com.bhagavatam.app.data.UserBackup.export(ctx, uri)
-            android.widget.Toast.makeText(ctx, if (r.isSuccess) tr(ui, "Backup saved.", "बैकअप सहेजा गया।", "ব্যাকআপ সংরক্ষিত হয়েছে।") else tr(ui, "Could not save the backup.", "बैकअप नहीं सहेजा जा सका।", "ব্যাকআপ সংরক্ষণ করা যায়নি।"), android.widget.Toast.LENGTH_LONG).show()
+            android.widget.Toast.makeText(ctx, if (r.isSuccess) tr(ui, "Backup saved.", "बैकअप सहेजा गया।", "ব্যাকআপ সংরক্ষিত হয়েছে।", "ବ୍ୟାକଅପ୍ ସେଭ୍ ହେଲା।") else tr(ui, "Could not save the backup.", "बैकअप नहीं सहेजा जा सका।", "ব্যাকআপ সংরক্ষণ করা যায়নি।", "ବ୍ୟାକଅପ୍ ସେଭ୍ ହୋଇପାରିଲା ନାହିଁ।"), android.widget.Toast.LENGTH_LONG).show()
         }
     }
     val openFile = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
             val r = com.bhagavatam.app.data.UserBackup.import(ctx, uri)
             if (r.isSuccess) {
-                android.widget.Toast.makeText(ctx, tr(ui, "Restored. The app will close; open it again.", "वापस लाया गया। ऐप बंद होगा; फिर से खोलें।", "ফিরিয়ে আনা হয়েছে। অ্যাপ বন্ধ হবে; আবার খুলুন।"), android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(ctx, tr(ui, "Restored. The app will close; open it again.", "वापस लाया गया। ऐप बंद होगा; फिर से खोलें।", "ফিরিয়ে আনা হয়েছে। অ্যাপ বন্ধ হবে; আবার খুলুন।", "ପୁନଃସ୍ଥାପିତ ହେଲା। ଆପ୍ ବନ୍ଦ ହେବ; ପୁଣି ଖୋଲନ୍ତୁ।"), android.widget.Toast.LENGTH_LONG).show()
                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({ android.os.Process.killProcess(android.os.Process.myPid()) }, 1500)
             } else {
-                android.widget.Toast.makeText(ctx, tr(ui, "That file is not a Bhagavatam backup.", "यह फ़ाइल Bhagavatam का बैकअप नहीं है।", "এটি Bhagavatam-এর ব্যাকআপ নয়।"), android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(ctx, tr(ui, "That file is not a Bhagavatam backup.", "यह फ़ाइल Bhagavatam का बैकअप नहीं है।", "এটি Bhagavatam-এর ব্যাকআপ নয়।", "ସେହି ଫାଇଲ୍ ଭାଗବତମ୍ ବ୍ୟାକଅପ୍ ନୁହେଁ।"), android.widget.Toast.LENGTH_LONG).show()
             }
         }
     }
     SubPage(wordsTitle(ui), s.tabMe, onBack) {
         SettingsGroup(
-            tr(ui, "Word meanings", "शब्दों के अर्थ", "শব্দের অর্থ"),
+            tr(ui, "Word meanings", "शब्दों के अर्थ", "শব্দের অর্থ", "ଶବ୍ଦାର୍ଥ"),
             tr(ui, "When on, pressing and holding a word asks Wiktionary for its meaning. Only that one word is sent. Off keeps the app fully offline.",
                 "चालू होने पर किसी शब्द को दबाए रखने पर उसका अर्थ Wiktionary से मँगाया जाता है। केवल वही एक शब्द भेजा जाता है। बंद रखने पर ऐप पूरी तरह ऑफ़लाइन रहता है।",
-                "চালু থাকলে কোনো শব্দ চেপে ধরলে Wiktionary থেকে তার অর্থ আনা হয়। শুধু সেই একটি শব্দ পাঠানো হয়। বন্ধ রাখলে অ্যাপ পুরোপুরি অফলাইন থাকে।"),
+                "চালু থাকলে কোনো শব্দ চেপে ধরলে Wiktionary থেকে তার অর্থ আনা হয়। শুধু সেই একটি শব্দ পাঠানো হয়। বন্ধ রাখলে অ্যাপ পুরোপুরি অফলাইন থাকে।", "ଚାଲୁ ଥିଲେ, ଶବ୍ଦକୁ ଧରି ରଖିଲେ Wiktionary ଠାରୁ ଅର୍ଥ ମାଗେ। କେବଳ ସେହି ଗୋଟିଏ ଶବ୍ଦ ପଠାଯାଏ। ବନ୍ଦ ଥିଲେ ଆପ୍ ସମ୍ପୂର୍ଣ୍ଣ ଅଫଲାଇନ୍ ରହେ।"),
         ) {
             val meaningLangOptions = listOf(
-                tr(ui, "Word's language", "शब्द की भाषा", "শব্দের ভাষা"),
-                tr(ui, "English", "अंग्रेज़ी", "ইংরেজি"),
-                tr(ui, "App language", "ऐप की भाषा", "অ্যাপের ভাষা")
+                tr(ui, "Word's language", "शब्द की भाषा", "শব্দের ভাষা", "ଶବ୍ଦର ଭାଷା"),
+                tr(ui, "English", "अंग्रेज़ी", "ইংরেজি", "ଇଂରାଜୀ"),
+                tr(ui, "App language", "ऐप की भाषा", "অ্যাপের ভাষা", "ଆପ୍‌ର ଭାଷା")
             )
             Column(Modifier.padding(horizontal = 14.dp, vertical = 8.dp)) {
                 Text(
-                    tr(ui, "Meaning language", "अर्थ की भाषा", "অর্থের ভাষা"),
+                    tr(ui, "Meaning language", "अर्थ की भाषा", "অর্থের ভাষা", "ଅର୍ଥର ଭାଷା"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = Brand.Secondary
@@ -140,40 +140,60 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
                 )
             }
             RowDivider()
-            SwitchRow(tr(ui, "Look up meanings online", "अर्थ ऑनलाइन खोजें", "অর্থ অনলাইনে খুঁজুন"), state.onlineMeanings, state::updateOnlineMeanings)
+            SwitchRow(tr(ui, "Look up meanings online", "अर्थ ऑनलाइन खोजें", "অর্থ অনলাইনে খুঁজুন", "ଅର୍ଥ ଅନଲାଇନ୍‌ରେ ଖୋଜନ୍ତୁ"), state.onlineMeanings, state::updateOnlineMeanings)
         }
         SettingsGroup(
-            tr(ui, "Highlight colour", "हाइलाइट का रंग", "হাইলাইটের রং"),
-            tr(ui, "The colour a new note starts with. You can still pick any of the four when you highlight.", "नया नोट इसी रंग से शुरू होता है। हाइलाइट करते समय चारों रंग चुन सकते हैं।", "নতুন নোট এই রং দিয়ে শুরু হয়। হাইলাইট করার সময় চারটির যেকোনোটি বেছে নিতে পারেন।"),
+            tr(ui, "Highlight colour", "हाइलाइट का रंग", "হাইলাইটের রং", "ହାଇଲାଇଟ୍ ରଙ୍ଗ"),
+            tr(ui, "The colour a new note starts with. You can still pick any of the four when you highlight.", "नया नोट इसी रंग से शुरू होता है। हाइलाइट करते समय चारों रंग चुन सकते हैं।", "নতুন নোট এই রং দিয়ে শুরু হয়। হাইলাইট করার সময় চারটির যেকোনোটি বেছে নিতে পারেন।", "ନୂଆ ନୋଟ୍ ଯେଉଁ ରଙ୍ଗରେ ଆରମ୍ଭ ହୁଏ। ହାଇଲାଇଟ୍ କରିବା ବେଳେ ଚାରିଟି ମଧ୍ଯରୁ ଯେକୌଣସି ବାଛିପାରିବେ।"),
         ) {
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 MarkColours.forEachIndexed { i, col ->
-                    Box(Modifier.size(48.dp).semantics { contentDescription = listOf(tr(ui, "Yellow", "पीला", "হলুদ"), tr(ui, "Green", "हरा", "সবুজ"), tr(ui, "Blue", "नीला", "নীল"), tr(ui, "Pink", "गुलाबी", "গোলাপি")).getOrElse(i) { "" } }.selectable(selected = state.defaultMark == i, role = Role.RadioButton) { state.updateDefaultMark(i) }, contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(48.dp).semantics { contentDescription = listOf(tr(ui, "Yellow", "पीला", "হলুদ", "ହଳଦିଆ"), tr(ui, "Green", "हरा", "সবুজ", "ସବୁଜ"), tr(ui, "Blue", "नीला", "নীল", "ନୀଳ"), tr(ui, "Pink", "गुलाबी", "গোলাপি", "ଗୋଲାପୀ")).getOrElse(i) { "" } }.selectable(selected = state.defaultMark == i, role = Role.RadioButton) { state.updateDefaultMark(i) }, contentAlignment = Alignment.Center) {
                         Box(Modifier.size(30.dp).clip(CircleShape).background(Color(col)).then(if (state.defaultMark == i) Modifier.border(3.dp, Brand.Ink, CircleShape) else Modifier))
                     }
                 }
             }
         }
         SettingsGroup(
-            tr(ui, "App updates", "ऐप के अपडेट", "অ্যাপের আপডেট"),
-            tr(ui, "A notification when a new version is published. Nothing else is sent.", "नया संस्करण आने पर एक सूचना। और कुछ नहीं भेजा जाता।", "নতুন সংস্করণ এলে একটি বিজ্ঞপ্তি। আর কিছু পাঠানো হয় না।"),
+            tr(ui, "Colour names", "रंगों के नाम", "রঙের নাম", "ରଙ୍ଗର ନାମ"),
+            tr(ui, "Give each colour a meaning, for example Important, Story, Doubt, Memorise. The names show in the colour picker and in the exported notes.", "हर रंग को एक अर्थ दें, जैसे महत्वपूर्ण, कथा, शंका, याद करना। नाम रंग चुनते समय और निर्यात किए नोट में दिखते हैं।", "প্রতিটি রঙকে একটি অর্থ দিন, যেমন গুরুত্বপূর্ণ, কাহিনি, সংশয়, মনে রাখা। নাম রং বাছাইয়ে ও রপ্তানি করা নোটে দেখা যায়।", "ପ୍ରତ୍ଯେକ ରଙ୍ଗକୁ ଗୋଟିଏ ଅର୍ଥ ଦିଅନ୍ତୁ, ଯେପରି ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ, କଥା, ସନ୍ଦେହ, ମନେରଖନ୍ତୁ। ନାମ ରଙ୍ଗ ବାଛିବା ସ୍ଥାନରେ ଓ ଏକ୍ସପୋର୍ଟ୍ ହୋଇଥିବା ନୋଟ୍‌ରେ ଦେଖାଯାଏ।"),
         ) {
-            SwitchRow(tr(ui, "Tell me about new versions", "नए संस्करण की सूचना दें", "নতুন সংস্করণের খবর দিন"), state.updateAlerts, state::updateUpdateAlerts)
+            MarkColours.forEachIndexed { i, col ->
+                Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Box(Modifier.size(24.dp).clip(CircleShape).background(Color(col)))
+                    androidx.compose.foundation.text.BasicTextField(
+                        value = state.markNames[i], onValueChange = { state.updateMarkName(i, it) }, singleLine = true, modifier = Modifier.weight(1f),
+                        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp, color = Brand.Ink),
+                        cursorBrush = androidx.compose.ui.graphics.SolidColor(Brand.Kesari),
+                        decorationBox = { inner ->
+                            if (state.markNames[i].isEmpty()) Text(state.markName(i), fontSize = 16.sp, color = Brand.Secondary)
+                            inner()
+                        },
+                    )
+                }
+                if (i < MarkColours.lastIndex) RowDivider()
+            }
         }
         SettingsGroup(
-            tr(ui, "Back up your data", "अपना डेटा सुरक्षित रखें", "আপনার ডেটা ব্যাকআপ"),
-            tr(ui, "One file with your notes, highlights, saved words, bookmarks, position and settings. Restore it on a new phone or after reinstalling.", "आपके नोट, हाइलाइट, सहेजे शब्द, बुकमार्क, स्थान और सेटिंग की एक फ़ाइल। नए फ़ोन पर या दोबारा इंस्टॉल करने के बाद वापस लाएँ।", "আপনার নোট, হাইলাইট, সংরক্ষিত শব্দ, বুকমার্ক, অবস্থান ও সেটিংসের একটি ফাইল। নতুন ফোনে বা আবার ইনস্টল করার পর ফিরিয়ে আনুন।"),
+            tr(ui, "App updates", "ऐप के अपडेट", "অ্যাপের আপডেট", "ଆପ୍ ଅପଡେଟ୍"),
+            tr(ui, "A notification when a new version is published. Nothing else is sent.", "नया संस्करण आने पर एक सूचना। और कुछ नहीं भेजा जाता।", "নতুন সংস্করণ এলে একটি বিজ্ঞপ্তি। আর কিছু পাঠানো হয় না।", "ନୂଆ ସଂସ୍କରଣ ପ୍ରକାଶିତ ହେଲେ ଏକ ବିଜ୍ଞପ୍ତି। ଆଉ କିଛି ପଠାଯାଏ ନାହିଁ।"),
         ) {
-            ValueRow(tr(ui, "Save a backup file", "बैकअप फ़ाइल सहेजें", "ব্যাকআপ ফাইল সংরক্ষণ"), "", Ic.Download) { saveFile.launch("Bhagavatam-backup.json") }
+            SwitchRow(tr(ui, "Tell me about new versions", "नए संस्करण की सूचना दें", "নতুন সংস্করণের খবর দিন", "ନୂଆ ସଂସ୍କରଣ ବିଷୟରେ ଜଣାନ୍ତୁ"), state.updateAlerts, state::updateUpdateAlerts)
+        }
+        SettingsGroup(
+            tr(ui, "Back up your data", "अपना डेटा सुरक्षित रखें", "আপনার ডেটা ব্যাকআপ", "ଆପଣଙ୍କ ଡାଟାର ବ୍ୟାକଅପ୍ ନିଅନ୍ତୁ"),
+            tr(ui, "One file with your notes, highlights, saved words, bookmarks, position and settings. Restore it on a new phone or after reinstalling.", "आपके नोट, हाइलाइट, सहेजे शब्द, बुकमार्क, स्थान और सेटिंग की एक फ़ाइल। नए फ़ोन पर या दोबारा इंस्टॉल करने के बाद वापस लाएँ।", "আপনার নোট, হাইলাইট, সংরক্ষিত শব্দ, বুকমার্ক, অবস্থান ও সেটিংসের একটি ফাইল। নতুন ফোনে বা আবার ইনস্টল করার পর ফিরিয়ে আনুন।", "ଆପଣଙ୍କ ନୋଟ୍, ହାଇଲାଇଟ୍, ସେଭ୍ ଶବ୍ଦ, ବୁକମାର୍କ, ସ୍ଥିତି ଓ ସେଟିଂସ୍ ସହିତ ଗୋଟିଏ ଫାଇଲ୍। ନୂଆ ଫୋନରେ କିମ୍ବା ପୁନଃଇନ୍‌ଷ୍ଟଲ୍ ପରେ ପୁନଃସ୍ଥାପନ କରନ୍ତୁ।"),
+        ) {
+            ValueRow(tr(ui, "Save a backup file", "बैकअप फ़ाइल सहेजें", "ব্যাকআপ ফাইল সংরক্ষণ", "ବ୍ୟାକଅପ୍ ଫାଇଲ୍ ସେଭ୍ କରନ୍ତୁ"), "", Ic.Download) { saveFile.launch("Bhagavatam-backup.json") }
             RowDivider()
-            ValueRow(tr(ui, "Restore from a backup file", "बैकअप फ़ाइल से वापस लाएँ", "ব্যাকআপ ফাইল থেকে ফিরিয়ে আনুন"), "", Ic.History) { openFile.launch(arrayOf("application/json", "*/*")) }
+            ValueRow(tr(ui, "Restore from a backup file", "बैकअप फ़ाइल से वापस लाएँ", "ব্যাকআপ ফাইল থেকে ফিরিয়ে আনুন", "ବ୍ୟାକଅପ୍ ଫାଇଲ୍‌ରୁ ପୁନଃସ୍ଥାପନ କରନ୍ତୁ"), "", Ic.History) { openFile.launch(arrayOf("application/json", "*/*")) }
         }
         val count = state.annotations.size
         SettingsGroup(
-            tr(ui, "Your notes", "आपके नोट", "আপনার নোট"),
-            tr(ui, "Notes and highlights live only on this phone. Sharing sends them as plain text to the app you choose.", "नोट और हाइलाइट केवल इसी फ़ोन में रहते हैं। साझा करने पर वे सादे पाठ के रूप में आपकी चुनी ऐप को जाते हैं।", "নোট ও হাইলাইট শুধু এই ফোনেই থাকে। শেয়ার করলে সেগুলো সাদা লেখা হিসেবে আপনার বাছা অ্যাপে যায়।"),
+            tr(ui, "Your notes", "आपके नोट", "আপনার নোট", "ଆପଣଙ୍କ ନୋଟ୍"),
+            tr(ui, "Notes and highlights live only on this phone. Sharing sends them as plain text to the app you choose.", "नोट और हाइलाइट केवल इसी फ़ोन में रहते हैं। साझा करने पर वे सादे पाठ के रूप में आपकी चुनी ऐप को जाते हैं।", "নোট ও হাইলাইট শুধু এই ফোনেই থাকে। শেয়ার করলে সেগুলো সাদা লেখা হিসেবে আপনার বাছা অ্যাপে যায়।", "ନୋଟ୍ ଓ ହାଇଲାଇଟ୍ କେବଳ ଏହି ଫୋନରେ ରହେ। ଶେୟାର୍ କଲେ ଆପଣ ବାଛିଥିବା ଆପ୍‌କୁ ସାଧା ଟେକ୍ସଟ୍ ଭାବେ ଯାଏ।"),
         ) {
-            ValueRow(tr(ui, "Share notes as text", "नोट पाठ के रूप में साझा करें", "নোট লেখা হিসেবে শেয়ার করুন"), localDigits(count.toString(), ui), Ic.Scroll) {
+            ValueRow(tr(ui, "Share notes as text", "नोट पाठ के रूप में साझा करें", "নোট লেখা হিসেবে শেয়ার করুন", "ନୋଟ୍ ଟେକ୍ସଟ୍ ଭାବେ ଶେୟାର୍ କରନ୍ତୁ"), localDigits(count.toString(), ui), Ic.Scroll) {
                 if (count > 0) {
                     val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, notesAsText(state))
                     runCatching { ctx.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
@@ -183,4 +203,4 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
     }
 }
 
-internal fun wordsTitle(ui: Lang) = tr(ui, "Words & notes", "शब्द और नोट", "শব্দ ও নোট")
+internal fun wordsTitle(ui: Lang) = tr(ui, "Words & notes", "शब्द और नोट", "শব্দ ও নোট", "ଶବ୍ଦ ଓ ନୋଟ୍")

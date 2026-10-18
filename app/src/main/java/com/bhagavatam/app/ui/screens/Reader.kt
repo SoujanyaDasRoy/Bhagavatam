@@ -185,6 +185,16 @@ fun ReaderScreen(
     val bookLang0 = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
     val bookLang = if (!BENGALI_READY && bookLang0 == Lang.BN) Lang.EN else bookLang0
 
+    // Minutes left in this chapter, from the first verse on screen to the end of the text being read.
+    val wordCounts = remember(verses, bookLang) { verses.map { v -> v.translation(bookLang).split(Regex("\\s+")).size } }
+    val minLeft by remember(wordCounts) {
+        derivedStateOf {
+            val first = (list.firstVisibleItemIndex - 1).coerceIn(0, (wordCounts.size - 1).coerceAtLeast(0))
+            com.bhagavatam.app.data.minutesLeft(if (wordCounts.isEmpty()) 0 else wordCounts.drop(first).sum())
+        }
+    }
+
+
     // Book mode: skip blocks whose translation is printed with the group, and label the carrier with the whole range.
     val bookRows = remember(verses, bookLang) {
         val out = ArrayList<BookRow>()
@@ -206,6 +216,7 @@ fun ReaderScreen(
         }
         out
     }
+    val speakers = remember(verses) { com.bhagavatam.app.data.speakerLabels(verses) }
     val rowVerses = remember(verses, bookRows, state.showSanskrit) { if (state.showSanskrit) verses else bookRows.map { it.verse } }
 
     // In-chapter find matches supporting Roman and Indic spellings across scripts
@@ -254,9 +265,42 @@ fun ReaderScreen(
         }
     }
 
+    // The verse at the top of the screen, remembered while the reader scrolls, so a change of reading language lands on the same verse.
+    val headItems = (if (!state.hasSession && state.nextTip() != null) 1 else 0) + (if (state.showChapterArt) 1 else 0) + 1
+    val rowNums by androidx.compose.runtime.rememberUpdatedState(rowVerses.map { it.num })
+    val headNow by androidx.compose.runtime.rememberUpdatedState(headItems)
+    var anchorNum by remember(skandha, adhyaya) { mutableStateOf(1) }
+    var firstRows by remember(skandha, adhyaya) { mutableStateOf(true) }
+    LaunchedEffect(skandha, adhyaya) {
+        snapshotFlow { list.firstVisibleItemIndex }.collect { idx -> anchorNum = com.bhagavatam.app.state.anchorVerseNum(idx, headNow, rowNums) }
+    }
+    LaunchedEffect(rowVerses) {
+        if (firstRows) { firstRows = false; return@LaunchedEffect }
+        list.scrollToItem(com.bhagavatam.app.state.itemIndexFor(anchorNum, headNow, rowNums))
+    }
+    // A verse asked for from outside (the word sheet's list of places): scroll to it once this chapter's text is on screen.
+    LaunchedEffect(state.scrollToVerse, rowVerses) {
+        val target = state.scrollToVerse ?: return@LaunchedEffect
+        val p = target.split(".").mapNotNull { it.toIntOrNull() }
+        if (p.size < 3 || p[0] != skandha || p[1] != adhyaya) return@LaunchedEffect
+        try {
+            val i = rowVerses.indexOfLast { it.num <= p[2] }
+            if (i >= 0) {
+                val head = (if (!state.hasSession && state.nextTip() != null) 1 else 0) + (if (state.showChapterArt) 1 else 0) + 1
+                list.scrollToItem(head + i)
+            }
+        } finally { state.scrollToVerse = null }
+    }
+    // A short message (Undo for a bookmark or a highlight) leaves by itself.
+    LaunchedEffect(state.snack) {
+        val s0 = state.snack ?: return@LaunchedEffect
+        delay(4000)
+        if (state.snack === s0) state.snack = null
+    }
+
     // Resume where the reader stopped.
     LaunchedEffect(skandha, adhyaya) {
-        if (state.lastSkandha == skandha && state.lastAdhyaya == adhyaya && state.lastVerse > 1 && rowVerses.isNotEmpty()) {
+        if (com.bhagavatam.app.state.resumeApplies(state.scrollToVerse) && state.lastSkandha == skandha && state.lastAdhyaya == adhyaya && state.lastVerse > 1 && rowVerses.isNotEmpty()) {
             val i = rowVerses.indexOfLast { it.num <= state.lastVerse }
             if (i > 0) list.scrollToItem(i + 1)
         }
@@ -307,23 +351,31 @@ fun ReaderScreen(
                     if (barAlpha > 0f) {
                         Column(Modifier.graphicsLayer { alpha = barAlpha; translationY = (1f - barAlpha) * 8.dp.toPx() }, horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(title, fontFamily = readingFont(state.titleLangFor(skandha, adhyaya)), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Text(reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
+                            Text(if (state.showReadTime && minLeft > 0) reference + " \u00b7 " + localDigits(tr(ui, "$minLeft min left", "$minLeft मिनट शेष", "$minLeft মিনিট বাকি", "ପ୍ରାୟ $minLeft ମିନିଟ୍ ବାକି"), ui) else reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
                         }
                     }
                 }
                 // The language pill shows words while the title is out of the bar, and shrinks to its icon once the title moves in.
-                LanguagePill(state, compact = titleInBar) { showLangSheet = true }
+                LanguagePill(state, compact = titleInBar, onLongClick = {
+                    // Hold to step through the translations this chapter has; the language sheet is still the way to change layers.
+                    val have = listOf(Lang.HI, Lang.EN, Lang.BN, Lang.OR).filter { l -> verses.any { it.hasText(l) } && (l != Lang.BN || BENGALI_READY) && (l != Lang.OR || com.bhagavatam.app.data.ODIA_READY) }
+                    if (!state.showSanskrit && have.size > 1) {
+                        val next = have[(have.indexOf(state.readLang) + 1) % have.size]
+                        state.updateReadLang(next)
+                        state.toast(layerName(next))
+                    }
+                }) { showLangSheet = true }
                 Box(
-                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন")) {
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন", "ଅଧ୍ଯାୟରେ ଖୋଜନ୍ତୁ")) {
                         showFindBar = !showFindBar
                         if (!showFindBar) findQuery = ""
                     },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(painterResource(Ic.Search), tr(ui, "Find", "खोज", "খুঁজুন"), tint = if (showFindBar) Brand.Kesari else c.accent, modifier = Modifier.size(20.dp))
+                    Icon(painterResource(Ic.Search), tr(ui, "Find", "खोज", "খুঁজুন", "ଖୋଜନ୍ତୁ"), tint = if (showFindBar) Brand.Kesari else c.accent, modifier = Modifier.size(20.dp))
                 }
                 Box(
-                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস")) { showSheet = true },
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস", "ପାଠକ ସେଟିଂସ୍")) { showSheet = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Aa", fontFamily = EnglishReading, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
@@ -352,7 +404,7 @@ fun ReaderScreen(
                         modifier = Modifier.weight(1f),
                         decorationBox = { inner ->
                             if (findQuery.isEmpty()) {
-                                Text(tr(ui, "Find in chapter...", "अध्याय में खोजें...", "অধ্যায়ে খুঁজুন..."), fontSize = 14.sp, color = c.secondary)
+                                Text(tr(ui, "Find in chapter...", "अध्याय में खोजें...", "অধ্যায়ে খুঁজুন...", "ଅଧ୍ଯାୟରେ ଖୋଜନ୍ତୁ..."), fontSize = 14.sp, color = c.secondary)
                             }
                             inner()
                         }
@@ -373,7 +425,7 @@ fun ReaderScreen(
                             },
                             modifier = Modifier.size(36.dp)
                         ) {
-                            Icon(painterResource(Ic.KeyboardArrowUp), tr(ui, "Previous", "पिछला", "পূর্ববর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                            Icon(painterResource(Ic.KeyboardArrowUp), tr(ui, "Previous", "पिछला", "পূর্ববর্তী", "ପୂର୍ବ"), tint = c.accent, modifier = Modifier.size(18.dp))
                         }
 
                         IconButton(
@@ -384,7 +436,7 @@ fun ReaderScreen(
                             },
                             modifier = Modifier.size(36.dp)
                         ) {
-                            Icon(painterResource(Ic.KeyboardArrowDown), tr(ui, "Next", "अगला", "পরবর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                            Icon(painterResource(Ic.KeyboardArrowDown), tr(ui, "Next", "अगला", "পরবর্তী", "ପରବର୍ତ୍ତୀ"), tint = c.accent, modifier = Modifier.size(18.dp))
                         }
                     }
                     IconButton(
@@ -397,6 +449,11 @@ fun ReaderScreen(
                         Icon(painterResource(Ic.Close), s.back, tint = c.secondary, modifier = Modifier.size(18.dp))
                     }
                 }
+            }
+            // Where the reader is in this chapter: a thin line under the bar.
+            val chapterProgress by remember { derivedStateOf { val n = list.layoutInfo.totalItemsCount; if (n <= 1) 0f else (list.firstVisibleItemIndex.toFloat() / (n - 1)).coerceIn(0f, 1f) } }
+            Box(Modifier.fillMaxWidth().height(2.dp).background(c.separator.copy(alpha = 0.4f))) {
+                Box(Modifier.fillMaxWidth(chapterProgress).height(2.dp).background(c.accent))
             }
             LazyColumn(
                 state = list,
@@ -411,7 +468,7 @@ fun ReaderScreen(
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
                         Text(reference, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
                         if (state.titleLang == Lang.OR && !SampleData.hasOdiaTitle(skandha, adhyaya)) Text(
-                            tr(ui, "Title shown in " + nameIn(ui, state.contentLang).substringBefore(" ("), "शीर्षक " + nameIn(ui, state.contentLang).substringBefore(" (") + " में दिखाया गया है", "শিরোনাম " + nameIn(ui, state.contentLang).substringBefore(" (") + "-এ দেখানো হয়েছে"),
+                            tr(ui, "Title shown in " + nameIn(ui, state.contentLang).substringBefore(" ("), "शीर्षक " + nameIn(ui, state.contentLang).substringBefore(" (") + " में दिखाया गया है", "শিরোনাম " + nameIn(ui, state.contentLang).substringBefore(" (") + "-এ দেখানো হয়েছে", "ଶୀର୍ଷକ " + nameIn(ui, state.contentLang).substringBefore(" (") + "ରେ ଦେଖାଯାଇଛି"),
                             fontSize = 14.sp, color = c.secondary,
                         )
                         Text(title, fontFamily = readingFont(state.titleLangFor(skandha, adhyaya)), fontSize = 24.sp, lineHeight = 38.sp,
@@ -453,7 +510,8 @@ fun ReaderScreen(
                     items(bookRows, key = { it.verse.ref }) { r ->
                         val isFindMatch = showFindBar && matchingVerseIndices.isNotEmpty() && matchingVerseIndices.getOrNull(currentMatchIndex)?.let { rowVerses.getOrNull(it)?.ref == r.verse.ref } == true
                         Box(modifier = if (isFindMatch) Modifier.clip(Radius.group).background(c.playing) else Modifier) {
-                            BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked) {
+                            BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked,
+                                speaker = if (state.showSpeakers && bookRows.indexOfFirst { it.verse.ref == r.verse.ref }.let { i -> com.bhagavatam.app.data.startsSpeakerRun(speakers, bookRows.map { it.verse }, r.verse) && i >= 0 }) speakers[r.verse.ref] else null) {
                                 if (r.verse.ref in peeked) peeked.remove(r.verse.ref) else peeked.add(r.verse.ref)
                             }
                         }
@@ -463,13 +521,26 @@ fun ReaderScreen(
             }
         }
 
-        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 150.dp else 130.dp)
+        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 170.dp else 150.dp)
         // Action bar while text is selected: sits just above the play controls.
         Column(
             Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (state.hasSession) 96.dp else 76.dp).padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SelectionPanel(state, onOpenDictionary = onOpenDictionary)
+            state.snack?.let { sn ->
+                Row(
+                    Modifier.shadow(6.dp, CircleShape).clip(CircleShape).background(c.ink).padding(start = 18.dp, end = 6.dp).heightIn(min = 48.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(sn.text, fontSize = 15.sp, color = c.bg)
+                    if (sn.action != null && sn.onAction != null) {
+                        Box(Modifier.heightIn(min = 48.dp).clip(CircleShape).clickable(role = Role.Button) { sn.onAction.invoke(); state.snack = null }.padding(horizontal = 12.dp), contentAlignment = Alignment.Center) {
+                            Text(sn.action, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = c.gold)
+                        }
+                    }
+                }
+            }
         }
         Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 10.dp)) {
             Crossfade(state.hasSession, animationSpec = tween(Motion.sheet), label = "playControl") { session ->
@@ -502,6 +573,7 @@ fun ReaderScreen(
     }
     if (showLangSheet) LanguageSheet(state, verses) { showLangSheet = false }
     AnnotationSheet(state)
+    VerseSheet(state)
     WordSheet(state, { sk, a -> onNextChapter(sk, a) }, onOpenDictionary = onOpenDictionary)
 }
 
@@ -511,8 +583,9 @@ private data class BookRow(val verse: Verse, val label: String)
 private fun translationMissing(ui: Lang, lang: Lang): String = when {
     lang == Lang.BN && ui == Lang.HI -> "इस अध्याय का बंगाली अनुवाद अभी उपलब्ध नहीं है। यह अध्याय-दर-अध्याय जोड़ा जा रहा है।"
     lang == Lang.BN && ui == Lang.BN -> "এই অধ্যায়ের বাংলা অনুবাদ এখনও পাওয়া যায়নি। অধ্যায় ধরে ধরে যোগ করা হচ্ছে।"
+    lang == Lang.BN && ui == Lang.OR -> "ଏହି ଅଧ୍ଯାୟର ବଙ୍ଗଳା ଅନୁବାଦ ଏପର୍ଯ୍ୟନ୍ତ ଉପଲବ୍ଧ ନାହିଁ। ଅଧ୍ଯାୟ ଅଧ୍ଯାୟ କରି ଯୋଡ଼ାଯାଉଛି।"
     lang == Lang.BN -> "The Bengali translation of this chapter is not available yet. It is being added chapter by chapter."
-    else -> "This translation is not available for this chapter."
+    else -> tr(ui, "This translation is not available for this chapter.", "यह अनुवाद इस अध्याय के लिए उपलब्ध नहीं है।", "এই অনুবাদ এই অধ্যায়ের জন্য পাওয়া যায়নি।", "ଏହି ଅନୁବାଦ ଏହି ଅଧ୍ଯାୟ ପାଇଁ ଉପଲବ୍ଧ ନାହିଁ।")
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -528,7 +601,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
     Column(Modifier.fillMaxWidth()) {
         Column(
             Modifier.fillMaxWidth().clip(Radius.group).background(tint)
-                .combinedClickable(onClick = {}, onLongClickLabel = if (marked) "Remove bookmark" else "Bookmark this shloka", onLongClick = { state.toggleBookmark(v.ref) })
+                .combinedClickable(onClick = {}, onLongClickLabel = tr(ui, "Shloka actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), onLongClick = { state.verseSheet = v.ref })
                 .padding(horizontal = 14.dp, vertical = 18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
@@ -538,11 +611,23 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                 Box(Modifier.weight(1f))
                 if (v.speaker != null) Text(v.speaker, fontFamily = NotoDevanagari, fontSize = 15.sp, color = c.secondary)
                 if (isCurrent) Icon(painterResource(Ic.Headphones), null, tint = c.accent, modifier = Modifier.size(15.dp))
-                // Press and hold anywhere on the shloka saves it; the mark only shows once saved.
-                if (marked) {
-                    IconButton(onClick = { state.toggleBookmark(v.ref) }, modifier = Modifier.size(48.dp)) {
-                        Icon(painterResource(Ic.Bookmark), "Remove bookmark", tint = c.accent, modifier = Modifier.size(20.dp))
-                    }
+                // Bookmark with one tap; the other verse actions (highlight, note, share, listen) open with the dots, or by holding the shloka.
+                IconButton(onClick = {
+                    state.toggleBookmark(v.ref)
+                    val now = v.ref in state.bookmarks
+                    state.toast(
+                        if (now) tr(ui, "Shloka bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
+                        tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ"),
+                    ) { state.toggleBookmark(v.ref) }
+                }, modifier = Modifier.size(48.dp)) {
+                    Icon(
+                        painterResource(if (marked) Ic.Bookmark else Ic.BookmarkOutline),
+                        if (marked) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this shloka", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ"),
+                        tint = if (marked) c.accent else c.secondary, modifier = Modifier.size(20.dp),
+                    )
+                }
+                IconButton(onClick = { state.verseSheet = v.ref }, modifier = Modifier.size(48.dp)) {
+                    Icon(painterResource(Ic.MoreVertical), tr(ui, "Shloka actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), tint = c.secondary, modifier = Modifier.size(20.dp))
                 }
             }
             // The shloka and its transliteration are centred, like a printed verse.
@@ -604,16 +689,17 @@ private fun ChapterStep(icon: Int, label: String, enabled: Boolean, onClick: () 
 }
 
 @Composable
-private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, scale: Float, peek: Boolean, onToggle: () -> Unit) {
+private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, scale: Float, peek: Boolean, speaker: String? = null, onToggle: () -> Unit) {
     val c = LocalReaderColors.current
     val ui = state.uiLang
     val big = lang == Lang.HI || lang == Lang.BN
-    val skLabel = if (v.skandha == 0) state.strings.mahatmya else v.skandha.toString()
+    val skLabel = if (v.skandha == 0) state.bookStrings.mahatmya else v.skandha.toString()
     // No rounded clip around the paragraph: it shaved the corner of the verse number and the first and last letters.
     Column(
         Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        if (speaker != null) Text(com.bhagavatam.app.data.speakerName(speaker, lang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, modifier = Modifier.padding(top = 6.dp))
         // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
             state, v.ref, lang, digitsTo(v.translation(lang), lang),
@@ -734,8 +820,20 @@ fun ReaderSettings(state: AppState) {
             AppSlider(value = state.textScale, onValueChange = state::updateTextScale, valueRange = 0.8f..1.6f, modifier = Modifier.weight(1f))
             Text("A", fontFamily = EnglishReading, fontSize = 22.sp, color = Brand.Secondary)
         }
+        // line spacing and the page switches that used to be only in Settings > Reading, so the page can be set up in one place
+        Column {
+            SectionLabel(com.bhagavatam.app.data.settingsTextFor(state.uiLang).lineSpacing)
+            val lineValues = listOf(0.9f, 1.0f, 1.2f)
+            Segmented(com.bhagavatam.app.data.settingsTextFor(state.uiLang).spacings, lineValues.indexOfFirst { it == state.lineScale }.coerceAtLeast(1), { state.updateLineScale(lineValues[it]) })
+        }
         Column(Modifier.padding(horizontal = 16.dp).clip(RoundedCornerShape(14.dp)).background(Brand.Card)) {
             SwitchRow(s.showSanskrit, state.showSanskrit, state::updateShowSanskrit)
+            HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+            SwitchRow(tr(state.uiLang, "Justify text", "पाठ बराबर करें", "লেখা সমান করুন", "ଟେକ୍ସଟ୍ ଜଷ୍ଟିଫାଏ କରନ୍ତୁ"), state.justifyText, state::updateJustifyText)
+            HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+            SwitchRow(tr(state.uiLang, "Shloka numbers", "श्लोक संख्या", "শ্লোক সংখ্যা", "ଶ୍ଳୋକ ସଂଖ୍ଯା"), state.showVerseNumbers, state::updateShowVerseNumbers)
+            HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+            SwitchRow(tr(state.uiLang, "Show who is speaking", "वक्ता का नाम दिखाएँ", "বক্তার নাম দেখান", "ବକ୍ତାଙ୍କ ନାମ ଦେଖାନ୍ତୁ"), state.showSpeakers, state::updateShowSpeakers)
         }
         if (state.showSanskrit) {
             Column {
@@ -760,6 +858,10 @@ fun ReaderSettings(state: AppState) {
                     HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
                 }
                 SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
+                if (com.bhagavatam.app.data.ODIA_READY) {
+                    HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+                    SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ", "ଓଡ଼ିଆ ଅନୁବାଦ"), state.showOr, state::updateShowOr)
+                }
             }
         }
         VSpace(4)

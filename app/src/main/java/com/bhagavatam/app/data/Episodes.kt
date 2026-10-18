@@ -13,7 +13,7 @@ data class Episode(
     val descriptionHi: String = "",
     val descriptionBn: String = "",
 ) {
-    fun title(l: Lang) = when (l) { Lang.HI -> hi; Lang.BN -> bn; else -> en }
+    fun title(l: Lang) = when (l) { Lang.HI -> hi; Lang.BN -> bn; Lang.OR -> EPISODE_TITLES_OR["$s.$a"] ?: en; else -> en }
     fun description(l: Lang) = when (l) { Lang.HI -> descriptionHi; Lang.BN -> descriptionBn; else -> descriptionEn }
 
     fun matchesQuery(query: String): Boolean {
@@ -33,8 +33,19 @@ enum class EpisodeCategory(val en: String, val hi: String, val bn: String) {
     LILA("Divine Lilas", "दिव्य लीला", "মধুর লীলা"),
     TEACHING("Teachings", "ज्ञानोपदेश", "তত্ত্বোপদেশ");
 
-    fun label(l: Lang) = when (l) { Lang.HI -> hi; Lang.BN -> bn; else -> en }
+    fun label(l: Lang) = when (l) {
+        Lang.HI -> hi; Lang.BN -> bn
+        Lang.OR -> when (this) { ALL -> "ସବୁ"; AVATAR -> "ଅବତାର"; BHAKTA -> "ମହାଭାଗବତ"; LILA -> "ଦିବ୍ଯ ଲୀଳା"; TEACHING -> "ଜ୍ଞାନୋପଦେଶ" }
+        else -> en
+    }
 }
+
+private val EPISODE_TITLES_OR = mapOf(
+    "10.29" to "ରାସଲୀଳା", "8.2" to "ଗଜେନ୍ଦ୍ର ମୋକ୍ଷ", "7.8" to "ନୃସିଂହ ଅବତାର ଓ ପ୍ରହ୍ଲାଦ", "4.8" to "ଧ୍ରୁବଙ୍କ ତପସ୍ୟା",
+    "10.3" to "ଶ୍ରୀକୃଷ୍ଣଙ୍କ ଆବିର୍ଭାବ ଓ ଜନ୍ମ", "10.25" to "ଗୋବର୍ଦ୍ଧନ ଧାରଣ ଲୀଳା", "10.16" to "କାଳୀୟ ଦମନ", "10.80" to "ସୁଦାମା ଚରିତ୍ର ଓ ସଖ୍ୟ",
+    "8.6" to "ସମୁଦ୍ର ମନ୍ଥନ ଓ ମୋହିନୀ", "8.18" to "ବାମନ ଅବତାର ଓ ବଳି", "6.1" to "ଅଜାମିଳ ଉଦ୍ଧାର", "1.8" to "କୁନ୍ତୀ ସ୍ତୁତି",
+    "3.25" to "କପିଳ ଗୀତା ଓ ସାଂଖ୍ୟ", "11.7" to "ଉଦ୍ଧବ ଗୀତା ଓ ୨୪ ଗୁରୁ", "9.4" to "ଅମ୍ବରୀଷ ଚରିତ୍ର ଓ ଦୁର୍ବାସା", "3.13" to "ବରାହ ଅବତାର ଓ ଭୂ-ଉଦ୍ଧାର",
+)
 
 object Episodes {
     val all = listOf(
@@ -169,4 +180,5 @@ object Episodes {
     )
 }
 
-fun tr(l: Lang, en: String, hi: String, bn: String) = when (l) { Lang.HI -> hi; Lang.BN -> bn; else -> en }
+/** The word or sentence in the app language; Odia falls back to English where [or] is not given. */
+fun tr(l: Lang, en: String, hi: String, bn: String, or: String = en) = when (l) { Lang.HI -> hi; Lang.BN -> bn; Lang.OR -> or; else -> en }

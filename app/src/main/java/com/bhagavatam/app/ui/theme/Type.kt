@@ -42,6 +42,16 @@ val NotoSerifBengali = FontFamily(
     variable(R.font.noto_serif_bengali, 400), variable(R.font.noto_serif_bengali, 500), variable(R.font.noto_serif_bengali, 600),
 )
 
+/** Odia reading text and Sanskrit in Odia script: Noto Serif Oriya (SIL Open Font License, docs/licenses/NotoOriya-OFL.txt). */
+val NotoSerifOriya = FontFamily(
+    variable(R.font.noto_serif_oriya, 400), variable(R.font.noto_serif_oriya, 500), variable(R.font.noto_serif_oriya, 600), variable(R.font.noto_serif_oriya, 700),
+)
+
+/** Interface font when the app language is Odia: Noto Sans Oriya. */
+val NotoSansOriya = FontFamily(
+    variable(R.font.noto_sans_oriya, 400), variable(R.font.noto_sans_oriya, 500), variable(R.font.noto_sans_oriya, 600), variable(R.font.noto_sans_oriya, 700),
+)
+
 /** Interface font when the app language is Hindi. */
 val Mukta = FontFamily(
     Font(R.font.mukta_regular, FontWeight.Normal), Font(R.font.mukta_semibold, FontWeight.SemiBold),

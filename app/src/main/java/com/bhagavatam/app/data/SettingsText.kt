@@ -1,6 +1,6 @@
 package com.bhagavatam.app.data
 
-/** Labels for the Settings screen, in the three app languages. */
+/** Labels for the Settings screen, in the app languages. */
 data class SettingsText(
     val appearance: String, val matchPhone: String, val matchPhoneNote: String, val lightLook: String, val darkLook: String,
     val look: String,
@@ -66,4 +66,4 @@ val SettingsBn = SettingsText(
     cancel = "বাতিল", doClear = "মুছুন", doRemove = "সরান", doReset = "রিসেট করুন",
     nothingSaved = "এখনও কিছু সংরক্ষিত নেই", savedHint = "পাঠে কোনো শ্লোক চেপে ধরে রাখলে সেটি সংরক্ষিত হবে।",
 )
-fun settingsTextFor(l: Lang) = when (l) { Lang.HI -> SettingsHi; Lang.BN -> SettingsBn; else -> SettingsEn }
+fun settingsTextFor(l: Lang) = when (l) { Lang.HI -> SettingsHi; Lang.BN -> SettingsBn; Lang.OR -> SettingsOr; else -> SettingsEn }

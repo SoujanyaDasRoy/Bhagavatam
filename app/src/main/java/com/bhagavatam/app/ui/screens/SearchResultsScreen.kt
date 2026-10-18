@@ -117,7 +117,10 @@ data class SearchUiData(
     val sameChapterMatches: List<Pair<Int, Int>>,
     val verseCards: List<VerseCardData>,
     val suggestedWord: String?,
-    val searchTimeMs: Long
+    val searchTimeMs: Long,
+    /** Dictionary entries for the typed word, and the reader's own notes, bookmarks and highlights that contain it. */
+    val dictMatches: List<com.bhagavatam.app.data.DictEntry> = emptyList(),
+    val noteMatches: List<com.bhagavatam.app.data.Annotation> = emptyList(),
 )
 
 /**
@@ -190,7 +193,8 @@ fun SearchResultsScreen(
     state: AppState,
     onOpenChapter: (Int, Int) -> Unit = { _, _ -> },
     onOpenVerse: (Int, Int) -> Unit = onOpenChapter,
-    onOpenGlossary: () -> Unit = {}
+    onOpenGlossary: () -> Unit = {},
+    onOpenDictionary: () -> Unit = {},
 ) {
     val s = state.strings
     val ui = state.uiLang
@@ -337,7 +341,14 @@ fun SearchResultsScreen(
                 if (cardList.size >= 100) break
             }
 
+            // the dictionary and the reader's own marks answer the same question, so they are searched with the book
+            val shortQuery = parsedRef == null && q.trim().split(" ").filter { it.isNotEmpty() }.size <= 2
+            val dictMatches = if (shortQuery) runCatching { com.bhagavatam.app.data.Dictionary.search(q.trim(), null, 5) }.getOrDefault(emptyList()) else emptyList()
+            val noteMatches = if (parsedRef == null) filterMarks(state.annotations.toList(), q, 0).take(5) else emptyList()
+
             SearchUiData(
+                dictMatches = dictMatches,
+                noteMatches = noteMatches,
                 parsedRef = parsedRef,
                 matchingStories = matchingStories,
                 sameChapterMatches = sameChapters,
@@ -415,7 +426,7 @@ fun SearchResultsScreen(
                         SearchScope.EN to s.tabEnglish,
                         SearchScope.HI to s.tabHindi,
                         SearchScope.BN to s.tabBangla,
-                        SearchScope.OR to "\u0b13\u0b21\u0b3c\u0b3f\u0b06"
+                        SearchScope.OR to nameIn(ui, Lang.OR)
                     )
                     tabs.forEach { (sc, label) ->
                         val on = activeScope == sc
@@ -429,10 +440,10 @@ fun SearchResultsScreen(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val allLabel = tr(ui, "All Skandhas", "सभी स्कन्ध", "সব স্কন্ধ")
+                    val allLabel = tr(ui, "All Skandhas", "सभी स्कन्ध", "সব স্কন্ধ", "ସମସ୍ତ ସ୍କନ୍ଧ")
                     Pill(text = allLabel, on = selectedSkandha == null, onClick = { selectedSkandha = null })
 
-                    val mahatmyaLabel = if (ui == Lang.HI) "माहात्म्य" else if (ui == Lang.BN) "মাহাত্ম্য" else "Mahatmya"
+                    val mahatmyaLabel = if (ui == Lang.HI) "माहात्म्य" else if (ui == Lang.BN) "মাহাত্ম্য" else if (ui == Lang.OR) "ମାହାତ୍ମ୍ୟ" else "Mahatmya"
                     Pill(text = mahatmyaLabel, on = selectedSkandha == 0, onClick = { selectedSkandha = 0 })
 
                     for (sk in 1..12) {
@@ -478,7 +489,7 @@ fun SearchResultsScreen(
                 }
 
                 item(span = { GridItemSpan(2) }) {
-                    SectionHeading(tr(ui, "Stories", "कथाएँ", "কাহিনি"), Modifier.padding(top = 6.dp))
+                    SectionHeading(tr(ui, "Stories", "कथाएँ", "কাহিনি", "କଥା"), Modifier.padding(top = 6.dp))
                 }
 
                 // Category Filter Pills
@@ -518,8 +529,8 @@ fun SearchResultsScreen(
                     val ref = data.parsedRef
                     if (ref != null) {
                         item {
-                            val skTitle = if (ref.skandha == 0) s.mahatmya else SampleData.skandha(ref.skandha).title(ui)
-                            val jumpLabel = localDigits("${s.goTo} $skTitle · ${s.adhyaya} ${ref.chapter} · ${s.shloka} ${ref.verse}", ui)
+                            val skTitle = if (ref.skandha == 0) state.bookStrings.mahatmya else SampleData.skandha(ref.skandha).title(state.contentLang)
+                            val jumpLabel = localDigits("${s.goTo} $skTitle · ${state.bookStrings.adhyaya} ${ref.chapter} · ${state.bookStrings.shloka} ${ref.verse}", state.titleLang)
                             val adTitle = SampleData.adhyayaTitle(ref.skandha, ref.chapter, state.titleLangFor(ref.skandha, ref.chapter), s)
 
                             Box(
@@ -542,7 +553,7 @@ fun SearchResultsScreen(
                     // 2. Did you mean suggestion card
                     if (data.suggestedWord != null && data.suggestedWord.lowercase() != query.trim().lowercase()) {
                         item {
-                            val suggestionPrompt = tr(ui, "Did you mean", "क्या आपका तात्पर्य है", "আপনি কি বোঝাতে চেয়েছেন")
+                            val suggestionPrompt = tr(ui, "Did you mean", "क्या आपका तात्पर्य है", "আপনি কি বোঝাতে চেয়েছেন", "ଆପଣ କ'ଣ ଏହା କହିବାକୁ ଚାହୁଁଥିଲେ")
                             Box(
                                 Modifier.fillMaxWidth()
                                     .clip(Radius.card)
@@ -572,7 +583,7 @@ fun SearchResultsScreen(
                     // 3. Matching Stories (Divine Incidents)
                     if (data.matchingStories.isNotEmpty()) {
                         item {
-                            SectionHeading(tr(ui, "Matching stories", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ"))
+                            SectionHeading(tr(ui, "Matching stories", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ", "ମେଳ ଖାଉଥିବା କଥା"))
                         }
                         items(data.matchingStories, key = { "inc_${it.s}_${it.a}" }) { ep ->
                             Box(
@@ -583,8 +594,8 @@ fun SearchResultsScreen(
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(ep.title(state.contentLang), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                                        val skLabel = if (ep.s == 0) s.mahatmya else "${s.skandha} ${ep.s}"
-                                        Text(localDigits("$skLabel · ${s.adhyaya} ${ep.a}", ui), fontSize = 12.sp, color = Brand.Gold)
+                                        val skLabel = if (ep.s == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} ${ep.s}"
+                                        Text(localDigits("$skLabel · ${state.bookStrings.adhyaya} ${ep.a}", state.titleLang), fontSize = 12.sp, color = Brand.Gold)
                                     }
                                     if (ep.description(ui).isNotEmpty()) {
                                         Text(ep.description(ui), fontSize = 13.sp, lineHeight = 21.sp, color = Brand.Secondary)
@@ -594,13 +605,51 @@ fun SearchResultsScreen(
                         }
                     }
 
+                    // 3b. Dictionary entries for the word
+                    if (data.dictMatches.isNotEmpty()) {
+                        item { SectionHeading(tr(ui, "In the dictionary", "शब्दकोश में", "অভিধানে", "ଅଭିଧାନରେ")) }
+                        items(data.dictMatches, key = { "dict_${it.id}" }) { e ->
+                            val gloss = e.senses.firstOrNull()?.gloss.orEmpty()
+                            Column(
+                                Modifier.fillMaxWidth().tappable(Radius.group, e.headword) {
+                                    state.lookup = com.bhagavatam.app.data.WordLookup(e.headword, Lang.entries.firstOrNull { l -> l.code == e.lang } ?: Lang.SA, "")
+                                    onOpenDictionary()
+                                }.background(Brand.Card).border(1.dp, Brand.Separator, Radius.group).padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(e.headword, Modifier.weight(1f), fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                                    Text(nameIn(ui, Lang.entries.firstOrNull { l -> l.code == e.lang } ?: Lang.SA), fontSize = 12.sp, color = Brand.Gold)
+                                }
+                                if (gloss.isNotEmpty()) Text(gloss, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            }
+                        }
+                    }
+
+                    // 3c. The reader's own marks
+                    if (data.noteMatches.isNotEmpty()) {
+                        item { SectionHeading(tr(ui, "In your notes", "आपके नोट में", "আপনার নোটে", "ଆପଣଙ୍କ ନୋଟ୍‌ରେ")) }
+                        items(data.noteMatches, key = { "note_${it.id}" }) { a ->
+                            val p = a.ref.split(".").mapNotNull { it.toIntOrNull() }
+                            Column(
+                                Modifier.fillMaxWidth().tappable(Radius.group, a.ref) { if (p.size >= 2) { state.scrollToVerse = a.ref; onOpenChapter(p[0], p[1]) } }
+                                    .background(Brand.Card).border(1.dp, Brand.Separator, Radius.group).padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Text(localDigits(a.ref, ui), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
+                                Text(a.quote, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                if (a.note.isNotBlank()) Text(a.note, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            }
+                        }
+                    }
+
                     // 4. Words appear together in the same chapter
                     if (data.sameChapterMatches.isNotEmpty() && data.verseCards.isEmpty()) {
                         item {
-                            SectionHeading(tr(ui, "Words appear in the same chapter", "ये शब्द एक ही अध्याय में मिलते हैं", "এই শব্দগুলি একই অধ্যায়ে পাওয়া যায়"))
+                            SectionHeading(tr(ui, "Words appear in the same chapter", "ये शब्द एक ही अध्याय में मिलते हैं", "এই শব্দগুলি একই অধ্যায়ে পাওয়া যায়", "ଶବ୍ଦଗୁଡ଼ିକ ଏକା ଅଧ୍ଯାୟରେ ଅଛି"))
                         }
                         items(data.sameChapterMatches, key = { "ch_${it.first}_${it.second}" }) { (sk, ad) ->
-                            val skLabel = if (sk == 0) s.mahatmya else "${s.skandha} $sk"
+                            val skLabel = if (sk == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} $sk"
                             val chTitle = SampleData.adhyayaTitle(sk, ad, state.titleLangFor(sk, ad), s)
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.group) { onOpenChapter(sk, ad) }
@@ -609,7 +658,7 @@ fun SearchResultsScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                        Text(localDigits("$skLabel · ${s.adhyaya} $ad", ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
+                                        Text(localDigits("$skLabel · ${state.bookStrings.adhyaya} $ad", state.titleLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
                                         Text(chTitle, fontFamily = readingFont(state.titleLangFor(sk, ad)), fontSize = 15.sp, color = Brand.Ink)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Secondary)
@@ -627,7 +676,7 @@ fun SearchResultsScreen(
                     }
 
                     // 6. Verse Result Cards
-                    if (data.verseCards.isEmpty() && data.matchingStories.isEmpty() && ref == null && data.sameChapterMatches.isEmpty()) {
+                    if (data.verseCards.isEmpty() && data.matchingStories.isEmpty() && ref == null && data.sameChapterMatches.isEmpty() && data.dictMatches.isEmpty() && data.noteMatches.isEmpty()) {
                         item {
                             Column(
                                 Modifier.fillMaxWidth().padding(vertical = 40.dp),
@@ -641,8 +690,8 @@ fun SearchResultsScreen(
                     } else {
                         items(data.verseCards, key = { "${it.verse.ref}_${it.layer.name}" }) { res ->
                             val v = res.verse
-                            val skName = if (v.skandha == 0) s.mahatmya else "${s.skandha} ${v.skandha}"
-                            val refText = localDigits("$skName · ${s.adhyaya} ${v.adhyaya} · ${s.shloka} ${v.num}", ui)
+                            val skName = if (v.skandha == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} ${v.skandha}"
+                            val refText = localDigits("$skName · ${state.bookStrings.adhyaya} ${v.adhyaya} · ${state.bookStrings.shloka} ${v.num}", state.titleLang)
 
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.group) { onOpenVerse(v.skandha, v.adhyaya) }

@@ -121,11 +121,11 @@ fun SplashScreen(state: AppState? = null) {
             }
             Spacer(Modifier.height(14.dp))
             Text(
-                s.shrimadBhagavatMahapuran, Modifier.alpha(name.value), fontFamily = bodyFont, fontSize = 17.sp,
-                color = Color(0xFFD9D2EC), letterSpacing = 0.4.sp,
+                s.shrimadBhagavatMahapuran, Modifier.alpha(name.value).padding(horizontal = 24.dp), fontFamily = bodyFont, fontSize = 17.sp,
+                color = Color(0xFFD9D2EC), letterSpacing = 0.4.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
             Spacer(Modifier.height(30.dp))
-            Text(s.jaiShreeMadhav, Modifier.alpha(greet.value), fontFamily = bodyFont, fontSize = 15.sp, color = gold.copy(alpha = 0.85f))
+            Text(s.jaiShreeMadhav, Modifier.alpha(greet.value).padding(horizontal = 24.dp), fontFamily = bodyFont, fontSize = 15.sp, color = gold.copy(alpha = 0.85f), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         }
     }
 }

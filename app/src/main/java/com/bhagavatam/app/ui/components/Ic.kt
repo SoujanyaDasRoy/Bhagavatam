@@ -15,6 +15,7 @@ object Ic {
     val Repeat = R.drawable.ic_repeat
     val Bedtime = R.drawable.ic_moon
     val Bookmark = R.drawable.ic_bookmark
+    val BookmarkOutline = R.drawable.ic_bookmark_outline
     val KeyboardArrowRight = R.drawable.ic_chevron_right
     val ArrowBackIos = R.drawable.ic_chevron_left
     val KeyboardArrowDown = R.drawable.ic_chevron_down
@@ -55,4 +56,6 @@ object Ic {
     val Sliders = R.drawable.ic_sliders
     val ListMusic = R.drawable.ic_list_music
     val Shuffle = R.drawable.ic_shuffle
+    val Share = R.drawable.ic_share
+    val Note = R.drawable.ic_note
 }

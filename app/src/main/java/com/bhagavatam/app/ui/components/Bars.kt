@@ -116,7 +116,7 @@ fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifi
 @Composable
 fun BottomScrim(modifier: Modifier = Modifier, height: Dp = 140.dp) {
     val bg = Brand.Paper
-    Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(0f to bg.copy(alpha = 0f), 0.30f to bg.copy(alpha = 0.92f), 0.45f to bg, 1f to bg)))
+    Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(0f to bg.copy(alpha = 0f), 0.18f to bg.copy(alpha = 0.95f), 0.32f to bg, 1f to bg)))
 }
 
 /** Mini player: Modern Glassmorphic floating pill with album art, live status, playback controls, and dismiss button. */
@@ -212,7 +212,7 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        "${state.strings.shloka} ${localDigits(v.ref, state.uiLang)}",
+                        "${state.bookStrings.shloka} ${localDigits(v.ref, state.titleLang)}",
                         fontSize = 14.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )

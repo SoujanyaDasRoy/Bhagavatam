@@ -6,7 +6,7 @@ Run everything from the project root, for example `py tools/content/missing_repo
 |---|---|---|
 | `content/` | `missing_report.py`, `check_alignment.py`, `fill_gaps.py`, `fill_missing.py`, `fill_odia_gaps.py`, `verify_gaps.py` | list, fill and check the verses that still have no Bengali or Odia translation |
 | `art/` | `import_art.py`, `make_chapter_prompts.py`, `batch_generate_art.py`, `grade_art.py`, `generate_icons.py`, `svg2vd.py` | paintings and icons |
-| `qa/` | `lang_audit.py`, `language_matrix.py` | language and screen checks |
+| `qa/` | `lang_audit.py`, `language_matrix.py`, `scan_text_quality.py` | language and screen checks; the scan lists garbled Odia verses and placeholder chapter titles |
 | `dev/` | `generate_graphify.py`, `make_code_map.py` | code map and knowledge graph |
 | `agent/` | checks used by coding agents | |
 

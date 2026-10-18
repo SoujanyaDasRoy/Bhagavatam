@@ -60,23 +60,6 @@ class MainActivity : ComponentActivity() {
                             askNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                         }
                     }
-                    // Once, on the first Home: say why, then let Android ask (Android 13 and later).
-                    if (android.os.Build.VERSION.SDK_INT >= 33 && state.onboarded && !state.askedNotify &&
-                        checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                        val u = state.uiLang
-                        androidx.compose.material3.AlertDialog(
-                            onDismissRequest = { state.markAskedNotify() },
-                            title = { androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Notifications", "सूचनाएँ", "বিজ্ঞপ্তি")) },
-                            text = { androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u,
-                                "Allow notifications to control playback from the lock screen and to hear about new versions of the app.",
-                                "लॉक स्क्रीन से पाठ नियंत्रित करने और ऐप के नए संस्करण की जानकारी पाने के लिए सूचनाओं की अनुमति दें।",
-                                "লক স্ক্রিন থেকে পাঠ নিয়ন্ত্রণ ও অ্যাপের নতুন সংস্করণের খবর পেতে বিজ্ঞপ্তির অনুমতি দিন।")) },
-                            confirmButton = { androidx.compose.material3.TextButton(onClick = { state.markAskedNotify(); askNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS) }) {
-                                androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Continue", "आगे बढ़ें", "এগিয়ে যান")) } },
-                            dismissButton = { androidx.compose.material3.TextButton(onClick = { state.markAskedNotify() }) {
-                                androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Not now", "अभी नहीं", "এখন নয়")) } },
-                        )
-                    }
                     LaunchedEffect(state.keepScreenOn) {
                         if (state.keepScreenOn) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

@@ -65,6 +65,12 @@ data class Verse(
     }
 }
 
+private val SKANDHA_TITLES_OR = listOf(
+    "ଶ୍ରୀମଦ୍ଭାଗବତ ମାହାତ୍ମ୍ୟ", "ନୈମିଷାରଣ୍ୟର ଋଷିଗଣ", "ଶୁକଦେବଙ୍କ ଆରମ୍ଭ", "ବିଦୁର ଓ ମୈତ୍ରେୟ", "ଧ୍ରୁବ ଓ ପୃଥୁ", "ଋଷଭ ଓ ଭରତ", "ଅଜାମିଳ ଓ ବୃତ୍ର",
+    "ପ୍ରହ୍ଲାଦ ଓ ନୃସିଂହ", "ଗଜେନ୍ଦ୍ର ଓ ସମୁଦ୍ର ମନ୍ଥନ", "ଶ୍ରୀରାମ ଓ ରାଜବଂଶ", "ଶ୍ରୀକୃଷ୍ଣ ଲୀଳା", "ଉଦ୍ଧବ ଗୀତା", "କଳିଯୁଗ ଓ ଉପସଂହାର",
+)
+private val SKANDHA_ORDINALS_OR = listOf("ପ୍ରଥମ", "ଦ୍ୱିତୀୟ", "ତୃତୀୟ", "ଚତୁର୍ଥ", "ପଞ୍ଚମ", "ଷଷ୍ଠ", "ସପ୍ତମ", "ଅଷ୍ଟମ", "ନବମ", "ଦଶମ", "ଏକାଦଶ", "ଦ୍ୱାଦଶ")
+
 data class Skandha(
     val num: Int, // 0 = Mahatmya
     val adhyayaCount: Int,
@@ -88,9 +94,11 @@ data class Skandha(
         12 -> "দ্বাদশ স্কন্ধ"
         else -> "স্কন্ধ $num"
     },
+    val titleOr: String = SKANDHA_TITLES_OR.getOrElse(num) { "" },
+    val nameOr: String = if (num == 0) "ଶ୍ରୀମଦ୍ଭାଗବତ ମାହାତ୍ମ୍ୟ" else SKANDHA_ORDINALS_OR.getOrElse(num - 1) { "" } + " ସ୍କନ୍ଧ",
 ) {
-    fun title(ui: Lang) = when (ui) { Lang.HI -> titleHi; Lang.BN -> titleBn; else -> titleEn }
-    fun name(ui: Lang) = when (ui) { Lang.BN -> nameBn; Lang.HI -> nameSa; else -> nameSa }
+    fun title(ui: Lang) = when (ui) { Lang.HI -> titleHi; Lang.BN -> titleBn; Lang.OR -> titleOr.ifEmpty { titleEn }; else -> titleEn }
+    fun name(ui: Lang) = when (ui) { Lang.BN -> nameBn; Lang.HI -> nameSa; Lang.OR -> nameOr.ifEmpty { nameSa }; else -> nameSa }
 }
 
 /** Colophon ("Thus ends ...") and Gita Press notes printed after the last shloka of a chapter. */
@@ -203,7 +211,7 @@ object SampleData {
         d.rawQuery("SELECT skandha, chapter, title_en, title_hi, verse_count, $titleBn FROM chapter", null).use { c ->
             while (c.moveToNext()) {
                 val k = "${c.getInt(0)}.${c.getInt(1)}"
-                titlesEn[k] = (c.getString(2) ?: "").tidyDashes()
+                titlesEn[k] = cleanEnglishTitle((c.getString(2) ?: "").tidyDashes())
                 titlesHi[k] = (c.getString(3) ?: "").tidyDashes()
                 titlesBn[k] = (c.getString(5) ?: "").tidyDashes()
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)
@@ -224,15 +232,18 @@ object SampleData {
     fun hasBengali(s: Int, a: Int) = "$s.$a" in bengaliChapters
 
     /** Title of an adhyaya in [lang] (pass AppState.titleLang). Bengali titles exist for the chapters that have Bengali; elsewhere English is shown. */
+    /** A title with the printed "fifth chapter" taken off; empty when the book printed only that (the next language is shown instead). */
+    private fun String?.clean() = cleanChapterTitle(orEmpty())
+
     fun adhyayaTitle(s: Int, a: Int, lang: Lang, s10n: Strings): String {
         val k = "$s.$a"
         val t = when (lang) {
-            Lang.HI, Lang.SA -> titlesHi[k].orEmpty().ifEmpty { titlesEn[k].orEmpty() }
+            Lang.HI, Lang.SA -> titlesHi[k].clean().ifEmpty { titlesEn[k].orEmpty() }
             // A chapter without a Bengali title falls back to Hindi (the same script family), then English.
-            Lang.BN -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }.ifEmpty { titlesEn[k].orEmpty() }
+            Lang.BN -> titlesBn[k].clean().ifEmpty { titlesHi[k].clean() }.ifEmpty { titlesEn[k].orEmpty() }
             // A chapter without an Odia title shows the app language's title, then English (the rule's fallback order).
-            Lang.OR -> titlesOr[k].orEmpty().ifEmpty {
-                when (s10n) { HindiStrings -> titlesHi[k].orEmpty(); BengaliStrings -> titlesBn[k].orEmpty().ifEmpty { titlesHi[k].orEmpty() }; else -> "" }
+            Lang.OR -> titlesOr[k].clean().ifEmpty {
+                when (s10n) { HindiStrings -> titlesHi[k].clean(); BengaliStrings -> titlesBn[k].clean().ifEmpty { titlesHi[k].clean() }; else -> "" }
             }.ifEmpty { titlesEn[k].orEmpty() }
             else -> titlesEn[k].orEmpty()
         }
@@ -313,7 +324,7 @@ object SampleData {
                             iast = c.getString(6).orEmpty().tidyDashes().let { if (it.isEmpty()) emptyList() else it.split('\n') },
                             hi = hi.tidyDashes(), en = c.getString(8).orEmpty().tidyDashes(), bn = c.getString(11).orEmpty().tidyDashes(),
                             bnFrom = if (c.isNull(12)) null else c.getInt(12),
-                            or = c.getString(13).orEmpty().tidyDashes(), orFrom = if (c.isNull(14)) null else c.getInt(14),
+                            or = c.getString(13).orEmpty().tidyDashes().let { if (odiaLooksGarbled(it)) "" else it }, orFrom = if (c.isNull(14)) null else c.getInt(14),
                             doubt = doubtByVerse[c.getLong(15)] ?: emptyMap(),
                             enFrom = if (c.isNull(9)) null else c.getInt(9),
                             hiFrom = if (c.isNull(10)) null else c.getInt(10),

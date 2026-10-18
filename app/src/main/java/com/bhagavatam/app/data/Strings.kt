@@ -48,24 +48,24 @@ val EnglishStrings = Strings(
     tabHome = "Home", tabGranth = "Content", tabSearch = "Search", tabDownloads = "Downloads", tabMe = "Settings",
     homeGreeting = "Hari Om. Continue where you left off.", skandha = "Skandha", adhyaya = "Chapter", adhyayas = "chapters", shloka = "Shloka",
     stoppedAt = "Stopped at shloka", resumeReading = "Resume reading", shlokaOfDay = "Shloka of the day", listen = "Listen",
-    goToHint = "Go to a verse, e.g. 10.29.1",
+    goToHint = "Go to a shloka, e.g. 10.29.1",
     granthSub = "Mahatmya and 12 Skandhas", mahatmya = "Mahatmya", finished = "finished", readingNow = "Reading",
-    sanskritOff = "Sanskrit is off. Tap a verse number to see its shloka.", show = "Show",
+    sanskritOff = "Sanskrit is off. Tap a shloka number to see its Sanskrit.", show = "Show",
     sampleOnly = "This prototype only includes the text of Chapter 1.1. The full text comes from the content database.",
     back = "Back", speed = "Speed", loop = "Loop", sleep = "Sleep", nowPlaying = "Now playing",
-    searchHint = "Word, story, character or verse (e.g. 10.29.1)", tryThese = "Try these", recent = "Recent",
+    searchHint = "Word, story, character or shloka (e.g. 10.29.1)", tryThese = "Try these", recent = "Recent",
     results = "results", result = "result", noMatches = "No matches",
-    noMatchesHint = "Try another spelling, an incident name, or a verse number like 1.2.6.",
+    noMatchesHint = "Try another spelling, an incident name, or a shloka number like 1.2.6.",
     goTo = "Go to", shlokas = "Shlokas", chapters = "Chapters", glossary = "Guide", all = "All", mool = "Mool", alsoIn = "Also in",
     sanskritAudioPacks = "Sanskrit audio · %d of 13 packs",
     downloadsNote = "Translations are read aloud by your phone’s own voices, so there is nothing to download for them.",
     onPhone = "On this phone", downloading = "Downloading…", sanskritAudio = "Sanskrit audio", packs = "Packs",
     saved = "Saved", bookmarks = "Bookmarks", highlights = "Highlights",
-    savedVerses = "Saved verses", languages = "Languages", reading = "Reading", showSanskrit = "Show Sanskrit shlokas",
-    showSanskritNote = "Turn off to read the translations on their own, like a book. You can still tap a verse number to see its shloka.",
+    savedVerses = "Saved shlokas", languages = "Languages", reading = "Reading", showSanskrit = "Show Sanskrit shlokas",
+    showSanskritNote = "Turn off to read the translations on their own, like a book. You can still tap a shloka number to see its Sanskrit.",
     listening = "Listening", keepPlaying = "Keep playing in the background",
     backgroundNote = "Paath carries on from the lock screen, notification and Bluetooth headphones after you leave the app.",
-    playThrough = "Play through", throughAdhyaya = "This chapter", throughSkandha = "Whole Skandha", throughGranth = "Whole granth",
+    playThrough = "Play through", throughAdhyaya = "This chapter", throughSkandha = "Whole Skandha", throughGranth = "Whole book",
     sleepTimer = "Sleep timer", off = "Off", keepScreenOn = "Keep screen on", textSize = "Text size", texts = "Texts", gitaPress = "Gita Press, Gorakhpur",
     appLanguage = "App language", appLanguageNote = "Menus, buttons and chapter titles.",
     bhagLanguage = "Bhagavatam language", bhagLanguageNote = "What you read and hear during paath.",
@@ -79,7 +79,7 @@ val EnglishStrings = Strings(
     paathLanguage = "Paath language", startReading = "Start reading", stepOf = "2 of 2", preview = "Preview: the first shloka",
     glossaryHint = "Search the dictionary", themes = listOf("Prabhat", "Pothi", "Sandhya", "Ratri"),
     jaiShreeMadhav = "Jai Shree Madhav", shrimadBhagavatMahapuran = "Shrimad Bhagavat Mahapuran", minRead = "%d min read",
-    tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bangla",
+    tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bengali",
     voiceSearchHint = "Listening... Speak a story or chapter", openPrompt = "Open %s?", openAction = "Open", cancelAction = "Cancel",
     thematicLilaIndex = "Dictionary",
 )
@@ -160,13 +160,6 @@ val BengaliStrings = Strings(
     tabAll = "সব", tabEnglish = "ইংরেজি", tabHindi = "হিন্দি", tabBangla = "বাংলা",
     voiceSearchHint = "শুনছি... কোনো ঘটনা বা অধ্যায় বলুন", openPrompt = "%s খুলবেন?", openAction = "খুলুন", cancelAction = "বাতিল",
     thematicLilaIndex = "অভিধান",
-)
-
-/** Only the words printed with a chapter (Skandha, chapter, shloka, reading time) exist in Odia; the rest of the app is not translated into Odia. */
-val OdiaStrings = EnglishStrings.copy(
-    skandha = "ସ୍କନ୍ଧ", adhyaya = "ଅଧ୍ଯାୟ", shloka = "ଶ୍ଳୋକ", shlokas = "ଶ୍ଳୋକ",
-    mahatmya = "ମାହାତ୍ମ୍ୟ", minRead = "%d ମିନିଟ୍ ପାଠ",
-    jaiShreeMadhav = "ଜୟ ଶ୍ରୀ ମାଧବ", shrimadBhagavatMahapuran = "ଶ୍ରୀମଦ୍ଭାଗବତ ମହାପୁରାଣ", granthSub = "ମାହାତ୍ମ୍ୟ ଓ ୧୨ ସ୍କନ୍ଧ",
 )
 
 fun stringsFor(ui: Lang) = when (ui) {

@@ -6,8 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// APK files are named Bhagavatam-v1.2.7-debug.apk and Bhagavatam-v1.2.7-release.apk.
-base { archivesName.set("Bhagavatam-v1.2.7") }
+// APK files are named Bhagavatam-v1.2.8-debug.apk and Bhagavatam-v1.2.8-release.apk.
+base { archivesName.set("Bhagavatam-v1.2.8") }
 
 // The maker's Telegram username, from local.properties (telegram.user=name). Blank hides the "Report an error" button.
 val telegramUser = rootProject.file("local.properties").takeIf { it.exists() }
@@ -27,8 +27,8 @@ android {
         applicationId = "com.bhagavatam.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 21
-        versionName = "1.2.7"
+        versionCode = 22
+        versionName = "1.2.8"
         buildConfigField("String", "TELEGRAM_USER", "\"" + telegramUser + "\"")
     }
 
@@ -95,6 +95,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20231013")
 }
 
 // Copy finished APKs to <project>/apk so they are easy to find (the build folder lives outside OneDrive).

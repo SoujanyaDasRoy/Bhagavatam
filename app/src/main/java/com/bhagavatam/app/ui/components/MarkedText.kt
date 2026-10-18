@@ -1,6 +1,8 @@
 package com.bhagavatam.app.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.draw.drawBehind
@@ -27,6 +29,7 @@ import com.bhagavatam.app.data.Lang
 import com.bhagavatam.app.data.SelBar
 import com.bhagavatam.app.data.WordLookup
 import com.bhagavatam.app.data.reanchor
+import com.bhagavatam.app.data.trimRange
 import com.bhagavatam.app.data.wordAt
 import com.bhagavatam.app.state.AppState
 import com.bhagavatam.app.ui.theme.LocalReaderColors
@@ -58,8 +61,14 @@ fun MarkedText(
     var asking by remember(text) { mutableStateOf<IntRange?>(null) }
     val anns = state.annotationsFor(ref, lang.code)
     val pl = prefix.length
+    val haptic = LocalHapticFeedback.current
+    // The span being chosen: while the finger drags, then while the action bar is open for it.
+    var dragSel by remember(text) { mutableStateOf<IntRange?>(null) }
+    var anchor by remember(text) { mutableStateOf<IntRange?>(null) }
+    val barSel = state.selBar?.takeIf { it.ref == ref && it.lang == lang }?.let { it.start until it.end }
+    val chosen = dragSel ?: barSel
 
-    val annotated = remember(text, anns, prefix, c) {
+    val annotated = remember(text, anns, prefix, c, chosen) {
         buildAnnotatedString {
             append(prefix)
             append(text)
@@ -72,6 +81,7 @@ fun MarkedText(
                 }
                 addStyle(if (a.note.isNotBlank()) base.copy(textDecoration = TextDecoration.Underline) else base, pl + r.first, pl + r.last + 1)
             }
+            if (chosen != null && !chosen.isEmpty()) addStyle(SpanStyle(background = c.gold.copy(alpha = 0.45f)), pl + chosen.first, (pl + chosen.last + 1).coerceAtMost(pl + text.length))
         }
     }
 
@@ -94,49 +104,73 @@ fun MarkedText(
                 drawLine(Color(0xFFD32F2F), Offset(b.left, b.bottom - 1f), Offset(b.right, b.bottom - 1f), strokeWidth = 2.5f)
             }
         }.pointerInput(text, anns, pl) {
-            detectTapGestures(
+            detectTapOrHoldDrag(
                 onTap = { offset ->
-                    val layout = layoutResult ?: return@detectTapGestures
+                    val layout = layoutResult ?: return@detectTapOrHoldDrag
                     val charOffset = layout.getOffsetForPosition(offset)
                     val textOffset = charOffset - pl
                     if (textOffset < 0) {
                         onPrefixTap?.invoke()
-                        return@detectTapGestures
+                        return@detectTapOrHoldDrag
                     }
                     val doubt = doubtful.firstOrNull { textOffset in it }
                     if (doubt != null) {
                         asking = doubt
-                        return@detectTapGestures
+                        return@detectTapOrHoldDrag
                     }
                     val hit = anns.firstOrNull { a ->
                         reanchor(text, a.start, a.end, a.quote)?.let { textOffset in it } == true
                     }
                     if (hit != null) {
                         state.annDraft = AnnDraft(hit, ref, lang.code, hit.start, hit.end, hit.quote)
-                        return@detectTapGestures
+                        return@detectTapOrHoldDrag
                     }
+                    state.selBar?.let { it.clear(); state.selBar = null }
+                    state.lookup = null
                     (onTextTap ?: onPrefixTap)?.invoke()
                 },
-                onLongPress = { offset ->
-                    val layout = layoutResult ?: return@detectTapGestures
+                onHoldStart = { offset ->
+                    val layout = layoutResult ?: return@detectTapOrHoldDrag
                     val charOffset = layout.getOffsetForPosition(offset)
-                    val textOffset = (charOffset - pl).coerceIn(0, text.length)
-                    val range = wordAt(text, textOffset)
-                    if (range != null) {
-                        val word = text.substring(range).trim()
-                        if (word.isNotEmpty()) {
-                            val s0 = range.first
-                            val e0 = range.last + 1
-                            state.selBar = SelBar(ref, lang, s0, e0, word) {
-                                state.selBar = null
-                            }
-                            state.lookup = WordLookup(word, lang, ref)
-                        }
-                    } else if (text.isNotEmpty()) {
-                        val word = text.split("\\s+".toRegex()).firstOrNull { it.isNotBlank() } ?: text.take(20)
+                    if (charOffset - pl < 0) {
+                        // Hold on the verse number: the verse's own actions.
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        state.verseSheet = ref
+                        anchor = null
+                        return@detectTapOrHoldDrag
+                    }
+                    val range = wordAt(text, (charOffset - pl).coerceIn(0, text.length))
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    anchor = range
+                    dragSel = range
+                    state.selBar?.let { it.clear(); state.selBar = null }
+                    if (range == null && text.isNotEmpty()) {
+                        val word = text.split(Regex("\\s+")).firstOrNull { it.isNotBlank() } ?: text.take(20)
                         state.lookup = WordLookup(word, lang, ref)
                     }
-                }
+                },
+                onHoldMove = { offset ->
+                    val a0 = anchor ?: return@detectTapOrHoldDrag
+                    val layout = layoutResult ?: return@detectTapOrHoldDrag
+                    val o = (layout.getOffsetForPosition(offset) - pl).coerceIn(0, text.length)
+                    val here = wordAt(text, o) ?: return@detectTapOrHoldDrag
+                    val s0 = minOf(a0.first, here.first)
+                    val e0 = maxOf(a0.last, here.last)
+                    if (dragSel != s0..e0) dragSel = s0..e0
+                },
+                onHoldEnd = {
+                    val sel = dragSel
+                    dragSel = null
+                    if (sel != null) {
+                        val tr = trimRange(text, sel.first, sel.last + 1)
+                        val quote = if (tr.isEmpty()) "" else text.substring(tr.first, tr.last + 1)
+                        if (quote.isNotEmpty()) {
+                            state.selBar = SelBar(ref, lang, tr.first, tr.last + 1, quote, text) { state.selBar = null }
+                            state.lookup = if (quote.any { it.isWhitespace() }) null else WordLookup(quote, lang, ref)
+                        }
+                    }
+                    anchor = null
+                },
             )
         }
     )
@@ -144,7 +178,7 @@ fun MarkedText(
 
 
 /** "word[?]" markers removed from [t]; returns the text without them and the character ranges of the doubtful words in it. */
-private fun splitDoubtful(t: String): Pair<String, List<IntRange>> {
+internal fun splitDoubtful(t: String): Pair<String, List<IntRange>> {
     if (!t.contains("[?]")) return t to emptyList()
     val out = StringBuilder()
     val ranges = ArrayList<IntRange>()
@@ -178,18 +212,18 @@ internal fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String,
                     ui,
                     "This word may have been misread when the book was typed from the scan. Is it spelled correctly?",
                     "स्कैन से पुस्तक टाइप करते समय यह शब्द गलत पढ़ा गया हो सकता है। क्या वर्तनी सही है?",
-                    "স্ক্যান থেকে বইটি টাইপ করার সময় এই শব্দটি ভুল পড়া হয়ে থাকতে পারে। বানান কি ঠিক?",
+                    "স্ক্যান থেকে বইটি টাইপ করার সময় এই শব্দটি ভুল পড়া হয়ে থাকতে পারে। বানান কি ঠিক?", "ସ୍କାନ୍‌ରୁ ବହି ଟାଇପ୍ କରିବା ବେଳେ ଏହି ଶବ୍ଦ ଭୁଲ ପଢ଼ାଯାଇଥାଇପାରେ। ଏହାର ବନାନ ଠିକ୍ ଅଛି କି?",
                 )
             )
         },
         confirmButton = {
             if (Corrections.enabled) TextButton(onClick = {
                 Corrections.open(context, ref, word)
-                android.widget.Toast.makeText(context, com.bhagavatam.app.data.tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।"), android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(context, com.bhagavatam.app.data.tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।", "ବିବରଣୀ କପି ହେଲା। ଚାଟ୍‌ରେ ପେଷ୍ଟ୍ କରନ୍ତୁ।"), android.widget.Toast.LENGTH_LONG).show()
                 onDone()
-            }) { Text(com.bhagavatam.app.data.tr(ui, "No, send the correct word", "नहीं, सही शब्द भेजें", "না, সঠিক শব্দ পাঠান")) }
+            }) { Text(com.bhagavatam.app.data.tr(ui, "No, send the correct word", "नहीं, सही शब्द भेजें", "না, সঠিক শব্দ পাঠান", "ନା, ଠିକ୍ ଶବ୍ଦ ପଠାନ୍ତୁ")) }
         },
-        dismissButton = { TextButton(onClick = onDone) { Text(com.bhagavatam.app.data.tr(ui, "Yes, it is correct", "हाँ, सही है", "হ্যাঁ, ঠিক আছে")) } },
+        dismissButton = { TextButton(onClick = onDone) { Text(com.bhagavatam.app.data.tr(ui, "Yes, it is correct", "हाँ, सही है", "হ্যাঁ, ঠিক আছে", "ହଁ, ଠିକ୍ ଅଛି")) } },
     )
 }
 

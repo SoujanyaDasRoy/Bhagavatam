@@ -193,6 +193,7 @@ fun SearchScreen(
     onOpenChapter: (Int, Int) -> Unit = { _, _ -> },
     onOpenVerse: (Int, Int) -> Unit = onOpenChapter,
     onOpenGlossary: () -> Unit = {},
+    onOpenDictionary: () -> Unit = {},
 ) {
     val openTarget: (Int, Int) -> Unit = { sk, ch ->
         onOpenVerse(sk, ch)
@@ -203,5 +204,6 @@ fun SearchScreen(
         onOpenChapter = openTarget,
         onOpenVerse = openTarget,
         onOpenGlossary = onOpenGlossary,
+        onOpenDictionary = onOpenDictionary,
     )
 }

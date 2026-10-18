@@ -22,6 +22,9 @@ import com.bhagavatam.app.audio.stream.StreamStatus
 import com.bhagavatam.app.audio.stream.YouTubeStreamPlayer
 import com.bhagavatam.app.data.BENGALI_READY
 import com.bhagavatam.app.data.Annotation
+import com.bhagavatam.app.data.ReviewCard
+import com.bhagavatam.app.data.ReviewScheduler
+import com.bhagavatam.app.data.ReviewStore
 import com.bhagavatam.app.data.AnnDraft
 import com.bhagavatam.app.data.AnnotationStore
 import com.bhagavatam.app.data.SelBar
@@ -84,7 +87,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var showIast by mutableStateOf(prefs.getBoolean("showIast", false))
         private set
     /** Meanings of a tapped word are fetched from Wiktionary when this is on (only the word is sent). */
-    var onlineMeanings by mutableStateOf(prefs.getBoolean("onlineMeanings", true))
+    var onlineMeanings by mutableStateOf(prefs.getBoolean("onlineMeanings", false))
         private set
     var meaningLangMode by mutableStateOf(
         runCatching { MeaningLangMode.valueOf(prefs.getString("meaningLangMode", MeaningLangMode.WORD_LANG.name) ?: MeaningLangMode.WORD_LANG.name) }.getOrDefault(MeaningLangMode.WORD_LANG)
@@ -95,7 +98,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var showHi by mutableStateOf(prefs.getBoolean("showHi", prefs.getString("uiLang", "EN") == "HI"))
         private set
     var showBn by mutableStateOf(prefs.getBoolean("showBn", prefs.getString("uiLang", "EN") == "BN") && BENGALI_READY)
-    var showOr by mutableStateOf(prefs.getBoolean("showOr", false) && com.bhagavatam.app.data.ODIA_READY)
+    var showOr by mutableStateOf(prefs.getBoolean("showOr", prefs.getString("uiLang", "EN") == "OR") && com.bhagavatam.app.data.ODIA_READY)
         private set
     var showEn by mutableStateOf(prefs.getBoolean("showEn", prefs.getString("uiLang", "EN") == "EN" || (!prefs.getBoolean("showHi", false) && !prefs.getBoolean("showBn", false))))
         private set
@@ -145,6 +148,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
 
     val strings get() = stringsFor(uiLang)
+    /** Names of the parts of the book (Mahatmya, Skandha, Chapter, Shloka): they are the book's words, so they follow the reading language, not the app language. */
+    val bookStrings get() = stringsFor(titleLang)
 
     private fun save(block: android.content.SharedPreferences.Editor.() -> Unit) = with(prefs.edit()) { block(); apply() }
 
@@ -155,12 +160,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
         // First run: the translation shown under the shloka is the language the person chose, and no other, so the first
         // page is not mixed. After onboarding the person's own switches are never touched here.
         if (!onboarded && l != Lang.SA) {
-            updateShowHi(l == Lang.HI); updateShowBn(l == Lang.BN && BENGALI_READY); updateShowEn(l == Lang.EN)
+            updateShowHi(l == Lang.HI); updateShowBn(l == Lang.BN && BENGALI_READY); updateShowOr(l == Lang.OR && com.bhagavatam.app.data.ODIA_READY); updateShowEn(l == Lang.EN)
         }
         when (l) {
             Lang.HI -> if (!showHi && !showBn && !showEn) updateShowHi(true)
             Lang.BN -> if (!showHi && !showBn && !showEn) updateShowBn(true)
             Lang.EN -> if (!showHi && !showBn && !showEn) updateShowEn(true)
+            Lang.OR -> if (!showHi && !showBn && !showOr && !showEn) updateShowOr(true)
             else -> {}
         }
     }
@@ -231,9 +237,21 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateJustifyText(on: Boolean) { justifyText = on; save { putBoolean("justifyText", on) } }
     fun updateShowVerseNumbers(on: Boolean) { showVerseNumbers = on; save { putBoolean("showVerseNumbers", on) } }
     fun updateShowChapterArt(on: Boolean) { showChapterArt = on; save { putBoolean("showChapterArt", on) } }
+    var showSpeakers by mutableStateOf(prefs.getBoolean("showSpeakers", true))
+    fun updateShowSpeakers(on: Boolean) { showSpeakers = on; save { putBoolean("showSpeakers", on) } }
     fun updateShowReadTime(on: Boolean) { showReadTime = on; save { putBoolean("showReadTime", on) } }
     fun updateKeepScreenOnReading(on: Boolean) { keepScreenOnReading = on; save { putBoolean("keepScreenOnReading", on) } }
     fun updateFollowAudio(on: Boolean) { followAudio = on; save { putBoolean("followAudio", on) } }
+    /** Names the reader gave the four highlight colours; a blank one falls back to the colour's own name in the app language. */
+    var markNames by mutableStateOf(prefs.getString("markNames", "")!!.split("\n").let { s -> List(4) { s.getOrElse(it) { "" } } })
+    fun markName(i: Int): String = markNames.getOrElse(i) { "" }.ifBlank {
+        listOf(com.bhagavatam.app.data.tr(uiLang, "Yellow", "पीला", "হলুদ", "ହଳଦିଆ"), com.bhagavatam.app.data.tr(uiLang, "Green", "हरा", "সবুজ", "ସବୁଜ"),
+            com.bhagavatam.app.data.tr(uiLang, "Blue", "नीला", "নীল", "ନୀଳ"), com.bhagavatam.app.data.tr(uiLang, "Pink", "गुलाबी", "গোলাপি", "ଗୋଲାପୀ")).getOrElse(i) { "" }
+    }
+    fun updateMarkName(i: Int, name: String) {
+        markNames = markNames.toMutableList().also { it[i] = name.replace("\n", " ").take(24) }
+        save { putString("markNames", markNames.joinToString("\n")) }
+    }
     fun updateDefaultMark(i: Int) { defaultMark = i.coerceIn(0, 3); save { putInt("defaultMark", defaultMark) } }
     fun updateTextScale(v: Float) { textScale = v; saveScaleDebounced { putFloat("textScale", v) } }
     fun updateKeepPlaying(on: Boolean) { keepPlaying = on; save { putBoolean("keepPlaying", on) } }
@@ -253,6 +271,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
         when (uiLang) {
             Lang.HI -> listOf(Lang.HI)
             Lang.BN -> listOf(Lang.BN)
+            Lang.OR -> listOf(Lang.OR)
             else -> listOf(Lang.EN)
         }
     }
@@ -269,8 +288,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var hasRead by mutableStateOf(prefs.getBoolean("hasRead", false))
         private set
 
+    /** The last chapters opened, most recent first, as "skandha.adhyaya" (at most five). */
+    val recentChapters = mutableStateListOf<String>().apply { addAll(prefs.getString("recentChapters", "")!!.split("\n").filter { it.isNotBlank() }) }
+
     fun markRead(s: Int, a: Int, v: Int) {
         lastSkandha = s; lastAdhyaya = a; lastVerse = v; hasRead = true
+        com.bhagavatam.app.data.pushRecent(recentChapters.toList(), "$s.$a").let { recentChapters.clear(); recentChapters.addAll(it) }
+        save { putString("recentChapters", recentChapters.joinToString("\n")) }
         save { putInt("lastS", s); putInt("lastA", a); putInt("lastV", v); putBoolean("hasRead", true) }
     }
 
@@ -346,11 +370,21 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var lookup by mutableStateOf<WordLookup?>(null)
     var selBar by mutableStateOf<SelBar?>(null)
 
+    /** The verse whose action sheet is open (a reference such as "10.29.1"), and a verse the reader should scroll to when it opens. */
+    var verseSheet by mutableStateOf<String?>(null)
+    var scrollToVerse by mutableStateOf<String?>(null)
+
+    /** A short message with an optional action (Undo), shown above the reader controls for a few seconds. */
+    class Snack(val text: String, val action: String? = null, val onAction: (() -> Unit)? = null)
+    var snack by mutableStateOf<Snack?>(null)
+    fun toast(text: String, action: String? = null, onAction: (() -> Unit)? = null) { snack = Snack(text, action, onAction) }
+
     fun annotationsFor(ref: String, layer: String) = annotations.filter { it.ref == ref && it.layer == layer }
 
-    fun addAnnotation(a: Annotation) {
+    fun addAnnotation(a: Annotation): Long {
         val id = annotationStore.insert(a)
         annotations.add(0, a.copy(id = id))
+        return id
     }
 
     fun updateAnnotation(a: Annotation) {
@@ -363,6 +397,27 @@ class AppState(app: Application) : AndroidViewModel(app) {
         annotationStore.delete(id)
         annotations.removeAll { it.id == id }
     }
+
+    // ---------- review: verses and words to be asked again (local only) ----------
+    private val reviewStore = ReviewStore(annotationStore)
+    val reviewCards = mutableStateListOf<ReviewCard>().apply { addAll(reviewStore.all()) }
+
+    fun addReview(kind: String, key: String) {
+        val id = reviewStore.add(kind, key, System.currentTimeMillis())
+        if (id != -1L && reviewCards.none { it.id == id }) reviewCards.add(ReviewCard(id, kind, key, 0, ReviewScheduler.dueAt(System.currentTimeMillis(), 0), System.currentTimeMillis()))
+    }
+    fun isInReview(kind: String, key: String) = reviewCards.any { it.kind == kind && it.key == key }
+    fun answerReview(card: ReviewCard, remembered: Boolean, now: Long = System.currentTimeMillis()) {
+        val stage = ReviewScheduler.after(card.stage, remembered)
+        val next = card.copy(stage = stage, dueAt = ReviewScheduler.dueAt(now, stage))
+        reviewStore.update(next)
+        val i = reviewCards.indexOfFirst { it.id == card.id }
+        if (i >= 0) reviewCards[i] = next
+    }
+    fun removeReview(card: ReviewCard) { reviewStore.remove(card.id); reviewCards.removeAll { it.id == card.id } }
+    /** Cards that are due and can still be shown (their shloka or word is in the book), so Home and the Review screen count the same cards. */
+    fun dueReviewCards(now: Long = System.currentTimeMillis()) = reviewCards.filter { ReviewScheduler.isDue(now, it.dueAt, it.stage) && com.bhagavatam.app.data.reviewPrompt(it, com.bhagavatam.app.data.SampleData::verse) != null }
+    fun dueReviewCount(now: Long = System.currentTimeMillis()): Int = dueReviewCards(now).size
 
     // ---------- saved words (local only) ----------
     private val savedWordStore = com.bhagavatam.app.data.SavedWordStore(annotationStore)
@@ -408,15 +463,15 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun resetSettings() {
         followSystem = true; lightTheme = ReaderTheme.Prabhat; darkTheme = ReaderTheme.Sandhya; readerTheme = ReaderTheme.Prabhat
         textScale = 1f; lineScale = 1f; showDaily = true
-        justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true
-        keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = true
+        justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true; showSpeakers = true
+        keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = false
         meaningLangMode = MeaningLangMode.WORD_LANG
         keepPlaying = true; playThrough = PlayThrough.SKANDHA; keepScreenOn = true; speed = 1f; pauseScale = 1f
         save {
             putBoolean("followSystem", true); putString("lightTheme", "Prabhat"); putString("darkTheme", "Sandhya"); putString("theme", "Prabhat")
             putFloat("textScale", 1f); putFloat("lineScale", 1f); putBoolean("showDaily", true)
-            putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true)
-            putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", true)
+            putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true); putBoolean("showSpeakers", true)
+            putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", false)
             putString("meaningLangMode", MeaningLangMode.WORD_LANG.name)
             putBoolean("keepPlaying", true); putString("playThrough", PlayThrough.SKANDHA.name); putBoolean("keepScreenOn", true); putFloat("speed", 1f); putFloat("pauseScale", 1f)
         }
@@ -565,7 +620,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     val contentLang: Lang get() = if (titleLang == Lang.OR) uiLang else titleLang
 
     /** The language a chapter's title is shown in: Odia where the contents list gave it, else the content language. */
-    fun titleLangFor(s: Int, a: Int): Lang = if (titleLang == Lang.OR && SampleData.hasOdiaTitle(s, a)) Lang.OR else contentLang
+    fun titleLangFor(s: Int, a: Int): Lang = if (titleLang == Lang.OR && SampleData.hasOdiaTitle(s, a)) Lang.OR else if (contentLang == Lang.OR) Lang.EN else contentLang
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

@@ -113,7 +113,7 @@ fun DownloadsScreen(state: AppState) {
                     ) {
                         Dot(if (sk.num == 0) Brand.Gold else Brand.Skandha[sk.num - 1], 10)
                         Column(Modifier.weight(1f)) {
-                            Text(if (sk.num == 0) s.mahatmya else "${localDigits("${s.skandha} ${sk.num}", ui)} · ${sk.title(ui)}", fontSize = 16.sp)
+                            Text(if (sk.num == 0) state.bookStrings.mahatmya else "${localDigits("${state.bookStrings.skandha} ${sk.num}", state.titleLang)} · ${sk.title(state.contentLang)}", fontSize = 16.sp)
                             Text(
                                 when (st) { PackState.DONE -> s.onPhone; PackState.DOWNLOADING -> s.downloading; PackState.NONE -> s.sanskritAudio },
                                 fontSize = 15.sp, color = Brand.Secondary,
@@ -122,12 +122,12 @@ fun DownloadsScreen(state: AppState) {
                         when (st) {
                             PackState.DONE -> Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(painterResource(Ic.Check), null, tint = Brand.Green)
-                                IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove pack", "पैक हटाएं", "প্যাক মুছুন"), tint = Brand.Tertiary) }
+                                IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove pack", "पैक हटाएं", "প্যাক মুছুন", "ପ୍ୟାକ୍ ହଟାନ୍ତୁ"), tint = Brand.Tertiary) }
                             }
                             PackState.DOWNLOADING -> Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(Modifier.size(24.dp), color = Brand.Teal, strokeWidth = 3.dp)
                             }
-                            PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), tr(ui, "Download", "डाउनलोड करें", "ডাউনলোড করুন"), tint = Brand.Kesari) }
+                            PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), tr(ui, "Download", "डाउनलोड करें", "ডাউনলোড করুন", "ଡାଉନଲୋଡ୍"), tint = Brand.Kesari) }
                         }
                     }
                 }
@@ -147,36 +147,27 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
         2 -> state.highlights.keys.toList()
         else -> (state.bookmarks + state.highlights.keys).distinct()
     }
-    // Passage marks and notes made in the reader: all of them, passage bookmarks only, or highlights and notes.
-    val marks = state.annotations.filter { a ->
+    // Passage marks and notes made in the reader: all of them, passage bookmarks only, or highlights and notes; then the search and colour chip.
+    var query by remember { mutableStateOf("") }
+    var colourChip by remember { mutableIntStateOf(0) }
+    val kindMarks = state.annotations.filter { a ->
         when (filter) { 1 -> a.kind == com.bhagavatam.app.data.AnnKind.BOOKMARK; 2 -> a.kind != com.bhagavatam.app.data.AnnKind.BOOKMARK; else -> true }
     }
+    val marks = remember(kindMarks, query, colourChip) { filterMarks(kindMarks, query, colourChip) }
+    val markGroups = remember(marks) { groupMarks(marks) }
     Box(Modifier.fillMaxSize()) {
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = BottomRoom), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { NavBar(s.tabMe, onBack) }
         item { Text(s.saved, Modifier.padding(horizontal = 20.dp), style = MaterialTheme.typography.displaySmall) }
         item { Segmented(listOf(s.all, s.bookmarks, s.highlights), filter, { filter = it }) }
+        if (kindMarks.isNotEmpty()) item { NotebookControls(state, query, { query = it }, colourChip, { colourChip = it }, marks) }
         if (marks.isNotEmpty()) {
-            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Secondary) }
-            items(marks, key = { "m${it.id}" }) { a ->
-                val v = SampleData.verse(a.ref)
-                Column(
-                    Modifier.padding(horizontal = 16.dp).fillMaxWidth().animateItem().clip(Radius.group).background(Brand.Card)
-                        .clickable { state.annDraft = com.bhagavatam.app.data.AnnDraft(a, a.ref, a.layer, a.start, a.end, a.quote) }.padding(horizontal = 16.dp, vertical = 14.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Box(Modifier.size(10.dp).clip(CircleShape).background(if (a.colour == 0L) Brand.Gold else Color(a.colour)))
-                        Text(localDigits(a.ref, ui), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
-                        Box(Modifier.weight(1f))
-                        if (v != null) Text(tr(ui, "Open chapter", "अध्याय खोलें", "অধ্যায় খুলুন"), Modifier.clickable { onOpen(v.skandha, v.adhyaya) }.padding(8.dp), fontSize = 15.sp, fontWeight = FontWeight.Medium, color = Brand.Kesari)
-                    }
-                    Text(a.quote, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic, fontSize = 15.sp, lineHeight = 22.sp, color = Brand.Ink, maxLines = 3)
-                    if (a.note.isNotBlank()) Text(a.note, fontSize = 15.sp, lineHeight = 20.sp, color = Brand.Secondary)
-                }
-            }
+            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট", "ଚିହ୍ନ ଓ ନୋଟ୍"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Secondary) }
+            notebookMarks(state, markGroups, onOpen)
+        } else if (kindMarks.isNotEmpty()) item {
+            Text(tr(ui, "No note matches.", "कोई नोट नहीं मिला।", "কোনো নোট মেলেনি।", "କୌଣସି ନୋଟ୍ ମେଳ ଖାଉନାହିଁ।"), Modifier.padding(horizontal = 20.dp, vertical = 12.dp), fontSize = 15.sp, color = Brand.Secondary)
         }
-        if (refs.isEmpty() && marks.isEmpty()) item {
+        if (refs.isEmpty() && kindMarks.isEmpty()) item {
             val t = com.bhagavatam.app.data.settingsTextFor(ui)
             Column(Modifier.fillMaxWidth().padding(horizontal = 40.dp, vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Icon(painterResource(Ic.Bookmark), null, tint = Brand.Secondary, modifier = Modifier.size(32.dp))
@@ -199,7 +190,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
                 enableDismissFromStartToEnd = false, enableDismissFromEndToStart = removable,
                 backgroundContent = {
                     Box(Modifier.fillMaxSize().clip(Radius.group).background(Brand.Kesari), contentAlignment = Alignment.CenterEnd) {
-                        Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান"), tint = Brand.OnKesari, modifier = Modifier.padding(end = 22.dp))
+                        Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ"), tint = Brand.OnKesari, modifier = Modifier.padding(end = 22.dp))
                     }
                 },
             ) {
@@ -273,7 +264,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
         Column {
             SectionLabel(s.appLanguage)
             GroupCard {
-                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri)).forEachIndexed { i, (l, n, f) ->
+                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri), Triple(Lang.OR, "ଓଡ଼ିଆ", readingFont(Lang.OR))).forEachIndexed { i, (l, n, f) ->
                     if (i > 0) RowDivider()
                     LanguageOption(n, nameIn(state.uiLang, l), f, state.uiLang == l) { state.updateUiLang(l) }
                 }
@@ -286,7 +277,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
                 listOf(
                     Triple(Lang.SA, "संस्कृत" to s.readSa, NotoDevanagari), Triple(Lang.HI, "हिन्दी" to s.readHi, TiroHindi),
                     Triple(Lang.BN, "বাংলা" to s.readBn, NotoSerifBengali), Triple(Lang.EN, "English" to s.readEn, EnglishReading),
-                    Triple(Lang.OR, "ଓଡ଼ିଆ" to tr(state.uiLang, "Odia", "ओड़िया", "ওড়িয়া"), com.bhagavatam.app.ui.theme.EnglishReading),
+                    Triple(Lang.OR, "ଓଡ଼ିଆ" to tr(state.uiLang, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ"), com.bhagavatam.app.ui.theme.NotoSerifOriya),
                 ).filter { (BENGALI_READY || it.first != Lang.BN) && (com.bhagavatam.app.data.ODIA_READY || it.first != Lang.OR) }.forEachIndexed { i, (l, names, f) ->
                     if (i > 0) RowDivider()
                     LanguageOption(names.first, names.second, f, state.readLang == l) { state.updateReadLang(l) }
@@ -307,7 +298,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
                     SwitchRow(s.hindiTr, state.showHi, state::updateShowHi); RowDivider()
                     if (BENGALI_READY) { SwitchRow(s.bengaliTr, state.showBn, state::updateShowBn); RowDivider() }
                     SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
-                    if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ"), state.showOr, state::updateShowOr) }
+                    if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ", "ଓଡ଼ିଆ ଅନୁବାଦ"), state.showOr, state::updateShowOr) }
                 }
             }
         }

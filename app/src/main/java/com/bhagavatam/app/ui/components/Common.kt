@@ -83,7 +83,11 @@ fun LargeTitle(title: String, subtitle: String? = null, modifier: Modifier = Mod
         modifier.fillMaxWidth().statusBarsPadding().padding(start = horizontalPadding, end = horizontalPadding, top = 14.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(title, style = MaterialTheme.typography.displaySmall, color = Brand.Ink)
+        // a page title this size must not break in the middle of a word when the phone's text size is at its largest
+        val d = androidx.compose.ui.platform.LocalDensity.current
+        androidx.compose.runtime.CompositionLocalProvider(
+            androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(d.density, d.fontScale.coerceAtMost(1.3f)),
+        ) { Text(title, Modifier.fillMaxWidth(), style = MaterialTheme.typography.displaySmall, color = Brand.Ink, maxLines = 2) }
         if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = Brand.Secondary)
     }
 }
@@ -249,7 +253,7 @@ fun Pill(text: String, on: Boolean, onClick: () -> Unit, fontFamily: FontFamily?
     val edge by animateColorAsState(if (on) Brand.Kesari else Brand.Separator, tween(Motion.press), label = "pillEdge")
     Box(Modifier.heightIn(min = Touch.min).clip(CircleShape).selectable(selected = on, role = Role.Tab, onClick = onClick), contentAlignment = Alignment.Center) {
         Row(
-            Modifier.height(36.dp).clip(CircleShape)
+            Modifier.heightIn(min = 36.dp).clip(CircleShape)
                 .background(fill)
                 .border(1.dp, edge, CircleShape)
                 .padding(horizontal = 14.dp),

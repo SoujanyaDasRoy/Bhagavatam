@@ -27,6 +27,9 @@ object UserBackup {
             items.put(o)
         }
         val root = JSONObject().put("format", FORMAT).put("items", items)
+        // notes, saved words and review cards live in annotations.db, not in the preferences
+        val db = AnnotationStore(ctx).readableDatabase
+        for (table in TABLES) root.put(table, BackupRows.toJson(dump(db, table)))
         ctx.contentResolver.openOutputStream(to)!!.use { it.write(root.toString().toByteArray(Charsets.UTF_8)) }
         items.length()
     }
@@ -50,7 +53,43 @@ object UserBackup {
                 "set" -> ed.putStringSet(k, o.getJSONArray("v").let { a -> (0 until a.length()).map { a.getString(it) }.toSet() })
             }
         }
+        // every table is read and checked before anything is written, then all three are replaced in one transaction
+        val db = AnnotationStore(ctx).writableDatabase
+        val plan = TABLES.mapNotNull { table -> BackupRows.fromRoot(root, table)?.let { rows -> BackupRows.requireColumns(table, rows, columnsOf(db, table)); table to rows } }
+        db.beginTransaction()
+        try {
+            for ((table, rows) in plan) restore(db, table, rows)
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
         check(ed.commit()) { "could not save" }
         items.length()
+    }
+
+    private val TABLES = listOf("annotation", "saved_word", "review")
+
+    private fun columnsOf(db: android.database.sqlite.SQLiteDatabase, table: String): Set<String> =
+        db.rawQuery("SELECT * FROM $table LIMIT 0", null).use { it.columnNames.toSet() }
+
+    private fun dump(db: android.database.sqlite.SQLiteDatabase, table: String): List<Map<String, Any?>> =
+        db.rawQuery("SELECT * FROM $table", null).use { c ->
+            buildList {
+                while (c.moveToNext()) add((0 until c.columnCount).associate { i ->
+                    c.getColumnName(i) to when (c.getType(i)) {
+                        android.database.Cursor.FIELD_TYPE_INTEGER -> c.getLong(i)
+                        android.database.Cursor.FIELD_TYPE_FLOAT -> c.getDouble(i)
+                        android.database.Cursor.FIELD_TYPE_NULL -> null
+                        else -> c.getString(i)
+                    }
+                })
+            }
+        }
+
+    private fun restore(db: android.database.sqlite.SQLiteDatabase, table: String, rows: List<Map<String, Any?>>) {
+        db.delete(table, null, null)
+        for (r in rows) {
+            val v = android.content.ContentValues()
+            for ((k, x) in r) when (x) { null -> v.putNull(k); is Long -> v.put(k, x); is Double -> v.put(k, x); else -> v.put(k, x.toString()) }
+            db.insertOrThrow(table, null, v)
+        }
     }
 }

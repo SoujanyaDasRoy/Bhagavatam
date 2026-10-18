@@ -109,32 +109,34 @@ fun ReadingSettings(state: AppState, onBack: () -> Unit) {
             }
         }
         SettingsGroup(
-            tr(ui, "Page layout", "पृष्ठ का रूप", "পাতার বিন্যাস"),
+            tr(ui, "Page layout", "पृष्ठ का रूप", "পাতার বিন্যাস", "ପୃଷ୍ଠା ବିନ୍ଯାସ"),
             tr(ui, "Justified text has straight edges on both sides. Hiding the picture or the reading time gives a plainer page.",
                 "सीधे किनारों वाला पाठ दोनों ओर बराबर होता है। चित्र या पाठ-समय छिपाने से पृष्ठ सादा दिखता है।",
-                "জাস্টিফাইড লেখার দুই পাশই সোজা থাকে। ছবি বা পড়ার সময় লুকালে পাতা আরও সাদামাটা দেখায়।"),
+                "জাস্টিফাইড লেখার দুই পাশই সোজা থাকে। ছবি বা পড়ার সময় লুকালে পাতা আরও সাদামাটা দেখায়।", "ଜଷ୍ଟିଫାଏଡ୍ ଟେକ୍ସଟ୍‌ର ଦୁଇ ପାଖ ସିଧା ଥାଏ। ଚିତ୍ର କିମ୍ବା ପଠନ ସମୟ ଲୁଚାଇଲେ ପୃଷ୍ଠା ସରଳ ହୁଏ।"),
         ) {
-            SwitchRow(tr(ui, "Justify text", "पाठ बराबर करें", "লেখা সমান করুন"), state.justifyText, state::updateJustifyText); RowDivider()
-            SwitchRow(tr(ui, "Verse numbers", "श्लोक संख्या", "শ্লোক সংখ্যা"), state.showVerseNumbers, state::updateShowVerseNumbers); RowDivider()
-            SwitchRow(tr(ui, "Chapter picture", "अध्याय का चित्र", "অধ্যায়ের ছবি"), state.showChapterArt, state::updateShowChapterArt); RowDivider()
-            SwitchRow(tr(ui, "Reading time", "पाठ-समय", "পড়ার সময়"), state.showReadTime, state::updateShowReadTime)
+            SwitchRow(tr(ui, "Justify text", "पाठ बराबर करें", "লেখা সমান করুন", "ଟେକ୍ସଟ୍ ଜଷ୍ଟିଫାଏ କରନ୍ତୁ"), state.justifyText, state::updateJustifyText); RowDivider()
+            SwitchRow(tr(ui, "Shloka numbers", "श्लोक संख्या", "শ্লোক সংখ্যা", "ଶ୍ଳୋକ ସଂଖ୍ଯା"), state.showVerseNumbers, state::updateShowVerseNumbers); RowDivider()
+            SwitchRow(tr(ui, "Chapter picture", "अध्याय का चित्र", "অধ্যায়ের ছবি", "ଅଧ୍ଯାୟର ଚିତ୍ର"), state.showChapterArt, state::updateShowChapterArt); RowDivider()
+            SwitchRow(tr(ui, "Reading time", "पाठ-समय", "পড়ার সময়", "ପଠନ ସମୟ"), state.showReadTime, state::updateShowReadTime)
+            RowDivider()
+            SwitchRow(tr(ui, "Show who is speaking", "वक्ता का नाम दिखाएँ", "বক্তার নাম দেখান", "ବକ୍ତାଙ୍କ ନାମ ଦେଖାନ୍ତୁ"), state.showSpeakers, state::updateShowSpeakers)
         }
         SettingsGroup(s.reading, s.showSanskritNote) {
             SwitchRow(s.showSanskrit, state.showSanskrit, state::updateShowSanskrit)
         }
         SettingsGroup(
-            tr(ui, "Screen", "स्क्रीन", "স্ক্রিন"),
-            tr(ui, "Stops the screen from turning off while a chapter is open.", "अध्याय खुला होने पर स्क्रीन बन्द नहीं होती।", "অধ্যায় খোলা থাকলে স্ক্রিন বন্ধ হয় না।"),
+            tr(ui, "Screen", "स्क्रीन", "স্ক্রিন", "ସ୍କ୍ରିନ୍"),
+            tr(ui, "Stops the screen from turning off while a chapter is open.", "अध्याय खुला होने पर स्क्रीन बन्द नहीं होती।", "অধ্যায় খোলা থাকলে স্ক্রিন বন্ধ হয় না।", "ଅଧ୍ଯାୟ ଖୋଲା ଥିବା ବେଳେ ସ୍କ୍ରିନ୍ ବନ୍ଦ ହେବାକୁ ଦିଏ ନାହିଁ।"),
         ) {
-            SwitchRow(tr(ui, "Keep screen on while reading", "पढ़ते समय स्क्रीन चालू रखें", "পড়ার সময় স্ক্রিন চালু রাখুন"), state.keepScreenOnReading, state::updateKeepScreenOnReading)
+            SwitchRow(tr(ui, "Keep screen on while reading", "पढ़ते समय स्क्रीन चालू रखें", "পড়ার সময় স্ক্রিন চালু রাখুন", "ପଢ଼ିବା ବେଳେ ସ୍କ୍ରିନ୍ ଚାଲୁ ରଖନ୍ତୁ"), state.keepScreenOnReading, state::updateKeepScreenOnReading)
         }
         SettingsGroup(
-            tr(ui, "Tips", "सुझाव", "টিপস"),
+            tr(ui, "Tips", "सुझाव", "টিপস", "ଟିପ୍ସ"),
             tr(ui, "Short hints about listening, word meanings and languages. Turning this on shows them again.",
                 "सुनने, शब्दार्थ और भाषाओं के बारे में छोटे सुझाव। इसे चालू करने पर वे फिर से दिखते हैं।",
-                "শোনা, শব্দের অর্থ ও ভাষা সম্পর্কে ছোট ইঙ্গিত। চালু করলে সেগুলো আবার দেখানো হবে।"),
+                "শোনা, শব্দের অর্থ ও ভাষা সম্পর্কে ছোট ইঙ্গিত। চালু করলে সেগুলো আবার দেখানো হবে।", "ଶୁଣିବା, ଶବ୍ଦାର୍ଥ ଓ ଭାଷା ବିଷୟରେ ଛୋଟ ଇଙ୍ଗିତ। ଚାଲୁ କଲେ ସେଗୁଡ଼ିକ ପୁଣି ଦେଖାଯିବ।"),
         ) {
-            SwitchRow(tr(ui, "Show tips", "सुझाव दिखाएँ", "টিপস দেখান"), state.tipsEnabled, state::updateTipsEnabled)
+            SwitchRow(tr(ui, "Show tips", "सुझाव दिखाएँ", "টিপস দেখান", "ଟିପ୍ସ ଦେଖାନ୍ତୁ"), state.tipsEnabled, state::updateTipsEnabled)
         }
     }
 }
