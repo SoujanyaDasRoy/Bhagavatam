@@ -90,8 +90,9 @@ internal fun nameIn(ui: Lang, l: Lang) = when (l) {
 }
 
 /** The text on the pill: the language being read, or a plain description when the shloka is shown too. */
-internal fun pillText(ui: Lang, withShloka: Boolean, readLang: Lang): String =
-    if (withShloka) tr(ui, "Shloka + translation", "श्लोक + अनुवाद", "শ্লোক + অনুবাদ", "ଶ୍ଳୋକ + ଅନୁବାଦ") else ownName(if (readLang == Lang.SA) Lang.EN else readLang)
+internal fun pillText(ui: Lang, withShloka: Boolean, readLang: Lang, translation: Lang? = null): String =
+    if (withShloka && translation != null) tr(ui, "Shloka", "श्लोक", "শ্লোক", "ଶ୍ଳୋକ") + " + " + ownName(translation)
+    else if (withShloka) tr(ui, "Shloka + translation", "श्लोक + अनुवाद", "শ্লোক + অনুবাদ", "ଶ୍ଳୋକ + ଅନୁବାଦ") else ownName(if (readLang == Lang.SA) Lang.EN else readLang)
 
 /** Changing to a language that has no text for this chapter is not offered. */
 internal fun canPick(available: Set<Lang>, l: Lang) = l in available
@@ -105,7 +106,7 @@ internal fun canTurnOff(layersOn: Int) = layersOn > 1
 fun LanguagePill(state: AppState, compact: Boolean, onLongClick: (() -> Unit)? = null, onClick: () -> Unit) {
     val c = LocalReaderColors.current
     val ui = state.uiLang
-    val text = pillText(ui, state.showSanskrit, state.readLang)
+    val text = pillText(ui, state.showSanskrit, state.readLang, state.alongsideLayers().firstOrNull())
     val font = if (state.showSanskrit) null else readingFont(if (state.readLang == Lang.SA) Lang.EN else state.readLang)
     val description = tr(ui, "Reading language: $text. Tap to change.", "पढ़ने की भाषा: $text। बदलने के लिए छुएँ।", "পড়ার ভাষা: $text। বদলাতে ছুঁয়ে দেখুন।", "ପଠନ ଭାଷା: $text। ବଦଳାଇବାକୁ ଦବାନ୍ତୁ।")
     Box(

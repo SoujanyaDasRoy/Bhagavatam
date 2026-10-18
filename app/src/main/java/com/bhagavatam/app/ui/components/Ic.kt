@@ -56,4 +56,6 @@ object Ic {
     val Sliders = R.drawable.ic_sliders
     val ListMusic = R.drawable.ic_list_music
     val Shuffle = R.drawable.ic_shuffle
+    val Share = R.drawable.ic_share
+    val Note = R.drawable.ic_note
 }

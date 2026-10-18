@@ -1,5 +1,6 @@
 package com.bhagavatam.app.ui.screens
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -61,6 +62,7 @@ fun ReviewScreen(state: AppState, onBack: () -> Unit) {
             val next = state.reviewCards.filter { it.stage < ReviewScheduler.steps.size }.minOfOrNull { it.dueAt }
             val days = next?.let { ((it - System.currentTimeMillis() + 86_399_999L) / 86_400_000L).toInt().coerceAtLeast(1) }
             Column(Modifier.fillMaxSize().padding(32.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                androidx.compose.material3.Icon(androidx.compose.ui.res.painterResource(com.bhagavatam.app.ui.components.Ic.History), null, tint = Brand.Secondary, modifier = Modifier.padding(bottom = 12.dp).size(36.dp))
                 Text(
                     if (state.reviewCards.isEmpty()) tr(ui, "Nothing to review yet", "अभी दोहराने को कुछ नहीं", "এখনও দেখে নেওয়ার কিছু নেই", "ଏପର୍ଯ୍ୟନ୍ତ ସମୀକ୍ଷା ପାଇଁ କିଛି ନାହିଁ")
                     else tr(ui, "Nothing due", "अभी कुछ देय नहीं", "এখন কিছু বাকি নেই", "କିଛି ବାକି ନାହିଁ"),

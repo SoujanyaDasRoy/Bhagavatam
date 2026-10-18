@@ -41,8 +41,18 @@ fun cleanChapterTitle(title: String): String {
 
 /** An English chapter title without the footnote stars of the print ("Sūta* (Ugraśravā)") and with a capital first letter. */
 fun cleanEnglishTitle(title: String): String =
-    title.replace("*", "").replace(Regex(" {2,}"), " ").replace(" ,", ",").trim().replaceFirstChar { it.uppercase() }
+    plainRoman(title.replace("*", "")).replace(Regex(" {2,}"), " ").replace(" ,", ",").trim().replaceFirstChar { it.uppercase() }
 
 /** The text without the `[?]` marks that flag words the page reading was unsure of: for what leaves the app (copy, share, review answers). */
 fun stripDoubt(text: String): String =
     if ("[?]" !in text) text else text.replace("[?]", "").replace(Regex("[ \t]{2,}"), " ").replace(Regex(" +([,.;:!?])"), "$1")
+
+/** Roman letters with the scholarly marks taken off, as the app spells names on screen: "Śrī Kṛṣṇa" becomes "Shri Krishna". */
+fun plainRoman(s: String): String = buildString {
+    for (c in s) append(when (c) {
+        'ś', 'ṣ' -> "sh"; 'Ś', 'Ṣ' -> "Sh"; 'ṛ' -> "ri"; 'Ṛ' -> "Ri"; 'ṝ' -> "ri"
+        'ā' -> "a"; 'Ā' -> "A"; 'ī' -> "i"; 'Ī' -> "I"; 'ū' -> "u"; 'Ū' -> "U"
+        'ṭ' -> "t"; 'Ṭ' -> "T"; 'ḍ' -> "d"; 'Ḍ' -> "D"; 'ṇ', 'ṅ', 'ñ' -> "n"; 'Ṇ', 'Ṅ' -> "N"
+        'ṃ', 'ṁ' -> "m"; 'ḥ' -> "h"; 'ḷ' -> "l"; 'Ḷ' -> "L"; else -> c.toString()
+    })
+}

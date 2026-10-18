@@ -219,18 +219,6 @@ fun HomeScreen(
                     size = 16f, color = Brand.Gold, fontWeight = FontWeight.Medium,
                 )
             }
-            // One tap between the light and the dark look; the full choice lives in Settings.
-            Box(
-                Modifier.size(Touch.min).clip(CircleShape).background(Brand.Card).border(1.dp, Brand.Separator, CircleShape)
-                    .clickable(onClickLabel = tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন", if (dark) "ହାଲୁକା ରୂପ ବାଛନ୍ତୁ" else "ଗାଢ଼ ରୂପ ବାଛନ୍ତୁ"), role = Role.Button) {
-                        state.setThemeMode(if (dark) ThemeMode.LIGHT else ThemeMode.DARK)
-                    },
-                contentAlignment = Alignment.Center,
-            ) {
-                Crossfade(dark, animationSpec = tween(Motion.sheet), label = "themeIcon") { d ->
-                    Icon(painterResource(if (d) Ic.Sun else Ic.Bedtime), tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন", if (dark) "ହାଲୁକା ରୂପ ବାଛନ୍ତୁ" else "ଗାଢ଼ ରୂପ ବାଛନ୍ତୁ"), tint = Brand.Kesari, modifier = Modifier.size(22.dp))
-                }
-            }
         }
         com.bhagavatam.app.ui.components.UpdateBanner(state, Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp))
         // Rows of cards run edge to edge, so each section carries its own side padding.
@@ -276,7 +264,8 @@ fun HomeScreen(
             }
             // Shloka of the day
             val v = SampleData.shlokaOfTheDay
-            if (state.showDaily) Box(Modifier.reveal(5, playIntro).padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.card).background(Brand.Card).border(1.dp, Brand.Separator, Radius.card)) {
+            if (state.showDaily) Box(Modifier.reveal(5, playIntro).padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.card).background(Brand.Card).border(1.dp, Brand.Separator, Radius.card)
+                .clickable(role = Role.Button, onClickLabel = tr(ui, "Open this shloka", "यह श्लोक खोलें", "এই শ্লোক খুলুন", "ଏହି ଶ୍ଳୋକ ଖୋଲନ୍ତୁ")) { state.scrollToVerse = v.ref; onOpenChapter(v.skandha, v.adhyaya) }) {
                 Mandala(Brand.Gold.copy(alpha = 0.14f), Modifier.matchParentSize())
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                     Row(Modifier.fillMaxWidth()) {
@@ -285,7 +274,7 @@ fun HomeScreen(
                     }
                     if (state.showSanskrit) ShlokaText(v, state.script, Brand.Sindoor, 19f, center = true)
                     val trl = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
-                    if (v.hasText(trl)) Text(v.translation(trl), fontFamily = readingFont(trl), fontSize = 16.sp, lineHeight = 25.sp, color = Brand.Ink)
+                    if (v.hasText(trl)) Text(v.translation(trl), fontFamily = readingFont(trl), fontSize = 16.sp, lineHeight = 25.sp, color = Brand.Ink, maxLines = 4, overflow = TextOverflow.Ellipsis)
                     Row(
                         Modifier.heightIn(min = 48.dp).clip(CircleShape).background(Brand.KesariTint).clickable(role = Role.Button) { state.playVerses(listOf(v)) }.padding(horizontal = 18.dp),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),

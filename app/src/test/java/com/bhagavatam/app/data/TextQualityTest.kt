@@ -43,7 +43,9 @@ class TextQualityTest {
 
 class EnglishTitleTest {
     @Test fun starsAreRemovedAndTheFirstLetterIsCapital() =
-        assertEquals("Śaunaka and other sages enquire of the famous Sūta (Ugraśravā)", cleanEnglishTitle("śaunaka and other sages enquire of the famous Sūta* (Ugraśravā)"))
+        assertEquals("Shaunaka and other sages enquire of the famous Suta (Ugrashrava)", cleanEnglishTitle("śaunaka and other sages enquire of the famous Sūta* (Ugraśravā)"))
+
+    @Test fun namesAreSpelledPlainly() = assertEquals("Advent of Lord Shri Krishna", cleanEnglishTitle("Advent of Lord Śrī Kṛṣṇa"))
 
     @Test fun plainTitlesAreUntouched() = assertEquals("Krishna's birth", cleanEnglishTitle("Krishna's birth"))
 }
