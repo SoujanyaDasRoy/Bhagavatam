@@ -415,7 +415,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
         if (i >= 0) reviewCards[i] = next
     }
     fun removeReview(card: ReviewCard) { reviewStore.remove(card.id); reviewCards.removeAll { it.id == card.id } }
-    fun dueReviewCards(now: Long = System.currentTimeMillis()) = reviewCards.filter { ReviewScheduler.isDue(now, it.dueAt, it.stage) }
+    /** Cards that are due and can still be shown (their shloka or word is in the book), so Home and the Review screen count the same cards. */
+    fun dueReviewCards(now: Long = System.currentTimeMillis()) = reviewCards.filter { ReviewScheduler.isDue(now, it.dueAt, it.stage) && com.bhagavatam.app.data.reviewPrompt(it, com.bhagavatam.app.data.SampleData::verse) != null }
     fun dueReviewCount(now: Long = System.currentTimeMillis()): Int = dueReviewCards(now).size
 
     // ---------- saved words (local only) ----------

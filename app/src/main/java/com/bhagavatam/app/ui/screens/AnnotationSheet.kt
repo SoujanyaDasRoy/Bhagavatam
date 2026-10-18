@@ -143,7 +143,7 @@ fun SelectionBar(state: AppState, modifier: Modifier = Modifier, framed: Boolean
             sel.clear()
         }
         TextAction(tr(ui, "Copy", "कॉपी", "কপি", "କପି")) {
-            clipboard.setText(AnnotatedString(sel.quote))
+            clipboard.setText(AnnotatedString(com.bhagavatam.app.data.stripDoubt(sel.quote)))
             done()
             state.toast(tr(ui, "Copied", "कॉपी हुआ", "কপি হয়েছে", "କପି ହେଲା"))
         }

@@ -47,3 +47,12 @@ class EnglishTitleTest {
 
     @Test fun plainTitlesAreUntouched() = assertEquals("Krishna's birth", cleanEnglishTitle("Krishna's birth"))
 }
+
+class StripDoubtTest {
+    @Test fun marksAreRemovedAndSpacesTidied() {
+        assertEquals("ଦୈବବଶତଃ ତାକୁ ମିଳିଗଲେ ।", stripDoubt("ଦୈବବଶତଃ[?] ତାକୁ [?] ମିଳିଗଲେ [?]।"))
+        assertEquals("a b", stripDoubt("a[?] b"))
+    }
+
+    @Test fun textWithoutMarksIsReturnedAsIs() = assertEquals("Krishna said:  yes", stripDoubt("Krishna said:  yes"))
+}

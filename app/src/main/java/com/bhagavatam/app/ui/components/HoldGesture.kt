@@ -34,17 +34,22 @@ suspend fun PointerInputScope.detectTapOrHoldDrag(
         return@awaitEachGesture
     }
     onHoldStart(down.position)
-    while (true) {
-        val event = awaitPointerEvent()
-        val change = event.changes.firstOrNull { it.id == down.id } ?: break
-        if (!change.pressed) {
-            change.consume()
-            break
+    // the end is reported also when the gesture is cancelled from outside (the screen changes, a system gesture takes over),
+    // so a selection never stays half made
+    try {
+        while (true) {
+            val event = awaitPointerEvent()
+            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+            if (!change.pressed) {
+                change.consume()
+                break
+            }
+            if (change.positionChange() != Offset.Zero) {
+                change.consume()
+                onHoldMove(change.position)
+            }
         }
-        if (change.positionChange() != Offset.Zero) {
-            change.consume()
-            onHoldMove(change.position)
-        }
+    } finally {
+        onHoldEnd()
     }
-    onHoldEnd()
 }

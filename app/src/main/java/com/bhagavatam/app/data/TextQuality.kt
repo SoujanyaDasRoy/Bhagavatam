@@ -42,3 +42,7 @@ fun cleanChapterTitle(title: String): String {
 /** An English chapter title without the footnote stars of the print ("Sūta* (Ugraśravā)") and with a capital first letter. */
 fun cleanEnglishTitle(title: String): String =
     title.replace("*", "").replace(Regex(" {2,}"), " ").replace(" ,", ",").trim().replaceFirstChar { it.uppercase() }
+
+/** The text without the `[?]` marks that flag words the page reading was unsure of: for what leaves the app (copy, share, review answers). */
+fun stripDoubt(text: String): String =
+    if ("[?]" !in text) text else text.replace("[?]", "").replace(Regex("[ \t]{2,}"), " ").replace(Regex(" +([,.;:!?])"), "$1")

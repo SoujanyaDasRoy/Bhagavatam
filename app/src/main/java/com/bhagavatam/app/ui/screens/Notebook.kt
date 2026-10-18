@@ -57,7 +57,7 @@ fun fitsInShareIntent(text: String): Boolean = text.length <= 200_000
 
 /** Plain text of [marks] as shared from the notebook, with the reader's colour names and chapter titles. */
 fun notebookExport(state: AppState, marks: List<Annotation>): String = notebookText(
-    marks.map { NotebookEntry(it.ref, it.kind, it.colour, it.quote, it.note) },
+    marks.map { NotebookEntry(it.ref, it.kind, it.colour, com.bhagavatam.app.data.stripDoubt(it.quote), it.note) },
     List(4) { state.markName(it) },
     MarkColours,
 ) { s, a -> SampleData.adhyayaTitle(s, a, state.titleLangFor(s, a), state.strings) }

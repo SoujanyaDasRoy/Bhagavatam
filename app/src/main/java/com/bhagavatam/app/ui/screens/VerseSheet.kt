@@ -71,7 +71,7 @@ fun verseShareText(state: AppState, v: Verse, lang: Lang?): String {
         SanskritScript.IAST -> v.iast
         else -> v.sa
     }.joinToString("\n")
-    val body = lang?.let { digitsTo(v.translation(it), it) }.orEmpty().trim()
+    val body = lang?.let { digitsTo(com.bhagavatam.app.data.stripDoubt(v.translation(it)), it) }.orEmpty().trim()
     return buildString {
         append(ref).append("\n\n")
         if (sa.isNotBlank()) append(sa).append("\n\n")
