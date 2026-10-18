@@ -116,7 +116,7 @@ fun FloatingTabBar(state: AppState, active: Tab, onSelect: (Tab) -> Unit, modifi
 @Composable
 fun BottomScrim(modifier: Modifier = Modifier, height: Dp = 140.dp) {
     val bg = Brand.Paper
-    Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(0f to bg.copy(alpha = 0f), 0.30f to bg.copy(alpha = 0.92f), 0.45f to bg, 1f to bg)))
+    Box(modifier.fillMaxWidth().height(height).background(Brush.verticalGradient(0f to bg.copy(alpha = 0f), 0.18f to bg.copy(alpha = 0.95f), 0.32f to bg, 1f to bg)))
 }
 
 /** Mini player: Modern Glassmorphic floating pill with album art, live status, playback controls, and dismiss button. */

@@ -450,6 +450,11 @@ fun ReaderScreen(
                     }
                 }
             }
+            // Where the reader is in this chapter: a thin line under the bar.
+            val chapterProgress by remember { derivedStateOf { val n = list.layoutInfo.totalItemsCount; if (n <= 1) 0f else (list.firstVisibleItemIndex.toFloat() / (n - 1)).coerceIn(0f, 1f) } }
+            Box(Modifier.fillMaxWidth().height(2.dp).background(c.separator.copy(alpha = 0.4f))) {
+                Box(Modifier.fillMaxWidth(chapterProgress).height(2.dp).background(c.accent))
+            }
             LazyColumn(
                 state = list,
                 modifier = Modifier.fillMaxHeight().widthIn(max = 600.dp).fillMaxWidth(),
@@ -516,7 +521,7 @@ fun ReaderScreen(
             }
         }
 
-        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 150.dp else 130.dp)
+        if (state.hasSession || verses.isNotEmpty()) BottomScrim(Modifier.align(Alignment.BottomCenter), height = if (state.hasSession) 170.dp else 150.dp)
         // Action bar while text is selected: sits just above the play controls.
         Column(
             Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (state.hasSession) 96.dp else 76.dp).padding(horizontal = 12.dp),
@@ -841,6 +846,10 @@ fun ReaderSettings(state: AppState) {
                     HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
                 }
                 SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
+                if (com.bhagavatam.app.data.ODIA_READY) {
+                    HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+                    SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ", "ଓଡ଼ିଆ ଅନୁବାଦ"), state.showOr, state::updateShowOr)
+                }
             }
         }
         VSpace(4)

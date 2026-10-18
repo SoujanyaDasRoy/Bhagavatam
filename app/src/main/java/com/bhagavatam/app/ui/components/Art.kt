@@ -51,7 +51,9 @@ fun ArtBackdrop(art: String, colors: List<Color>, modifier: Modifier = Modifier,
     Box(modifier.background(Brush.linearGradient(colors))) {
         if (id != 0) {
             Image(painterResource(id), null, Modifier.matchParentSize(), contentScale = ContentScale.Crop)
-            Box(Modifier.matchParentSize().background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = 0.10f), Color.Black.copy(alpha = 0.74f)))))
+            // at night the paintings are dimmed a little so they do not glare
+            val night = com.bhagavatam.app.ui.theme.LocalAppColors.current.isDark
+            Box(Modifier.matchParentSize().background(Brush.verticalGradient(listOf(Color.Black.copy(alpha = if (night) 0.24f else 0.10f), Color.Black.copy(alpha = if (night) 0.80f else 0.74f)))))
         } else {
             Mandala(mandala, Modifier.matchParentSize(), petals)
         }

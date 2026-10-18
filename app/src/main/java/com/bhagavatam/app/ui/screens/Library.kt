@@ -313,7 +313,8 @@ fun HomeScreen(
                 }
             }
             // Your progress: one line and a thin bar
-            Column(Modifier.reveal(2, playIntro).padding(horizontal = 20.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Shown from the first finished chapter; before that an empty bar says nothing.
+            if (done > 0) Column(Modifier.reveal(2, playIntro).padding(horizontal = 20.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val frac by animateFloatAsState((done.toFloat() / total).coerceIn(0f, 1f), tween(Motion.screen), label = "readingProgress")
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(tr(ui, "Your reading", "आपका पठन", "আপনার পাঠ", "ଆପଣଙ୍କ ପଠନ"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
