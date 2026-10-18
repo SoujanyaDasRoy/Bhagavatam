@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -100,7 +101,8 @@ internal fun canTurnOff(layersOn: Int) = layersOn > 1
 
 /** The pill in the top bar. [compact] shows only the icon (used once the chapter title has moved into the bar). */
 @Composable
-fun LanguagePill(state: AppState, compact: Boolean, onClick: () -> Unit) {
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+fun LanguagePill(state: AppState, compact: Boolean, onLongClick: (() -> Unit)? = null, onClick: () -> Unit) {
     val c = LocalReaderColors.current
     val ui = state.uiLang
     val text = pillText(ui, state.showSanskrit, state.readLang)
@@ -108,7 +110,7 @@ fun LanguagePill(state: AppState, compact: Boolean, onClick: () -> Unit) {
     val description = tr(ui, "Reading language: $text. Tap to change.", "पढ़ने की भाषा: $text। बदलने के लिए छुएँ।", "পড়ার ভাষা: $text। বদলাতে ছুঁয়ে দেখুন।")
     Box(
         Modifier.height(48.dp).widthIn(min = 48.dp).semantics(mergeDescendants = true) { contentDescription = description }
-            .clickable(role = Role.Button, onClick = onClick),
+            .combinedClickable(role = Role.Button, onLongClick = onLongClick, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Row(

@@ -265,6 +265,19 @@ fun ReaderScreen(
         }
     }
 
+    // The verse at the top of the screen, remembered while the reader scrolls, so a change of reading language lands on the same verse.
+    val headItems = (if (!state.hasSession && state.nextTip() != null) 1 else 0) + (if (state.showChapterArt) 1 else 0) + 1
+    val rowNums by androidx.compose.runtime.rememberUpdatedState(rowVerses.map { it.num })
+    val headNow by androidx.compose.runtime.rememberUpdatedState(headItems)
+    var anchorNum by remember(skandha, adhyaya) { mutableStateOf(1) }
+    var firstRows by remember(skandha, adhyaya) { mutableStateOf(true) }
+    LaunchedEffect(skandha, adhyaya) {
+        snapshotFlow { list.firstVisibleItemIndex }.collect { idx -> anchorNum = com.bhagavatam.app.state.anchorVerseNum(idx, headNow, rowNums) }
+    }
+    LaunchedEffect(rowVerses) {
+        if (firstRows) { firstRows = false; return@LaunchedEffect }
+        list.scrollToItem(com.bhagavatam.app.state.itemIndexFor(anchorNum, headNow, rowNums))
+    }
     // A verse asked for from outside (the word sheet's list of places): scroll to it once this chapter's text is on screen.
     LaunchedEffect(state.scrollToVerse, rowVerses) {
         val target = state.scrollToVerse ?: return@LaunchedEffect
@@ -342,7 +355,15 @@ fun ReaderScreen(
                     }
                 }
                 // The language pill shows words while the title is out of the bar, and shrinks to its icon once the title moves in.
-                LanguagePill(state, compact = titleInBar) { showLangSheet = true }
+                LanguagePill(state, compact = titleInBar, onLongClick = {
+                    // Hold to step through the translations this chapter has; the language sheet is still the way to change layers.
+                    val have = listOf(Lang.HI, Lang.EN, Lang.BN, Lang.OR).filter { l -> verses.any { it.hasText(l) } && (l != Lang.BN || BENGALI_READY) && (l != Lang.OR || com.bhagavatam.app.data.ODIA_READY) }
+                    if (!state.showSanskrit && have.size > 1) {
+                        val next = have[(have.indexOf(state.readLang) + 1) % have.size]
+                        state.updateReadLang(next)
+                        state.toast(layerName(next))
+                    }
+                }) { showLangSheet = true }
                 Box(
                     Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন")) {
                         showFindBar = !showFindBar
