@@ -205,6 +205,7 @@ fun AnnotationSheet(state: AppState) {
  * Fast, compact, offline-first card above the reading controls for a pressed or tapped word.
  * Shows the book's own glossary entry if there is one, then the offline dictionary, then online Wiktionary.
  */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun MeaningCard(
     state: AppState,
@@ -374,17 +375,19 @@ fun MeaningCard(
             }
         }
 
-        Row(
+        androidx.compose.foundation.layout.FlowRow(
             Modifier.fillMaxWidth().padding(top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             if (onOpenDictionary != null) {
                 TextAction(tr(ui, "Open in dictionary", "शब्दकोश में देखें", "অভিধানে দেখুন")) {
                     onOpenDictionary()
                 }
-            } else {
-                Spacer(Modifier.width(1.dp))
+            }
+            val reviewKey = w.lang.code + "|" + w.word
+            TextAction(if (state.isInReview("word", reviewKey)) tr(ui, "In review", "समीक्षा में", "পর্যালোচনায়") else tr(ui, "Add to review", "समीक्षा में जोड़ें", "পর্যালোচনায় যোগ")) {
+                if (!state.isInReview("word", reviewKey)) { state.addReview("word", reviewKey); state.toast(tr(ui, "Word added to review", "शब्द समीक्षा में जुड़ा", "শব্দ পর্যালোচনায় যোগ হল")) }
             }
             TextAction(tr(ui, "Occurrences in Granth", "ग्रंथ में खोजें", "গ্রন্থে দেখুন")) {
                 state.showWordSheet = true

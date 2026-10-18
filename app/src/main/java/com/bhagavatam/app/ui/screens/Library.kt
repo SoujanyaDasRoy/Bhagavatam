@@ -175,7 +175,7 @@ private fun QuickAction(icon: Int, label: String, modifier: Modifier, onClick: (
 fun HomeScreen(
     state: AppState, onResume: () -> Unit, onSearch: () -> Unit,
     onOpenSkandha: (Int) -> Unit = {}, onOpenGranth: () -> Unit = {},
-    onOpenChapter: (Int, Int) -> Unit = { _, _ -> }, onSaved: () -> Unit = {}, onGlossary: () -> Unit = {},
+    onOpenChapter: (Int, Int) -> Unit = { _, _ -> }, onSaved: () -> Unit = {}, onReview: () -> Unit = {}, onGlossary: () -> Unit = {},
 ) {
     val s = state.strings
     val ui = state.uiLang
@@ -247,6 +247,11 @@ fun HomeScreen(
                         ) { Icon(painterResource(Ic.PlayArrow), s.listen, tint = Color(0xFF2A1A08), modifier = Modifier.size(28.dp)) }
                     }
                 }
+            }
+            // Cards that have come due: the way back into what the reader chose to remember.
+            val due = state.dueReviewCount()
+            if (due > 0) Box(Modifier.padding(horizontal = 16.dp)) {
+                QuickAction(Ic.Bookmark, tr(ui, "Review ($due due)", "दोहराएँ ($due देय)", "পর্যালোচনা ($due বাকি)"), Modifier.fillMaxWidth(), onReview)
             }
             // Shortcuts that are not already a tab
             val savedLabel = tr(ui, "Saved", "सहेजे गए", "সংরক্ষিত")

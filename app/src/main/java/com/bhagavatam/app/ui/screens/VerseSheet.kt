@@ -150,6 +150,12 @@ fun VerseSheet(state: AppState) {
                     close()
                 }
             }
+            val inReview = state.isInReview("verse", v.ref)
+            Action(if (inReview) tr(ui, "In review (comes back soon)", "समीक्षा में है (जल्द लौटेगा)", "পর্যালোচনায় আছে (শীঘ্র ফিরবে)") else tr(ui, "Memorise this verse", "इस श्लोक को याद करें", "এই শ্লোক মনে রাখুন"), enabled = !inReview) {
+                state.addReview("verse", v.ref)
+                state.toast(tr(ui, "Added to review. It comes back tomorrow.", "समीक्षा में जुड़ा। यह कल लौटेगा।", "পর্যালোচনায় যোগ হল। কাল ফিরবে।"))
+                close()
+            }
             Action(tr(ui, "Share", "साझा करें", "শেয়ার করুন")) {
                 val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, verseShareText(state, v, lang))
                 runCatching { ctx.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
