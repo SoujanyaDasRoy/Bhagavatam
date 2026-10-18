@@ -116,3 +116,8 @@ or overlapping text, the resume card, shloka of the day, tab bar labels, top bar
 labels on one line. Content, Search and Settings were not repeated at this size in this pass.
 The reader's "Aa" sheet now also holds line spacing, Justify text, Shloka numbers and Show who is speaking, next to theme, size, Sanskrit
 and the translations to show alongside (Odia included), so the page can be set up in one place; Settings > Reading keeps the same switches.
+
+## Update: Content, Search, Settings at font scale 2.0 (dark, Hindi, Bengali, Odia)
+Found and fixed: page titles broke in the middle of a word ("सूचिप / त्र", "सेटिं / ग्स"; the title text now takes the full width and its size is capped at 1.3 times); Skandha cards on Content and Home cut off their chapter count (card height now grows with the text size, up to 1.8 times); the filter pills on Search clipped their text (fixed height changed to a minimum); the theme labels under the Settings previews were cut to one line (two lines now).
+Not fixed: the splash screen text "Shrimad Bhagavat Mahapuran" wraps left-aligned at this size.
+Also done in this pass: copy, share, notebook export and review answers no longer carry the `[?]` doubt marks; a hold gesture that is cancelled from outside now always ends the selection; Home and the Review screen count the same due cards.

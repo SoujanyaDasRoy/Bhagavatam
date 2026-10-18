@@ -335,7 +335,7 @@ fun HomeScreen(
             Column(Modifier.reveal(4, playIntro), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 SectionHeading(s.tabGranth, Modifier.padding(start = 20.dp, end = 12.dp), action = s.all, onAction = onOpenGranth)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
-                    items((state.lastSkandha..minOf(12, state.lastSkandha + 2)).toList(), key = { it }) { n -> SkandhaCard(n, state, Modifier.width(184.dp).height(184.dp)) { onOpenSkandha(n) } }
+                    items((state.lastSkandha..minOf(12, state.lastSkandha + 2)).toList(), key = { it }) { n -> SkandhaCard(n, state, Modifier.width(184.dp).height((184 * LocalDensity.current.fontScale.coerceIn(1f, 1.8f)).dp)) { onOpenSkandha(n) } }
                 }
             }
         }
@@ -395,7 +395,7 @@ fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
             }
         }
         items(SampleData.skandhas.filter { it.num > 0 }, key = { it.num }) { sk ->
-            SkandhaCard(sk.num, state, Modifier.fillMaxWidth().height(156.dp)) { onOpen(sk.num) }
+            SkandhaCard(sk.num, state, Modifier.fillMaxWidth().height((156 * LocalDensity.current.fontScale.coerceIn(1f, 1.8f)).dp)) { onOpen(sk.num) }
         }
     }
 }

@@ -127,7 +127,7 @@ internal fun ThemeSwitcher(state: AppState, labels: List<String>) {
                         }
                     }
                 }
-                Text(labels[i], fontSize = 15.sp, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium, color = if (on) Brand.Ink else Brand.Secondary, maxLines = 1)
+                Text(labels[i], fontSize = 15.sp, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium, color = if (on) Brand.Ink else Brand.Secondary, maxLines = 2, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
         }
     }
