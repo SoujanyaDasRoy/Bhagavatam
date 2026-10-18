@@ -97,7 +97,7 @@ fun ListeningSettings(state: AppState, onBack: () -> Unit) {
         }
         SettingsGroup(
             tr(ui, "Following along", "साथ-साथ पढ़ना", "সঙ্গে সঙ্গে পড়া", "ସାଙ୍ଗେ ସାଙ୍ଗେ ଅନୁସରଣ"),
-            tr(ui, "Scrolls the chapter to the verse that is being read aloud.", "जो श्लोक सुनाया जा रहा है, अध्याय उसी तक सरकता है।", "যে শ্লোক পড়ে শোনানো হচ্ছে, অধ্যায় সেখানে সরে যায়।", "ଯେଉଁ ଶ୍ଳୋକ ପଢ଼ାଯାଉଛି ଅଧ୍ଯାୟ ସେଠାକୁ ସ୍କ୍ରୋଲ୍ ହୁଏ।"),
+            tr(ui, "Scrolls the chapter to the shloka that is being read aloud.", "जो श्लोक सुनाया जा रहा है, अध्याय उसी तक सरकता है।", "যে শ্লোক পড়ে শোনানো হচ্ছে, অধ্যায় সেখানে সরে যায়।", "ଯେଉଁ ଶ୍ଳୋକ ପଢ଼ାଯାଉଛି ଅଧ୍ଯାୟ ସେଠାକୁ ସ୍କ୍ରୋଲ୍ ହୁଏ।"),
         ) {
             SwitchRow(tr(ui, "Follow the narration", "पाठ के साथ चलें", "পাঠের সঙ্গে চলুন", "ବର୍ଣ୍ଣନା ଅନୁସରଣ କରନ୍ତୁ"), state.followAudio, state::updateFollowAudio)
         }

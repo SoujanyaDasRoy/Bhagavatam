@@ -596,7 +596,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
     Column(Modifier.fillMaxWidth()) {
         Column(
             Modifier.fillMaxWidth().clip(Radius.group).background(tint)
-                .combinedClickable(onClick = {}, onLongClickLabel = tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), onLongClick = { state.verseSheet = v.ref })
+                .combinedClickable(onClick = {}, onLongClickLabel = tr(ui, "Shloka actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), onLongClick = { state.verseSheet = v.ref })
                 .padding(horizontal = 14.dp, vertical = 18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
@@ -611,18 +611,18 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                     state.toggleBookmark(v.ref)
                     val now = v.ref in state.bookmarks
                     state.toast(
-                        if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
+                        if (now) tr(ui, "Shloka bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
                         tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ"),
                     ) { state.toggleBookmark(v.ref) }
                 }, modifier = Modifier.size(48.dp)) {
                     Icon(
                         painterResource(if (marked) Ic.Bookmark else Ic.BookmarkOutline),
-                        if (marked) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ"),
+                        if (marked) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this shloka", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ"),
                         tint = if (marked) c.accent else c.secondary, modifier = Modifier.size(20.dp),
                     )
                 }
                 IconButton(onClick = { state.verseSheet = v.ref }, modifier = Modifier.size(48.dp)) {
-                    Icon(painterResource(Ic.MoreVertical), tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), tint = c.secondary, modifier = Modifier.size(20.dp))
+                    Icon(painterResource(Ic.MoreVertical), tr(ui, "Shloka actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), tint = c.secondary, modifier = Modifier.size(20.dp))
                 }
             }
             // The shloka and its transliteration are centred, like a printed verse.

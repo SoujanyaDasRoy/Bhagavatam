@@ -67,7 +67,7 @@ fun ReviewScreen(state: AppState, onBack: () -> Unit) {
                     fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = Brand.Ink, textAlign = TextAlign.Center,
                 )
                 Text(
-                    if (state.reviewCards.isEmpty()) tr(ui, "Hold a verse and choose Memorise, or add a word from its meaning card.", "किसी श्लोक को दबाए रखकर 'याद करें' चुनें, या अर्थ कार्ड से कोई शब्द जोड़ें।", "কোনো শ্লোক চেপে ধরে 'মনে রাখুন' বাছুন, বা অর্থ কার্ড থেকে শব্দ যোগ করুন।", "ଗୋଟିଏ ଶ୍ଳୋକକୁ ଧରି ରଖି ମନେରଖନ୍ତୁ ବାଛନ୍ତୁ, କିମ୍ବା ତାହାର ଅର୍ଥ କାର୍ଡ୍‌ରୁ ଗୋଟିଏ ଶବ୍ଦ ଯୋଡ଼ନ୍ତୁ।")
+                    if (state.reviewCards.isEmpty()) tr(ui, "Hold a shloka and choose Memorise, or add a word from its meaning card.", "किसी श्लोक को दबाए रखकर 'याद करें' चुनें, या अर्थ कार्ड से कोई शब्द जोड़ें।", "কোনো শ্লোক চেপে ধরে 'মনে রাখুন' বাছুন, বা অর্থ কার্ড থেকে শব্দ যোগ করুন।", "ଗୋଟିଏ ଶ୍ଳୋକକୁ ଧରି ରଖି ମନେରଖନ୍ତୁ ବାଛନ୍ତୁ, କିମ୍ବା ତାହାର ଅର୍ଥ କାର୍ଡ୍‌ରୁ ଗୋଟିଏ ଶବ୍ଦ ଯୋଡ଼ନ୍ତୁ।")
                     else if (days != null) tr(ui, "Next review in $days day(s).", "अगली समीक्षा ${localDigits("$days", ui)} दिन में।", "পরের পর্যালোচনা ${localDigits("$days", ui)} দিন পরে।", "ପରବର୍ତ୍ତୀ ସମୀକ୍ଷା $days ଦିନ ପରେ।")
                     else tr(ui, "Everything is learned.", "सब याद हो गया।", "সব মনে রাখা হয়েছে।", "ସବୁ ଶିଖାହୋଇଗଲା।"),
                     Modifier.padding(top = 8.dp), fontSize = 16.sp, lineHeight = 24.sp, color = Brand.Secondary, textAlign = TextAlign.Center,

@@ -114,3 +114,25 @@ Screens still read `Brand.*`. Move them to `LocalAppColors.current` one at a tim
 - **Player**: reference and title in the header; the sentence (or shloka line) being said is lit and the rest quieter; tap any sentence to play from there; auto-scroll that yields to the reader's finger; chapter progress with time left; a ring on the play button while the voice prepares; a plain message with a way out when no voice is installed; end-of-chapter Replay and Next chapter; landscape layout; voice and pause settings in a sheet.
 - **Background**: `PlaybackService` (foreground media service, `MediaSession`, notification and lock-screen controls). `AppState` lives in `BhagavatamApp`, so playback survives the screen closing.
 - **Check it**: debug build, `adb shell am start -n com.bhagavatam.app/.MainActivity --ez narration_probe true` runs `NarrationProbe` (corpus statistics and synthesised WAVs in `files/probe`). Unit tests: `./gradlew :app:testDebugUnitTest`.
+
+## Words and writing (Oct 2026)
+One rule per word, so a screen never says "verse" in one place and "shloka" in another.
+
+| Say | Not | Why |
+|---|---|---|
+| **shloka** (plural shlokas) for each numbered unit of the book | verse | it is the book's word, and the Hindi, Bengali and Odia strings already use श्लोक, শ্লোক, ଶ୍ଳୋକ |
+| **chapter** for an adhyaya; **Skandha** for a canto; **Mahatmya** for the first part | Adhyaya in running text | "Adhyaya" stays only as a dictionary term |
+| **the book** for the whole Bhagavatam | granth | "Content" is the tab; the page says "book" |
+| **Content** for the tab, **Saved** for notes and bookmarks | Granth, Library, Me | one name per place |
+| **Bengali** | Bangla | same form in the app and the search chips |
+| **Odia** | Oriya | |
+
+Sentence case for buttons, titles and labels ("Bookmark this shloka"), never title case, never all capitals except a single small label.
+No em or en dashes anywhere (project rule); use a plain hyphen with spaces, a comma or a full stop.
+Numbers in the frame (counts, progress, timers) use the app language's digits; shloka numbers and references printed with the book use
+the reading language's script (`docs/superpowers/plans/2026-10-14-language-rules.md`).
+A button says what happens ("Save", "Remove", "Look it up online"); an error says what went wrong and what to do next.
+Interface text exists in English, Hindi, Bengali and Odia, written together: a new string is added to all four in the same change, through
+`tr(ui, en, hi, bn, or)`; with no Odia text it falls back to English, which the language audit shows.
+Odia interface text has not been read by an Odia speaker yet: `docs/agent/ODIA_UI_REVIEW.csv` lists every string in four languages with a
+column for corrections.

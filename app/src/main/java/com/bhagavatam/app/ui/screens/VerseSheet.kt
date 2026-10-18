@@ -121,11 +121,11 @@ fun VerseSheet(state: AppState) {
                 text, Modifier.padding(horizontal = 12.dp, vertical = 6.dp), fontSize = 15.sp, lineHeight = 22.sp, color = c.secondary,
                 maxLines = 3, overflow = TextOverflow.Ellipsis, fontFamily = lang?.let { readingFont(it) },
             )
-            Action(if (saved) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ")) {
+            Action(if (saved) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this shloka", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ")) {
                 state.toggleBookmark(v.ref)
                 val now = v.ref in state.bookmarks
                 state.toast(
-                    if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
+                    if (now) tr(ui, "Shloka bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
                     tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ"),
                 ) { state.toggleBookmark(v.ref) }
                 close()
@@ -138,7 +138,7 @@ fun VerseSheet(state: AppState) {
                         Box(
                             Modifier.size(48.dp).clickable(role = Role.Button, onClickLabel = tr(ui, "Highlight ", "हाइलाइट ", "হাইলাইট ", "ହାଇଲାଇଟ୍ ") + names[i]) {
                                 val id = state.addAnnotation(Annotation(0, v.ref, lang.code, 0, text.length, text, AnnKind.HIGHLIGHT, col, "", System.currentTimeMillis()))
-                                state.toast(tr(ui, "Verse highlighted", "श्लोक हाइलाइट हुआ", "শ্লোক হাইলাইট হয়েছে", "ଶ୍ଳୋକ ହାଇଲାଇଟ୍ ହେଲା"), tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ")) { state.removeAnnotation(id) }
+                                state.toast(tr(ui, "Shloka highlighted", "श्लोक हाइलाइट हुआ", "শ্লোক হাইলাইট হয়েছে", "ଶ୍ଳୋକ ହାଇଲାଇଟ୍ ହେଲା"), tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ")) { state.removeAnnotation(id) }
                                 close()
                             },
                             contentAlignment = Alignment.Center,
@@ -151,7 +151,7 @@ fun VerseSheet(state: AppState) {
                 }
             }
             val inReview = state.isInReview("verse", v.ref)
-            Action(if (inReview) tr(ui, "In review (comes back soon)", "समीक्षा में है (जल्द लौटेगा)", "পর্যালোচনায় আছে (শীঘ্র ফিরবে)", "ସମୀକ୍ଷାରେ (ଶୀଘ୍ର ଫେରିବ)") else tr(ui, "Memorise this verse", "इस श्लोक को याद करें", "এই শ্লোক মনে রাখুন", "ଏହି ଶ୍ଳୋକ ମନେରଖନ୍ତୁ"), enabled = !inReview) {
+            Action(if (inReview) tr(ui, "In review (comes back soon)", "समीक्षा में है (जल्द लौटेगा)", "পর্যালোচনায় আছে (শীঘ্র ফিরবে)", "ସମୀକ୍ଷାରେ (ଶୀଘ୍ର ଫେରିବ)") else tr(ui, "Memorise this shloka", "इस श्लोक को याद करें", "এই শ্লোক মনে রাখুন", "ଏହି ଶ୍ଳୋକ ମନେରଖନ୍ତୁ"), enabled = !inReview) {
                 state.addReview("verse", v.ref)
                 state.toast(tr(ui, "Added to review. It comes back tomorrow.", "समीक्षा में जुड़ा। यह कल लौटेगा।", "পর্যালোচনায় যোগ হল। কাল ফিরবে।", "ସମୀକ୍ଷାରେ ଯୋଡ଼ାଗଲା। କାଲି ଫେରିବ।"))
                 close()

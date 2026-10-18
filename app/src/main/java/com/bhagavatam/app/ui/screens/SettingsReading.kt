@@ -115,7 +115,7 @@ fun ReadingSettings(state: AppState, onBack: () -> Unit) {
                 "জাস্টিফাইড লেখার দুই পাশই সোজা থাকে। ছবি বা পড়ার সময় লুকালে পাতা আরও সাদামাটা দেখায়।", "ଜଷ୍ଟିଫାଏଡ୍ ଟେକ୍ସଟ୍‌ର ଦୁଇ ପାଖ ସିଧା ଥାଏ। ଚିତ୍ର କିମ୍ବା ପଠନ ସମୟ ଲୁଚାଇଲେ ପୃଷ୍ଠା ସରଳ ହୁଏ।"),
         ) {
             SwitchRow(tr(ui, "Justify text", "पाठ बराबर करें", "লেখা সমান করুন", "ଟେକ୍ସଟ୍ ଜଷ୍ଟିଫାଏ କରନ୍ତୁ"), state.justifyText, state::updateJustifyText); RowDivider()
-            SwitchRow(tr(ui, "Verse numbers", "श्लोक संख्या", "শ্লোক সংখ্যা", "ଶ୍ଳୋକ ସଂଖ୍ଯା"), state.showVerseNumbers, state::updateShowVerseNumbers); RowDivider()
+            SwitchRow(tr(ui, "Shloka numbers", "श्लोक संख्या", "শ্লোক সংখ্যা", "ଶ୍ଳୋକ ସଂଖ୍ଯା"), state.showVerseNumbers, state::updateShowVerseNumbers); RowDivider()
             SwitchRow(tr(ui, "Chapter picture", "अध्याय का चित्र", "অধ্যায়ের ছবি", "ଅଧ୍ଯାୟର ଚିତ୍ର"), state.showChapterArt, state::updateShowChapterArt); RowDivider()
             SwitchRow(tr(ui, "Reading time", "पाठ-समय", "পড়ার সময়", "ପଠନ ସମୟ"), state.showReadTime, state::updateShowReadTime)
             RowDivider()

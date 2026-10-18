@@ -140,7 +140,7 @@ fun SettingsScreen(
             t.aboutSec,
             listOf(
                 Entry(Ic.Scroll, t.textsFrom, s.gitaPress),
-                Entry(Ic.Scroll, tr(ui, "Corpus", "सम्पूर्ण ग्रन्थ", "সম্পূর্ণ গ্রন্থ", "ସଂଗ୍ରହ"), localDigits(tr(ui, "341 Chapters · 14,580 Verses", "३४१ अध्याय · १४,५८० श्लोक", "৩৪১টি অধ্যায় · ১৪,৫৮০টি শ্লোক", "୩୪୧ ଅଧ୍ଯାୟ · ୧୪,୫୮୦ ଶ୍ଳୋକ"), ui)),
+                Entry(Ic.Scroll, tr(ui, "Corpus", "सम्पूर्ण ग्रन्थ", "সম্পূর্ণ গ্রন্থ", "ସଂଗ୍ରହ"), localDigits(tr(ui, "341 chapters · 14,580 shlokas", "३४१ अध्याय · १४,५८० श्लोक", "৩৪১টি অধ্যায় · ১৪,৫৮০টি শ্লোক", "୩୪୧ ଅଧ୍ଯାୟ · ୧୪,୫୮୦ ଶ୍ଳୋକ"), ui)),
                 Entry(Ic.Languages, tr(ui, "Dictionary credits", "शब्दकोश आभार", "অভিধান কৃতজ্ঞতা স্বীকার", "ଅଭିଧାନର ଶ୍ରେୟ"), "", onCredits),
                 Entry(Ic.Settings, t.version, "v${BuildConfig.VERSION_NAME}"),
                 Entry(Ic.Settings, t.contentVersion, localDigits(ContentDb.openVersion.toString(), ui)),

@@ -728,7 +728,7 @@ private fun SavedWordRow(
                 )
                 if (saved.ref.isNotBlank()) {
                     Text(
-                        tr(ui, "From verse: ", "श्लोक से: ", "শ্লোক থেকে: ", "ଶ୍ଳୋକରୁ: ") + localDigits(saved.ref, ui),
+                        tr(ui, "From shloka: ", "श्लोक से: ", "শ্লোক থেকে: ", "ଶ୍ଳୋକରୁ: ") + localDigits(saved.ref, ui),
                         fontSize = 12.sp,
                         color = app.inkSecondary
                     )

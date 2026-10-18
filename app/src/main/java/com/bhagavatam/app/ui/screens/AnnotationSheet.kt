@@ -147,7 +147,7 @@ fun SelectionBar(state: AppState, modifier: Modifier = Modifier, framed: Boolean
             done()
             state.toast(tr(ui, "Copied", "कॉपी हुआ", "কপি হয়েছে", "କପି ହେଲା"))
         }
-        TextAction(tr(ui, "Verse", "श्लोक", "শ্লোক", "ଶ୍ଳୋକ")) { state.verseSheet = sel.ref; done() }
+        TextAction(tr(ui, "Shloka", "श्लोक", "শ্লোক", "ଶ୍ଳୋକ")) { state.verseSheet = sel.ref; done() }
     }
 }
 
@@ -393,7 +393,7 @@ fun MeaningCard(
             TextAction(if (state.isInReview("word", reviewKey)) tr(ui, "In review", "समीक्षा में", "পর্যালোচনায়", "ସମୀକ୍ଷାରେ") else tr(ui, "Add to review", "समीक्षा में जोड़ें", "পর্যালোচনায় যোগ", "ସମୀକ୍ଷାରେ ଯୋଡ଼ନ୍ତୁ")) {
                 if (!state.isInReview("word", reviewKey)) { state.addReview("word", reviewKey); state.toast(tr(ui, "Word added to review", "शब्द समीक्षा में जुड़ा", "শব্দ পর্যালোচনায় যোগ হল", "ଶବ୍ଦ ସମୀକ୍ଷାରେ ଯୋଡ଼ାଗଲା")) }
             }
-            TextAction(tr(ui, "Occurrences in Granth", "ग्रंथ में खोजें", "গ্রন্থে দেখুন", "ଗ୍ରନ୍ଥରେ ଏହାର ପ୍ରୟୋଗ")) {
+            TextAction(tr(ui, "Occurrences in the book", "ग्रंथ में खोजें", "গ্রন্থে দেখুন", "ଗ୍ରନ୍ଥରେ ଏହାର ପ୍ରୟୋଗ")) {
                 state.showWordSheet = true
             }
         }
@@ -448,9 +448,9 @@ fun WordSheet(
             val f = found
             Text(
                 when {
-                    f == null -> tr(ui, "Searching the granth...", "ग्रंथ में खोज रहे हैं...", "গ্রন্থে খোঁজা হচ্ছে...", "ଗ୍ରନ୍ଥରେ ଖୋଜୁଛି...")
-                    f.first == 0 -> tr(ui, "Not found elsewhere in the granth in this form.", "इस रूप में ग्रंथ में और कहीं नहीं मिला।", "এই রূপে গ্রন্থের আর কোথাও পাওয়া যায়নি।", "ଏହି ରୂପରେ ଗ୍ରନ୍ଥର ଅନ୍ଯତ୍ର ମିଳିଲା ନାହିଁ।")
-                    else -> tr(ui, "In this granth (${f.first})", "इस ग्रंथ में (${localDigits("${f.first}", ui)})", "এই গ্রন্থে (${localDigits("${f.first}", ui)})", "ଏହି ଗ୍ରନ୍ଥରେ (${f.first})")
+                    f == null -> tr(ui, "Searching the book...", "ग्रंथ में खोज रहे हैं...", "গ্রন্থে খোঁজা হচ্ছে...", "ଗ୍ରନ୍ଥରେ ଖୋଜୁଛି...")
+                    f.first == 0 -> tr(ui, "Not found elsewhere in the book in this form.", "इस रूप में ग्रंथ में और कहीं नहीं मिला।", "এই রূপে গ্রন্থের আর কোথাও পাওয়া যায়নি।", "ଏହି ରୂପରେ ଗ୍ରନ୍ଥର ଅନ୍ଯତ୍ର ମିଳିଲା ନାହିଁ।")
+                    else -> tr(ui, "In this book (${f.first})", "इस ग्रंथ में (${localDigits("${f.first}", ui)})", "এই গ্রন্থে (${localDigits("${f.first}", ui)})", "ଏହି ଗ୍ରନ୍ଥରେ (${f.first})")
                 },
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
