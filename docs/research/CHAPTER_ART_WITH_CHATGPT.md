@@ -26,6 +26,16 @@ Looking at the image, these are the traits to copy, in this order of importance:
 Recommendation: try the style in the ChatGPT app on 6 chapters, then run all 341 through the API with the same prompt text.
 Never paste an API key into a chat or commit it; put it in an environment variable (`OPENAI_API_KEY`).
 
+## 2b. If you have only ChatGPT Go (the owner's plan)
+What the notes say (third-party blogs, OpenAI publishes no number): Go has "higher limits" than Free for images but no fixed daily count; reports range from about 10 to 120 images a day, 20 to 30 being the figure repeated most. Uploads are limited to 80 files per 3 hours on Go, Plus and Pro, and 20 MB per image, so attaching the reference picture to each new chat is fine. Go includes Projects (25 files per project). Go does **not** include the API: the API is billed separately at platform.openai.com. Treat the numbers as rough and watch the message ChatGPT shows when the limit is reached.
+What that means for 341 images: at 20 to 30 a day it is 12 to 17 days of pasting, with re-runs more like 3 weeks; at 10 a day, more than a month.
+Ways to make it work on Go:
+1. **Make a Project** ("Bhagavatam paintings"). Put `ch_0_1`, the style block and the character lines in the project's files and instructions, so each new chat in it starts with the style and nothing has to be pasted or attached again. Start a new chat inside the project every 8 to 10 images.
+2. **Do the 40 most important chapters on Go** (the twelve well-loved stories, the first chapter of each Skandha, the Mahatmya) and let the rest keep the Skandha painting, which the app already falls back to. The set stays beautiful and finishes in about 2 weeks.
+3. **Or put $10 to $25 of credit on the API for the rest.** About $14 to $22 pays for all 341 at medium quality in one evening with a script, and the pictures are the same model. This does not need Go at all.
+4. **Pace yourself with a list.** A ready-to-paste file (`content/art/paste_list.md`: chapter code, scene, one block per chapter, tick boxes) and a small intake script that renames the downloaded files in the order you made them and shows a contact sheet to confirm before they are installed.
+Not recommended: asking for several scenes in one image (a grid) and cropping; the pictures come out small and the style slips.
+
 ## 3. The prompt: three parts, always in this order
 **A. Style block (fixed, identical in all 341 prompts).** Written from the picture, not from a school name:
 ```
@@ -71,6 +81,7 @@ Then `python tools/art/import_art.py <file> --name ch_S_C --install` (converts t
 6. Import, build, look at the app in light and dark, update the credits.
 
 ## Sources
+- ChatGPT Go limits and uploads (unofficial, they disagree): https://www.aifreeapi.com/en/posts/chatgpt-go-image-generation-limit, https://chatgptimage2.org/blog/chatgpt-go-image-generation-limit, https://onefileapp.com/faq, https://blog.laozhang.ai/en/posts/chatgpt-file-upload-limits-free-plus-pro, https://www.glbgpt.com/hub/how-many-images-can-you-generate-with-chatgpt-go/
 - ChatGPT image limits (unofficial, they disagree): https://blog.laozhang.ai/en/posts/chatgpt-image-generation-upload-limits.md, https://www.cometapi.com/en/how-many-images-can-i-generate-with-chatgpt-plus-%E2%80%94-a-2026-status-report/, https://community.openai.com/t/why-is-chatgpt-limiting-the-number-of-images-i-try-to-generate-for-something-i-paid-for/1088555
 - OpenAI image model pages and prices: https://developers.openai.com/api/docs/models/gpt-image-1, https://developers.openai.com/api/docs/models/gpt-image-1-mini, https://community.openai.com/t/gpt-image-1-5-rolling-out-in-the-api-and-chatgpt/1369443?page=3
 - GPT Image 2 prices (resellers and summaries, check OpenAI): https://www.pixazo.ai/blog/gpt-image-2-api-cheapest-pricing, https://enter.converge.ai/page/en-US/news/gpt-image-2-pricing-cost-breakdown, https://www.atlascloud.ai/blog/gpt-image-2-api-guide
