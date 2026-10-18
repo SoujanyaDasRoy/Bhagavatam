@@ -99,3 +99,13 @@ left" is estimated at 150 words a minute for every language.
 2. F5 and the Odia font in F4 (visible on every screen).
 3. F7 labels, then F8 items, then F6 and F9.
 4. Odia verses and titles in F4 need an Odia reader or the local OCR re-run; nobody types scripture from the page images.
+
+## Update, same day: fixed after this audit
+| Finding | What changed |
+|---|---|
+| F1 online meanings | Off by default and after "Reset settings". When the offline dictionary has nothing, the meaning card offers "Look it up online (sends this word to Wiktionary)" for that one word. |
+| F2 notifications | The extra prompt on first Home is gone; Android's permission is asked once, when playback first starts. |
+| F4 Odia font | Noto Serif Oriya (reading text, Settings picker) and Noto Sans Oriya (app interface in Odia) bundled in `res/font`; licence in `docs/licenses/NotoOriya-OFL.txt`. Checked on the emulator in Odia. |
+| F5 English titles | Footnote stars removed and the first letter capitalised when titles load (`cleanEnglishTitle`, with tests). |
+| F7 labels | Search chip "Bangla" is now "Bengali" in English. A second pass over Search and Settings with the accessibility tree found no unlabelled control except Android's own scroll indicator; the earlier count of 7 was not reproduced. Highlight colour buttons now have 8dp between them. |
+Still open: F3, F6, F8 (rest), F9, the Odia verse and title data, the Odia interface review by an Odia reader.

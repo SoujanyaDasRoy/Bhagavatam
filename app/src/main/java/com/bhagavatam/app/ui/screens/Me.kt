@@ -277,7 +277,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
                 listOf(
                     Triple(Lang.SA, "संस्कृत" to s.readSa, NotoDevanagari), Triple(Lang.HI, "हिन्दी" to s.readHi, TiroHindi),
                     Triple(Lang.BN, "বাংলা" to s.readBn, NotoSerifBengali), Triple(Lang.EN, "English" to s.readEn, EnglishReading),
-                    Triple(Lang.OR, "ଓଡ଼ିଆ" to tr(state.uiLang, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ"), com.bhagavatam.app.ui.theme.EnglishReading),
+                    Triple(Lang.OR, "ଓଡ଼ିଆ" to tr(state.uiLang, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ"), com.bhagavatam.app.ui.theme.NotoSerifOriya),
                 ).filter { (BENGALI_READY || it.first != Lang.BN) && (com.bhagavatam.app.data.ODIA_READY || it.first != Lang.OR) }.forEachIndexed { i, (l, names, f) ->
                     if (i > 0) RowDivider()
                     LanguageOption(names.first, names.second, f, state.readLang == l) { state.updateReadLang(l) }

@@ -352,7 +352,7 @@ fun GranthScreen(state: AppState, onOpen: (Int) -> Unit) {
     val headerFont = when (pageLang) {
         Lang.BN -> NotoSerifBengali
         Lang.HI, Lang.SA -> NotoDevanagari
-        Lang.OR -> readingFont(Lang.OR)
+        Lang.OR -> com.bhagavatam.app.ui.theme.NotoSerifOriya
         else -> EnglishReading
     }
 

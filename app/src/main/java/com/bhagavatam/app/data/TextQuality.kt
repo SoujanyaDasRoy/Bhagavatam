@@ -38,3 +38,7 @@ fun cleanChapterTitle(title: String): String {
     if (t.length >= 2 && (t.first() == '(' && t.last() == ')' || t.first() == '[' && t.last() == ']')) t = t.substring(1, t.length - 1).trim()
     return ORDINAL_FRONT.replaceFirst(t, "").trim()
 }
+
+/** An English chapter title without the footnote stars of the print ("Sūta* (Ugraśravā)") and with a capital first letter. */
+fun cleanEnglishTitle(title: String): String =
+    title.replace("*", "").replace(Regex(" {2,}"), " ").replace(" ,", ",").trim().replaceFirstChar { it.uppercase() }

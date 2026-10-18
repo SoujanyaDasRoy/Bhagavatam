@@ -79,7 +79,7 @@ val EnglishStrings = Strings(
     paathLanguage = "Paath language", startReading = "Start reading", stepOf = "2 of 2", preview = "Preview: the first shloka",
     glossaryHint = "Search the dictionary", themes = listOf("Prabhat", "Pothi", "Sandhya", "Ratri"),
     jaiShreeMadhav = "Jai Shree Madhav", shrimadBhagavatMahapuran = "Shrimad Bhagavat Mahapuran", minRead = "%d min read",
-    tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bangla",
+    tabAll = "All", tabEnglish = "English", tabHindi = "Hindi", tabBangla = "Bengali",
     voiceSearchHint = "Listening... Speak a story or chapter", openPrompt = "Open %s?", openAction = "Open", cancelAction = "Cancel",
     thematicLilaIndex = "Dictionary",
 )

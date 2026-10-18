@@ -211,7 +211,7 @@ object SampleData {
         d.rawQuery("SELECT skandha, chapter, title_en, title_hi, verse_count, $titleBn FROM chapter", null).use { c ->
             while (c.moveToNext()) {
                 val k = "${c.getInt(0)}.${c.getInt(1)}"
-                titlesEn[k] = (c.getString(2) ?: "").tidyDashes()
+                titlesEn[k] = cleanEnglishTitle((c.getString(2) ?: "").tidyDashes())
                 titlesHi[k] = (c.getString(3) ?: "").tidyDashes()
                 titlesBn[k] = (c.getString(5) ?: "").tidyDashes()
                 if (!c.isNull(4)) verseCounts[k] = c.getInt(4)

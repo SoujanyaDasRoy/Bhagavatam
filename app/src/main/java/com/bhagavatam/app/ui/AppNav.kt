@@ -87,7 +87,7 @@ object Routes {
 
 @Composable
 fun AppNav(state: AppState) {
-    val uiFont = when (state.uiLang) { Lang.HI -> Mukta; Lang.BN -> HindSiliguri; else -> Jakarta }
+    val uiFont = when (state.uiLang) { Lang.HI -> Mukta; Lang.BN -> HindSiliguri; Lang.OR -> com.bhagavatam.app.ui.theme.NotoSansOriya; else -> Jakarta }
     val sysDark = isSystemInDarkTheme()
     val theme = if (state.followSystem) (if (sysDark) state.darkTheme else state.lightTheme) else state.readerTheme
     val app = appColorsFor(theme)

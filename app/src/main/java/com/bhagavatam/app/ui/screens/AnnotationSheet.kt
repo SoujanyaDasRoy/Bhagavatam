@@ -114,7 +114,7 @@ fun SelectionBar(state: AppState, modifier: Modifier = Modifier, framed: Boolean
             .horizontalScroll(rememberScrollState())
             .padding(horizontal = 8.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         MarkColours.forEachIndexed { i, col ->
             Box(
@@ -186,7 +186,7 @@ fun AnnotationSheet(state: AppState) {
                 modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
                 placeholder = { Text(tr(ui, "Your note (stays on this phone)", "आपका नोट (केवल इसी फ़ोन में रहता है)", "আপনার নোট (শুধু এই ফোনে থাকে)", "ଆପଣଙ୍କ ନୋଟ୍ (ଏହି ଫୋନରେ ରହେ)")) },
             )
-            if (existing?.kind != AnnKind.BOOKMARK) Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            if (existing?.kind != AnnKind.BOOKMARK) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 MarkColours.forEach { col ->
                     Box(Modifier.size(48.dp).clickable(role = Role.RadioButton) { colour = col }, contentAlignment = Alignment.Center) {
                         Box(Modifier.size(26.dp).clip(CircleShape).background(Color(col)).then(if (col == colour) Modifier.border(2.dp, c.ink, CircleShape) else Modifier))
@@ -233,8 +233,11 @@ fun MeaningCard(
     }
 
     // 2. Online meaning fallback (only when offline has no hit and setting is enabled)
-    val onlineMeaning by produceState<com.bhagavatam.app.data.Meaning?>(null, w, state.onlineMeanings, offlineEntries, retryKey) {
-        value = if (offlineEntries.isEmpty() && state.onlineMeanings && !w.word.contains(' ')) {
+    // Online lookup is off unless the reader turned it on in Settings; with it off, this card can ask once for this one word.
+    var onceOnline by remember(w) { mutableStateOf(false) }
+    val allowOnline = state.onlineMeanings || onceOnline
+    val onlineMeaning by produceState<com.bhagavatam.app.data.Meaning?>(null, w, allowOnline, offlineEntries, retryKey) {
+        value = if (offlineEntries.isEmpty() && allowOnline && !w.word.contains(' ')) {
             com.bhagavatam.app.data.OnlineMeaning.lookup(w.word, w.lang)
         } else null
     }
@@ -347,7 +350,7 @@ fun MeaningCard(
                 w.word.contains(' ') -> {
                     Text(tr(ui, "Select a single word to see its dictionary meaning.", "शब्दकोश अर्थ के लिए एक शब्द चुनें।", "অভিধান অর্থের জন্য একটি শব্দ নির্বাচন করুন।", "ଅଭିଧାନ ଅର୍ଥ ଦେଖିବାକୁ ଗୋଟିଏ ଶବ୍ଦ ବାଛନ୍ତୁ।"), fontSize = 15.sp, color = c.secondary)
                 }
-                m == null && state.onlineMeanings -> {
+                m == null && allowOnline -> {
                     Text(tr(ui, "Looking up meaning...", "अर्थ खोज रहे हैं...", "অর্থ খোঁজা হচ্ছে...", "ଅର୍ଥ ଖୋଜୁଛି..."), fontSize = 15.sp, color = c.secondary)
                 }
                 m is com.bhagavatam.app.data.Meaning.Found -> {
@@ -367,7 +370,8 @@ fun MeaningCard(
                 }
                 else -> {
                     Text(tr(ui, "No dictionary entry found.", "कोई प्रविष्टि नहीं मिली।", "কোনো অর্থ পাওয়া যায়নি।", "ଅଭିଧାନରେ କିଛି ମିଳିଲା ନାହିଁ।"), fontSize = 15.sp, color = c.secondary)
-                    if (!state.onlineMeanings) Text(
+                    if (!allowOnline) TextAction(tr(ui, "Look it up online (sends this word to Wiktionary)", "ऑनलाइन खोजें (यह शब्द Wiktionary को भेजा जाएगा)", "অনলাইনে খুঁজুন (শব্দটি Wiktionary-তে যাবে)", "ଅନଲାଇନ୍‌ରେ ଖୋଜନ୍ତୁ (ଏହି ଶବ୍ଦ Wiktionary କୁ ଯିବ)")) { onceOnline = true }
+                    if (!allowOnline) Text(
                         tr(ui, "Turn on online meanings in Settings > Words & notes to look it up.", "सेटिंग > शब्द और नोट में ऑनलाइन अर्थ चालू करके खोजें।", "সেটিংস > শব্দ ও নোট-এ অনলাইন অর্থ চালু করে খুঁজুন।", "ଖୋଜିବାକୁ ସେଟିଂସ୍ > ଶବ୍ଦ ଓ ନୋଟ୍‌ରେ ଅନଲାଇନ୍ ଅର୍ଥ ଚାଲୁ କରନ୍ତୁ।"),
                         fontSize = 15.sp, color = c.secondary,
                     )

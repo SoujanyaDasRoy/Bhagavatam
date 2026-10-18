@@ -40,3 +40,10 @@ class TextQualityTest {
         assertEquals("विदुरের প্রশ্ন", cleanChapterTitle("विदुरের প্রশ্ন"))
     }
 }
+
+class EnglishTitleTest {
+    @Test fun starsAreRemovedAndTheFirstLetterIsCapital() =
+        assertEquals("Śaunaka and other sages enquire of the famous Sūta (Ugraśravā)", cleanEnglishTitle("śaunaka and other sages enquire of the famous Sūta* (Ugraśravā)"))
+
+    @Test fun plainTitlesAreUntouched() = assertEquals("Krishna's birth", cleanEnglishTitle("Krishna's birth"))
+}
