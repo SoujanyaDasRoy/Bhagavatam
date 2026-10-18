@@ -305,7 +305,7 @@ object SampleData {
                     val firstOfChapter = key != prevChapter
                     prevChapter = key
                     var sa = c.getString(5).orEmpty()
-                    var hi = c.getString(7).orEmpty()
+                    var hi = stripColophon(c.getString(7).orEmpty())
                     var speaker = c.getString(4)?.takeIf { it.isNotBlank() }
                     if (firstOfChapter) {
                         // In the source PDFs the chapter heading ran into the first shloka. The reader shows the title once, above the text.

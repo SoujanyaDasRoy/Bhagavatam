@@ -58,3 +58,16 @@ class StripDoubtTest {
 
     @Test fun textWithoutMarksIsReturnedAsIs() = assertEquals("Krishna said:  yes", stripDoubt("Krishna said:  yes"))
 }
+
+class ColophonTest {
+    @org.junit.Test
+    fun theClosingLineAtTheEndOfAHindiVerseIsDropped() {
+        val text = "पालन-पोषण करते हैं ॥ ३४ ॥\n\n*इति श्रीमद्भागवते महापुराणे पारमहंस्यां संहितायां प्रथमस्कन्धे द्वितीयोऽध्यायः ॥ २ ॥*"
+        org.junit.Assert.assertEquals("पालन-पोषण करते हैं ॥ ३४ ॥", stripColophon(text))
+    }
+
+    @org.junit.Test
+    fun aVerseWithoutAClosingLineStaysAsItIs() {
+        org.junit.Assert.assertEquals("इति कहकर वे चले गये", stripColophon("इति कहकर वे चले गये"))
+    }
+}

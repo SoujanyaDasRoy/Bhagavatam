@@ -35,6 +35,7 @@ def prefs_xml(ui, read, theme, s, c):
         "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n"
         '    <boolean name="onboarded" value="true" />\n'
         '    <boolean name="tipsEnabled" value="false" />\n'
+        '    <boolean name="followSystem" value="false" />\n'
         f'    <boolean name="showSanskrit" value="{"true" if read == "SA" else "false"}" />\n'
         + flags +
         f'    <string name="uiLang">{ui}</string>\n    <string name="readLang">{read}</string>\n    <string name="theme">{theme}</string>\n'

@@ -467,10 +467,14 @@ fun ReaderScreen(
                     Column(Modifier.fillMaxWidth().padding(vertical = 14.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
                         Text(reference, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
-                        if (state.titleLang == Lang.OR && !SampleData.hasOdiaTitle(skandha, adhyaya)) Text(
-                            tr(ui, "Title shown in " + nameIn(ui, state.contentLang).substringBefore(" ("), "शीर्षक " + nameIn(ui, state.contentLang).substringBefore(" (") + " में दिखाया गया है", "শিরোনাম " + nameIn(ui, state.contentLang).substringBefore(" (") + "-এ দেখানো হয়েছে", "ଶୀର୍ଷକ " + nameIn(ui, state.contentLang).substringBefore(" (") + "ରେ ଦେଖାଯାଇଛି"),
-                            fontSize = 14.sp, color = c.secondary,
-                        )
+                        // the chapter has no Odia title: say in which language the title below is
+                        if (state.titleLang == Lang.OR && !SampleData.hasOdiaTitle(skandha, adhyaya)) {
+                            val shownIn = nameIn(ui, state.titleLangFor(skandha, adhyaya)).substringBefore(" (")
+                            Text(
+                                tr(ui, "Title shown in $shownIn", "शीर्षक $shownIn में दिखाया गया है", "শিরোনাম $shownIn-এ দেখানো হয়েছে", "ଶୀର୍ଷକ $shownIn ରେ ଦେଖାଯାଇଛି"),
+                                fontSize = 15.sp, color = c.secondary, fontFamily = if (ui == Lang.EN) null else readingFont(ui),
+                            )
+                        }
                         Text(title, fontFamily = readingFont(state.titleLangFor(skandha, adhyaya)), fontSize = 24.sp, lineHeight = 38.sp,
                             fontWeight = FontWeight.Medium, color = c.ink, textAlign = TextAlign.Center)
                         val count = SampleData.verseCount(skandha, adhyaya)

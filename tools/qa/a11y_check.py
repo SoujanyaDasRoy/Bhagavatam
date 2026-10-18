@@ -5,7 +5,8 @@
 
 For every tappable node (clickable or long-clickable):
   - no label: no text and no content-desc on the node or anything inside it (TalkBack says only "button")
-  - small target: narrower or lower than 48dp (the project rule, CLAUDE.md section 5.3), unless it is a text link inside a line
+  - small target: narrower or lower than 48dp (the project rule, CLAUDE.md section 5.3)
+Items cut by the top or bottom edge of the screen are skipped: their visible size is not their size.
 Each finding is counted once per screen kind (home, top, end) and resource or label, so repeats across languages do not inflate it.
 """
 import collections
@@ -38,6 +39,11 @@ def main():
             root = ET.parse(f).getroot()
         except ET.ParseError:
             continue
+        first = next(root.iter("node"), None)
+        if first is None:
+            continue
+        top = BOUNDS.match(first.get("bounds", ""))
+        screen_h = int(top.group(4)) if top else 2400
         for n in root.iter("node"):
             if n.get("clickable") != "true" and n.get("long-clickable") != "true":
                 continue
@@ -45,6 +51,8 @@ def main():
             if not m:
                 continue
             x1, y1, x2, y2 = map(int, m.groups())
+            if y1 <= 0 or y2 >= screen_h - 2:
+                continue  # cut by the screen edge (a bar sliding away, a card half scrolled in): its size here is not its size
             w, h = x2 - x1, y2 - y1
             lab = label_of(n)
             key = (kind, n.get("class", "").split(".")[-1], n.get("resource-id", ""), lab[:40] if lab else f"@{x1},{y1} {w}x{h}")
