@@ -79,6 +79,17 @@ object Dictionary {
         else lookupAs(word, lang, lang.lowercase(), preferredGlossLang))
             .ifEmpty { listOfNotNull(fromBook(word, lang, preferredGlossLang)) }
 
+    /** The language a typed word is written in, from its first letter: Odia, Bengali, Devanagari (Hindi) or else English. */
+    fun langOfScript(word: String): String {
+        val ch = word.trim().firstOrNull { it.isLetter() } ?: return "en"
+        return when (ch.code) {
+            in 0x0B00..0x0B7F -> "or"
+            in 0x0980..0x09FF -> "bn"
+            in 0x0900..0x097F -> "hi"
+            else -> "en"
+        }
+    }
+
     /** 7. Last step: the book's own translations (BookGloss): one entry made from the matched words and the parts, or null. */
     private fun fromBook(word: String, lang: String, preferredGlossLang: String?): DictEntry? {
         val clean = Normalise.word(word, lang)

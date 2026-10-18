@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Language matrix: app language (EN, HI, BN) x reading language (SA, EN, HI, BN, OR), light and dark, on a running emulator or phone.
+"""Language matrix: app language (EN, HI, BN, OR) x reading language (SA, EN, HI, BN, OR), light and dark, on a running emulator or phone.
 
     py tools/qa/language_matrix.py --out <folder> [--serial emulator-5554] [--skandha 8 --chapter 14] [--themes Prabhat,Sandhya]
 
@@ -18,7 +18,7 @@ from pathlib import Path
 ADB = r"C:\Users\sdroy\AppData\Local\Android\Sdk\platform-tools\adb.exe"
 PKG = "com.bhagavatam.app"
 READS = ["SA", "EN", "HI", "BN", "OR"]
-UIS = ["EN", "HI", "BN"]
+UIS = ["EN", "HI", "BN", "OR"]
 
 
 def run(serial, *a, binary=False):
@@ -43,7 +43,10 @@ def prefs_xml(ui, read, theme, s, c):
 
 
 def shot(serial, path):
+    """Screenshot plus the uiautomator dump of the same screen (for tools/qa/a11y_check.py and the language check)."""
     Path(path).write_bytes(run(serial, "exec-out", "screencap", "-p", binary=True))
+    run(serial, "shell", "uiautomator", "dump", "/sdcard/bh_ui.xml")
+    Path(str(path)[:-4] + ".xml").write_bytes(run(serial, "exec-out", "cat", "/sdcard/bh_ui.xml", binary=True))
 
 
 def main():

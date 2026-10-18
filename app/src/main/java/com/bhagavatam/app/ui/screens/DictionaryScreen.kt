@@ -109,11 +109,10 @@ fun DictionaryScreen(
         isSearching = true
         delay(150)
         val results = withContext(Dispatchers.IO) {
-            val exactLookups = Dictionary.lookup(
-                trimmed,
-                if (selectedLang == "all") "en" else selectedLang,
-                state.preferredMeaningLang(selectedLang)
-            )
+            // "All": the word is looked up in the language of its script; a Devanagari word as Hindi, then as Sanskrit
+            val lookLang = if (selectedLang == "all") Dictionary.langOfScript(trimmed) else selectedLang
+            val exactLookups = Dictionary.lookup(trimmed, lookLang, state.preferredMeaningLang(lookLang))
+                .ifEmpty { if (selectedLang == "all" && lookLang == "hi") Dictionary.lookup(trimmed, "sa", state.preferredMeaningLang("sa")) else emptyList() }
             val prefixResults = Dictionary.search(
                 prefix = trimmed,
                 lang = if (selectedLang == "all") null else selectedLang,

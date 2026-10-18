@@ -42,3 +42,13 @@ class BookGlossTest {
         assertEquals(listOf("≈ descended, manifestations"), BookGloss.senses(BookGloss.Row(hi = "", en = "descended|manifestations", parts = "")) { null })
     }
 }
+
+class ScriptLangTest {
+    @Test
+    fun aTypedWordIsLookedUpInTheLanguageOfItsScript() {
+        assertEquals("or", Dictionary.langOfScript("ହୋଇଥିବାରୁ"))
+        assertEquals("bn", Dictionary.langOfScript("কৃষ্ণ"))
+        assertEquals("hi", Dictionary.langOfScript("कृष्ण"))
+        assertEquals("en", Dictionary.langOfScript("Krishna"))
+    }
+}
