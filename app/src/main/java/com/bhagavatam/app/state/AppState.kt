@@ -87,7 +87,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var showIast by mutableStateOf(prefs.getBoolean("showIast", false))
         private set
     /** Meanings of a tapped word are fetched from Wiktionary when this is on (only the word is sent). */
-    var onlineMeanings by mutableStateOf(prefs.getBoolean("onlineMeanings", true))
+    var onlineMeanings by mutableStateOf(prefs.getBoolean("onlineMeanings", false))
         private set
     var meaningLangMode by mutableStateOf(
         runCatching { MeaningLangMode.valueOf(prefs.getString("meaningLangMode", MeaningLangMode.WORD_LANG.name) ?: MeaningLangMode.WORD_LANG.name) }.getOrDefault(MeaningLangMode.WORD_LANG)
@@ -463,14 +463,14 @@ class AppState(app: Application) : AndroidViewModel(app) {
         followSystem = true; lightTheme = ReaderTheme.Prabhat; darkTheme = ReaderTheme.Sandhya; readerTheme = ReaderTheme.Prabhat
         textScale = 1f; lineScale = 1f; showDaily = true
         justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true; showSpeakers = true
-        keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = true
+        keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = false
         meaningLangMode = MeaningLangMode.WORD_LANG
         keepPlaying = true; playThrough = PlayThrough.SKANDHA; keepScreenOn = true; speed = 1f; pauseScale = 1f
         save {
             putBoolean("followSystem", true); putString("lightTheme", "Prabhat"); putString("darkTheme", "Sandhya"); putString("theme", "Prabhat")
             putFloat("textScale", 1f); putFloat("lineScale", 1f); putBoolean("showDaily", true)
             putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true); putBoolean("showSpeakers", true)
-            putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", true)
+            putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", false)
             putString("meaningLangMode", MeaningLangMode.WORD_LANG.name)
             putBoolean("keepPlaying", true); putString("playThrough", PlayThrough.SKANDHA.name); putBoolean("keepScreenOn", true); putFloat("speed", 1f); putFloat("pauseScale", 1f)
         }
