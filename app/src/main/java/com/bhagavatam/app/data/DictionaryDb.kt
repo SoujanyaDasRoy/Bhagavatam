@@ -9,6 +9,9 @@ import java.io.File
  * Copies the bundled asset database to app storage once per version and opens read-only.
  */
 object DictionaryDb {
+    /** The dictionary_version of the database in assets; raise it together with the database. */
+    const val ASSET_VERSION = 3
+
     private const val ASSET = "dictionary.db"
 
     private var db: SQLiteDatabase? = null
@@ -50,7 +53,8 @@ object DictionaryDb {
         val prefs = ctx.getSharedPreferences("dictionary", Context.MODE_PRIVATE)
         val appCode = appVersionCode(ctx)
 
-        if (!targetFile.exists() || prefs.getInt("dictAppCode", -1) != appCode) {
+        // copied again after an app update, and whenever the dictionary in the app is a newer build (ASSET_VERSION = dictionary_version in its meta table)
+        if (!targetFile.exists() || prefs.getInt("dictAppCode", -1) != appCode || prefs.getInt("dictAssetVersion", -1) != ASSET_VERSION) {
             val tmp = File(targetFile.path + ".tmp")
             val copied = runCatching {
                 ctx.assets.open(ASSET).use { input ->
@@ -61,7 +65,7 @@ object DictionaryDb {
             }.getOrDefault(false)
 
             if (copied) {
-                prefs.edit().putInt("dictAppCode", appCode).apply()
+                prefs.edit().putInt("dictAppCode", appCode).putInt("dictAssetVersion", ASSET_VERSION).apply()
             } else if (tmp.exists()) {
                 tmp.delete()
             }
