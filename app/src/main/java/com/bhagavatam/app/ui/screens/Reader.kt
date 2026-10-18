@@ -283,12 +283,13 @@ fun ReaderScreen(
         val target = state.scrollToVerse ?: return@LaunchedEffect
         val p = target.split(".").mapNotNull { it.toIntOrNull() }
         if (p.size < 3 || p[0] != skandha || p[1] != adhyaya) return@LaunchedEffect
-        val i = rowVerses.indexOfLast { it.num <= p[2] }
-        if (i >= 0) {
-            val head = (if (!state.hasSession && state.nextTip() != null) 1 else 0) + (if (state.showChapterArt) 1 else 0) + 1
-            list.animateScrollToItem(head + i)
-        }
-        state.scrollToVerse = null
+        try {
+            val i = rowVerses.indexOfLast { it.num <= p[2] }
+            if (i >= 0) {
+                val head = (if (!state.hasSession && state.nextTip() != null) 1 else 0) + (if (state.showChapterArt) 1 else 0) + 1
+                list.scrollToItem(head + i)
+            }
+        } finally { state.scrollToVerse = null }
     }
     // A short message (Undo for a bookmark or a highlight) leaves by itself.
     LaunchedEffect(state.snack) {
@@ -299,7 +300,7 @@ fun ReaderScreen(
 
     // Resume where the reader stopped.
     LaunchedEffect(skandha, adhyaya) {
-        if (state.lastSkandha == skandha && state.lastAdhyaya == adhyaya && state.lastVerse > 1 && rowVerses.isNotEmpty()) {
+        if (com.bhagavatam.app.state.resumeApplies(state.scrollToVerse) && state.lastSkandha == skandha && state.lastAdhyaya == adhyaya && state.lastVerse > 1 && rowVerses.isNotEmpty()) {
             val i = rowVerses.indexOfLast { it.num <= state.lastVerse }
             if (i > 0) list.scrollToItem(i + 1)
         }

@@ -154,6 +154,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
         when (filter) { 1 -> a.kind == com.bhagavatam.app.data.AnnKind.BOOKMARK; 2 -> a.kind != com.bhagavatam.app.data.AnnKind.BOOKMARK; else -> true }
     }
     val marks = remember(kindMarks, query, colourChip) { filterMarks(kindMarks, query, colourChip) }
+    val markGroups = remember(marks) { groupMarks(marks) }
     Box(Modifier.fillMaxSize()) {
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = BottomRoom), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         item { NavBar(s.tabMe, onBack) }
@@ -162,7 +163,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
         if (kindMarks.isNotEmpty()) item { NotebookControls(state, query, { query = it }, colourChip, { colourChip = it }, marks) }
         if (marks.isNotEmpty()) {
             item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Secondary) }
-            notebookMarks(state, marks, onOpen)
+            notebookMarks(state, markGroups, onOpen)
         } else if (kindMarks.isNotEmpty()) item {
             Text(tr(ui, "No note matches.", "कोई नोट नहीं मिला।", "কোনো নোট মেলেনি।"), Modifier.padding(horizontal = 20.dp, vertical = 12.dp), fontSize = 15.sp, color = Brand.Secondary)
         }

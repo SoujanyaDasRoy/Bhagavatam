@@ -52,6 +52,9 @@ fun filterMarks(marks: List<Annotation>, query: String, colour: Int): List<Annot
     }
 }
 
+/** Android refuses to carry more than about 1 MB in a share; text in UTF-16 is 2 bytes a character, so stay well under. */
+fun fitsInShareIntent(text: String): Boolean = text.length <= 200_000
+
 /** Plain text of [marks] as shared from the notebook, with the reader's colour names and chapter titles. */
 fun notebookExport(state: AppState, marks: List<Annotation>): String = notebookText(
     marks.map { NotebookEntry(it.ref, it.kind, it.colour, it.quote, it.note) },
@@ -96,8 +99,10 @@ fun NotebookControls(state: AppState, query: String, onQuery: (String) -> Unit, 
         }
         if (marks.isNotEmpty()) Box(
             Modifier.heightIn(min = 48.dp).clip(CircleShape).clickable(role = Role.Button) {
-                val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, notebookExport(state, marks))
-                runCatching { ctx.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+                val text = notebookExport(state, marks)
+                if (!fitsInShareIntent(text)) state.toast(tr(ui, "Too many notes to share at once. Filter by colour or search first.", "एक साथ साझा करने के लिए बहुत नोट हैं। पहले रंग या खोज से छाँटें।", "একসঙ্গে শেয়ার করার মতো অনেক বেশি নোট। আগে রং বা খোঁজ দিয়ে বাছুন।"))
+                else runCatching { ctx.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+                    .onFailure { state.toast(tr(ui, "Could not open sharing.", "साझा करना नहीं खुल सका।", "শেয়ার খোলা যায়নি।")) }
             }.padding(horizontal = 6.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
@@ -106,19 +111,24 @@ fun NotebookControls(state: AppState, query: String, onQuery: (String) -> Unit, 
     }
 }
 
+/** The marks grouped by chapter ("skandha.adhyaya"), chapters in book order and marks in verse order. Computed once per list, not per frame. */
+fun groupMarks(marks: List<Annotation>): List<Pair<String, List<Annotation>>> {
+    val keyed = marks.map { a -> a to a.ref.split(".").map { it.toIntOrNull() ?: 0 } }
+    return keyed.sortedWith(compareBy({ it.second.getOrElse(0) { 0 } }, { it.second.getOrElse(1) { 0 } }, { it.second.getOrElse(2) { 0 } }))
+        .groupBy({ it.second.take(2).joinToString(".") }, { it.first }).toList()
+}
+
 /** The marks grouped by chapter, each group under its chapter's name; tapping a mark opens its note editor, "Open" goes to the verse. */
-fun LazyListScope.notebookMarks(state: AppState, marks: List<Annotation>, onOpen: (Int, Int) -> Unit) {
+fun LazyListScope.notebookMarks(state: AppState, groups: List<Pair<String, List<Annotation>>>, onOpen: (Int, Int) -> Unit) {
     val ui = state.uiLang
-    val groups = notebookGroups(marks.map { NotebookEntry(it.ref, it.kind, it.colour, it.quote, it.note) })
-    groups.forEach { (key, entries) ->
+    groups.forEach { (key, anns) ->
         val p = key.split(".").map { it.toIntOrNull() ?: 0 }
         item(key = "g$key") {
             androidx.compose.material3.Text(
-                localDigits(if (p[0] == 0) "Mahatmya ${p[1]}" else "${p[0]}.${p[1]}", ui) + "  " + SampleData.adhyayaTitle(p[0], p[1], state.titleLangFor(p[0], p[1]), state.strings),
+                localDigits(if (p[0] == 0) state.strings.mahatmya + " ${p[1]}" else "${p[0]}.${p[1]}", ui) + "  " + SampleData.adhyayaTitle(p[0], p[1], state.titleLangFor(p[0], p[1]), state.strings),
                 Modifier.padding(horizontal = 20.dp, vertical = 6.dp), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold,
             )
         }
-        val anns = marks.filter { a -> a.ref.split(".").take(2).joinToString(".") == key }.sortedBy { it.ref.substringAfterLast('.').toIntOrNull() ?: 0 }
         items(anns, key = { "m${it.id}" }) { a ->
             Column(
                 Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card)

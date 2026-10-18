@@ -17,3 +17,19 @@ class BackupRowsTest {
 
     @Test fun anOldBackupWithoutTheKeyReadsAsNull() = assertTrue(BackupRows.fromRoot(org.json.JSONObject("{\"format\":\"bhagavatam-backup-1\",\"items\":[]}"), "review") == null)
 }
+
+class BackupRestoreRulesTest {
+    private val allowed = setOf("id", "ref", "quote")
+
+    @Test fun anUnknownColumnIsRejectedBeforeAnythingIsDeleted() {
+        val rows = listOf(mapOf<String, Any?>("id" to 1L, "ref" to "1.1.1", "from_a_newer_version" to "x"))
+        var thrown = false
+        try { BackupRows.requireColumns("annotation", rows, allowed) } catch (e: IllegalArgumentException) { thrown = true }
+        org.junit.Assert.assertTrue(thrown)
+    }
+
+    @Test fun knownColumnsAndEmptyTablesPass() {
+        BackupRows.requireColumns("annotation", listOf(mapOf<String, Any?>("id" to 1L, "ref" to "r")), allowed)
+        BackupRows.requireColumns("annotation", emptyList(), allowed)
+    }
+}

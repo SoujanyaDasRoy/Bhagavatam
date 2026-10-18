@@ -14,6 +14,14 @@ object BackupRows {
         o.keys().asSequence().associateWith { k -> if (o.isNull(k)) null else o.get(k).let { v -> if (v is Int) v.toLong() else v } }
     }
 
+    /** Throws before anything is deleted when a row has a column the table does not have (a backup from a newer version). */
+    fun requireColumns(table: String, rows: List<Map<String, Any?>>, allowed: Set<String>) {
+        for (r in rows) {
+            val extra = r.keys - allowed
+            require(extra.isEmpty()) { "backup has columns $extra that table $table does not have" }
+        }
+    }
+
     /** The rows under [key] in the backup, or null when the file does not have that key (a backup made by an older version). */
     fun fromRoot(root: JSONObject, key: String): List<Map<String, Any?>>? = root.optJSONArray(key)?.let { fromJson(it) }
 }

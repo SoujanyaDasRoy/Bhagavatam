@@ -22,3 +22,27 @@ class FilterMarksTest {
     @Test fun searchAndColourTogether() = assertEquals(listOf(1L), filterMarks(marks, "hill", 1).map { it.id })
     @Test fun blankSearchIsNoSearch() = assertEquals(3, filterMarks(marks, "   ", 0).size)
 }
+
+class ShareSizeTest {
+    @Test fun smallTextFitsAndHugeTextDoesNot() {
+        org.junit.Assert.assertTrue(fitsInShareIntent("a".repeat(1000)))
+        org.junit.Assert.assertFalse(fitsInShareIntent("ଓ".repeat(300_000)))
+    }
+}
+
+class GroupMarksTest {
+    private fun a(id: Long, ref: String) = Annotation(id, ref, "hi", 0, 1, "q", AnnKind.HIGHLIGHT, 1L, "", 0)
+
+    @Test fun groupsAreInBookOrderAndMarksInVerseOrder() {
+        val g = groupMarks(listOf(a(1, "10.29.1"), a(2, "1.2.10"), a(3, "1.2.3")))
+        org.junit.Assert.assertEquals(listOf("1.2", "10.29"), g.map { it.first })
+        org.junit.Assert.assertEquals(listOf(3L, 2L), g[0].second.map { it.id })
+    }
+
+    @Test fun twoThousandMarksGroupQuickly() {
+        val marks = (1..2000).map { a(it.toLong(), "${it % 12 + 1}.${it % 30 + 1}.${it % 50 + 1}") }
+        val t0 = System.nanoTime()
+        groupMarks(marks)
+        org.junit.Assert.assertTrue((System.nanoTime() - t0) / 1_000_000 < 500)
+    }
+}

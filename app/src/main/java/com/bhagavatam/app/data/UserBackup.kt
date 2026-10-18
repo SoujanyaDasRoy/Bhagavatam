@@ -53,16 +53,24 @@ object UserBackup {
                 "set" -> ed.putStringSet(k, o.getJSONArray("v").let { a -> (0 until a.length()).map { a.getString(it) }.toSet() })
             }
         }
-        check(ed.commit()) { "could not save" }
-        // a table the file does not have (a backup from an older version) is left as it is
+        // every table is read and checked before anything is written, then all three are replaced in one transaction
         val db = AnnotationStore(ctx).writableDatabase
-        for (table in TABLES) BackupRows.fromRoot(root, table)?.let { restore(db, table, it) }
+        val plan = TABLES.mapNotNull { table -> BackupRows.fromRoot(root, table)?.let { rows -> BackupRows.requireColumns(table, rows, columnsOf(db, table)); table to rows } }
+        db.beginTransaction()
+        try {
+            for ((table, rows) in plan) restore(db, table, rows)
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+        check(ed.commit()) { "could not save" }
         items.length()
     }
 
     private val TABLES = listOf("annotation", "saved_word", "review")
 
-    private fun dump(db: android.database.sqlite.SQLiteDatabase, table: String): List<Map<String, Any?>> = runCatching {
+    private fun columnsOf(db: android.database.sqlite.SQLiteDatabase, table: String): Set<String> =
+        db.rawQuery("SELECT * FROM $table LIMIT 0", null).use { it.columnNames.toSet() }
+
+    private fun dump(db: android.database.sqlite.SQLiteDatabase, table: String): List<Map<String, Any?>> =
         db.rawQuery("SELECT * FROM $table", null).use { c ->
             buildList {
                 while (c.moveToNext()) add((0 until c.columnCount).associate { i ->
@@ -75,18 +83,13 @@ object UserBackup {
                 })
             }
         }
-    }.getOrDefault(emptyList())
 
     private fun restore(db: android.database.sqlite.SQLiteDatabase, table: String, rows: List<Map<String, Any?>>) {
-        db.beginTransaction()
-        try {
-            db.delete(table, null, null)
-            for (r in rows) {
-                val v = android.content.ContentValues()
-                for ((k, x) in r) when (x) { null -> v.putNull(k); is Long -> v.put(k, x); is Double -> v.put(k, x); else -> v.put(k, x.toString()) }
-                db.insert(table, null, v)
-            }
-            db.setTransactionSuccessful()
-        } finally { db.endTransaction() }
+        db.delete(table, null, null)
+        for (r in rows) {
+            val v = android.content.ContentValues()
+            for ((k, x) in r) when (x) { null -> v.putNull(k); is Long -> v.put(k, x); is Double -> v.put(k, x); else -> v.put(k, x.toString()) }
+            db.insertOrThrow(table, null, v)
+        }
     }
 }

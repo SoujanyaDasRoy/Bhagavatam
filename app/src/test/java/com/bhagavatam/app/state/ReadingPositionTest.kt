@@ -25,3 +25,10 @@ class ReadingPositionTest {
         assertEquals(1 + 2, itemIndexFor(top, 1, joint)) // verse 3 is the nearest row at or before 4
     }
 }
+
+class ResumeRuleTest {
+    @Test fun resumeAppliesOnlyWhenNoVerseWasAskedFor() {
+        org.junit.Assert.assertTrue(resumeApplies(null))
+        org.junit.Assert.assertFalse(resumeApplies("10.29.5"))
+    }
+}

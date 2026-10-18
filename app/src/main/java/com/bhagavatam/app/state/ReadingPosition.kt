@@ -6,3 +6,6 @@ fun anchorVerseNum(firstVisibleIndex: Int, headItems: Int, rows: List<Int>): Int
 
 /** The list index to scroll to so [num] (or the row at or before it, when the new language has no row for it) is at the top. */
 fun itemIndexFor(num: Int, headItems: Int, rows: List<Int>): Int = headItems + rows.indexOfLast { it <= num }.coerceAtLeast(0)
+
+/** The reader goes back to where it stopped only when nothing asked for a particular verse (the notebook, the word sheet). */
+fun resumeApplies(pendingVerse: String?): Boolean = pendingVerse == null
