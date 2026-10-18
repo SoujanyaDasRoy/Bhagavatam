@@ -117,7 +117,10 @@ data class SearchUiData(
     val sameChapterMatches: List<Pair<Int, Int>>,
     val verseCards: List<VerseCardData>,
     val suggestedWord: String?,
-    val searchTimeMs: Long
+    val searchTimeMs: Long,
+    /** Dictionary entries for the typed word, and the reader's own notes, bookmarks and highlights that contain it. */
+    val dictMatches: List<com.bhagavatam.app.data.DictEntry> = emptyList(),
+    val noteMatches: List<com.bhagavatam.app.data.Annotation> = emptyList(),
 )
 
 /**
@@ -190,7 +193,8 @@ fun SearchResultsScreen(
     state: AppState,
     onOpenChapter: (Int, Int) -> Unit = { _, _ -> },
     onOpenVerse: (Int, Int) -> Unit = onOpenChapter,
-    onOpenGlossary: () -> Unit = {}
+    onOpenGlossary: () -> Unit = {},
+    onOpenDictionary: () -> Unit = {},
 ) {
     val s = state.strings
     val ui = state.uiLang
@@ -337,7 +341,14 @@ fun SearchResultsScreen(
                 if (cardList.size >= 100) break
             }
 
+            // the dictionary and the reader's own marks answer the same question, so they are searched with the book
+            val shortQuery = parsedRef == null && q.trim().split(" ").filter { it.isNotEmpty() }.size <= 2
+            val dictMatches = if (shortQuery) runCatching { com.bhagavatam.app.data.Dictionary.search(q.trim(), null, 5) }.getOrDefault(emptyList()) else emptyList()
+            val noteMatches = if (parsedRef == null) filterMarks(state.annotations.toList(), q, 0).take(5) else emptyList()
+
             SearchUiData(
+                dictMatches = dictMatches,
+                noteMatches = noteMatches,
                 parsedRef = parsedRef,
                 matchingStories = matchingStories,
                 sameChapterMatches = sameChapters,
@@ -594,6 +605,44 @@ fun SearchResultsScreen(
                         }
                     }
 
+                    // 3b. Dictionary entries for the word
+                    if (data.dictMatches.isNotEmpty()) {
+                        item { SectionHeading(tr(ui, "In the dictionary", "शब्दकोश में", "অভিধানে", "ଅଭିଧାନରେ")) }
+                        items(data.dictMatches, key = { "dict_${it.id}" }) { e ->
+                            val gloss = e.senses.firstOrNull()?.gloss.orEmpty()
+                            Column(
+                                Modifier.fillMaxWidth().tappable(Radius.group, e.headword) {
+                                    state.lookup = com.bhagavatam.app.data.WordLookup(e.headword, Lang.entries.firstOrNull { l -> l.code == e.lang } ?: Lang.SA, "")
+                                    onOpenDictionary()
+                                }.background(Brand.Card).border(1.dp, Brand.Separator, Radius.group).padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(e.headword, Modifier.weight(1f), fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                                    Text(nameIn(ui, Lang.entries.firstOrNull { l -> l.code == e.lang } ?: Lang.SA), fontSize = 12.sp, color = Brand.Gold)
+                                }
+                                if (gloss.isNotEmpty()) Text(gloss, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            }
+                        }
+                    }
+
+                    // 3c. The reader's own marks
+                    if (data.noteMatches.isNotEmpty()) {
+                        item { SectionHeading(tr(ui, "In your notes", "आपके नोट में", "আপনার নোটে", "ଆପଣଙ୍କ ନୋଟ୍‌ରେ")) }
+                        items(data.noteMatches, key = { "note_${it.id}" }) { a ->
+                            val p = a.ref.split(".").mapNotNull { it.toIntOrNull() }
+                            Column(
+                                Modifier.fillMaxWidth().tappable(Radius.group, a.ref) { if (p.size >= 2) { state.scrollToVerse = a.ref; onOpenChapter(p[0], p[1]) } }
+                                    .background(Brand.Card).border(1.dp, Brand.Separator, Radius.group).padding(14.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                            ) {
+                                Text(localDigits(a.ref, ui), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
+                                Text(a.quote, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                if (a.note.isNotBlank()) Text(a.note, fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            }
+                        }
+                    }
+
                     // 4. Words appear together in the same chapter
                     if (data.sameChapterMatches.isNotEmpty() && data.verseCards.isEmpty()) {
                         item {
@@ -627,7 +676,7 @@ fun SearchResultsScreen(
                     }
 
                     // 6. Verse Result Cards
-                    if (data.verseCards.isEmpty() && data.matchingStories.isEmpty() && ref == null && data.sameChapterMatches.isEmpty()) {
+                    if (data.verseCards.isEmpty() && data.matchingStories.isEmpty() && ref == null && data.sameChapterMatches.isEmpty() && data.dictMatches.isEmpty() && data.noteMatches.isEmpty()) {
                         item {
                             Column(
                                 Modifier.fillMaxWidth().padding(vertical = 40.dp),

@@ -155,7 +155,8 @@ fun AppNav(state: AppState) {
                 TabScaffold(state, nav, Tab.Search) {
                     SearchScreen(state,
                         onOpenVerse = { s, a -> nav.navigate(Routes.reader(s, a)) },
-                        onOpenGlossary = { nav.navigate(Routes.GLOSSARY) })
+                        onOpenGlossary = { nav.navigate(Routes.GLOSSARY) },
+                        onOpenDictionary = { nav.navigate(Routes.DICTIONARY) })
                 }
             }
             tabComposable(Tab.Downloads.route) { TabScaffold(state, nav, Tab.Downloads) { DownloadsScreen(state) } }
