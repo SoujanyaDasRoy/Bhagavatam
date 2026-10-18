@@ -76,7 +76,7 @@ fun verseShareText(state: AppState, v: Verse, lang: Lang?): String {
         append(ref).append("\n\n")
         if (sa.isNotBlank()) append(sa).append("\n\n")
         if (body.isNotEmpty()) append(body).append("\n\n")
-        if (lang == Lang.OR) append(tr(ui, "(Odia text is machine-read; check the printed book.)", "(ओड़िया पाठ मशीन से पढ़ा गया है; छपी पुस्तक से मिलाएँ।)", "(ওড়িয়া পাঠ যন্ত্রে পড়া; ছাপা বইয়ের সঙ্গে মিলিয়ে নিন।)")).append("\n\n")
+        if (lang == Lang.OR) append(tr(ui, "(Odia text is machine-read; check the printed book.)", "(ओड़िया पाठ मशीन से पढ़ा गया है; छपी पुस्तक से मिलाएँ।)", "(ওড়িয়া পাঠ যন্ত্রে পড়া; ছাপা বইয়ের সঙ্গে মিলিয়ে নিন।)", "(ଓଡ଼ିଆ ଟେକ୍ସଟ୍ ମେସିନ୍ ଦ୍ୱାରା ପଢ଼ାଯାଇଛି; ଛପା ବହି ଦେଖନ୍ତୁ।)")).append("\n\n")
         append("Shrimad Bhagavat Mahapuran: https://github.com/SoujanyaDasRoy/Bhagavatam")
     }
 }
@@ -121,52 +121,52 @@ fun VerseSheet(state: AppState) {
                 text, Modifier.padding(horizontal = 12.dp, vertical = 6.dp), fontSize = 15.sp, lineHeight = 22.sp, color = c.secondary,
                 maxLines = 3, overflow = TextOverflow.Ellipsis, fontFamily = lang?.let { readingFont(it) },
             )
-            Action(if (saved) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন")) {
+            Action(if (saved) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ")) {
                 state.toggleBookmark(v.ref)
                 val now = v.ref in state.bookmarks
                 state.toast(
-                    if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে"),
-                    tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন"),
+                    if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
+                    tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ"),
                 ) { state.toggleBookmark(v.ref) }
                 close()
             }
             if (text.isNotEmpty() && lang != null) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(tr(ui, "Highlight", "हाइलाइट", "হাইলাইট"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Medium, color = c.ink)
+                    Text(tr(ui, "Highlight", "हाइलाइट", "হাইলাইট", "ହାଇଲାଇଟ୍"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Medium, color = c.ink)
                     val names = List(4) { state.markName(it) }
                     MarkColours.forEachIndexed { i, col ->
                         Box(
-                            Modifier.size(48.dp).clickable(role = Role.Button, onClickLabel = tr(ui, "Highlight ", "हाइलाइट ", "হাইলাইট ") + names[i]) {
+                            Modifier.size(48.dp).clickable(role = Role.Button, onClickLabel = tr(ui, "Highlight ", "हाइलाइट ", "হাইলাইট ", "ହାଇଲାଇଟ୍ ") + names[i]) {
                                 val id = state.addAnnotation(Annotation(0, v.ref, lang.code, 0, text.length, text, AnnKind.HIGHLIGHT, col, "", System.currentTimeMillis()))
-                                state.toast(tr(ui, "Verse highlighted", "श्लोक हाइलाइट हुआ", "শ্লোক হাইলাইট হয়েছে"), tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন")) { state.removeAnnotation(id) }
+                                state.toast(tr(ui, "Verse highlighted", "श्लोक हाइलाइट हुआ", "শ্লোক হাইলাইট হয়েছে", "ଶ୍ଳୋକ ହାଇଲାଇଟ୍ ହେଲା"), tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ")) { state.removeAnnotation(id) }
                                 close()
                             },
                             contentAlignment = Alignment.Center,
                         ) { Box(Modifier.size(24.dp).clip(CircleShape).background(Color(col))) }
                     }
                 }
-                Action(tr(ui, "Add a note", "नोट जोड़ें", "নোট যোগ করুন")) {
+                Action(tr(ui, "Add a note", "नोट जोड़ें", "নোট যোগ করুন", "ନୋଟ୍ ଯୋଡ଼ନ୍ତୁ")) {
                     state.annDraft = AnnDraft(null, v.ref, lang.code, 0, text.length, text)
                     close()
                 }
             }
             val inReview = state.isInReview("verse", v.ref)
-            Action(if (inReview) tr(ui, "In review (comes back soon)", "समीक्षा में है (जल्द लौटेगा)", "পর্যালোচনায় আছে (শীঘ্র ফিরবে)") else tr(ui, "Memorise this verse", "इस श्लोक को याद करें", "এই শ্লোক মনে রাখুন"), enabled = !inReview) {
+            Action(if (inReview) tr(ui, "In review (comes back soon)", "समीक्षा में है (जल्द लौटेगा)", "পর্যালোচনায় আছে (শীঘ্র ফিরবে)", "ସମୀକ୍ଷାରେ (ଶୀଘ୍ର ଫେରିବ)") else tr(ui, "Memorise this verse", "इस श्लोक को याद करें", "এই শ্লোক মনে রাখুন", "ଏହି ଶ୍ଳୋକ ମନେରଖନ୍ତୁ"), enabled = !inReview) {
                 state.addReview("verse", v.ref)
-                state.toast(tr(ui, "Added to review. It comes back tomorrow.", "समीक्षा में जुड़ा। यह कल लौटेगा।", "পর্যালোচনায় যোগ হল। কাল ফিরবে।"))
+                state.toast(tr(ui, "Added to review. It comes back tomorrow.", "समीक्षा में जुड़ा। यह कल लौटेगा।", "পর্যালোচনায় যোগ হল। কাল ফিরবে।", "ସମୀକ୍ଷାରେ ଯୋଡ଼ାଗଲା। କାଲି ଫେରିବ।"))
                 close()
             }
-            Action(tr(ui, "Share", "साझा करें", "শেয়ার করুন")) {
+            Action(tr(ui, "Share", "साझा करें", "শেয়ার করুন", "ଶେୟାର୍")) {
                 val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, verseShareText(state, v, lang))
                 runCatching { ctx.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
                 close()
             }
-            Action(tr(ui, "Copy with reference", "संदर्भ सहित कॉपी करें", "রেফারেন্স সহ কপি করুন")) {
+            Action(tr(ui, "Copy with reference", "संदर्भ सहित कॉपी करें", "রেফারেন্স সহ কপি করুন", "ସନ୍ଦର୍ଭ ସହିତ କପି କରନ୍ତୁ")) {
                 clipboard.setText(AnnotatedString(verseShareText(state, v, lang)))
-                state.toast(tr(ui, "Copied", "कॉपी हुआ", "কপি হয়েছে"))
+                state.toast(tr(ui, "Copied", "कॉपी हुआ", "কপি হয়েছে", "କପି ହେଲା"))
                 close()
             }
-            Action(tr(ui, "Listen from here", "यहाँ से सुनें", "এখান থেকে শুনুন")) {
+            Action(tr(ui, "Listen from here", "यहाँ से सुनें", "এখান থেকে শুনুন", "ଏଠାରୁ ଶୁଣନ୍ତୁ")) {
                 val all = SampleData.versesFor(v.skandha, v.adhyaya)
                 val i = all.indexOfFirst { it.ref == v.ref }.coerceAtLeast(0)
                 state.playVerses(all, i)
@@ -174,7 +174,7 @@ fun VerseSheet(state: AppState) {
             }
             val other = listOf(Lang.SA, Lang.HI, Lang.EN, Lang.BN, Lang.OR).filter { it != lang && it != Lang.SA && v.hasText(it) }
             if (other.isNotEmpty()) {
-                Action(if (others) tr(ui, "Hide other translations", "अन्य अनुवाद छिपाएँ", "অন্য অনুবাদ লুকান") else tr(ui, "Other translations", "अन्य अनुवाद", "অন্য অনুবাদ")) { others = !others }
+                Action(if (others) tr(ui, "Hide other translations", "अन्य अनुवाद छिपाएँ", "অন্য অনুবাদ লুকান", "ଅନ୍ଯ ଅନୁବାଦ ଲୁଚାନ୍ତୁ") else tr(ui, "Other translations", "अन्य अनुवाद", "অন্য অনুবাদ", "ଅନ୍ଯ ଅନୁବାଦ")) { others = !others }
                 if (others) other.forEach { l ->
                     Column(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(languageName(l), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold)
@@ -182,9 +182,9 @@ fun VerseSheet(state: AppState) {
                     }
                 }
             }
-            if (Corrections.enabled) Action(tr(ui, "Report an error", "त्रुटि बताएँ", "ভুল জানান")) {
+            if (Corrections.enabled) Action(tr(ui, "Report an error", "त्रुटि बताएँ", "ভুল জানান", "ତ୍ରୁଟି ଜଣାନ୍ତୁ")) {
                 Corrections.open(ctx, v.ref, "")
-                state.toast(tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।"))
+                state.toast(tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।", "ବିବରଣୀ କପି ହେଲା। ଚାଟ୍‌ରେ ପେଷ୍ଟ୍ କରନ୍ତୁ।"))
                 close()
             }
         }

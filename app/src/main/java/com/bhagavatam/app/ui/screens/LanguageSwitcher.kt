@@ -82,16 +82,16 @@ internal fun ownName(l: Lang) = when (l) { Lang.HI -> "हिन्दी"; Lang
 
 /** A language's name written in the app language (the small line under the own-script name). */
 internal fun nameIn(ui: Lang, l: Lang) = when (l) {
-    Lang.HI -> tr(ui, "Hindi", "हिन्दी", "হিন্দি")
-    Lang.BN -> tr(ui, "Bengali", "बंगाली", "বাংলা")
-    Lang.OR -> tr(ui, "Odia", "ओड़िया", "ওড়িয়া")
-    Lang.EN -> tr(ui, "English", "अंग्रेज़ी", "ইংরেজি")
-    Lang.SA -> tr(ui, "Sanskrit", "संस्कृत", "সংস্কৃত")
+    Lang.HI -> tr(ui, "Hindi", "हिन्दी", "হিন্দি", "ହିନ୍ଦୀ")
+    Lang.BN -> tr(ui, "Bengali", "बंगाली", "বাংলা", "ବଙ୍ଗାଳୀ")
+    Lang.OR -> tr(ui, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ")
+    Lang.EN -> tr(ui, "English", "अंग्रेज़ी", "ইংরেজি", "ଇଂରାଜୀ")
+    Lang.SA -> tr(ui, "Sanskrit", "संस्कृत", "সংস্কৃত", "ସଂସ୍କୃତ")
 }
 
 /** The text on the pill: the language being read, or a plain description when the shloka is shown too. */
 internal fun pillText(ui: Lang, withShloka: Boolean, readLang: Lang): String =
-    if (withShloka) tr(ui, "Shloka + translation", "श्लोक + अनुवाद", "শ্লোক + অনুবাদ") else ownName(if (readLang == Lang.SA) Lang.EN else readLang)
+    if (withShloka) tr(ui, "Shloka + translation", "श्लोक + अनुवाद", "শ্লোক + অনুবাদ", "ଶ୍ଳୋକ + ଅନୁବାଦ") else ownName(if (readLang == Lang.SA) Lang.EN else readLang)
 
 /** Changing to a language that has no text for this chapter is not offered. */
 internal fun canPick(available: Set<Lang>, l: Lang) = l in available
@@ -107,7 +107,7 @@ fun LanguagePill(state: AppState, compact: Boolean, onLongClick: (() -> Unit)? =
     val ui = state.uiLang
     val text = pillText(ui, state.showSanskrit, state.readLang)
     val font = if (state.showSanskrit) null else readingFont(if (state.readLang == Lang.SA) Lang.EN else state.readLang)
-    val description = tr(ui, "Reading language: $text. Tap to change.", "पढ़ने की भाषा: $text। बदलने के लिए छुएँ।", "পড়ার ভাষা: $text। বদলাতে ছুঁয়ে দেখুন।")
+    val description = tr(ui, "Reading language: $text. Tap to change.", "पढ़ने की भाषा: $text। बदलने के लिए छुएँ।", "পড়ার ভাষা: $text। বদলাতে ছুঁয়ে দেখুন।", "ପଠନ ଭାଷା: $text। ବଦଳାଇବାକୁ ଦବାନ୍ତୁ।")
     Box(
         Modifier.height(48.dp).widthIn(min = 48.dp).semantics(mergeDescendants = true) { contentDescription = description }
             .combinedClickable(role = Role.Button, onLongClick = onLongClick, onClick = onClick),
@@ -160,7 +160,7 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
     val have = remember(verses) { availableTranslations(verses) }
     val withShloka = state.showSanskrit
     val layers = state.alongsideLayers()
-    val notAvailable = tr(ui, "Not available for this chapter", "इस अध्याय के लिए उपलब्ध नहीं", "এই অধ্যায়ের জন্য পাওয়া যায়নি")
+    val notAvailable = tr(ui, "Not available for this chapter", "इस अध्याय के लिए उपलब्ध नहीं", "এই অধ্যায়ের জন্য পাওয়া যায়নি", "ଏହି ଅଧ୍ଯାୟ ପାଇଁ ଉପଲବ୍ଧ ନାହିଁ")
 
     fun setMode(withShlokaNow: Boolean) {
         if (withShlokaNow == withShloka) return
@@ -181,19 +181,19 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
     // Open fully, so every language row is in view and none sits half cut off at the bottom edge.
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = Brand.Paper) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            Text(tr(ui, "Reading language", "पढ़ने की भाषा", "পড়ার ভাষা"), Modifier.padding(horizontal = 20.dp), fontSize = 22.sp, fontWeight = FontWeight.Medium, color = Brand.Ink)
+            Text(tr(ui, "Reading language", "पढ़ने की भाषा", "পড়ার ভাষা", "ପଠନ ଭାଷା"), Modifier.padding(horizontal = 20.dp), fontSize = 22.sp, fontWeight = FontWeight.Medium, color = Brand.Ink)
 
             Column {
-                SectionLabel(tr(ui, "Show", "दिखाएँ", "দেখান"))
+                SectionLabel(tr(ui, "Show", "दिखाएँ", "দেখান", "ଦେଖାନ୍ତୁ"))
                 Segmented(
-                    listOf(tr(ui, "Translation only", "केवल अनुवाद", "শুধু অনুবাদ"), tr(ui, "With shloka", "श्लोक सहित", "শ্লোক সহ")),
+                    listOf(tr(ui, "Translation only", "केवल अनुवाद", "শুধু অনুবাদ", "କେବଳ ଅନୁବାଦ"), tr(ui, "With shloka", "श्लोक सहित", "শ্লোক সহ", "ଶ୍ଳୋକ ସହିତ")),
                     if (withShloka) 1 else 0, { setMode(it == 1) },
                 )
             }
 
             if (!withShloka) {
                 Column {
-                    SectionLabel(tr(ui, "Language", "भाषा", "ভাষা"))
+                    SectionLabel(tr(ui, "Language", "भाषा", "ভাষা", "ଭାଷା"))
                     GroupCard {
                         TRANSLATIONS.forEachIndexed { i, l ->
                             if (i > 0) androidx.compose.material3.HorizontalDivider(Modifier.padding(start = 16.dp), thickness = 0.5.dp, color = Brand.Separator)
@@ -201,11 +201,11 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
                             LanguageRow(ownName(l), fontFor(l), if (ok) nameIn(ui, l) else notAvailable, ok, state.readLang == l, false) { pick(l) }
                         }
                     }
-                    Note(tr(ui, "The audio is read in this language too.", "ऑडियो भी इसी भाषा में सुनाया जाता है।", "অডিও-ও এই ভাষায় শোনানো হয়।"))
+                    Note(tr(ui, "The audio is read in this language too.", "ऑडियो भी इसी भाषा में सुनाया जाता है।", "অডিও-ও এই ভাষায় শোনানো হয়।", "ଅଡିଓ ମଧ୍ଯ ଏହି ଭାଷାରେ ପଢ଼ାଯାଏ।"))
                 }
             } else {
                 Column {
-                    SectionLabel(tr(ui, "Shloka script", "श्लोक की लिपि", "শ্লোকের লিপি"))
+                    SectionLabel(tr(ui, "Shloka script", "श्लोक की लिपि", "শ্লোকের লিপি", "ଶ୍ଳୋକର ଲିପି"))
                     Segmented(
                         listOf("देवनागरी", "বাংলা", "Roman"), state.script.ordinal, { state.updateScript(SanskritScript.entries[it]) },
                         fonts = listOf(NotoDevanagari, NotoSerifBengali, null),
@@ -216,7 +216,7 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
                                 Modifier.fillMaxWidth().toggleable(value = state.showIast, role = Role.Switch) { state.updateShowIast(it) }.heightIn(min = 56.dp).padding(horizontal = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Text(tr(ui, "Also show Roman letters", "रोमन अक्षर भी दिखाएँ", "রোমান অক্ষরও দেখান"), Modifier.weight(1f), fontSize = 16.sp, color = Brand.Ink)
+                                Text(tr(ui, "Also show Roman letters", "रोमन अक्षर भी दिखाएँ", "রোমান অক্ষরও দেখান", "ରୋମାନ୍ ଅକ୍ଷର ମଧ୍ଯ ଦେଖାନ୍ତୁ"), Modifier.weight(1f), fontSize = 16.sp, color = Brand.Ink)
                                 Switch(
                                     checked = state.showIast, onCheckedChange = null,
                                     colors = SwitchDefaults.colors(
@@ -229,7 +229,7 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
                     }
                 }
                 Column {
-                    SectionLabel(tr(ui, "Translations under the shloka", "श्लोक के नीचे अनुवाद", "শ্লোকের নীচে অনুবাদ"))
+                    SectionLabel(tr(ui, "Translations under the shloka", "श्लोक के नीचे अनुवाद", "শ্লোকের নীচে অনুবাদ", "ଶ୍ଳୋକ ତଳେ ଅନୁବାଦ"))
                     GroupCard {
                         TRANSLATIONS.forEachIndexed { i, l ->
                             if (i > 0) androidx.compose.material3.HorizontalDivider(Modifier.padding(start = 16.dp), thickness = 0.5.dp, color = Brand.Separator)
@@ -237,7 +237,7 @@ fun LanguageSheet(state: AppState, verses: List<Verse>, onDismiss: () -> Unit) {
                             LanguageRow(ownName(l), fontFor(l), if (ok) nameIn(ui, l) else notAvailable, ok, l in layers && ok, true) { toggleLayer(l) }
                         }
                     }
-                    Note(tr(ui, "At least one stays on. The audio reads the Sanskrit shloka.", "कम से कम एक चालू रहता है। ऑडियो संस्कृत श्लोक सुनाता है।", "অন্তত একটি চালু থাকে। অডিও সংস্কৃত শ্লোক শোনায়।"))
+                    Note(tr(ui, "At least one stays on. The audio reads the Sanskrit shloka.", "कम से कम एक चालू रहता है। ऑडियो संस्कृत श्लोक सुनाता है।", "অন্তত একটি চালু থাকে। অডিও সংস্কৃত শ্লোক শোনায়।", "ଅତିକମ୍‌ରେ ଗୋଟିଏ ଚାଲୁ ରହେ। ଅଡିଓ ସଂସ୍କୃତ ଶ୍ଳୋକ ପଢ଼େ।"))
                 }
             }
         }

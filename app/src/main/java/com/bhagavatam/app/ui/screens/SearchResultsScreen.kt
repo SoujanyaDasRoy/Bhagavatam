@@ -429,10 +429,10 @@ fun SearchResultsScreen(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val allLabel = tr(ui, "All Skandhas", "सभी स्कन्ध", "সব স্কন্ধ")
+                    val allLabel = tr(ui, "All Skandhas", "सभी स्कन्ध", "সব স্কন্ধ", "ସମସ୍ତ ସ୍କନ୍ଧ")
                     Pill(text = allLabel, on = selectedSkandha == null, onClick = { selectedSkandha = null })
 
-                    val mahatmyaLabel = if (ui == Lang.HI) "माहात्म्य" else if (ui == Lang.BN) "মাহাত্ম্য" else "Mahatmya"
+                    val mahatmyaLabel = if (ui == Lang.HI) "माहात्म्य" else if (ui == Lang.BN) "মাহাত্ম্য" else if (ui == Lang.OR) "ମାହାତ୍ମ୍ୟ" else "Mahatmya"
                     Pill(text = mahatmyaLabel, on = selectedSkandha == 0, onClick = { selectedSkandha = 0 })
 
                     for (sk in 1..12) {
@@ -478,7 +478,7 @@ fun SearchResultsScreen(
                 }
 
                 item(span = { GridItemSpan(2) }) {
-                    SectionHeading(tr(ui, "Stories", "कथाएँ", "কাহিনি"), Modifier.padding(top = 6.dp))
+                    SectionHeading(tr(ui, "Stories", "कथाएँ", "কাহিনি", "କଥା"), Modifier.padding(top = 6.dp))
                 }
 
                 // Category Filter Pills
@@ -542,7 +542,7 @@ fun SearchResultsScreen(
                     // 2. Did you mean suggestion card
                     if (data.suggestedWord != null && data.suggestedWord.lowercase() != query.trim().lowercase()) {
                         item {
-                            val suggestionPrompt = tr(ui, "Did you mean", "क्या आपका तात्पर्य है", "আপনি কি বোঝাতে চেয়েছেন")
+                            val suggestionPrompt = tr(ui, "Did you mean", "क्या आपका तात्पर्य है", "আপনি কি বোঝাতে চেয়েছেন", "ଆପଣ କ'ଣ ଏହା କହିବାକୁ ଚାହୁଁଥିଲେ")
                             Box(
                                 Modifier.fillMaxWidth()
                                     .clip(Radius.card)
@@ -572,7 +572,7 @@ fun SearchResultsScreen(
                     // 3. Matching Stories (Divine Incidents)
                     if (data.matchingStories.isNotEmpty()) {
                         item {
-                            SectionHeading(tr(ui, "Matching stories", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ"))
+                            SectionHeading(tr(ui, "Matching stories", "प्रासंगिक लीला प्रसंग", "অনুরূপ লীলা প্রসঙ্গ", "ମେଳ ଖାଉଥିବା କଥା"))
                         }
                         items(data.matchingStories, key = { "inc_${it.s}_${it.a}" }) { ep ->
                             Box(
@@ -597,7 +597,7 @@ fun SearchResultsScreen(
                     // 4. Words appear together in the same chapter
                     if (data.sameChapterMatches.isNotEmpty() && data.verseCards.isEmpty()) {
                         item {
-                            SectionHeading(tr(ui, "Words appear in the same chapter", "ये शब्द एक ही अध्याय में मिलते हैं", "এই শব্দগুলি একই অধ্যায়ে পাওয়া যায়"))
+                            SectionHeading(tr(ui, "Words appear in the same chapter", "ये शब्द एक ही अध्याय में मिलते हैं", "এই শব্দগুলি একই অধ্যায়ে পাওয়া যায়", "ଶବ୍ଦଗୁଡ଼ିକ ଏକା ଅଧ୍ଯାୟରେ ଅଛି"))
                         }
                         items(data.sameChapterMatches, key = { "ch_${it.first}_${it.second}" }) { (sk, ad) ->
                             val skLabel = if (sk == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} $sk"

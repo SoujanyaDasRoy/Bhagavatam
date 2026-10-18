@@ -1,6 +1,6 @@
 package com.bhagavatam.app.data
 
-/** Words used by the player and the voice sheet, in the three app languages. */
+/** Words used by the player and the voice sheet, in the app languages. */
 data class PlayerText(
     // states
     val textOnly: String,
@@ -68,4 +68,4 @@ val PlayerBn = PlayerText(
     qualities = listOf("সাধারণ", "মানসম্মত", "উচ্চ মান", "সর্বোচ্চ মান"),
 )
 
-fun playerTextFor(l: Lang) = when (l) { Lang.HI -> PlayerHi; Lang.BN -> PlayerBn; else -> PlayerEn }
+fun playerTextFor(l: Lang) = when (l) { Lang.HI -> PlayerHi; Lang.BN -> PlayerBn; Lang.OR -> PlayerOr; else -> PlayerEn }

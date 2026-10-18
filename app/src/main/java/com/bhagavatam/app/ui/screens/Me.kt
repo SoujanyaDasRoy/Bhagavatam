@@ -122,12 +122,12 @@ fun DownloadsScreen(state: AppState) {
                         when (st) {
                             PackState.DONE -> Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(painterResource(Ic.Check), null, tint = Brand.Green)
-                                IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove pack", "पैक हटाएं", "প্যাক মুছুন"), tint = Brand.Tertiary) }
+                                IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove pack", "पैक हटाएं", "প্যাক মুছুন", "ପ୍ୟାକ୍ ହଟାନ୍ତୁ"), tint = Brand.Tertiary) }
                             }
                             PackState.DOWNLOADING -> Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(Modifier.size(24.dp), color = Brand.Teal, strokeWidth = 3.dp)
                             }
-                            PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), tr(ui, "Download", "डाउनलोड करें", "ডাউনলোড করুন"), tint = Brand.Kesari) }
+                            PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), tr(ui, "Download", "डाउनलोड करें", "ডাউনলোড করুন", "ଡାଉନଲୋଡ୍"), tint = Brand.Kesari) }
                         }
                     }
                 }
@@ -162,10 +162,10 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
         item { Segmented(listOf(s.all, s.bookmarks, s.highlights), filter, { filter = it }) }
         if (kindMarks.isNotEmpty()) item { NotebookControls(state, query, { query = it }, colourChip, { colourChip = it }, marks) }
         if (marks.isNotEmpty()) {
-            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Secondary) }
+            item { Text(tr(ui, "Marks and notes", "निशान और नोट", "চিহ্ন ও নোট", "ଚିହ୍ନ ଓ ନୋଟ୍"), Modifier.padding(horizontal = 20.dp, vertical = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Secondary) }
             notebookMarks(state, markGroups, onOpen)
         } else if (kindMarks.isNotEmpty()) item {
-            Text(tr(ui, "No note matches.", "कोई नोट नहीं मिला।", "কোনো নোট মেলেনি।"), Modifier.padding(horizontal = 20.dp, vertical = 12.dp), fontSize = 15.sp, color = Brand.Secondary)
+            Text(tr(ui, "No note matches.", "कोई नोट नहीं मिला।", "কোনো নোট মেলেনি।", "କୌଣସି ନୋଟ୍ ମେଳ ଖାଉନାହିଁ।"), Modifier.padding(horizontal = 20.dp, vertical = 12.dp), fontSize = 15.sp, color = Brand.Secondary)
         }
         if (refs.isEmpty() && kindMarks.isEmpty()) item {
             val t = com.bhagavatam.app.data.settingsTextFor(ui)
@@ -190,7 +190,7 @@ fun SavedScreen(state: AppState, onBack: () -> Unit, onOpen: (Int, Int) -> Unit)
                 enableDismissFromStartToEnd = false, enableDismissFromEndToStart = removable,
                 backgroundContent = {
                     Box(Modifier.fillMaxSize().clip(Radius.group).background(Brand.Kesari), contentAlignment = Alignment.CenterEnd) {
-                        Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান"), tint = Brand.OnKesari, modifier = Modifier.padding(end = 22.dp))
+                        Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ"), tint = Brand.OnKesari, modifier = Modifier.padding(end = 22.dp))
                     }
                 },
             ) {
@@ -264,7 +264,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
         Column {
             SectionLabel(s.appLanguage)
             GroupCard {
-                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri)).forEachIndexed { i, (l, n, f) ->
+                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri), Triple(Lang.OR, "ଓଡ଼ିଆ", readingFont(Lang.OR))).forEachIndexed { i, (l, n, f) ->
                     if (i > 0) RowDivider()
                     LanguageOption(n, nameIn(state.uiLang, l), f, state.uiLang == l) { state.updateUiLang(l) }
                 }
@@ -277,7 +277,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
                 listOf(
                     Triple(Lang.SA, "संस्कृत" to s.readSa, NotoDevanagari), Triple(Lang.HI, "हिन्दी" to s.readHi, TiroHindi),
                     Triple(Lang.BN, "বাংলা" to s.readBn, NotoSerifBengali), Triple(Lang.EN, "English" to s.readEn, EnglishReading),
-                    Triple(Lang.OR, "ଓଡ଼ିଆ" to tr(state.uiLang, "Odia", "ओड़िया", "ওড়িয়া"), com.bhagavatam.app.ui.theme.EnglishReading),
+                    Triple(Lang.OR, "ଓଡ଼ିଆ" to tr(state.uiLang, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ"), com.bhagavatam.app.ui.theme.EnglishReading),
                 ).filter { (BENGALI_READY || it.first != Lang.BN) && (com.bhagavatam.app.data.ODIA_READY || it.first != Lang.OR) }.forEachIndexed { i, (l, names, f) ->
                     if (i > 0) RowDivider()
                     LanguageOption(names.first, names.second, f, state.readLang == l) { state.updateReadLang(l) }
@@ -298,7 +298,7 @@ fun LanguagesScreen(state: AppState, onBack: () -> Unit) {
                     SwitchRow(s.hindiTr, state.showHi, state::updateShowHi); RowDivider()
                     if (BENGALI_READY) { SwitchRow(s.bengaliTr, state.showBn, state::updateShowBn); RowDivider() }
                     SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
-                    if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ"), state.showOr, state::updateShowOr) }
+                    if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ", "ଓଡ଼ିଆ ଅନୁବାଦ"), state.showOr, state::updateShowOr) }
                 }
             }
         }

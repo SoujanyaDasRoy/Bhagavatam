@@ -1,0 +1,81 @@
+package com.bhagavatam.app.data
+
+/*
+ * The app in Odia: menus, buttons, settings, player. The words printed with the book (Skandha, chapter, shloka) are the same ones
+ * the reading layer uses. Written in the app, not machine-read from a scan; an Odia reader should still go through it once.
+ */
+
+val OdiaStrings = Strings(
+    tabHome = "ହୋମ୍", tabGranth = "ସୂଚୀପତ୍ର", tabSearch = "ଖୋଜା", tabDownloads = "ଡାଉନଲୋଡ୍", tabMe = "ସେଟିଂସ୍",
+    homeGreeting = "ହରି ଓଁ। ଯେଉଁଠି ଛାଡ଼ିଥିଲେ ସେଠାରୁ ଜାରି ରଖନ୍ତୁ।", skandha = "ସ୍କନ୍ଧ", adhyaya = "ଅଧ୍ଯାୟ", adhyayas = "ଅଧ୍ଯାୟ", shloka = "ଶ୍ଳୋକ",
+    stoppedAt = "ଶ୍ଳୋକରେ ଅଟକିଥିଲେ", resumeReading = "ପଢ଼ା ଜାରି ରଖନ୍ତୁ", shlokaOfDay = "ଆଜିର ଶ୍ଳୋକ", listen = "ଶୁଣନ୍ତୁ",
+    goToHint = "ଶ୍ଳୋକକୁ ଯାଆନ୍ତୁ, ଯେପରି ୧୦.୨୯.୧",
+    granthSub = "ମାହାତ୍ମ୍ୟ ଓ ୧୨ ସ୍କନ୍ଧ", mahatmya = "ମାହାତ୍ମ୍ୟ", finished = "ସମାପ୍ତ", readingNow = "ପଢ଼ୁଛନ୍ତି",
+    sanskritOff = "ସଂସ୍କୃତ ବନ୍ଦ ଅଛି। ଶ୍ଳୋକ ଦେଖିବାକୁ ଶ୍ଳୋକ ସଂଖ୍ଯା ଦବାନ୍ତୁ।", show = "ଦେଖାନ୍ତୁ",
+    sampleOnly = "ଏହି ପ୍ରୋଟୋଟାଇପ୍‌ରେ କେବଳ ଅଧ୍ଯାୟ ୧.୧ ର ପାଠ ଅଛି। ପୂରା ପାଠ ବିଷୟବସ୍ତୁ ଡାଟାବେସ୍‌ରୁ ଆସେ।",
+    back = "ପଛକୁ", speed = "ଗତି", loop = "ଲୁପ୍", sleep = "ନିଦ", nowPlaying = "ବର୍ତ୍ତମାନ ଚାଲୁଛି",
+    searchHint = "ଶବ୍ଦ, କଥା, ଚରିତ୍ର କିମ୍ବା ଶ୍ଳୋକ (ଯେପରି ୧୦.୨୯.୧)", tryThese = "ଏସବୁ ଚେଷ୍ଟା କରନ୍ତୁ", recent = "ଅଧୁନା",
+    results = "ଫଳାଫଳ", result = "ଫଳାଫଳ", noMatches = "କିଛି ମିଳିଲା ନାହିଁ",
+    noMatchesHint = "ଅନ୍ଯ ବନାନ, ଘଟଣାର ନାମ, କିମ୍ବା ୧.୨.୬ ପରି ଶ୍ଳୋକ ସଂଖ୍ଯା ଚେଷ୍ଟା କରନ୍ତୁ।",
+    goTo = "ଯାଆନ୍ତୁ", shlokas = "ଶ୍ଳୋକ", chapters = "ଅଧ୍ଯାୟ", glossary = "ପରିଚୟ", all = "ସବୁ", mool = "ମୂଳ", alsoIn = "ଏଥିରେ ମଧ୍ଯ",
+    sanskritAudioPacks = "ସଂସ୍କୃତ ଅଡିଓ · ୧୩ ମଧ୍ଯରୁ %d ପ୍ୟାକ୍",
+    downloadsNote = "ଅନୁବାଦ ଆପଣଙ୍କ ଫୋନ୍‌ର ନିଜ ସ୍ୱରରେ ପଢ଼ାଯାଏ, ତେଣୁ ସେଥିପାଇଁ ଡାଉନଲୋଡ୍ କରିବାକୁ କିଛି ନାହିଁ।",
+    onPhone = "ଏହି ଫୋନରେ", downloading = "ଡାଉନଲୋଡ୍ ହେଉଛି…", sanskritAudio = "ସଂସ୍କୃତ ଅଡିଓ", packs = "ପ୍ୟାକ୍",
+    saved = "ସେଭ୍ ହୋଇଥିବା", bookmarks = "ବୁକମାର୍କ", highlights = "ହାଇଲାଇଟ୍",
+    savedVerses = "ସେଭ୍ ହୋଇଥିବା ଶ୍ଳୋକ", languages = "ଭାଷା", reading = "ପଠନ", showSanskrit = "ସଂସ୍କୃତ ଶ୍ଳୋକ ଦେଖାନ୍ତୁ",
+    showSanskritNote = "ବହି ପରି କେବଳ ଅନୁବାଦ ପଢ଼ିବାକୁ ବନ୍ଦ କରନ୍ତୁ। ତଥାପି ଶ୍ଳୋକ ଦେଖିବାକୁ ଶ୍ଳୋକ ସଂଖ୍ଯା ଦବାଇପାରିବେ।",
+    listening = "ଶ୍ରବଣ", keepPlaying = "ପୃଷ୍ଠଭୂମିରେ ଚାଲୁ ରଖନ୍ତୁ",
+    backgroundNote = "ଆପ୍ ଛାଡ଼ିଲା ପରେ ମଧ୍ଯ ଲକ୍ ସ୍କ୍ରିନ୍, ବିଜ୍ଞପ୍ତି ଓ ବ୍ଲୁଟୁଥ୍ ହେଡ୍‌ଫୋନ୍‌ରୁ ପାଠ ଚାଲିଥାଏ।",
+    playThrough = "ଏପର୍ଯ୍ୟନ୍ତ ଚଳାନ୍ତୁ", throughAdhyaya = "ଏହି ଅଧ୍ଯାୟ", throughSkandha = "ସମ୍ପୂର୍ଣ୍ଣ ସ୍କନ୍ଧ", throughGranth = "ସମ୍ପୂର୍ଣ୍ଣ ଗ୍ରନ୍ଥ",
+    sleepTimer = "ସ୍ଲିପ୍ ଟାଇମର୍", off = "ବନ୍ଦ", keepScreenOn = "ସ୍କ୍ରିନ୍ ଚାଲୁ ରଖନ୍ତୁ", textSize = "ଅକ୍ଷରର ଆକାର", texts = "ପାଠ", gitaPress = "ଗୀତା ପ୍ରେସ୍, ଗୋରଖପୁର",
+    appLanguage = "ଆପ୍‌ର ଭାଷା", appLanguageNote = "ମେନୁ, ବଟନ୍ ଓ ଅଧ୍ଯାୟର ନାମ।",
+    bhagLanguage = "ଭାଗବତର ଭାଷା", bhagLanguageNote = "ପାଠ ସମୟରେ ଆପଣ ଯାହା ପଢ଼ନ୍ତି ଓ ଶୁଣନ୍ତି।",
+    sanskritScript = "ସଂସ୍କୃତ ଲିପି", showAlongside = "ସାଙ୍ଗେ ଦେଖାନ୍ତୁ", transliteration = "ରୋମାନ୍ ଅକ୍ଷର",
+    hindiTr = "ହିନ୍ଦୀ ଅନୁବାଦ", bengaliTr = "ବଙ୍ଗଳା ଅନୁବାଦ", englishTr = "ଇଂରାଜୀ ଅନୁବାଦ",
+    readSa = "ସଂସ୍କୃତ ମୂଳ ଶ୍ଳୋକ, ସାଙ୍ଗରେ ଅନୁବାଦ", readHi = "କେବଳ ହିନ୍ଦୀ ଅନୁବାଦ",
+    readBn = "କେବଳ ବଙ୍ଗଳା ଅନୁବାଦ", readEn = "କେବଳ ଇଂରାଜୀ ଅନୁବାଦ",
+    chooseLanguage = "ଆପ୍ ପାଇଁ ଭାଷା ବାଛନ୍ତୁ", changeLater = "ଆପଣ ଯେକୌଣସି ସମୟରେ ସେଟିଂସ୍ › ଭାଷାରେ ଏହା ବଦଳାଇପାରିବେ।",
+    continueBtn = "ଜାରି ରଖନ୍ତୁ", textsFrom = "ଗୀତା ପ୍ରେସ୍, ଗୋରଖପୁର ସଂସ୍କରଣର ପାଠ",
+    paathQuestion = "ଆପଣ କିପରି ପାଠ କରିବେ?", paathSub = "ପାଠ ହେଉଛି ପାଠ୍ଯ ପଢ଼ିବା ଓ ଶୁଣିବା। ଆପଣ ଯେଉଁ ଭାଷାରେ ପଢ଼ିବେ ଓ ଶୁଣିବେ ତାହା ବାଛନ୍ତୁ; ଅନ୍ଯଗୁଡ଼ିକ ସାଙ୍ଗରେ ରହିପାରିବ।",
+    paathLanguage = "ପାଠର ଭାଷା", startReading = "ପଢ଼ିବା ଆରମ୍ଭ କରନ୍ତୁ", stepOf = "୨ ମଧ୍ଯରୁ ୨", preview = "ପୂର୍ବ ଦୃଶ୍ଯ: ପ୍ରଥମ ଶ୍ଳୋକ",
+    glossaryHint = "ଅଭିଧାନ ଖୋଜନ୍ତୁ", themes = listOf("ପ୍ରଭାତ", "ପୋଥି", "ସନ୍ଧ୍ଯା", "ରାତ୍ରି"),
+    jaiShreeMadhav = "ଜୟ ଶ୍ରୀ ମାଧବ", shrimadBhagavatMahapuran = "ଶ୍ରୀମଦ୍ଭାଗବତ ମହାପୁରାଣ", minRead = "%d ମିନିଟ୍ ପାଠ",
+    tabAll = "ସବୁ", tabEnglish = "ଇଂରାଜୀ", tabHindi = "ହିନ୍ଦୀ", tabBangla = "ବଙ୍ଗଳା",
+    voiceSearchHint = "ଶୁଣୁଛି... କୌଣସି କଥା କିମ୍ବା ଅଧ୍ଯାୟ କୁହନ୍ତୁ", openPrompt = "%s ଖୋଲିବେ?", openAction = "ଖୋଲନ୍ତୁ", cancelAction = "ବାତିଲ୍",
+    thematicLilaIndex = "ଅଭିଧାନ",
+)
+
+val SettingsOr = SettingsText(
+    appearance = "ରୂପ", matchPhone = "ଫୋନ୍ ଅନୁସାରେ", matchPhoneNote = "ଆପଣଙ୍କ ଫୋନ୍‌ର ସେଟିଂସ୍ ଅନୁସାରେ ହାଲୁକା ଓ ଗାଢ଼ ରୂପ ମଧ୍ଯରେ ବଦଳେ।",
+    lightLook = "ହାଲୁକା ରୂପ", darkLook = "ଗାଢ଼ ରୂପ", look = "ରୂପ",
+    textSize = "ଅକ୍ଷରର ଆକାର", sample = "ଭଗବାନ୍ ହିଁ ସବୁ ଅସ୍ତିତ୍ୱର ମୂଳ।", lineSpacing = "ଧାଡ଼ି ମଧ୍ଯରେ ବ୍ଯବଧାନ",
+    spacings = listOf("ସଂକୁଚିତ", "ସାଧାରଣ", "ଖୋଲା"), showDaily = "ଆଜିର ଶ୍ଳୋକ ଦେଖାନ୍ତୁ", homeSec = "ହୋମ୍",
+    readingSec = "ପଠନ", listeningSec = "ଶ୍ରବଣ", librarySec = "ସଂଗ୍ରହ", aboutSec = "ବିଷୟରେ",
+    textsFrom = "ପାଠର ଉତ୍ସ", version = "ଆପ୍ ସଂସ୍କରଣ", contentVersion = "ପାଠ ଡାଟାବେସ୍",
+    theme = "ଥିମ୍", modes = listOf("ସିଷ୍ଟମ୍", "ହାଲୁକା", "ଗାଢ଼"), preferences = "ପସନ୍ଦ",
+    pinchHint = "ପାଠକରେ ଦୁଇ ଆଙ୍ଗୁଳିରେ ପିଞ୍ଚ୍ କରି ଅକ୍ଷରର ଆକାର ବଦଳାନ୍ତୁ ଓ ପାଖକୁ ସ୍ୱାଇପ୍ କରି ଅଧ୍ଯାୟ ବଦଳାନ୍ତୁ।",
+    dataSec = "ଆପଣଙ୍କ ଡାଟା", clearProgress = "ପଠନ ପ୍ରଗତି ସଫା କରନ୍ତୁ",
+    clearProgressMsg = "ସମାପ୍ତ ଅଧ୍ଯାୟ ଓ ପାଠରେ ଆପଣଙ୍କ ସ୍ଥାନ ରିସେଟ୍ ହେବ। ସେଭ୍ ହୋଇଥିବା ଶ୍ଳୋକ ରହିବ।",
+    clearSearches = "ଅଧୁନା ଖୋଜା ସଫା କରନ୍ତୁ", clearSearchesMsg = "ଆପଣଙ୍କ ଖୋଜାର ଇତିହାସ ହଟିଯିବ।",
+    clearSaved = "ସବୁ ସେଭ୍ ଶ୍ଳୋକ ହଟାନ୍ତୁ", clearSavedMsg = "ସବୁ ବୁକମାର୍କ ଓ ହାଇଲାଇଟ୍ ହଟିଯିବ।",
+    resetSettings = "ସେଟିଂସ୍ ରିସେଟ୍ କରନ୍ତୁ", resetSettingsMsg = "ଥିମ୍, ଅକ୍ଷରର ଆକାର ଓ ଶ୍ରବଣ ବିକଳ୍ପ ସେମାନଙ୍କ ଡିଫଲ୍ଟକୁ ଫେରିବ। ଭାଷା ଓ ଆପଣଙ୍କ ପ୍ରଗତି ରହିବ।",
+    cancel = "ବାତିଲ୍", doClear = "ସଫା କରନ୍ତୁ", doRemove = "ହଟାନ୍ତୁ", doReset = "ରିସେଟ୍ କରନ୍ତୁ",
+    nothingSaved = "ଏପର୍ଯ୍ୟନ୍ତ କିଛି ସେଭ୍ ହୋଇନାହିଁ", savedHint = "ପାଠକରେ କୌଣସି ଶ୍ଳୋକକୁ ଧରି ରଖିଲେ ତାହା ବୁକମାର୍କ ହେବ।",
+)
+
+val PlayerOr = PlayerText(
+    textOnly = "ଧ୍ୱନି ନାହିଁ, କେବଳ ଲେଖା",
+    preparing = "ସ୍ୱର ପ୍ରସ୍ତୁତ ହେଉଛି", paused = "ବିରତି", pausedHint = "ବିରତି। କୌଣସି ବାକ୍ଯକୁ ଛୁଇଁ ସେଠାରୁ ଶୁଣନ୍ତୁ।",
+    ended = "ଅଧ୍ଯାୟ ସରିଲା", replay = "ପୁଣି ଶୁଣନ୍ତୁ", nextChapter = "ପରବର୍ତ୍ତୀ ଅଧ୍ଯାୟ",
+    sanskritViaHindi = "ସଂସ୍କୃତ, ହିନ୍ଦୀ ସ୍ୱରରେ",
+    minutesLeft = { "ପ୍ରାୟ $it ମିନିଟ୍ ବାକି" }, hoursLeft = { h, m -> "ପ୍ରାୟ $h ଘଣ୍ଟା $m ମିନିଟ୍ ବାକି" }, lessThanMinute = "ଏକ ମିନିଟ୍‌ରୁ କମ୍ ବାକି",
+    noVoice = { "$it ସ୍ୱର ଇନ୍‌ଷ୍ଟଲ୍ ହୋଇନାହିଁ। ଲେଖା ଧ୍ୱନି ବିନା ଆଗକୁ ବଢ଼ିବ।" },
+    noEngine = "ଏହି ଫୋନ୍‌ରେ ପଢ଼ି ଶୁଣାଇବା ଇଞ୍ଜିନ୍ ନାହିଁ। ଲେଖା ଧ୍ୱନି ବିନା ଆଗକୁ ବଢ଼ିବ।",
+    voiceStopped = "ସ୍ୱର ମଝିରେ ଅଟକିଗଲା।", installVoice = "ସ୍ୱର ଇନ୍‌ଷ୍ଟଲ୍ କରନ୍ତୁ",
+    closePlayer = "ପ୍ଲେୟାର୍ ବନ୍ଦ କରନ୍ତୁ", prevShloka = "ପୂର୍ବ ଶ୍ଳୋକ", nextShloka = "ପରବର୍ତ୍ତୀ ଶ୍ଳୋକ", play = "ଚଳାନ୍ତୁ", pause = "ଅଟକାନ୍ତୁ",
+    voiceSettings = "ସ୍ୱର ଓ ବିରତି", position = { a, b -> "ଶ୍ଳୋକ $a / $b" }, playFromHere = "ଏଠାରୁ ଚଳାନ୍ତୁ",
+    voiceTitle = "ପାଠର ସ୍ୱର", voiceWord = "ସ୍ୱର", pausesTitle = "ବାକ୍ଯ ମଧ୍ଯରେ ବିରତି", pauseOptions = listOf("କମ୍", "ସାଧାରଣ", "ଅଧିକ"),
+    installMore = "ଆହୁରି ସ୍ୱର ଯୋଡ଼ନ୍ତୁ", tapToHear = "ଶୁଣିବାକୁ କୌଣସି ସ୍ୱରକୁ ଦବାନ୍ତୁ।", noVoicesFor = "ଏହି ଭାଷା ପାଇଁ କୌଣସି ସ୍ୱର ଇନ୍‌ଷ୍ଟଲ୍ ହୋଇନାହିଁ।",
+    automatic = "ସ୍ୱୟଂଚାଳିତ (ଉପଲବ୍ଧ ସର୍ବୋତ୍ତମ)", offline = "ଅଫଲାଇନ୍ ଚାଲେ", online = "ଇଣ୍ଟରନେଟ୍ ଦରକାର",
+    qualities = listOf("ସାଧାରଣ", "ମାନକ", "ଉଚ୍ଚ ଗୁଣବତ୍ତା", "ସର୍ବୋଚ୍ଚ ଗୁଣବତ୍ତା"),
+)

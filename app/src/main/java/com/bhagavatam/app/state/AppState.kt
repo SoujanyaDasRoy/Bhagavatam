@@ -98,7 +98,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var showHi by mutableStateOf(prefs.getBoolean("showHi", prefs.getString("uiLang", "EN") == "HI"))
         private set
     var showBn by mutableStateOf(prefs.getBoolean("showBn", prefs.getString("uiLang", "EN") == "BN") && BENGALI_READY)
-    var showOr by mutableStateOf(prefs.getBoolean("showOr", false) && com.bhagavatam.app.data.ODIA_READY)
+    var showOr by mutableStateOf(prefs.getBoolean("showOr", prefs.getString("uiLang", "EN") == "OR") && com.bhagavatam.app.data.ODIA_READY)
         private set
     var showEn by mutableStateOf(prefs.getBoolean("showEn", prefs.getString("uiLang", "EN") == "EN" || (!prefs.getBoolean("showHi", false) && !prefs.getBoolean("showBn", false))))
         private set
@@ -160,12 +160,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
         // First run: the translation shown under the shloka is the language the person chose, and no other, so the first
         // page is not mixed. After onboarding the person's own switches are never touched here.
         if (!onboarded && l != Lang.SA) {
-            updateShowHi(l == Lang.HI); updateShowBn(l == Lang.BN && BENGALI_READY); updateShowEn(l == Lang.EN)
+            updateShowHi(l == Lang.HI); updateShowBn(l == Lang.BN && BENGALI_READY); updateShowOr(l == Lang.OR && com.bhagavatam.app.data.ODIA_READY); updateShowEn(l == Lang.EN)
         }
         when (l) {
             Lang.HI -> if (!showHi && !showBn && !showEn) updateShowHi(true)
             Lang.BN -> if (!showHi && !showBn && !showEn) updateShowBn(true)
             Lang.EN -> if (!showHi && !showBn && !showEn) updateShowEn(true)
+            Lang.OR -> if (!showHi && !showBn && !showOr && !showEn) updateShowOr(true)
             else -> {}
         }
     }
@@ -244,8 +245,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     /** Names the reader gave the four highlight colours; a blank one falls back to the colour's own name in the app language. */
     var markNames by mutableStateOf(prefs.getString("markNames", "")!!.split("\n").let { s -> List(4) { s.getOrElse(it) { "" } } })
     fun markName(i: Int): String = markNames.getOrElse(i) { "" }.ifBlank {
-        listOf(com.bhagavatam.app.data.tr(uiLang, "Yellow", "पीला", "হলুদ"), com.bhagavatam.app.data.tr(uiLang, "Green", "हरा", "সবুজ"),
-            com.bhagavatam.app.data.tr(uiLang, "Blue", "नीला", "নীল"), com.bhagavatam.app.data.tr(uiLang, "Pink", "गुलाबी", "গোলাপি")).getOrElse(i) { "" }
+        listOf(com.bhagavatam.app.data.tr(uiLang, "Yellow", "पीला", "হলুদ", "ହଳଦିଆ"), com.bhagavatam.app.data.tr(uiLang, "Green", "हरा", "সবুজ", "ସବୁଜ"),
+            com.bhagavatam.app.data.tr(uiLang, "Blue", "नीला", "নীল", "ନୀଳ"), com.bhagavatam.app.data.tr(uiLang, "Pink", "गुलाबी", "গোলাপি", "ଗୋଲାପୀ")).getOrElse(i) { "" }
     }
     fun updateMarkName(i: Int, name: String) {
         markNames = markNames.toMutableList().also { it[i] = name.replace("\n", " ").take(24) }
@@ -270,6 +271,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
         when (uiLang) {
             Lang.HI -> listOf(Lang.HI)
             Lang.BN -> listOf(Lang.BN)
+            Lang.OR -> listOf(Lang.OR)
             else -> listOf(Lang.EN)
         }
     }
@@ -617,7 +619,7 @@ class AppState(app: Application) : AndroidViewModel(app) {
     val contentLang: Lang get() = if (titleLang == Lang.OR) uiLang else titleLang
 
     /** The language a chapter's title is shown in: Odia where the contents list gave it, else the content language. */
-    fun titleLangFor(s: Int, a: Int): Lang = if (titleLang == Lang.OR && SampleData.hasOdiaTitle(s, a)) Lang.OR else contentLang
+    fun titleLangFor(s: Int, a: Int): Lang = if (titleLang == Lang.OR && SampleData.hasOdiaTitle(s, a)) Lang.OR else if (contentLang == Lang.OR) Lang.EN else contentLang
 
     // ---- plans: the speakable form of each shloka, built from the untouched source text ----
     private val plans = HashMap<Int, VersePlan>()

@@ -76,7 +76,7 @@ fun NotebookControls(state: AppState, query: String, onQuery: (String) -> Unit, 
                 value = query, onValueChange = onQuery, singleLine = true, modifier = Modifier.weight(1f),
                 textStyle = TextStyle(fontSize = 16.sp, color = Brand.Ink), cursorBrush = SolidColor(Brand.Kesari),
                 decorationBox = { inner ->
-                    if (query.isEmpty()) androidx.compose.material3.Text(tr(ui, "Search your notes", "अपने नोट खोजें", "আপনার নোট খুঁজুন"), fontSize = 16.sp, color = Brand.Secondary)
+                    if (query.isEmpty()) androidx.compose.material3.Text(tr(ui, "Search your notes", "अपने नोट खोजें", "আপনার নোট খুঁজুন", "ଆପଣଙ୍କ ନୋଟ୍ ଖୋଜନ୍ତୁ"), fontSize = 16.sp, color = Brand.Secondary)
                     inner()
                 },
             )
@@ -94,19 +94,19 @@ fun NotebookControls(state: AppState, query: String, onQuery: (String) -> Unit, 
                     androidx.compose.material3.Text(label, fontSize = 15.sp, color = Brand.Ink, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal)
                 }
             }
-            Chip(colour == 0, tr(ui, "All", "सभी", "সব"), null) { onColour(0) }
+            Chip(colour == 0, tr(ui, "All", "सभी", "সব", "ସବୁ"), null) { onColour(0) }
             MarkColours.forEachIndexed { i, col -> Chip(colour == i + 1, state.markName(i), Color(col)) { onColour(i + 1) } }
         }
         if (marks.isNotEmpty()) Box(
             Modifier.heightIn(min = 48.dp).clip(CircleShape).clickable(role = Role.Button) {
                 val text = notebookExport(state, marks)
-                if (!fitsInShareIntent(text)) state.toast(tr(ui, "Too many notes to share at once. Filter by colour or search first.", "एक साथ साझा करने के लिए बहुत नोट हैं। पहले रंग या खोज से छाँटें।", "একসঙ্গে শেয়ার করার মতো অনেক বেশি নোট। আগে রং বা খোঁজ দিয়ে বাছুন।"))
+                if (!fitsInShareIntent(text)) state.toast(tr(ui, "Too many notes to share at once. Filter by colour or search first.", "एक साथ साझा करने के लिए बहुत नोट हैं। पहले रंग या खोज से छाँटें।", "একসঙ্গে শেয়ার করার মতো অনেক বেশি নোট। আগে রং বা খোঁজ দিয়ে বাছুন।", "ଏକାଥରକେ ଶେୟାର୍ କରିବାକୁ ବହୁତ ନୋଟ୍ ଅଛି। ଆଗେ ରଙ୍ଗ କିମ୍ବା ଖୋଜା ଦ୍ୱାରା ବାଛନ୍ତୁ।"))
                 else runCatching { ctx.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
-                    .onFailure { state.toast(tr(ui, "Could not open sharing.", "साझा करना नहीं खुल सका।", "শেয়ার খোলা যায়নি।")) }
+                    .onFailure { state.toast(tr(ui, "Could not open sharing.", "साझा करना नहीं खुल सका।", "শেয়ার খোলা যায়নি।", "ଶେୟାର୍ ଖୋଲିପାରିଲା ନାହିଁ।")) }
             }.padding(horizontal = 6.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
-            androidx.compose.material3.Text(tr(ui, "Share these notes as text", "ये नोट टेक्स्ट में साझा करें", "এই নোট টেক্সটে শেয়ার করুন"), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Ink)
+            androidx.compose.material3.Text(tr(ui, "Share these notes as text", "ये नोट टेक्स्ट में साझा करें", "এই নোট টেক্সটে শেয়ার করুন", "ଏହି ନୋଟ୍‌ଗୁଡ଼ିକ ଟେକ୍ସଟ୍ ଭାବେ ଶେୟାର୍ କରନ୍ତୁ"), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Ink)
         }
     }
 }
@@ -142,7 +142,7 @@ fun LazyListScope.notebookMarks(state: AppState, groups: List<Pair<String, List<
                     Box(Modifier.weight(1f))
                     val s = a.ref.split(".").map { it.toIntOrNull() ?: 0 }
                     Box(Modifier.heightIn(min = 48.dp).clickable(role = Role.Button) { state.scrollToVerse = a.ref; onOpen(s[0], s[1]) }.padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
-                        androidx.compose.material3.Text(tr(ui, "Open chapter", "अध्याय खोलें", "অধ্যায় খুলুন"), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari)
+                        androidx.compose.material3.Text(tr(ui, "Open chapter", "अध्याय खोलें", "অধ্যায় খুলুন", "ଅଧ୍ଯାୟ ଖୋଲନ୍ତୁ"), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Kesari)
                     }
                 }
                 androidx.compose.material3.Text(a.quote, fontStyle = FontStyle.Italic, fontSize = 15.sp, lineHeight = 22.sp, color = Brand.Ink, maxLines = 3)

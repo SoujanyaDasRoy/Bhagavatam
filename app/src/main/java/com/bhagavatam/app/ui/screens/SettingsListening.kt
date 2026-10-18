@@ -85,21 +85,21 @@ fun ListeningSettings(state: AppState, onBack: () -> Unit) {
     val ui = state.uiLang
     var showVoices by remember { mutableStateOf(false) }
     SubPage(t.listeningSec, s.tabMe, onBack) {
-        SettingsGroup(tr(ui, "Voice and speed", "आवाज़ और गति", "কণ্ঠ ও গতি")) {
+        SettingsGroup(tr(ui, "Voice and speed", "आवाज़ और गति", "কণ্ঠ ও গতি", "ସ୍ୱର ଓ ଗତି")) {
             ValueRow(playerTextFor(ui).voiceTitle, "", Ic.Headphones) { showVoices = true }; RowDivider()
             ValueRow(s.speed, "${state.speed}×") { state.cycleSpeed() }
         }
-        SettingsGroup(tr(ui, "Playback", "प्लेबैक", "প্লেব্যাক"), s.backgroundNote) {
+        SettingsGroup(tr(ui, "Playback", "प्लेबैक", "প্লেব্যাক", "ପ୍ଲେବ୍ୟାକ୍"), s.backgroundNote) {
             ValueRow(s.playThrough, when (state.playThrough) { PlayThrough.ADHYAYA -> s.throughAdhyaya; PlayThrough.SKANDHA -> s.throughSkandha; PlayThrough.GRANTH -> s.throughGranth }) { state.cyclePlayThrough() }
             RowDivider()
             SwitchRow(s.keepPlaying, state.keepPlaying, state::updateKeepPlaying); RowDivider()
             SwitchRow(s.keepScreenOn, state.keepScreenOn, state::updateKeepScreenOn)
         }
         SettingsGroup(
-            tr(ui, "Following along", "साथ-साथ पढ़ना", "সঙ্গে সঙ্গে পড়া"),
-            tr(ui, "Scrolls the chapter to the verse that is being read aloud.", "जो श्लोक सुनाया जा रहा है, अध्याय उसी तक सरकता है।", "যে শ্লোক পড়ে শোনানো হচ্ছে, অধ্যায় সেখানে সরে যায়।"),
+            tr(ui, "Following along", "साथ-साथ पढ़ना", "সঙ্গে সঙ্গে পড়া", "ସାଙ୍ଗେ ସାଙ୍ଗେ ଅନୁସରଣ"),
+            tr(ui, "Scrolls the chapter to the verse that is being read aloud.", "जो श्लोक सुनाया जा रहा है, अध्याय उसी तक सरकता है।", "যে শ্লোক পড়ে শোনানো হচ্ছে, অধ্যায় সেখানে সরে যায়।", "ଯେଉଁ ଶ୍ଳୋକ ପଢ଼ାଯାଉଛି ଅଧ୍ଯାୟ ସେଠାକୁ ସ୍କ୍ରୋଲ୍ ହୁଏ।"),
         ) {
-            SwitchRow(tr(ui, "Follow the narration", "पाठ के साथ चलें", "পাঠের সঙ্গে চলুন"), state.followAudio, state::updateFollowAudio)
+            SwitchRow(tr(ui, "Follow the narration", "पाठ के साथ चलें", "পাঠের সঙ্গে চলুন", "ବର୍ଣ୍ଣନା ଅନୁସରଣ କରନ୍ତୁ"), state.followAudio, state::updateFollowAudio)
         }
     }
     if (showVoices) VoiceSheet(state) { showVoices = false }

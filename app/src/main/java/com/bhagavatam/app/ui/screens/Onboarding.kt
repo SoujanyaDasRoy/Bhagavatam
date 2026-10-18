@@ -108,14 +108,14 @@ fun OnboardingLanguageScreen(state: AppState, onContinue: () -> Unit) {
             )
             VSpace(18)
             Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri)).forEach { (lang, native, font) ->
+                listOf(Triple(Lang.EN, "English", Jakarta), Triple(Lang.HI, "हिन्दी", Mukta), Triple(Lang.BN, "বাংলা", HindSiliguri), Triple(Lang.OR, "ଓଡ଼ିଆ", readingFont(Lang.OR))).forEach { (lang, native, font) ->
                     LanguageOption(
-                        native, mapOf("EN" to "English", "HI" to "Hindi", "BN" to "Bengali")[lang.name]!!, font, state.uiLang == lang,
+                        native, mapOf("EN" to "English", "HI" to "Hindi", "BN" to "Bengali", "OR" to "Odia")[lang.name]!!, font, state.uiLang == lang,
                     ) { state.updateUiLang(lang) }
                 }
             }
             Text(
-                s.changeLater + "  " + tr(ui, "Works fully offline. No sign-in.", "पूरी तरह ऑफ़लाइन। साइन-इन की ज़रूरत नहीं।", "সম্পূর্ণ অফলাইন। সাইন-ইন লাগে না।"),
+                s.changeLater + "  " + tr(ui, "Works fully offline. No sign-in.", "पूरी तरह ऑफ़लाइन। साइन-इन की ज़रूरत नहीं।", "সম্পূর্ণ অফলাইন। সাইন-ইন লাগে না।", "ସମ୍ପୂର୍ଣ୍ଣ ଅଫଲାଇନ୍ ଚାଲେ। ସାଇନ୍-ଇନ୍ ଦରକାର ନାହିଁ।"),
                 Modifier.padding(start = 28.dp, end = 28.dp, top = 14.dp), style = MaterialTheme.typography.bodySmall, color = Brand.Secondary,
             )
             VSpace(16)
@@ -126,7 +126,7 @@ fun OnboardingLanguageScreen(state: AppState, onContinue: () -> Unit) {
                 Box(Modifier.width(4.dp).fillMaxHeight().background(Brand.Gold))
                 val v = SampleData.adhyaya1.first()
                 Text(
-                    v.translation(state.uiLang), Modifier.padding(16.dp), fontFamily = readingFont(state.uiLang), fontSize = 15.sp, lineHeight = 23.sp,
+                    (if (v.hasText(state.uiLang)) v.translation(state.uiLang) else v.translation(Lang.EN)), Modifier.padding(16.dp), fontFamily = readingFont(if (v.hasText(state.uiLang)) state.uiLang else Lang.EN), fontSize = 15.sp, lineHeight = 23.sp,
                     color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                 )
             }
@@ -183,7 +183,7 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
                 SwitchRow(s.hindiTr, state.showHi, state::updateShowHi); RowDivider()
                 if (BENGALI_READY) { SwitchRow(s.bengaliTr, state.showBn, state::updateShowBn); RowDivider() }
                 SwitchRow(s.englishTr, state.showEn, state::updateShowEn)
-                if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ"), state.showOr, state::updateShowOr) }
+                if (com.bhagavatam.app.data.ODIA_READY) { RowDivider(); SwitchRow(tr(state.uiLang, "Odia translation", "ओड़िया अनुवाद", "ওড়িয়া অনুবাদ", "ଓଡ଼ିଆ ଅନୁବାଦ"), state.showOr, state::updateShowOr) }
             }
             VSpace(24)
             Row(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.group).background(Brand.Card)) {

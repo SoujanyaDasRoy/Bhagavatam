@@ -73,13 +73,13 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
             IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(Ic.ArrowBackIos),
-                    contentDescription = tr(ui, "Back", "वापस", "ফিরে যান"),
+                    contentDescription = tr(ui, "Back", "वापस", "ফিরে যান", "ପଛକୁ"),
                     tint = app.ink,
                     modifier = Modifier.size(20.dp)
                 )
             }
             Text(
-                tr(ui, "Dictionary credits", "शब्दकोश आभार", "অভিধান কৃতজ্ঞতা স্বীকার"),
+                tr(ui, "Dictionary credits", "शब्दकोश आभार", "অভিধান কৃতজ্ঞতা স্বীকার", "ଅଭିଧାନର ଶ୍ରେୟ"),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = app.ink,
@@ -98,7 +98,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Creative Commons Attribution - ShareAlike 4.0", "क्रिएटिव कॉमन्स 4.0 (CC BY-SA 4.0)", "ক্রিয়েটিভ কমন্স ৪.০ (CC BY-SA 4.0)"),
+                    tr(ui, "Creative Commons Attribution - ShareAlike 4.0", "क्रिएटिव कॉमन्स 4.0 (CC BY-SA 4.0)", "ক্রিয়েটিভ কমন্স ৪.০ (CC BY-SA 4.0)", "Creative Commons Attribution - ShareAlike 4.0"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = app.accent,
@@ -109,7 +109,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
                         ui,
                         "The offline dictionary in Bhagavatam is built from Wikimedia dumps. All definitions and word senses are created by community contributors under CC BY-SA 4.0. Note: This share-alike license applies to the dictionary database itself, not to the Bhagavatam reader codebase.",
                         "भागवतम में उपलब्ध ऑफ़लाइन शब्दकोश विकिमीडिया डेटा से निर्मित है। सभी अर्थ और परिभाषाएँ CC BY-SA 4.0 के अंतर्गत समुदाय के योगदानकर्ताओं द्वारा तैयार की गई हैं। यह लाइसेंस केवल शब्दकोश डेटाबेस पर लागू होता है, ऐप के मुख्य कोड पर नहीं।",
-                        "ভাগবতমে অন্তর্ভুক্ত অফলাইন অভিধান উইকিমিডিয়া ডাম্প থেকে তৈরি। সমস্ত সংজ্ঞা এবং অর্থ CC BY-SA 4.0 লাইসেন্সের অধীনে সম্প্রদায়ের অবদানকারীদের দ্বারা লিখিত। এই শেয়ার-অ্যালাইক লাইসেন্সটি কেবল অভিধান ডাটাবেজের ক্ষেত্রে প্রযোজ্য, মূল অ্যাপ কোডের ক্ষেত্রে নয়।"
+                        "ভাগবতমে অন্তর্ভুক্ত অফলাইন অভিধান উইকিমিডিয়া ডাম্প থেকে তৈরি। সমস্ত সংজ্ঞা এবং অর্থ CC BY-SA 4.0 লাইসেন্সের অধীনে সম্প্রদায়ের অবদানকারীদের দ্বারা লিখিত। এই শেয়ার-অ্যালাইক লাইসেন্সটি কেবল অভিধান ডাটাবেজের ক্ষেত্রে প্রযোজ্য, মূল অ্যাপ কোডের ক্ষেত্রে নয়।", "ଭାଗବତମ୍‌ର ଅଫଲାଇନ୍ ଅଭିଧାନ Wikimedia ଡମ୍ପ୍‌ରୁ ତିଆରି। ସମସ୍ତ ସଂଜ୍ଞା ଓ ଶବ୍ଦାର୍ଥ CC BY-SA 4.0 ଅଧୀନରେ ସମୁଦାୟ ଯୋଗଦାନକାରୀମାନେ ଲେଖିଛନ୍ତି। ଧ୍ଯାନ ଦିଅନ୍ତୁ: ଏହି share-alike ଲାଇସେନ୍ସ କେବଳ ଅଭିଧାନ ଡାଟାବେସ୍‌ ପାଇଁ, ଭାଗବତମ୍ ରିଡର୍‌ର କୋଡ୍ ପାଇଁ ନୁହେଁ।"
                     ),
                     fontSize = 15.sp, lineHeight = 24.sp,
                     color = app.inkSecondary,
@@ -120,7 +120,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
 
         // Source list
         Text(
-            tr(ui, "Sources used", "उपयोग किए गए स्रोत", "ব্যবহৃত উৎসসমূহ"),
+            tr(ui, "Sources used", "उपयोग किए गए स्रोत", "ব্যবহৃত উৎসসমূহ", "ବ୍ଯବହୃତ ଉତ୍ସ"),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = app.ink,
@@ -171,14 +171,14 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
                     }
 
                     Text(
-                        tr(ui, "Attribution: ", "श्रेय: ", "কৃতজ্ঞতা: ") + s.attribution,
+                        tr(ui, "Attribution: ", "श्रेय: ", "কৃতজ্ঞতা: ", "ଶ୍ରେୟ: ") + s.attribution,
                         fontSize = 13.sp,
                         color = app.inkSecondary
                     )
 
                     if (s.retrieved.isNotBlank()) {
                         Text(
-                            tr(ui, "Dump version: ", "संस्करण: ", "সংস্করণ: ") + localDigits(s.retrieved, ui),
+                            tr(ui, "Dump version: ", "संस्करण: ", "সংস্করণ: ", "ଡମ୍ପ୍ ସଂସ୍କରଣ: ") + localDigits(s.retrieved, ui),
                             fontSize = 12.sp,
                             color = app.inkSecondary
                         )
@@ -229,7 +229,7 @@ fun CreditsScreen(state: AppState, onBack: () -> Unit) {
                     ui,
                     "Note: Odia Wiktionary coverage is based on preliminary entries and is currently an unverified draft.",
                     "सूचना: ओड़िया विक्षनरी के अर्थ प्रारंभिक प्रविष्टियों पर आधारित हैं और वर्तमान में अपरीक्षित प्रारूप हैं।",
-                    "উল্লেখ্য: ওড়িয়া উইকিঅভিধানের কভারেজ প্রাথমিক তথ্যের ওপর ভিত্তি করে তৈরি এবং এটি বর্তমানে একটি অপ্রমাণিত খসড়া।"
+                    "উল্লেখ্য: ওড়িয়া উইকিঅভিধানের কভারেজ প্রাথমিক তথ্যের ওপর ভিত্তি করে তৈরি এবং এটি বর্তমানে একটি অপ্রমাণিত খসড়া।", "ଧ୍ଯାନ ଦିଅନ୍ତୁ: ଓଡ଼ିଆ Wiktionary ପ୍ରାଥମିକ ପ୍ରବିଷ୍ଟି ଉପରେ ଆଧାରିତ ଏବଂ ବର୍ତ୍ତମାନ ଯାଞ୍ଚ ହୋଇନଥିବା ଖସଡ଼ା।"
                 ),
                 fontSize = 15.sp, lineHeight = 24.sp,
                 color = app.inkSecondary,

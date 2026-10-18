@@ -66,15 +66,15 @@ class MainActivity : ComponentActivity() {
                         val u = state.uiLang
                         androidx.compose.material3.AlertDialog(
                             onDismissRequest = { state.markAskedNotify() },
-                            title = { androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Notifications", "सूचनाएँ", "বিজ্ঞপ্তি")) },
+                            title = { androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Notifications", "सूचनाएँ", "বিজ্ঞপ্তি", "ବିଜ୍ଞପ୍ତି")) },
                             text = { androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u,
                                 "Allow notifications to control playback from the lock screen and to hear about new versions of the app.",
                                 "लॉक स्क्रीन से पाठ नियंत्रित करने और ऐप के नए संस्करण की जानकारी पाने के लिए सूचनाओं की अनुमति दें।",
-                                "লক স্ক্রিন থেকে পাঠ নিয়ন্ত্রণ ও অ্যাপের নতুন সংস্করণের খবর পেতে বিজ্ঞপ্তির অনুমতি দিন।")) },
+                                "লক স্ক্রিন থেকে পাঠ নিয়ন্ত্রণ ও অ্যাপের নতুন সংস্করণের খবর পেতে বিজ্ঞপ্তির অনুমতি দিন।", "ଲକ୍ ସ୍କ୍ରିନ୍‌ରୁ ପ୍ଲେବ୍ୟାକ୍ ନିୟନ୍ତ୍ରଣ କରିବାକୁ ଓ ଆପ୍‌ର ନୂଆ ସଂସ୍କରଣ ବିଷୟରେ ଜାଣିବାକୁ ବିଜ୍ଞପ୍ତି ଅନୁମତି ଦିଅନ୍ତୁ।")) },
                             confirmButton = { androidx.compose.material3.TextButton(onClick = { state.markAskedNotify(); askNotifications.launch(android.Manifest.permission.POST_NOTIFICATIONS) }) {
-                                androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Continue", "आगे बढ़ें", "এগিয়ে যান")) } },
+                                androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Continue", "आगे बढ़ें", "এগিয়ে যান", "ଜାରି ରଖନ୍ତୁ")) } },
                             dismissButton = { androidx.compose.material3.TextButton(onClick = { state.markAskedNotify() }) {
-                                androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Not now", "अभी नहीं", "এখন নয়")) } },
+                                androidx.compose.material3.Text(com.bhagavatam.app.data.tr(u, "Not now", "अभी नहीं", "এখন নয়", "ଏବେ ନୁହେଁ")) } },
                         )
                     }
                     LaunchedEffect(state.keepScreenOn) {

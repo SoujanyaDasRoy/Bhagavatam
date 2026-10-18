@@ -222,13 +222,13 @@ fun HomeScreen(
             // One tap between the light and the dark look; the full choice lives in Settings.
             Box(
                 Modifier.size(Touch.min).clip(CircleShape).background(Brand.Card).border(1.dp, Brand.Separator, CircleShape)
-                    .clickable(onClickLabel = tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন"), role = Role.Button) {
+                    .clickable(onClickLabel = tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন", if (dark) "ହାଲୁକା ରୂପ ବାଛନ୍ତୁ" else "ଗାଢ଼ ରୂପ ବାଛନ୍ତୁ"), role = Role.Button) {
                         state.setThemeMode(if (dark) ThemeMode.LIGHT else ThemeMode.DARK)
                     },
                 contentAlignment = Alignment.Center,
             ) {
                 Crossfade(dark, animationSpec = tween(Motion.sheet), label = "themeIcon") { d ->
-                    Icon(painterResource(if (d) Ic.Sun else Ic.Bedtime), tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন"), tint = Brand.Kesari, modifier = Modifier.size(22.dp))
+                    Icon(painterResource(if (d) Ic.Sun else Ic.Bedtime), tr(ui, if (dark) "Switch to light look" else "Switch to dark look", if (dark) "हल्का रूप चुनें" else "गहरा रूप चुनें", if (dark) "হালকা রূপ বেছে নিন" else "গাঢ় রূপ বেছে নিন", if (dark) "ହାଲୁକା ରୂପ ବାଛନ୍ତୁ" else "ଗାଢ଼ ରୂପ ବାଛନ୍ତୁ"), tint = Brand.Kesari, modifier = Modifier.size(22.dp))
                 }
             }
         }
@@ -255,8 +255,8 @@ fun HomeScreen(
                                 Text(s.resumeReading, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFF4DC))
                                 Text(localDigits("${s.stoppedAt} ${state.lastVerse}", ui), fontSize = 15.sp, color = Color(0xFFFFF4DC))
                             } else {
-                                Text(tr(ui, "Start with Skandha 1", "स्कन्ध १ से शुरू करें", "স্কন্ধ ১ দিয়ে শুরু করুন"), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFF4DC))
-                                Text(tr(ui, "Begin the first chapter", "पहला अध्याय आरम्भ करें", "প্রথম অধ্যায় শুরু করুন"), fontSize = 15.sp, color = Color(0xFFFFF4DC))
+                                Text(tr(ui, "Start with Skandha 1", "स्कन्ध १ से शुरू करें", "স্কন্ধ ১ দিয়ে শুরু করুন", "ସ୍କନ୍ଧ ୧ ରୁ ଆରମ୍ଭ କରନ୍ତୁ"), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFFF4DC))
+                                Text(tr(ui, "Begin the first chapter", "पहला अध्याय आरम्भ करें", "প্রথম অধ্যায় শুরু করুন", "ପ୍ରଥମ ଅଧ୍ଯାୟ ଆରମ୍ଭ କରନ୍ତୁ"), fontSize = 15.sp, color = Color(0xFFFFF4DC))
                             }
                         }
                         Box(
@@ -272,7 +272,7 @@ fun HomeScreen(
             // Cards that have come due: the way back into what the reader chose to remember.
             val due = state.dueReviewCount()
             if (due > 0) Box(Modifier.padding(horizontal = 16.dp)) {
-                QuickAction(Ic.Bookmark, tr(ui, "Review ($due due)", "दोहराएँ ($due देय)", "পর্যালোচনা ($due বাকি)"), Modifier.fillMaxWidth(), onReview)
+                QuickAction(Ic.Bookmark, tr(ui, "Review ($due due)", "दोहराएँ ($due देय)", "পর্যালোচনা ($due বাকি)", "ସମୀକ୍ଷା ($due ବାକି)"), Modifier.fillMaxWidth(), onReview)
             }
             // Shloka of the day
             val v = SampleData.shlokaOfTheDay
@@ -297,13 +297,13 @@ fun HomeScreen(
             }
             // Shortcuts that are not already a tab
             Row(Modifier.reveal(1, playIntro).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                QuickTile(Ic.Bookmark, tr(ui, "Saved", "सहेजे गए", "সংরক্ষিত"), Modifier.weight(1f), onSaved)
+                QuickTile(Ic.Bookmark, tr(ui, "Saved", "सहेजे गए", "সংরক্ষিত", "ସେଭ୍ ହୋଇଥିବା"), Modifier.weight(1f), onSaved)
                 QuickTile(Ic.Scroll, s.thematicLilaIndex, Modifier.weight(1f), onGlossary)
             }
             // The last chapters opened, other than the one the Resume card already offers: plain rows, no box.
             val others = state.recentChapters.mapNotNull { k -> k.split(".").mapNotNull { it.toIntOrNull() }.takeIf { it.size == 2 } }.filter { !(it[0] == state.lastSkandha && it[1] == state.lastAdhyaya) }.take(3)
             if (others.isNotEmpty()) Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                SectionHeading(tr(ui, "Recently read", "हाल में पढ़े", "সম্প্রতি পড়া"), Modifier.padding(horizontal = 20.dp))
+                SectionHeading(tr(ui, "Recently read", "हाल में पढ़े", "সম্প্রতি পড়া", "ଅଧୁନା ପଢ଼ା"), Modifier.padding(horizontal = 20.dp))
                 others.forEach { (sk, ad) ->
                     Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpenChapter(sk, ad) }.heightIn(min = 52.dp).padding(horizontal = 20.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(localDigits(if (sk == 0) "M.$ad" else "$sk.$ad", ui), Modifier.width(48.dp), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
@@ -316,8 +316,8 @@ fun HomeScreen(
             Column(Modifier.reveal(2, playIntro).padding(horizontal = 20.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 val frac by animateFloatAsState((done.toFloat() / total).coerceIn(0f, 1f), tween(Motion.screen), label = "readingProgress")
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text(tr(ui, "Your reading", "आपका पठन", "আপনার পাঠ"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                    Text(localDigits(tr(ui, "$done of $total chapters read", "$done / $total अध्याय पढ़े", "$done / $total অধ্যায় পড়া"), ui), fontSize = 15.sp, color = Brand.Secondary)
+                    Text(tr(ui, "Your reading", "आपका पठन", "আপনার পাঠ", "ଆପଣଙ୍କ ପଠନ"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
+                    Text(localDigits(tr(ui, "$done of $total chapters read", "$done / $total अध्याय पढ़े", "$done / $total অধ্যায় পড়া", "$total ମଧ୍ଯରୁ $done ଅଧ୍ଯାୟ ପଢ଼ା"), ui), fontSize = 15.sp, color = Brand.Secondary)
                 }
                 Box(Modifier.fillMaxWidth().height(6.dp).clip(CircleShape).background(Brand.Fill)) {
                     if (frac > 0f) Box(Modifier.fillMaxWidth(frac.coerceAtLeast(0.02f)).height(6.dp).clip(CircleShape).background(Brand.Kesari))
@@ -325,7 +325,7 @@ fun HomeScreen(
             }
             // Well-loved stories
             Column(Modifier.reveal(3, playIntro), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                SectionHeading(tr(ui, "Well-loved stories", "प्रिय कथाएँ", "প্রিয় কথা"), Modifier.padding(horizontal = 20.dp))
+                SectionHeading(tr(ui, "Well-loved stories", "प्रिय कथाएँ", "প্রিয় কথা", "ପ୍ରିୟ କଥା"), Modifier.padding(horizontal = 20.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
                     items(Episodes.all, key = { "${it.s}.${it.a}" }) { StoryCard(it, state, onOpenChapter) }
                 }
@@ -433,7 +433,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                         Text(skName, fontFamily = skFont, fontSize = 19.sp, color = Color.White, style = cardShadow)
                     }
                     Text(sk.title(state.contentLang), fontFamily = readingFont(state.contentLang), fontSize = 16.sp, color = Color(0xFFFFF4DC), style = cardShadow)
-                    val counts = "${sk.adhyayaCount} ${s.adhyayas}" + if (readN > 0) " · " + tr(ui, "$readN read", "$readN पढ़े", "$readN পড়া") + if (readN >= ofN) "  ✓" else "" else ""
+                    val counts = "${sk.adhyayaCount} ${s.adhyayas}" + if (readN > 0) " · " + tr(ui, "$readN read", "$readN पढ़े", "$readN পড়া", "$readN ପଢ଼ା") + if (readN >= ofN) "  ✓" else "" else ""
                     Text(localDigits(counts, ui), Modifier.padding(top = 6.dp), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC), style = cardShadow)
                 }
             }
@@ -445,7 +445,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Icon(painterResource(Ic.PlayArrow), null, tint = Color(0xFF2A1A08), modifier = Modifier.size(22.dp))
-                Text(localDigits(tr(ui, "Continue chapter ${state.lastAdhyaya}", "अध्याय ${state.lastAdhyaya} जारी रखें", "অধ্যায় ${state.lastAdhyaya} চালিয়ে যান"), ui), Modifier.weight(1f), fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2A1A08))
+                Text(localDigits(tr(ui, "Continue chapter ${state.lastAdhyaya}", "अध्याय ${state.lastAdhyaya} जारी रखें", "অধ্যায় ${state.lastAdhyaya} চালিয়ে যান", "ଅଧ୍ଯାୟ ${state.lastAdhyaya} ଜାରି ରଖନ୍ତୁ"), ui), Modifier.weight(1f), fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2A1A08))
             }
         }
         items((1..sk.adhyayaCount).toList(), key = { it }) { a ->

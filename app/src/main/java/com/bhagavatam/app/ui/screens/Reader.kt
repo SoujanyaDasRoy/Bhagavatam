@@ -351,7 +351,7 @@ fun ReaderScreen(
                     if (barAlpha > 0f) {
                         Column(Modifier.graphicsLayer { alpha = barAlpha; translationY = (1f - barAlpha) * 8.dp.toPx() }, horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(title, fontFamily = readingFont(state.titleLangFor(skandha, adhyaya)), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Text(if (state.showReadTime && minLeft > 0) reference + " \u00b7 " + localDigits(tr(ui, "$minLeft min left", "$minLeft मिनट शेष", "$minLeft মিনিট বাকি"), ui) else reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
+                            Text(if (state.showReadTime && minLeft > 0) reference + " \u00b7 " + localDigits(tr(ui, "$minLeft min left", "$minLeft मिनट शेष", "$minLeft মিনিট বাকি", "ପ୍ରାୟ $minLeft ମିନିଟ୍ ବାକି"), ui) else reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
                         }
                     }
                 }
@@ -366,16 +366,16 @@ fun ReaderScreen(
                     }
                 }) { showLangSheet = true }
                 Box(
-                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন")) {
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Find in chapter", "अध्याय में खोजें", "অধ্যায়ে খুঁজুন", "ଅଧ୍ଯାୟରେ ଖୋଜନ୍ତୁ")) {
                         showFindBar = !showFindBar
                         if (!showFindBar) findQuery = ""
                     },
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(painterResource(Ic.Search), tr(ui, "Find", "खोज", "খুঁজুন"), tint = if (showFindBar) Brand.Kesari else c.accent, modifier = Modifier.size(20.dp))
+                    Icon(painterResource(Ic.Search), tr(ui, "Find", "खोज", "খুঁজুন", "ଖୋଜନ୍ତୁ"), tint = if (showFindBar) Brand.Kesari else c.accent, modifier = Modifier.size(20.dp))
                 }
                 Box(
-                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস")) { showSheet = true },
+                    Modifier.size(48.dp).clip(CircleShape).clickable(role = Role.Button, onClickLabel = tr(ui, "Reader settings", "पठन सेटिंग्स", "পঠন সেটিংস", "ପାଠକ ସେଟିଂସ୍")) { showSheet = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Aa", fontFamily = EnglishReading, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = c.accent)
@@ -404,7 +404,7 @@ fun ReaderScreen(
                         modifier = Modifier.weight(1f),
                         decorationBox = { inner ->
                             if (findQuery.isEmpty()) {
-                                Text(tr(ui, "Find in chapter...", "अध्याय में खोजें...", "অধ্যায়ে খুঁজুন..."), fontSize = 14.sp, color = c.secondary)
+                                Text(tr(ui, "Find in chapter...", "अध्याय में खोजें...", "অধ্যায়ে খুঁজুন...", "ଅଧ୍ଯାୟରେ ଖୋଜନ୍ତୁ..."), fontSize = 14.sp, color = c.secondary)
                             }
                             inner()
                         }
@@ -425,7 +425,7 @@ fun ReaderScreen(
                             },
                             modifier = Modifier.size(36.dp)
                         ) {
-                            Icon(painterResource(Ic.KeyboardArrowUp), tr(ui, "Previous", "पिछला", "পূর্ববর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                            Icon(painterResource(Ic.KeyboardArrowUp), tr(ui, "Previous", "पिछला", "পূর্ববর্তী", "ପୂର୍ବ"), tint = c.accent, modifier = Modifier.size(18.dp))
                         }
 
                         IconButton(
@@ -436,7 +436,7 @@ fun ReaderScreen(
                             },
                             modifier = Modifier.size(36.dp)
                         ) {
-                            Icon(painterResource(Ic.KeyboardArrowDown), tr(ui, "Next", "अगला", "পরবর্তী"), tint = c.accent, modifier = Modifier.size(18.dp))
+                            Icon(painterResource(Ic.KeyboardArrowDown), tr(ui, "Next", "अगला", "পরবর্তী", "ପରବର୍ତ୍ତୀ"), tint = c.accent, modifier = Modifier.size(18.dp))
                         }
                     }
                     IconButton(
@@ -463,7 +463,7 @@ fun ReaderScreen(
                         if (skandha == 1 && adhyaya == 1) Text("ॐ नमो भगवते वासुदेवाय", fontFamily = NotoDevanagari, fontSize = 16.sp, color = c.gold)
                         Text(reference, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, letterSpacing = 0.3.sp)
                         if (state.titleLang == Lang.OR && !SampleData.hasOdiaTitle(skandha, adhyaya)) Text(
-                            tr(ui, "Title shown in " + nameIn(ui, state.contentLang).substringBefore(" ("), "शीर्षक " + nameIn(ui, state.contentLang).substringBefore(" (") + " में दिखाया गया है", "শিরোনাম " + nameIn(ui, state.contentLang).substringBefore(" (") + "-এ দেখানো হয়েছে"),
+                            tr(ui, "Title shown in " + nameIn(ui, state.contentLang).substringBefore(" ("), "शीर्षक " + nameIn(ui, state.contentLang).substringBefore(" (") + " में दिखाया गया है", "শিরোনাম " + nameIn(ui, state.contentLang).substringBefore(" (") + "-এ দেখানো হয়েছে", "ଶୀର୍ଷକ " + nameIn(ui, state.contentLang).substringBefore(" (") + "ରେ ଦେଖାଯାଇଛି"),
                             fontSize = 14.sp, color = c.secondary,
                         )
                         Text(title, fontFamily = readingFont(state.titleLangFor(skandha, adhyaya)), fontSize = 24.sp, lineHeight = 38.sp,
@@ -578,8 +578,9 @@ private data class BookRow(val verse: Verse, val label: String)
 private fun translationMissing(ui: Lang, lang: Lang): String = when {
     lang == Lang.BN && ui == Lang.HI -> "इस अध्याय का बंगाली अनुवाद अभी उपलब्ध नहीं है। यह अध्याय-दर-अध्याय जोड़ा जा रहा है।"
     lang == Lang.BN && ui == Lang.BN -> "এই অধ্যায়ের বাংলা অনুবাদ এখনও পাওয়া যায়নি। অধ্যায় ধরে ধরে যোগ করা হচ্ছে।"
+    lang == Lang.BN && ui == Lang.OR -> "ଏହି ଅଧ୍ଯାୟର ବଙ୍ଗଳା ଅନୁବାଦ ଏପର୍ଯ୍ୟନ୍ତ ଉପଲବ୍ଧ ନାହିଁ। ଅଧ୍ଯାୟ ଅଧ୍ଯାୟ କରି ଯୋଡ଼ାଯାଉଛି।"
     lang == Lang.BN -> "The Bengali translation of this chapter is not available yet. It is being added chapter by chapter."
-    else -> "This translation is not available for this chapter."
+    else -> tr(ui, "This translation is not available for this chapter.", "यह अनुवाद इस अध्याय के लिए उपलब्ध नहीं है।", "এই অনুবাদ এই অধ্যায়ের জন্য পাওয়া যায়নি।", "ଏହି ଅନୁବାଦ ଏହି ଅଧ୍ଯାୟ ପାଇଁ ଉପଲବ୍ଧ ନାହିଁ।")
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -595,7 +596,7 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
     Column(Modifier.fillMaxWidth()) {
         Column(
             Modifier.fillMaxWidth().clip(Radius.group).background(tint)
-                .combinedClickable(onClick = {}, onLongClickLabel = tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প"), onLongClick = { state.verseSheet = v.ref })
+                .combinedClickable(onClick = {}, onLongClickLabel = tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), onLongClick = { state.verseSheet = v.ref })
                 .padding(horizontal = 14.dp, vertical = 18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
@@ -610,18 +611,18 @@ private fun VerseBlock(state: AppState, v: Verse, isCurrent: Boolean, scale: Flo
                     state.toggleBookmark(v.ref)
                     val now = v.ref in state.bookmarks
                     state.toast(
-                        if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে"),
-                        tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন"),
+                        if (now) tr(ui, "Verse bookmarked", "श्लोक बुकमार्क हुआ", "শ্লোক বুকমার্ক হয়েছে", "ଶ୍ଳୋକ ବୁକମାର୍କ ହେଲା") else tr(ui, "Bookmark removed", "बुकमार्क हटा", "বুকমার্ক সরানো হয়েছে", "ବୁକମାର୍କ ହଟିଗଲା"),
+                        tr(ui, "Undo", "पूर्ववत", "ফিরিয়ে নিন", "ପୂର୍ବବତ୍ କରନ୍ତୁ"),
                     ) { state.toggleBookmark(v.ref) }
                 }, modifier = Modifier.size(48.dp)) {
                     Icon(
                         painterResource(if (marked) Ic.Bookmark else Ic.BookmarkOutline),
-                        if (marked) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন"),
+                        if (marked) tr(ui, "Remove bookmark", "बुकमार्क हटाएँ", "বুকমার্ক সরান", "ବୁକମାର୍କ ହଟାନ୍ତୁ") else tr(ui, "Bookmark this verse", "इस श्लोक को बुकमार्क करें", "এই শ্লোক বুকমার্ক করুন", "ଏହି ଶ୍ଳୋକ ବୁକମାର୍କ କରନ୍ତୁ"),
                         tint = if (marked) c.accent else c.secondary, modifier = Modifier.size(20.dp),
                     )
                 }
                 IconButton(onClick = { state.verseSheet = v.ref }, modifier = Modifier.size(48.dp)) {
-                    Icon(painterResource(Ic.MoreVertical), tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প"), tint = c.secondary, modifier = Modifier.size(20.dp))
+                    Icon(painterResource(Ic.MoreVertical), tr(ui, "Verse actions", "श्लोक के विकल्प", "শ্লোকের বিকল্প", "ଶ୍ଳୋକ କ୍ରିୟା"), tint = c.secondary, modifier = Modifier.size(20.dp))
                 }
             }
             // The shloka and its transliteration are centred, like a printed verse.

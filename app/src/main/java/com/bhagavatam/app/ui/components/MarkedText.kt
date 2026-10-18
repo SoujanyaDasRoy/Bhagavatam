@@ -212,18 +212,18 @@ internal fun DoubtDialog(state: AppState, ref: String, lang: Lang, word: String,
                     ui,
                     "This word may have been misread when the book was typed from the scan. Is it spelled correctly?",
                     "स्कैन से पुस्तक टाइप करते समय यह शब्द गलत पढ़ा गया हो सकता है। क्या वर्तनी सही है?",
-                    "স্ক্যান থেকে বইটি টাইপ করার সময় এই শব্দটি ভুল পড়া হয়ে থাকতে পারে। বানান কি ঠিক?",
+                    "স্ক্যান থেকে বইটি টাইপ করার সময় এই শব্দটি ভুল পড়া হয়ে থাকতে পারে। বানান কি ঠিক?", "ସ୍କାନ୍‌ରୁ ବହି ଟାଇପ୍ କରିବା ବେଳେ ଏହି ଶବ୍ଦ ଭୁଲ ପଢ଼ାଯାଇଥାଇପାରେ। ଏହାର ବନାନ ଠିକ୍ ଅଛି କି?",
                 )
             )
         },
         confirmButton = {
             if (Corrections.enabled) TextButton(onClick = {
                 Corrections.open(context, ref, word)
-                android.widget.Toast.makeText(context, com.bhagavatam.app.data.tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।"), android.widget.Toast.LENGTH_LONG).show()
+                android.widget.Toast.makeText(context, com.bhagavatam.app.data.tr(ui, "Details copied. Paste them in the chat.", "विवरण कॉपी हो गया। चैट में पेस्ट करें।", "বিবরণ কপি হয়েছে। চ্যাটে পেস্ট করুন।", "ବିବରଣୀ କପି ହେଲା। ଚାଟ୍‌ରେ ପେଷ୍ଟ୍ କରନ୍ତୁ।"), android.widget.Toast.LENGTH_LONG).show()
                 onDone()
-            }) { Text(com.bhagavatam.app.data.tr(ui, "No, send the correct word", "नहीं, सही शब्द भेजें", "না, সঠিক শব্দ পাঠান")) }
+            }) { Text(com.bhagavatam.app.data.tr(ui, "No, send the correct word", "नहीं, सही शब्द भेजें", "না, সঠিক শব্দ পাঠান", "ନା, ଠିକ୍ ଶବ୍ଦ ପଠାନ୍ତୁ")) }
         },
-        dismissButton = { TextButton(onClick = onDone) { Text(com.bhagavatam.app.data.tr(ui, "Yes, it is correct", "हाँ, सही है", "হ্যাঁ, ঠিক আছে")) } },
+        dismissButton = { TextButton(onClick = onDone) { Text(com.bhagavatam.app.data.tr(ui, "Yes, it is correct", "हाँ, सही है", "হ্যাঁ, ঠিক আছে", "ହଁ, ଠିକ୍ ଅଛି")) } },
     )
 }
 

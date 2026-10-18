@@ -120,7 +120,8 @@ private fun clock(sec: Int) = "%d:%02d".format(sec / 60, sec % 60)
 private fun languageName(ui: Lang, l: Lang) = when (ui) {
     Lang.HI -> when (l) { Lang.EN -> "अंग्रेज़ी"; Lang.BN -> "बंगाली"; else -> "हिन्दी" }
     Lang.BN -> when (l) { Lang.EN -> "ইংরেজি"; Lang.HI, Lang.SA -> "হিন্দি"; Lang.BN -> "বাংলা"; Lang.OR -> "ওড়িয়া" }
-    else -> when (l) { Lang.EN -> "English"; Lang.BN -> "Bengali"; else -> "Hindi" }
+    Lang.OR -> when (l) { Lang.EN -> "ଇଂରାଜୀ"; Lang.BN -> "ବଙ୍ଗାଳୀ"; Lang.OR -> "ଓଡ଼ିଆ"; else -> "ହିନ୍ଦୀ" }
+    else -> when (l) { Lang.EN -> "English"; Lang.BN -> "Bengali"; Lang.OR -> "Odia"; else -> "Hindi" }
 }
 
 private val PeachGradient = Brush.verticalGradient(
@@ -299,7 +300,7 @@ private fun SpotifyHeader(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                tr(ui, "PLAYING FROM", "प्रसारित हो रहा है", "সম্প্রচারিত হচ্ছে"),
+                tr(ui, "PLAYING FROM", "प्रसारित हो रहा है", "সম্প্রচারিত হচ্ছে", "ଏଠାରୁ ଚାଲୁଛି"),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextMuted,
@@ -307,7 +308,7 @@ private fun SpotifyHeader(
                 maxLines = 1,
             )
             Text(
-                tr(ui, "Where you left off", "जहाँ आपने छोड़ा था", "যেখান থেকে শেষ করেছিলেন"),
+                tr(ui, "Where you left off", "जहाँ आपने छोड़ा था", "যেখান থেকে শেষ করেছিলেন", "ଆପଣ ଯେଉଁଠି ଛାଡ଼ିଥିଲେ"),
                 fontFamily = if (state.titleLang == Lang.BN || ui == Lang.BN) NotoSerifBengali else Jakarta,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -641,28 +642,28 @@ private fun SpotifyBottomUtilityBar(
         // 1. This phone
         UtilityItem(
             icon = Ic.Smartphone,
-            label = tr(ui, "This phone", "यह फोन", "এই ফোন"),
+            label = tr(ui, "This phone", "यह फोन", "এই ফোন", "ଏହି ଫୋନ୍"),
             onClick = { /* Device audio output */ }
         )
 
         // 2. Lyrics
         UtilityItem(
             icon = Ic.MessageSquare,
-            label = tr(ui, "Lyrics", "श्लोक", "লিরিক্স"),
+            label = tr(ui, "Lyrics", "श्लोक", "লিরিক্স", "ପାଠ"),
             onClick = onLyrics
         )
 
         // 3. Equalizer
         UtilityItem(
             icon = Ic.Sliders,
-            label = tr(ui, "Equalizer", "इक्वलाइज़र", "ইকুয়ালাইজার"),
+            label = tr(ui, "Equalizer", "इक्वलाइज़र", "ইকুয়ালাইজার", "ଇକ୍ୱାଲାଇଜର୍"),
             onClick = onEqualizer
         )
 
         // 4. Sleep
         UtilityItem(
             icon = Ic.Bedtime,
-            label = tr(ui, "Sleep", "स्लीप", "ঘুম"),
+            label = tr(ui, "Sleep", "स्लीप", "ঘুম", "ନିଦ"),
             active = state.sleepMinutes > 0,
             onClick = onSleep
         )
@@ -670,7 +671,7 @@ private fun SpotifyBottomUtilityBar(
         // 5. Queue
         UtilityItem(
             icon = Ic.ListMusic,
-            label = tr(ui, "Queue", "कतार", "সারি"),
+            label = tr(ui, "Queue", "कतार", "সারি", "କ୍ରମ"),
             onClick = onQueue
         )
     }
@@ -747,7 +748,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
-                tr(ui, "Sound & Playback Settings", "ध्वनि और प्लेबैक सेटिंग्स", "শব্দ ও প্লেব্যাক সেটিংস"),
+                tr(ui, "Sound & Playback Settings", "ध्वनि और प्लेबैक सेटिंग्स", "শব্দ ও প্লেব্যাক সেটিংস", "ଧ୍ୱନି ଓ ପ୍ଲେବ୍ୟାକ୍ ସେଟିଂସ୍"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -756,7 +757,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             // Playback Speed Selector
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Playback speed", "प्लेबैक गति", "প্লেব্যাক গতি"),
+                    tr(ui, "Playback speed", "प्लेबैक गति", "প্লেব্যাক গতি", "ପ୍ଲେବ୍ୟାକ୍ ଗତି"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextMuted,
@@ -790,7 +791,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
             // Audio Mode Selector
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    tr(ui, "Audio source", "ऑडियो स्रोत", "অডিও উৎস"),
+                    tr(ui, "Audio source", "ऑडियो स्रोत", "অডিও উৎস", "ଅଡିଓ ଉତ୍ସ"),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextMuted,
@@ -810,7 +811,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            tr(ui, "🪔 Shloka Paath", "🪔 श्लोक पाठ", "🪔 শ্লোক পাঠ"),
+                            tr(ui, "🪔 Shloka Paath", "🪔 श्लोक पाठ", "🪔 শ্লোক পাঠ", "🪔 ଶ୍ଳୋକ ପାଠ"),
                             fontSize = 13.sp,
                             fontWeight = if (isPaath) FontWeight.Bold else FontWeight.Medium,
                             color = if (isPaath) Color.White else TextPrimary,
@@ -827,7 +828,7 @@ private fun SpeedEqualizerSheet(state: AppState, onDismiss: () -> Unit) {
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            tr(ui, "📺 YouTube Recitation", "📺 यूट्यूब पाठ", "📺 ইউটিউব পাঠ"),
+                            tr(ui, "📺 YouTube Recitation", "📺 यूट्यूब पाठ", "📺 ইউটিউব পাঠ", "📺 YouTube ପାଠ"),
                             fontSize = 13.sp,
                             fontWeight = if (isYt) FontWeight.Bold else FontWeight.Medium,
                             color = if (isYt) Color.White else TextPrimary,
@@ -861,7 +862,7 @@ private fun SleepTimerSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                tr(ui, "Sleep timer", "स्लीप टाइमर", "স্লিপ টাইমার"),
+                tr(ui, "Sleep timer", "स्लीप टाइमर", "স্লিপ টাইমার", "ସ୍ଲିପ୍ ଟାଇମର୍"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -924,7 +925,7 @@ private fun QueueSheet(state: AppState, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                tr(ui, "Playback queue", "प्लेबैक कतार", "প্লেব্যাক সারি"),
+                tr(ui, "Playback queue", "प्लेबैक कतार", "প্লেব্যাক সারি", "ପ୍ଲେବ୍ୟାକ୍ କ୍ରମ"),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,
@@ -1029,8 +1030,8 @@ private fun PlayerOptionsSheet(
                     modifier = Modifier.size(24.dp),
                 )
                 Text(
-                    if (isBookmarked) tr(ui, "Remove from Favorites", "पसंदीदा से हटाएं", "পছন্দ থেকে সরান")
-                    else tr(ui, "Add to Favorites", "पसंदीदा में जोड़ें", "পছন্দে যোগ করুন"),
+                    if (isBookmarked) tr(ui, "Remove from Favorites", "पसंदीदा से हटाएं", "পছন্দ থেকে সরান", "ପସନ୍ଦରୁ ହଟାନ୍ତୁ")
+                    else tr(ui, "Add to Favorites", "पसंदीदा में जोड़ें", "পছন্দে যোগ করুন", "ପସନ୍ଦରେ ଯୋଡ଼ନ୍ତୁ"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = TextPrimary,
@@ -1054,7 +1055,7 @@ private fun PlayerOptionsSheet(
                     modifier = Modifier.size(24.dp),
                 )
                 Text(
-                    tr(ui, "Voice & Narration Settings", "आवाज़ सेटिंग्स", "কণ্ঠ সেটিংস"),
+                    tr(ui, "Voice & Narration Settings", "आवाज़ सेटिंग्स", "কণ্ঠ সেটিংস", "ସ୍ୱର ଓ ବର୍ଣ୍ଣନା ସେଟିଂସ୍"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = TextPrimary,
@@ -1078,7 +1079,7 @@ private fun PlayerOptionsSheet(
                     modifier = Modifier.size(24.dp),
                 )
                 Text(
-                    tr(ui, "Close & Stop Audio", "ऑडियो बंद करें", "অডিও বন্ধ করুন"),
+                    tr(ui, "Close & Stop Audio", "ऑडियो बंद करें", "অডিও বন্ধ করুন", "ବନ୍ଦ କରି ଅଡିଓ ଅଟକାନ୍ତୁ"),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFFE53935),
@@ -1124,7 +1125,7 @@ private fun SpotifyLyricsCard(state: AppState, idx: Int, active: Int) {
                         .background(c.accent)
                 )
                 Text(
-                    tr(ui, "LYRICS & SYNCHRONIZED PAATH", "गीत और समकालिक पाठ", "শ্লোক ও সমकालिक পাঠ"),
+                    tr(ui, "LYRICS & SYNCHRONIZED PAATH", "गीत और समकालिक पाठ", "শ্লোক ও সমकालिक পাঠ", "ପାଠ ଓ ସିଙ୍କ୍ କରାଯାଇଥିବା ପାଠ"),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = c.gold,
@@ -1342,7 +1343,7 @@ private fun YouTubeStreamCard(state: AppState, v: Verse) {
                     )
                 } else if (isError) {
                     Text(
-                        yt.errorMessage ?: tr(ui, "Stream unavailable", "प्रवाह अनुपलब्ध", "স্ট্রিম পাওয়া যায়নি"),
+                        yt.errorMessage ?: tr(ui, "Stream unavailable", "प्रवाह अनुपलब्ध", "স্ট্রিম পাওয়া যায়নি", "ଷ୍ଟ୍ରିମ୍ ଉପଲବ୍ଧ ନାହିଁ"),
                         fontSize = 12.sp,
                         color = Color(0xFFE53935),
                         fontWeight = FontWeight.Medium,

@@ -144,13 +144,13 @@ fun DictionaryScreen(
             IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(Ic.ArrowBackIos),
-                    contentDescription = tr(ui, "Back", "वापस", "ফিরে যান"),
+                    contentDescription = tr(ui, "Back", "वापस", "ফিরে যান", "ପଛକୁ"),
                     tint = app.ink,
                     modifier = Modifier.size(20.dp)
                 )
             }
             Text(
-                tr(ui, "Dictionary", "शब्दकोश", "অভিধান"),
+                tr(ui, "Dictionary", "शब्दकोश", "অভিধান", "ଅଭିଧାନ"),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = app.ink,
@@ -160,7 +160,7 @@ fun DictionaryScreen(
             IconButton(onClick = onOpenCredits, modifier = Modifier.size(48.dp)) {
                 Icon(
                     painter = painterResource(Ic.Scroll),
-                    contentDescription = tr(ui, "Credits", "आभार", "স্বীকার"),
+                    contentDescription = tr(ui, "Credits", "आभार", "স্বীকার", "ଶ୍ରେୟ"),
                     tint = app.inkSecondary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -199,7 +199,7 @@ fun DictionaryScreen(
                     decorationBox = { inner ->
                         if (query.isEmpty()) {
                             Text(
-                                tr(ui, "Search word or prefix...", "शब्द या अक्षर खोजें...", "শব্দ বা উপসর্গ খুঁজুন..."),
+                                tr(ui, "Search word or prefix...", "शब्द या अक्षर खोजें...", "শব্দ বা উপসর্গ খুঁজুন...", "ଶବ୍ଦ ବା ଉପସର୍ଗ ଖୋଜନ୍ତୁ..."),
                                 color = app.inkSecondary,
                                 fontSize = 16.sp,
                                 fontFamily = readingFont(ui)
@@ -219,7 +219,7 @@ fun DictionaryScreen(
                     ) {
                         Icon(
                             painter = painterResource(Ic.Close),
-                            contentDescription = tr(ui, "Clear", "साफ़ करें", "মুছুন"),
+                            contentDescription = tr(ui, "Clear", "साफ़ करें", "মুছুন", "ସଫା କରନ୍ତୁ"),
                             tint = app.inkSecondary,
                             modifier = Modifier.size(16.dp)
                         )
@@ -237,11 +237,11 @@ fun DictionaryScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val langs = listOf(
-                "all" to tr(ui, "All", "सभी", "সব"),
-                "en" to tr(ui, "English", "अंग्रेज़ी", "ইংরেজি"),
-                "hi" to tr(ui, "Hindi", "हिन्दी", "হিন্দি"),
-                "bn" to tr(ui, "Bengali", "বাংলা", "বাংলা"),
-                "or" to tr(ui, "Odia", "ओड़िया", "ওড়িয়া")
+                "all" to tr(ui, "All", "सभी", "সব", "ସବୁ"),
+                "en" to tr(ui, "English", "अंग्रेज़ी", "ইংরেজি", "ଇଂରାଜୀ"),
+                "hi" to tr(ui, "Hindi", "हिन्दी", "হিন্দি", "ହିନ୍ଦୀ"),
+                "bn" to tr(ui, "Bengali", "বাংলা", "বাংলা", "ବଙ୍ଗାଳୀ"),
+                "or" to tr(ui, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ")
             )
             langs.forEach { (code, label) ->
                 val selected = selectedLang == code
@@ -293,7 +293,7 @@ fun DictionaryScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                tr(ui, "No dictionary entry found for this prefix.", "इस शब्द के लिए कोई प्रविष्टि नहीं मिली।", "এই শব্দের জন্য কোনো অভিধান অর্থ পাওয়া যায়নি।"),
+                                tr(ui, "No dictionary entry found for this prefix.", "इस शब्द के लिए कोई प्रविष्टि नहीं मिली।", "এই শব্দের জন্য কোনো অভিধান অর্থ পাওয়া যায়নি।", "ଏହି ଉପସର୍ଗ ପାଇଁ ଅଭିଧାନରେ କିଛି ମିଳିଲା ନାହିଁ।"),
                                 fontSize = 15.sp,
                                 color = app.inkSecondary,
                                 fontFamily = readingFont(ui)
@@ -317,7 +317,7 @@ fun DictionaryScreen(
                 if (searchResults.size > 1) {
                     item {
                         Text(
-                            tr(ui, "Matching entries", "मिलती-जुलती प्रविष्टियाँ", "অনুরূপ প্রবিষ্টসমূহ"),
+                            tr(ui, "Matching entries", "मिलती-जुलती प्रविष्टियाँ", "অনুরূপ প্রবিষ্টসমূহ", "ମେଳ ଖାଉଥିବା ପ୍ରବିଷ୍ଟି"),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = app.inkSecondary,
@@ -338,7 +338,7 @@ fun DictionaryScreen(
                 items(SampleData.glossary.size) { i -> GlossaryRow(SampleData.glossary[i], ui) }
                 item {
                     Text(
-                        tr(ui, "Saved words", "सहेजे गए शब्द", "সংরক্ষিত শব্দসমূহ"),
+                        tr(ui, "Saved words", "सहेजे गए शब्द", "সংরক্ষিত শব্দসমূহ", "ସେଭ୍ ହୋଇଥିବା ଶବ୍ଦ"),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = app.ink,
@@ -363,7 +363,7 @@ fun DictionaryScreen(
                                     ui,
                                     "No saved words yet. Press and hold any word while reading to save it.",
                                     "अभी कोई सहेजा हुआ शब्द नहीं है। पढ़ते समय किसी भी शब्द को दबाकर रखें।",
-                                    "এখনও কোনো সংরক্ষিত শব্দ নেই। পড়ার সময় যেকোনো শব্দ চেপে ধরে সংরক্ষণ করুন।"
+                                    "এখনও কোনো সংরক্ষিত শব্দ নেই। পড়ার সময় যেকোনো শব্দ চেপে ধরে সংরক্ষণ করুন।", "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ଶବ୍ଦ ସେଭ୍ ହୋଇନାହିଁ। ପଢ଼ିବା ବେଳେ ଯେକୌଣସି ଶବ୍ଦକୁ ଧରି ରଖି ସେଭ୍ କରନ୍ତୁ।"
                                 ),
                                 fontSize = 15.sp, lineHeight = 24.sp,
                                 color = app.inkSecondary,
@@ -394,7 +394,7 @@ fun DictionaryScreen(
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                tr(ui, "Offline dictionary", "ऑफ़लाइन ग्रंथ शब्दकोश", "অফলাইন গ্রন্থ অভিধান"),
+                                tr(ui, "Offline dictionary", "ऑफ़लाइन ग्रंथ शब्दकोश", "অফলাইন গ্রন্থ অভিধান", "ଅଫଲାଇନ୍ ଅଭିଧାନ"),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = app.ink,
@@ -405,7 +405,7 @@ fun DictionaryScreen(
                                     ui,
                                     "Works 100% offline. Covers Sanskrit, Hindi, Bengali and English definitions from Wiktionary (CC BY-SA 4.0).",
                                     "पूरी तरह ऑफ़लाइन काम करता है। विक्षनरी (CC BY-SA 4.0) से संस्कृत, हिन्दी, बंगाली और अंग्रेज़ी अर्थ शामिल हैं।",
-                                    "সম্পূর্ণ অফলাইনে কাজ করে। উইকিঅভিধান (CC BY-SA 4.0) থেকে সংস্কৃত, হিন্দি, বাংলা ও ইংরেজি অর্থ যুক্ত।"
+                                    "সম্পূর্ণ অফলাইনে কাজ করে। উইকিঅভিধান (CC BY-SA 4.0) থেকে সংস্কৃত, হিন্দি, বাংলা ও ইংরেজি অর্থ যুক্ত।", "ସମ୍ପୂର୍ଣ୍ଣ ଅଫଲାଇନ୍ ଚାଲେ। Wiktionary (CC BY-SA 4.0) ର ସଂସ୍କୃତ, ହିନ୍ଦୀ, ବଙ୍ଗଳା ଓ ଇଂରାଜୀ ସଂଜ୍ଞା ଅଛି।"
                                 ),
                                 fontSize = 15.sp, lineHeight = 24.sp,
                                 color = app.inkSecondary,
@@ -490,7 +490,7 @@ private fun DictionaryEntryDetailCard(
                                 ui,
                                 "(Sanskrit origin - also in ${entry.originLang?.uppercase() ?: "Hindi"})",
                                 "(संस्कृत मूल - ${entry.originLang?.uppercase() ?: "हिन्दी"} में भी)",
-                                "(সংস্কৃত মূল - ${entry.originLang?.uppercase() ?: "হিন্দি"}তেও)"
+                                "(সংস্কৃত মূল - ${entry.originLang?.uppercase() ?: "হিন্দি"}তেও)", "(ସଂସ୍କୃତ ମୂଳ - ${entry.originLang?.uppercase() ?: "ହିନ୍ଦୀ"} ରେ ମଧ୍ଯ)"
                             ),
                             fontSize = 15.sp,
                             color = app.accent,
@@ -545,7 +545,7 @@ private fun DictionaryEntryDetailCard(
             // Etymology if present
             if (entry.etymology != null && entry.etymology.isNotBlank()) {
                 Text(
-                    tr(ui, "Etymology: ", "व्युत्पत्ति: ", "ব্যুৎপত্তি: ") + entry.etymology,
+                    tr(ui, "Etymology: ", "व्युत्पत्ति: ", "ব্যুৎপত্তি: ", "ଶବ୍ଦ ଉତ୍ପତ୍ତି: ") + entry.etymology,
                     fontSize = 12.sp,
                     color = app.inkSecondary,
                     fontFamily = fontForLang(entry.lang)
@@ -556,7 +556,7 @@ private fun DictionaryEntryDetailCard(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (entry.senses.isEmpty()) {
                     Text(
-                        tr(ui, "No specific definitions recorded.", "कोई विशिष्ट अर्थ दर्ज नहीं है।", "কোনো নির্দিষ্ট অর্থ নথিভুক্ত নেই।"),
+                        tr(ui, "No specific definitions recorded.", "कोई विशिष्ट अर्थ दर्ज नहीं है।", "কোনো নির্দিষ্ট অর্থ নথিভুক্ত নেই।", "କୌଣସି ନିର୍ଦ୍ଦିଷ୍ଟ ସଂଜ୍ଞା ନାହିଁ।"),
                         fontSize = 15.sp,
                         color = app.inkSecondary,
                         fontFamily = readingFont(ui)
@@ -612,7 +612,7 @@ private fun DictionaryEntryDetailCard(
                     color = app.inkSecondary
                 )
                 Text(
-                    tr(ui, "Credits", "आभार", "স্বীকার"),
+                    tr(ui, "Credits", "आभार", "স্বীকার", "ଶ୍ରେୟ"),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = app.accent
@@ -728,7 +728,7 @@ private fun SavedWordRow(
                 )
                 if (saved.ref.isNotBlank()) {
                     Text(
-                        tr(ui, "From verse: ", "श्लोक से: ", "শ্লোক থেকে: ") + localDigits(saved.ref, ui),
+                        tr(ui, "From verse: ", "श्लोक से: ", "শ্লোক থেকে: ", "ଶ୍ଳୋକରୁ: ") + localDigits(saved.ref, ui),
                         fontSize = 12.sp,
                         color = app.inkSecondary
                     )
@@ -740,7 +740,7 @@ private fun SavedWordRow(
             ) {
                 Icon(
                     painter = painterResource(Ic.DeleteOutline),
-                    contentDescription = tr(ui, "Remove", "हटाएँ", "মুছুন"),
+                    contentDescription = tr(ui, "Remove", "हटाएँ", "মুছুন", "ହଟାନ୍ତୁ"),
                     tint = app.inkSecondary,
                     modifier = Modifier.size(16.dp)
                 )
@@ -754,7 +754,7 @@ private fun SavedWordRow(
 private fun GlossaryHeading(ui: com.bhagavatam.app.data.Lang) {
     val app = LocalAppColors.current
     Text(
-        tr(ui, "Names and terms of the book", "ग्रन्थ के नाम और शब्द", "গ্রন্থের নাম ও শব্দ"),
+        tr(ui, "Names and terms of the book", "ग्रन्थ के नाम और शब्द", "গ্রন্থের নাম ও শব্দ", "ଗ୍ରନ୍ଥର ନାମ ଓ ଶବ୍ଦ"),
         fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = app.inkSecondary, modifier = Modifier.padding(top = 8.dp),
     )
 }
