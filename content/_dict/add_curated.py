@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add hand-written entries for frequent book words that Wiktionary lacks: content/_dict/curated/{or,hi,bn}.tsv.
+"""Add hand-written entries for frequent book words that Wiktionary lacks: content/_dict/curated/{or,hi,bn,sa}.tsv.
 
     py content/_dict/add_curated.py [path/to/dictionary.db]      (default: app/src/main/assets/dictionary.db)
 
@@ -45,7 +45,7 @@ def main():
                     "Short glosses written for this app; not reviewed by a native reader.", "2026-10-14"))
     nid = db.execute("select max(id) from entry").fetchone()[0] + 1
     n = 0
-    for lang in ("or", "hi", "bn"):
+    for lang in ("or", "hi", "bn", "sa"):
         f = HERE / "curated" / f"{lang}.tsv"
         if not f.exists():
             continue
@@ -60,7 +60,6 @@ def main():
             db.execute("insert into sense(entry_id, idx, gloss_lang, gloss, example) values (?,?,?,?,?)", (nid, 0, "en", gloss, None))
             nid += 1
             n += 1
-    db.execute("insert or replace into meta values('dictionary_version', '2')")
     db.commit()
     db.close()
     print(f"{n} curated entries added to {path}")

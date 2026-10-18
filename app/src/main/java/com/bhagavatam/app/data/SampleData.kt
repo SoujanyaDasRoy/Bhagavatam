@@ -192,6 +192,9 @@ object SampleData {
 
     val isLoaded get() = db != null
 
+    /** The open text database, for the few readers of its other tables (BookGloss). */
+    internal val rawDb: SQLiteDatabase? get() = db
+
     /** Called once from ContentDb.open(). */
     @Synchronized
     fun attach(d: SQLiteDatabase) {

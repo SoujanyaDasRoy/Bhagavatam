@@ -40,6 +40,7 @@ DUMPS = WORK / "dumps"
 RE_REF = re.compile(r"<ref[^>]*>.*?</ref>|<ref[^>]*/>", re.IGNORECASE | re.DOTALL)
 RE_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
 RE_HTML_TAG = re.compile(r"</?[a-zA-Z][^>]*>")
+RE_INTERWIKI = re.compile(r"\s*:[a-z]{2,3}:\S+")
 RE_CATEGORY = re.compile(r"\[\[(?:Category|শ্রেণী|श्रेणी|ଶ୍ରେଣୀ|File|চিত্র|चित्र|ଫାଇଲ):[^\]]+\]\]", re.IGNORECASE)
 RE_FILE = re.compile(r"\[\[(?:Image|File|চিত্র|चित्र|ଫାଇଲ):[^\]]+\]\]", re.IGNORECASE)
 RE_LINK = re.compile(r"\[\[([^\|\]]+)(?:\|([^\]]+))?\]\]")
@@ -124,6 +125,9 @@ def clean_wikitext(text: str, max_chars: int = 240) -> str:
 
     # Replace em and en dashes with " - "
     text = RE_DASHES.sub(" - ", text)
+
+    # Interwiki leftovers of [[:en:home]] ("home :en:home")
+    text = RE_INTERWIKI.sub("", text)
 
     # Collapse repeated whitespace
     text = re.sub(r"\s+", " ", text).strip()

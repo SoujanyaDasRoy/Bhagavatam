@@ -339,8 +339,11 @@ fun MeaningCard(
                     color = c.secondary
                 )
             }
+            val src = first.source
             Text(
-                (first.source?.name ?: "Wiktionary") + " · CC BY-SA 4.0",
+                if (src?.code == com.bhagavatam.app.data.BookGloss.SOURCE_CODE)
+                    tr(ui, "Not in the dictionary: matched by machine with this verse's translations", "शब्दकोश में नहीं: इस श्लोक के अनुवाद से मशीन द्वारा मिलाया गया", "অভিধানে নেই: এই শ্লোকের অনুবাদের সঙ্গে যন্ত্রে মেলানো", "ଅଭିଧାନରେ ନାହିଁ: ଏହି ଶ୍ଳୋକର ଅନୁବାଦ ସହିତ ଯନ୍ତ୍ର ଦ୍ୱାରା ମିଳାଯାଇଛି")
+                else (src?.name ?: "Wiktionary") + " · " + (src?.licence?.ifBlank { null } ?: "CC BY-SA 4.0"),
                 fontSize = 13.sp,
                 color = c.secondary
             )
@@ -370,6 +373,13 @@ fun MeaningCard(
                 }
                 else -> {
                     Text(tr(ui, "No dictionary entry found.", "कोई प्रविष्टि नहीं मिली।", "কোনো অর্থ পাওয়া যায়নি।", "ଅଭିଧାନରେ କିଛି ମିଳିଲା ନାହିଁ।"), fontSize = 15.sp, color = c.secondary)
+                    // every word of the book still gets its meaning in context: the same verse in another language
+                    val inVerse = remember(w, ui) { verseMeaning(w, ui) }
+                    if (inVerse != null) {
+                        Text(tr(ui, "In this verse:", "इस श्लोक में:", "এই শ্লোকে:", "ଏହି ଶ୍ଳୋକରେ:"), fontSize = 15.sp, color = c.gold, fontWeight = FontWeight.Medium)
+                        Text(inVerse.second, fontSize = 15.sp, lineHeight = 24.sp, color = c.ink, maxLines = if (more) 12 else 4, overflow = TextOverflow.Ellipsis, fontFamily = readingFont(inVerse.first))
+                        if (!more) TextAction(tr(ui, "Show the whole verse", "पूरा श्लोक दिखाएँ", "পুরো শ্লোক দেখান", "ପୂରା ଶ୍ଳୋକ ଦେଖାନ୍ତୁ")) { more = true }
+                    }
                     if (!allowOnline) TextAction(tr(ui, "Look it up online (sends this word to Wiktionary)", "ऑनलाइन खोजें (यह शब्द Wiktionary को भेजा जाएगा)", "অনলাইনে খুঁজুন (শব্দটি Wiktionary-তে যাবে)", "ଅନଲାଇନ୍‌ରେ ଖୋଜନ୍ତୁ (ଏହି ଶବ୍ଦ Wiktionary କୁ ଯିବ)")) { onceOnline = true }
                 }
             }
@@ -487,4 +497,14 @@ fun SelectionPanel(
         if (state.lookup != null && state.selBar != null) Box(Modifier.fillMaxWidth().height(1.dp).background(c.separator))
         if (state.selBar != null) SelectionBar(state, framed = false)
     }
+}
+
+/** The verse of a tapped word in another language than the word's own (the app language first, then English, then Hindi). */
+internal fun verseMeaning(w: com.bhagavatam.app.data.WordLookup, ui: com.bhagavatam.app.data.Lang): Pair<com.bhagavatam.app.data.Lang, String>? {
+    if (w.ref.isBlank()) return null
+    val v = SampleData.verse(w.ref) ?: return null
+    return listOf(ui, com.bhagavatam.app.data.Lang.EN, com.bhagavatam.app.data.Lang.HI).distinct()
+        .filter { it != w.lang && it != com.bhagavatam.app.data.Lang.SA && v.hasText(it) }
+        .map { it to v.translation(it) }
+        .firstOrNull { it.second.isNotBlank() }
 }

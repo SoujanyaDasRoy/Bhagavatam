@@ -57,6 +57,7 @@ data class DictEntry(
  *  4. Stem match via suffix stripping (Lemmatizer).
  *  5. Chandrabindu/anusvara and nukta variant match.
  *  6. Cross-script tatsama lookup by script-neutral skey.
+ *  7. The book's own translations for words no dictionary has (BookGloss).
  */
 object Dictionary {
 
@@ -74,8 +75,30 @@ object Dictionary {
         preferredGlossLang: String? = null
     ): List<DictEntry> =
         // a Sanskrit word is looked up among the Sanskrit entries first, then among the Hindi ones (many words are the same)
-        if (lang == "sa") lookupAs(word, lang, "sa", preferredGlossLang).ifEmpty { lookupAs(word, lang, "hi", preferredGlossLang) }
-        else lookupAs(word, lang, lang.lowercase(), preferredGlossLang)
+        (if (lang == "sa") lookupAs(word, lang, "sa", preferredGlossLang).ifEmpty { lookupAs(word, lang, "hi", preferredGlossLang) }
+        else lookupAs(word, lang, lang.lowercase(), preferredGlossLang))
+            .ifEmpty { listOfNotNull(fromBook(word, lang, preferredGlossLang)) }
+
+    /** 7. Last step: the book's own translations (BookGloss): one entry made from the matched words and the parts, or null. */
+    private fun fromBook(word: String, lang: String, preferredGlossLang: String?): DictEntry? {
+        val clean = Normalise.word(word, lang)
+        if (clean.isBlank()) return null
+        val row = BookGloss.row(lang.lowercase(), clean) ?: return null
+        val lines = BookGloss.senses(row) { w ->
+            if (!Normalise.isIndic(w)) null
+            else {
+                val l = if (row.parts.split('+').contains(w)) lang else "hi"  // parts are in the word's language, matches in Hindi
+                (if (l == "sa") lookupAs(w, l, "sa", preferredGlossLang).ifEmpty { lookupAs(w, l, "hi", preferredGlossLang) } else lookupAs(w, l, l, preferredGlossLang))
+                    .firstOrNull()?.senses?.firstOrNull()?.gloss?.take(60)
+            }
+        }
+        if (lines.isEmpty()) return null
+        return DictEntry(
+            id = -1, lang = lang, headword = clean, norm = clean, skey = Normalise.skey(clean), pos = "", ipa = null, etymology = null,
+            freq = 0, sourceId = BookGloss.source.id, source = BookGloss.source,
+            senses = lines.mapIndexed { i, g -> DictSense(-1 - i, -1, i, "en", g, null) }
+        )
+    }
 
     private fun lookupAs(
         word: String,
