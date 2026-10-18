@@ -14,6 +14,7 @@ A private, offline reader and listener for the **Shrimad Bhagavat Mahapuran** on
 - **Who is speaking:** each speech in the book is labelled, in the language you read.
 - **Listening:** narration with pauses, lock-screen playback, sleep timer and speed control.
 - **Paintings:** each Skandha card shows a public-domain Indian miniature ([credits](docs/ART_CREDITS.md)).
+- **Chapter paintings (in progress):** one scene per chapter is written in `content/art/scenes/`; the pack for the artist (Excel prompts, Word brief, reference picture) is in `content/art/HANDOFF/` ([how it works](content/art/PROMPT_GUIDE.md)).
 - **Four themes:** light, sepia, dark and black; the text size and spacing are yours to set, and the layout holds at the largest system text size.
 - **Private:** no account, no ads, no tracking. Word meanings stay on the phone unless you turn on the online lookup.
 - **Updates:** the app tells you when a new version is out.
