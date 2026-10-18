@@ -156,6 +156,7 @@ def apply(db_path, src_root=None, version=None):
     if 'title_bn' not in {r[1] for r in db.execute('PRAGMA table_info(chapter)')}:
         db.execute('ALTER TABLE chapter ADD COLUMN title_bn TEXT')
     db.execute('UPDATE verse SET bn = NULL, bn_from = NULL')
+    db.execute("DELETE FROM meta WHERE key = 'verse_moves_bn'")  # the column is filled again: the moves apply again
     db.execute('UPDATE chapter SET title_bn = NULL')
     stats = dict(chapters=0, verses_with_text=0, verses_pointing=0, verses_without=0, bengali_blocks_unmatched=0)
     issues = []
@@ -198,6 +199,8 @@ def apply(db_path, src_root=None, version=None):
         db.execute("UPDATE meta SET value=? WHERE key='content_version'", (str(version),))
     db.execute("UPDATE meta SET value=? WHERE key='languages'", ('sa,hi,en,bn',))
     db.execute("INSERT OR REPLACE INTO meta VALUES('bengali_stats', ?)", (json.dumps(stats),))
+    from verse_moves import apply_moves  # blocks the assembly put on the wrong verse (reviewed list)
+    print('verse moves:', apply_moves(db, 'bn'))
     db.commit()
     db.close()
     json.dump(issues, open(os.path.join(HERE, 'bengali_issues.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
