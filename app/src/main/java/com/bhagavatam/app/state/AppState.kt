@@ -284,8 +284,13 @@ class AppState(app: Application) : AndroidViewModel(app) {
     var hasRead by mutableStateOf(prefs.getBoolean("hasRead", false))
         private set
 
+    /** The last chapters opened, most recent first, as "skandha.adhyaya" (at most five). */
+    val recentChapters = mutableStateListOf<String>().apply { addAll(prefs.getString("recentChapters", "")!!.split("\n").filter { it.isNotBlank() }) }
+
     fun markRead(s: Int, a: Int, v: Int) {
         lastSkandha = s; lastAdhyaya = a; lastVerse = v; hasRead = true
+        com.bhagavatam.app.data.pushRecent(recentChapters.toList(), "$s.$a").let { recentChapters.clear(); recentChapters.addAll(it) }
+        save { putString("recentChapters", recentChapters.joinToString("\n")) }
         save { putInt("lastS", s); putInt("lastA", a); putInt("lastV", v); putBoolean("hasRead", true) }
     }
 

@@ -265,6 +265,17 @@ fun HomeScreen(
                 QuickAction(Ic.Bookmark, savedLabel, Modifier.weight(1f), onSaved)
                 QuickAction(Ic.Scroll, s.thematicLilaIndex, Modifier.weight(1f), onGlossary)
             }
+            // The last chapters opened, other than the one the Resume card already offers.
+            val others = state.recentChapters.mapNotNull { k -> k.split(".").mapNotNull { it.toIntOrNull() }.takeIf { it.size == 2 } }.filter { !(it[0] == state.lastSkandha && it[1] == state.lastAdhyaya) }
+            if (others.isNotEmpty()) Column(Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.card).background(Brand.Card).border(1.dp, Brand.Separator, Radius.card)) {
+                Text(tr(ui, "Continue", "आगे पढ़ें", "চালিয়ে যান"), Modifier.padding(start = 18.dp, top = 14.dp, bottom = 4.dp), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Secondary)
+                others.forEach { (sk, ad) ->
+                    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(role = Role.Button) { onOpenChapter(sk, ad) }.padding(horizontal = 18.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(localDigits(if (sk == 0) "M.$ad" else "$sk.$ad", ui), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold)
+                        Text(SampleData.adhyayaTitle(sk, ad, state.titleLangFor(sk, ad), s), Modifier.weight(1f), fontFamily = readingFont(state.titleLangFor(sk, ad)), fontSize = 16.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    }
+                }
+            }
             // Your progress
             Column(
                 Modifier.reveal(2, playIntro).padding(horizontal = 16.dp).fillMaxWidth().clip(Radius.card).background(Brand.Card).border(1.dp, Brand.Separator, Radius.card).padding(18.dp),
@@ -401,7 +412,12 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
             Box(Modifier.padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 16.dp).fillMaxWidth().clip(Radius.large)) {
                 ArtBackdrop(skArt(skandha), if (skandha == 0) listOf(Color(0xFF5A3C06), Color(0xFF8A5C0F)) else skGradient(skColor(skandha)), Modifier.matchParentSize(), mandala = Color(0x33FFFFFF))
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    val (readN, ofN) = com.bhagavatam.app.data.skandhaProgress(state.finished.toSet(), sk.adhyayaCount, skandha)
                     Text(localDigits("${sk.adhyayaCount} ${s.adhyayas}", ui), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC))
+                    if (readN > 0) Text(
+                        localDigits(tr(ui, "$readN of $ofN chapters read", "$readN / $ofN अध्याय पढ़े", "$readN / $ofN অধ্যায় পড়া"), ui) + if (readN >= ofN) "  \u2713" else "",
+                        fontSize = 15.sp, color = Color(0xFFFFF4DC),
+                    )
                     Text(headerTitle, fontFamily = headerFont, fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     if (skandha > 0) {
                         val skName = when (state.contentLang) {

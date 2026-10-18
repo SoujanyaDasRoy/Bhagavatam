@@ -185,6 +185,16 @@ fun ReaderScreen(
     val bookLang0 = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
     val bookLang = if (!BENGALI_READY && bookLang0 == Lang.BN) Lang.EN else bookLang0
 
+    // Minutes left in this chapter, from the first verse on screen to the end of the text being read.
+    val wordCounts = remember(verses, bookLang) { verses.map { v -> v.translation(bookLang).split(Regex("\\s+")).size } }
+    val minLeft by remember(wordCounts) {
+        derivedStateOf {
+            val first = (list.firstVisibleItemIndex - 1).coerceIn(0, (wordCounts.size - 1).coerceAtLeast(0))
+            com.bhagavatam.app.data.minutesLeft(if (wordCounts.isEmpty()) 0 else wordCounts.drop(first).sum())
+        }
+    }
+
+
     // Book mode: skip blocks whose translation is printed with the group, and label the carrier with the whole range.
     val bookRows = remember(verses, bookLang) {
         val out = ArrayList<BookRow>()
@@ -327,7 +337,7 @@ fun ReaderScreen(
                     if (barAlpha > 0f) {
                         Column(Modifier.graphicsLayer { alpha = barAlpha; translationY = (1f - barAlpha) * 8.dp.toPx() }, horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(title, fontFamily = readingFont(state.titleLangFor(skandha, adhyaya)), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Text(reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
+                            Text(if (state.showReadTime && minLeft > 0) reference + " \u00b7 " + localDigits(tr(ui, "$minLeft min left", "$minLeft मिनट शेष", "$minLeft মিনিট বাকি"), ui) else reference, fontSize = 15.sp, color = c.secondary, maxLines = 1)
                         }
                     }
                 }
