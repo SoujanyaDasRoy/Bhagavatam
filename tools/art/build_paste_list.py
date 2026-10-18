@@ -37,3 +37,24 @@ for r in rows:
     out.append(f"- [ ] {r[0]}. SCENE: {r[2]} TIME AND LIGHT: {r[3]}. FIGURES: {r[4]}. MOOD: {r[5]}.")
 open(os.path.join(ROOT, "paste_list.md"), "w", encoding="utf-8").write("\n".join(out) + "\n")
 print(len(rows), "chapters")
+
+# Self-contained prompts for the person making the pictures (works in any tool, no Project needed)
+import re as _re
+guide = open(os.path.join(ROOT, "PROMPT_GUIDE.md"), encoding="utf-8").read()
+blocks = _re.findall(r"```\n(.*?)```", guide, _re.S)
+setup = next(b for b in blocks if b.startswith("You paint chapter"))
+style = setup.split("STYLE (always):")[1].split("CHARACTERS")[0].strip()
+chars = setup.split("CHARACTERS (use exactly when named):")[1].strip()
+hand = os.path.join(ROOT, "HANDOFF")
+os.makedirs(hand, exist_ok=True)
+with open(os.path.join(hand, "prompts_full.txt"), "w", encoding="utf-8") as f:
+    for r in rows:
+        if "DONE" in r[1]:
+            continue
+        f.write(f"===== {r[0]}  ({r[1]}) =====\n")
+        f.write(f"Use the attached picture ch_0_1 only as the style reference, never copy its scene. Make ONE image, wide landscape 3:2.\n")
+        f.write(f"SCENE: {r[2]} TIME AND LIGHT: {r[3]}. FIGURES: {r[4]}. MOOD: {r[5]}.\n")
+        f.write(f"{style}\nCHARACTERS: {chars}\n\n")
+with open(os.path.join(hand, "tracker.csv"), "w", newline="", encoding="utf-8") as f:
+    w = csv.writer(f); w.writerow(["id", "title", "made", "approved", "notes"])
+    w.writerows([[r[0], r[1], "", "", ""] for r in rows if "DONE" not in r[1]])
