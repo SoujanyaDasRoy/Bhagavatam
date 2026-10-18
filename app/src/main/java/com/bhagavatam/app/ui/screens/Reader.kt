@@ -687,13 +687,13 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
     val c = LocalReaderColors.current
     val ui = state.uiLang
     val big = lang == Lang.HI || lang == Lang.BN
-    val skLabel = if (v.skandha == 0) state.strings.mahatmya else v.skandha.toString()
+    val skLabel = if (v.skandha == 0) state.bookStrings.mahatmya else v.skandha.toString()
     // No rounded clip around the paragraph: it shaved the corner of the verse number and the first and last letters.
     Column(
         Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (speaker != null) Text(com.bhagavatam.app.data.speakerName(speaker, state.uiLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, modifier = Modifier.padding(top = 6.dp))
+        if (speaker != null) Text(com.bhagavatam.app.data.speakerName(speaker, lang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, modifier = Modifier.padding(top = 6.dp))
         // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
             state, v.ref, lang, digitsTo(v.translation(lang), lang),

@@ -148,6 +148,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
         private set
 
     val strings get() = stringsFor(uiLang)
+    /** Names of the parts of the book (Mahatmya, Skandha, Chapter, Shloka): they are the book's words, so they follow the reading language, not the app language. */
+    val bookStrings get() = stringsFor(titleLang)
 
     private fun save(block: android.content.SharedPreferences.Editor.() -> Unit) = with(prefs.edit()) { block(); apply() }
 

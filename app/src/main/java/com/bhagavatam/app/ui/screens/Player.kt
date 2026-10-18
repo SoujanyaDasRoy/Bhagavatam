@@ -275,7 +275,7 @@ private fun SpotifyHeader(
     val ui = state.uiLang
     val v = state.current
     val skandha = SampleData.skandhas.find { it.num == v.skandha }
-    val skandhaTitle = skandha?.name(ui) ?: if (v.skandha == 0) state.strings.mahatmya else "${state.strings.skandha} ${localDigits("${v.skandha}", ui)}"
+    val skandhaTitle = skandha?.name(state.contentLang) ?: if (v.skandha == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} ${localDigits("${v.skandha}", state.titleLang)}"
 
     Row(
         Modifier
@@ -383,7 +383,7 @@ private fun TrackMetadataRow(state: AppState, v: Verse) {
     } else if (v.speaker != null) {
         "${v.speaker} · $langLabel"
     } else {
-        "${state.strings.shloka} ${localDigits(v.ref, ui)} · $langLabel"
+        "${state.bookStrings.shloka} ${localDigits(v.ref, state.titleLang)} · $langLabel"
     }
 
     Row(
@@ -953,7 +953,7 @@ private fun QueueSheet(state: AppState, onDismiss: () -> Unit) {
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                "${state.strings.shloka} ${localDigits(verse.ref, ui)}",
+                                "${state.bookStrings.shloka} ${localDigits(verse.ref, state.titleLang)}",
                                 fontSize = 14.sp,
                                 fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
                                 color = if (isCurrent) AccentTerracotta else TextPrimary,
@@ -1006,7 +1006,7 @@ private fun PlayerOptionsSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                "${state.strings.shloka} ${localDigits(v.ref, ui)}",
+                "${state.bookStrings.shloka} ${localDigits(v.ref, state.titleLang)}",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary,

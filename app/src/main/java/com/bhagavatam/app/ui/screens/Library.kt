@@ -404,7 +404,8 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
     val s = state.strings
     val ui = state.uiLang
     val sk = SampleData.skandha(skandha)
-    val headerTitle = if (skandha == 0) s.mahatmya else localDigits("${s.skandha} $skandha", ui)
+    val bs = stringsFor(state.titleLang)
+    val headerTitle = if (skandha == 0) bs.mahatmya else localDigits("${bs.skandha} $skandha", state.titleLang)
     val headerFont = when (ui) {
         Lang.BN -> NotoSerifBengali
         Lang.HI -> NotoDevanagari
@@ -432,8 +433,7 @@ fun AdhyayasScreen(state: AppState, skandha: Int, onBack: () -> Unit, onOpen: (I
                         Text(skName, fontFamily = skFont, fontSize = 19.sp, color = Color.White, style = cardShadow)
                     }
                     Text(sk.title(state.contentLang), fontFamily = readingFont(state.contentLang), fontSize = 16.sp, color = Color(0xFFFFF4DC), style = cardShadow)
-                    val counts = if (readN > 0) tr(ui, "${sk.adhyayaCount} chapters · $readN read", "${sk.adhyayaCount} ${s.adhyayas} · $readN पढ़े", "${sk.adhyayaCount} ${s.adhyayas} · $readN পড়া") + if (readN >= ofN) "  \u2713" else ""
-                    else "${sk.adhyayaCount} ${s.adhyayas}"
+                    val counts = "${sk.adhyayaCount} ${s.adhyayas}" + if (readN > 0) " · " + tr(ui, "$readN read", "$readN पढ़े", "$readN পড়া") + if (readN >= ofN) "  ✓" else "" else ""
                     Text(localDigits(counts, ui), Modifier.padding(top = 6.dp), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFFFFF4DC), style = cardShadow)
                 }
             }

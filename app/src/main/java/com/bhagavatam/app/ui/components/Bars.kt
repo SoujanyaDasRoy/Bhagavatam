@@ -212,7 +212,7 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        "${state.strings.shloka} ${localDigits(v.ref, state.uiLang)}",
+                        "${state.bookStrings.shloka} ${localDigits(v.ref, state.titleLang)}",
                         fontSize = 14.sp, fontWeight = FontWeight.Bold, color = c.ink, maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )

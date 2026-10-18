@@ -89,10 +89,10 @@ class PlaybackService : Service() {
         val title = if (isYt) "$baseTitle (Recitation)" else baseTitle
         val line = if (isYt) {
             s.ytPlayer.currentSubtitle.ifEmpty {
-                if (v.skandha == 0) "${s.strings.mahatmya} ${v.adhyaya}" else "${v.skandha}.${v.adhyaya}"
+                if (v.skandha == 0) "${s.bookStrings.mahatmya} ${v.adhyaya}" else "${v.skandha}.${v.adhyaya}"
             }
         } else {
-            if (v.skandha == 0) "${s.strings.mahatmya} ${v.adhyaya}.${v.numLabel}" else "${v.skandha}.${v.adhyaya}.${v.numLabel}"
+            if (v.skandha == 0) "${s.bookStrings.mahatmya} ${v.adhyaya}.${v.numLabel}" else "${v.skandha}.${v.adhyaya}.${v.numLabel}"
         }
         session.setMetadata(MediaMetadata.Builder().putString(MediaMetadata.METADATA_KEY_TITLE, title).putString(MediaMetadata.METADATA_KEY_ARTIST, line).build())
         val actions = PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS

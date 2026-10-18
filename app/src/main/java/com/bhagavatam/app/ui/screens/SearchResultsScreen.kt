@@ -518,8 +518,8 @@ fun SearchResultsScreen(
                     val ref = data.parsedRef
                     if (ref != null) {
                         item {
-                            val skTitle = if (ref.skandha == 0) s.mahatmya else SampleData.skandha(ref.skandha).title(ui)
-                            val jumpLabel = localDigits("${s.goTo} $skTitle · ${s.adhyaya} ${ref.chapter} · ${s.shloka} ${ref.verse}", ui)
+                            val skTitle = if (ref.skandha == 0) state.bookStrings.mahatmya else SampleData.skandha(ref.skandha).title(state.contentLang)
+                            val jumpLabel = localDigits("${s.goTo} $skTitle · ${state.bookStrings.adhyaya} ${ref.chapter} · ${state.bookStrings.shloka} ${ref.verse}", state.titleLang)
                             val adTitle = SampleData.adhyayaTitle(ref.skandha, ref.chapter, state.titleLangFor(ref.skandha, ref.chapter), s)
 
                             Box(
@@ -583,8 +583,8 @@ fun SearchResultsScreen(
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(ep.title(state.contentLang), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Brand.Ink)
-                                        val skLabel = if (ep.s == 0) s.mahatmya else "${s.skandha} ${ep.s}"
-                                        Text(localDigits("$skLabel · ${s.adhyaya} ${ep.a}", ui), fontSize = 12.sp, color = Brand.Gold)
+                                        val skLabel = if (ep.s == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} ${ep.s}"
+                                        Text(localDigits("$skLabel · ${state.bookStrings.adhyaya} ${ep.a}", state.titleLang), fontSize = 12.sp, color = Brand.Gold)
                                     }
                                     if (ep.description(ui).isNotEmpty()) {
                                         Text(ep.description(ui), fontSize = 13.sp, lineHeight = 21.sp, color = Brand.Secondary)
@@ -600,7 +600,7 @@ fun SearchResultsScreen(
                             SectionHeading(tr(ui, "Words appear in the same chapter", "ये शब्द एक ही अध्याय में मिलते हैं", "এই শব্দগুলি একই অধ্যায়ে পাওয়া যায়"))
                         }
                         items(data.sameChapterMatches, key = { "ch_${it.first}_${it.second}" }) { (sk, ad) ->
-                            val skLabel = if (sk == 0) s.mahatmya else "${s.skandha} $sk"
+                            val skLabel = if (sk == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} $sk"
                             val chTitle = SampleData.adhyayaTitle(sk, ad, state.titleLangFor(sk, ad), s)
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.group) { onOpenChapter(sk, ad) }
@@ -609,7 +609,7 @@ fun SearchResultsScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                        Text(localDigits("$skLabel · ${s.adhyaya} $ad", ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
+                                        Text(localDigits("$skLabel · ${state.bookStrings.adhyaya} $ad", state.titleLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold)
                                         Text(chTitle, fontFamily = readingFont(state.titleLangFor(sk, ad)), fontSize = 15.sp, color = Brand.Ink)
                                     }
                                     Icon(painterResource(Ic.KeyboardArrowRight), null, tint = Brand.Secondary)
@@ -641,8 +641,8 @@ fun SearchResultsScreen(
                     } else {
                         items(data.verseCards, key = { "${it.verse.ref}_${it.layer.name}" }) { res ->
                             val v = res.verse
-                            val skName = if (v.skandha == 0) s.mahatmya else "${s.skandha} ${v.skandha}"
-                            val refText = localDigits("$skName · ${s.adhyaya} ${v.adhyaya} · ${s.shloka} ${v.num}", ui)
+                            val skName = if (v.skandha == 0) state.bookStrings.mahatmya else "${state.bookStrings.skandha} ${v.skandha}"
+                            val refText = localDigits("$skName · ${state.bookStrings.adhyaya} ${v.adhyaya} · ${state.bookStrings.shloka} ${v.num}", state.titleLang)
 
                             Box(
                                 Modifier.fillMaxWidth().tappable(Radius.group) { onOpenVerse(v.skandha, v.adhyaya) }

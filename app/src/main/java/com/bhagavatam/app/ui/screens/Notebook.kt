@@ -125,7 +125,7 @@ fun LazyListScope.notebookMarks(state: AppState, groups: List<Pair<String, List<
         val p = key.split(".").map { it.toIntOrNull() ?: 0 }
         item(key = "g$key") {
             androidx.compose.material3.Text(
-                localDigits(if (p[0] == 0) state.strings.mahatmya + " ${p[1]}" else "${p[0]}.${p[1]}", ui) + "  " + SampleData.adhyayaTitle(p[0], p[1], state.titleLangFor(p[0], p[1]), state.strings),
+                localDigits(if (p[0] == 0) state.bookStrings.mahatmya + " ${p[1]}" else "${p[0]}.${p[1]}", state.titleLang) + "  " + SampleData.adhyayaTitle(p[0], p[1], state.titleLangFor(p[0], p[1]), state.strings),
                 Modifier.padding(horizontal = 20.dp, vertical = 6.dp), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Brand.Gold,
             )
         }

@@ -37,9 +37,42 @@ class SpeakersTest {
         assertEquals(listOf(true, false, false, true), verses.map { startsSpeakerRun(l, verses, it) })
     }
 
-    @Test fun knownSpeakerIsNamedInTheAppLanguageUnknownStaysAsPrinted() {
+    @Test fun topSpeakersAreNamedInEveryLanguage() {
         assertEquals("Shri Shukadeva said", speakerName("श्रीशुक उवाच", Lang.EN))
-        assertEquals("श्रीशुक उवाच", speakerName("श्रीशुक उवाच", Lang.HI))
+        assertEquals("श्रीशुकदेवजी ने कहा", speakerName("श्रीशुक उवाच", Lang.HI))
+        assertEquals("শ্রীশুকদেব বললেন", speakerName("श्रीशुक उवाच", Lang.BN))
+        assertEquals("श्रीमैत्रेयजी ने कहा", speakerName("मैत्रेय उवाच", Lang.HI))
+        assertEquals("The Lord said", speakerName("श्रीभगवानुवाच", Lang.EN))
+        assertEquals("श्रीभगवान् ने कहा", speakerName("श्रीभगवानुवाच", Lang.HI))
+    }
+
+    @Test fun otherSpeakersAreBuiltFromTheirName() {
+        assertEquals("Yudhishthira said", speakerName("युधिष्ठिर उवाच", Lang.EN))
+        assertEquals("युधिष्ठिर ने कहा", speakerName("युधिष्ठिर उवाच", Lang.HI))
+        assertEquals("যুধিষ্ঠির বললেন", speakerName("युधिष्ठिर उवाच", Lang.BN))
+        assertEquals("Prahrada said", speakerName("प्रह्राद उवाच", Lang.EN))
+    }
+
+    @Test fun joinedFormsAndPluralsAreRead() {
+        assertEquals("The king said", speakerName("राजोवाच", Lang.EN))
+        assertEquals("राजा ने कहा", speakerName("राजोवाच", Lang.HI))
+        assertEquals("Brahma said", speakerName("ब्रह्मोवाच", Lang.EN))
+        assertEquals("Bali said", speakerName("बलिरुवाच", Lang.EN))
+        assertEquals("The gods said", speakerName("देवा ऊचुः", Lang.EN))
+        assertEquals("देवता बोले", speakerName("देवा ऊचुः", Lang.HI))
+        assertEquals("দেবগণ বললেন", speakerName("देवा ऊचुः", Lang.BN))
+        assertEquals("गोपी ने कहा", speakerName("गोप्युवाच", Lang.HI))
+    }
+
+    @Test fun odiaReadersGetOdiaScript() {
+        assertEquals("ମୈତ୍ରେୟ କହିଲେ", speakerName("मैत्रेय उवाच", Lang.OR))
+        assertEquals("ଶ୍ରୀଶୁକଦେବ କହିଲେ", speakerName("श्रीशुक उवाच", Lang.OR))
+        assertEquals("ବିଦୁର କହିଲେ", speakerName("विदुर उवाच", Lang.OR))
+    }
+
+    @Test fun textThatIsNotASpeakerLineStaysAsPrinted() {
+        assertEquals("[अस्यार्थः]", speakerName("[अस्यार्थः]", Lang.EN))
         assertEquals("কেউ উবাচ", speakerName("কেউ উবাচ", Lang.EN))
+        assertEquals("सूत उवाच", speakerName("सूत उवाच", Lang.SA))
     }
 }

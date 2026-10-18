@@ -113,7 +113,7 @@ fun DownloadsScreen(state: AppState) {
                     ) {
                         Dot(if (sk.num == 0) Brand.Gold else Brand.Skandha[sk.num - 1], 10)
                         Column(Modifier.weight(1f)) {
-                            Text(if (sk.num == 0) s.mahatmya else "${localDigits("${s.skandha} ${sk.num}", ui)} · ${sk.title(ui)}", fontSize = 16.sp)
+                            Text(if (sk.num == 0) state.bookStrings.mahatmya else "${localDigits("${state.bookStrings.skandha} ${sk.num}", state.titleLang)} · ${sk.title(state.contentLang)}", fontSize = 16.sp)
                             Text(
                                 when (st) { PackState.DONE -> s.onPhone; PackState.DOWNLOADING -> s.downloading; PackState.NONE -> s.sanskritAudio },
                                 fontSize = 15.sp, color = Brand.Secondary,
