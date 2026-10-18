@@ -371,10 +371,6 @@ fun MeaningCard(
                 else -> {
                     Text(tr(ui, "No dictionary entry found.", "कोई प्रविष्टि नहीं मिली।", "কোনো অর্থ পাওয়া যায়নি।", "ଅଭିଧାନରେ କିଛି ମିଳିଲା ନାହିଁ।"), fontSize = 15.sp, color = c.secondary)
                     if (!allowOnline) TextAction(tr(ui, "Look it up online (sends this word to Wiktionary)", "ऑनलाइन खोजें (यह शब्द Wiktionary को भेजा जाएगा)", "অনলাইনে খুঁজুন (শব্দটি Wiktionary-তে যাবে)", "ଅନଲାଇନ୍‌ରେ ଖୋଜନ୍ତୁ (ଏହି ଶବ୍ଦ Wiktionary କୁ ଯିବ)")) { onceOnline = true }
-                    if (!allowOnline) Text(
-                        tr(ui, "Turn on online meanings in Settings > Words & notes to look it up.", "सेटिंग > शब्द और नोट में ऑनलाइन अर्थ चालू करके खोजें।", "সেটিংস > শব্দ ও নোট-এ অনলাইন অর্থ চালু করে খুঁজুন।", "ଖୋଜିବାକୁ ସେଟିଂସ୍ > ଶବ୍ଦ ଓ ନୋଟ୍‌ରେ ଅନଲାଇନ୍ ଅର୍ଥ ଚାଲୁ କରନ୍ତୁ।"),
-                        fontSize = 15.sp, color = c.secondary,
-                    )
                 }
             }
         }

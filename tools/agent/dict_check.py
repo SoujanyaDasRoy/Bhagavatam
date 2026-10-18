@@ -17,10 +17,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT = ROOT / "app" / "src" / "main" / "assets" / "dictionary.db"
-LANGS = ("en", "hi", "bn", "or")
-SCRIPT = {"hi": r"[ऀ-ॿ]", "bn": r"[ঀ-৿]", "or": r"[଀-୿]", "en": r"[A-Za-z]"}
+LANGS = ("en", "hi", "bn", "or", "sa")
+SCRIPT = {"hi": r"[ऀ-ॿ]", "sa": r"[ऀ-ॿ]", "bn": r"[ঀ-৿]", "or": r"[଀-୿]", "en": r"[A-Za-z]"}
 # Words that must be found in every database that claims to cover that language (the most common words of the book).
-MUST_FIND = {"en": ["lord", "king", "god"], "hi": ["धर्म", "भगवान", "राजा"], "bn": ["ধর্ম", "ভগবান", "রাজা"], "or": ["ଧର୍ମ", "ଭଗବାନ", "ରାଜା"]}
+MUST_FIND = {"en": ["lord", "king", "god"], "hi": ["धर्म", "भगवान", "राजा"], "bn": ["ধর্ম", "ভগবান", "রাজা"], "or": ["ଧର୍ମ", "ଭଗବାନ", "ରାଜା"], "sa": ["धर्म", "राजा", "कृष्ण"]}
 SCHEMA = {
     "meta": {"key", "value"},
     "source": {"id", "code", "name", "licence", "url", "attribution", "retrieved"},

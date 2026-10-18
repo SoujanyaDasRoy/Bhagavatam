@@ -7,6 +7,7 @@ Plan and rules: `docs/superpowers/plans/2026-10-09-dictionary-db.md`. Working ag
 | `coverage_probe.py` | works: counts the book's words per language, writes `work/vocab_<lang>.tsv`, can measure a headword list against them |
 | `sources.json` | source list with licences and status (verified / unverified / rejected) |
 | `fetch.py`, `parse_wiktionary.py`, `build_dictionary.py` | to be written (Tasks 2 to 4) |
+| `add_sanskrit.py` | works: adds Sanskrit entries (English Wiktionary's Sanskrit words, Wiktextract JSON from kaikki.org, CC BY-SA 4.0) for the words of the book; run it, then `add_book_words.py`. Input: `work/dumps/sanskrit_kaikki/kaikki-sanskrit.jsonl` (145 MB, not committed). 2026-10-18: Sanskrit words with a meaning rose from 19% to 59% of the book's Sanskrit text; compounds are still not split |
 | `work/` | downloads, vocabulary files and JSONL; in `.gitignore`, never commit (derived from the Gita Press text or large) |
 
 Check a built database: `python tools/agent/dict_check.py content/_dict/dictionary.db --max-mb 30`

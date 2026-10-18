@@ -241,6 +241,7 @@ fun DictionaryScreen(
                 "en" to tr(ui, "English", "अंग्रेज़ी", "ইংরেজি", "ଇଂରାଜୀ"),
                 "hi" to tr(ui, "Hindi", "हिन्दी", "হিন্দি", "ହିନ୍ଦୀ"),
                 "bn" to tr(ui, "Bengali", "বাংলা", "বাংলা", "ବଙ୍ଗାଳୀ"),
+                "sa" to tr(ui, "Sanskrit", "संस्कृत", "সংস্কৃত", "ସଂସ୍କୃତ"),
                 "or" to tr(ui, "Odia", "ओड़िया", "ওড়িয়া", "ଓଡ଼ିଆ")
             )
             langs.forEach { (code, label) ->

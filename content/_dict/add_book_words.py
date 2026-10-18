@@ -73,7 +73,7 @@ def main():
                     refs[w].append((s, ch, n)); seen.add(w)
         rows, got = 0, 0
         for w, n in freq.items():
-            eid = resolve(w, look if lang != "sa" else "hi")
+            eid = resolve(w, look) if lang != "sa" else (resolve(w, "sa") or resolve(w, "hi"))
             if n < 2 and eid is None:
                 continue
             cur = d.execute("INSERT INTO book_word(lang, word, freq, entry_id) VALUES(?,?,?,?)", (lang, w, n, eid))
