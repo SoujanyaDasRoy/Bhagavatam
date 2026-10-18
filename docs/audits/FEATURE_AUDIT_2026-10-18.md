@@ -109,3 +109,10 @@ left" is estimated at 150 words a minute for every language.
 | F5 English titles | Footnote stars removed and the first letter capitalised when titles load (`cleanEnglishTitle`, with tests). |
 | F7 labels | Search chip "Bangla" is now "Bengali" in English. A second pass over Search and Settings with the accessibility tree found no unlabelled control except Android's own scroll indicator; the earlier count of 7 was not reproduced. Highlight colour buttons now have 8dp between them. |
 Still open: F3, F6, F8 (rest), F9, the Odia verse and title data, the Odia interface review by an Odia reader.
+
+## Update: dark mode at font scale 2.0 (checked after the UI pass)
+Home and the reader, dark theme, system font scale 2.0, app and reading language Hindi, Bengali and Odia, on the Pixel_8 emulator: no clipped
+or overlapping text, the resume card, shloka of the day, tab bar labels, top bar and Listen bar stay readable, and the bottom bar keeps its
+labels on one line. Content, Search and Settings were not repeated at this size in this pass.
+The reader's "Aa" sheet now also holds line spacing, Justify text, Shloka numbers and Show who is speaking, next to theme, size, Sanskrit
+and the translations to show alongside (Odia included), so the page can be set up in one place; Settings > Reading keeps the same switches.

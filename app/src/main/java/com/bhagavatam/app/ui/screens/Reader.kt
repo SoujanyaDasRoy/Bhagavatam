@@ -820,8 +820,20 @@ fun ReaderSettings(state: AppState) {
             AppSlider(value = state.textScale, onValueChange = state::updateTextScale, valueRange = 0.8f..1.6f, modifier = Modifier.weight(1f))
             Text("A", fontFamily = EnglishReading, fontSize = 22.sp, color = Brand.Secondary)
         }
+        // line spacing and the page switches that used to be only in Settings > Reading, so the page can be set up in one place
+        Column {
+            SectionLabel(com.bhagavatam.app.data.settingsTextFor(state.uiLang).lineSpacing)
+            val lineValues = listOf(0.9f, 1.0f, 1.2f)
+            Segmented(com.bhagavatam.app.data.settingsTextFor(state.uiLang).spacings, lineValues.indexOfFirst { it == state.lineScale }.coerceAtLeast(1), { state.updateLineScale(lineValues[it]) })
+        }
         Column(Modifier.padding(horizontal = 16.dp).clip(RoundedCornerShape(14.dp)).background(Brand.Card)) {
             SwitchRow(s.showSanskrit, state.showSanskrit, state::updateShowSanskrit)
+            HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+            SwitchRow(tr(state.uiLang, "Justify text", "पाठ बराबर करें", "লেখা সমান করুন", "ଟେକ୍ସଟ୍ ଜଷ୍ଟିଫାଏ କରନ୍ତୁ"), state.justifyText, state::updateJustifyText)
+            HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+            SwitchRow(tr(state.uiLang, "Shloka numbers", "श्लोक संख्या", "শ্লোক সংখ্যা", "ଶ୍ଳୋକ ସଂଖ୍ଯା"), state.showVerseNumbers, state::updateShowVerseNumbers)
+            HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
+            SwitchRow(tr(state.uiLang, "Show who is speaking", "वक्ता का नाम दिखाएँ", "বক্তার নাম দেখান", "ବକ୍ତାଙ୍କ ନାମ ଦେଖାନ୍ତୁ"), state.showSpeakers, state::updateShowSpeakers)
         }
         if (state.showSanskrit) {
             Column {
