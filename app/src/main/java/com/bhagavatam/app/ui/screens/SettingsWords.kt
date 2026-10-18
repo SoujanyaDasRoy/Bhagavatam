@@ -155,6 +155,26 @@ fun WordsSettings(state: AppState, onBack: () -> Unit) {
             }
         }
         SettingsGroup(
+            tr(ui, "Colour names", "रंगों के नाम", "রঙের নাম"),
+            tr(ui, "Give each colour a meaning, for example Important, Story, Doubt, Memorise. The names show in the colour picker and in the exported notes.", "हर रंग को एक अर्थ दें, जैसे महत्वपूर्ण, कथा, शंका, याद करना। नाम रंग चुनते समय और निर्यात किए नोट में दिखते हैं।", "প্রতিটি রঙকে একটি অর্থ দিন, যেমন গুরুত্বপূর্ণ, কাহিনি, সংশয়, মনে রাখা। নাম রং বাছাইয়ে ও রপ্তানি করা নোটে দেখা যায়।"),
+        ) {
+            MarkColours.forEachIndexed { i, col ->
+                Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Box(Modifier.size(24.dp).clip(CircleShape).background(Color(col)))
+                    androidx.compose.foundation.text.BasicTextField(
+                        value = state.markNames[i], onValueChange = { state.updateMarkName(i, it) }, singleLine = true, modifier = Modifier.weight(1f),
+                        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp, color = Brand.Ink),
+                        cursorBrush = androidx.compose.ui.graphics.SolidColor(Brand.Kesari),
+                        decorationBox = { inner ->
+                            if (state.markNames[i].isEmpty()) Text(state.markName(i), fontSize = 16.sp, color = Brand.Secondary)
+                            inner()
+                        },
+                    )
+                }
+                if (i < MarkColours.lastIndex) RowDivider()
+            }
+        }
+        SettingsGroup(
             tr(ui, "App updates", "ऐप के अपडेट", "অ্যাপের আপডেট"),
             tr(ui, "A notification when a new version is published. Nothing else is sent.", "नया संस्करण आने पर एक सूचना। और कुछ नहीं भेजा जाता।", "নতুন সংস্করণ এলে একটি বিজ্ঞপ্তি। আর কিছু পাঠানো হয় না।"),
         ) {

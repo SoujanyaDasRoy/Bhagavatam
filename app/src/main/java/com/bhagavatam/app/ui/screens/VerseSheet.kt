@@ -133,7 +133,7 @@ fun VerseSheet(state: AppState) {
             if (text.isNotEmpty() && lang != null) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(tr(ui, "Highlight", "हाइलाइट", "হাইলাইট"), Modifier.weight(1f), fontSize = 16.sp, fontWeight = FontWeight.Medium, color = c.ink)
-                    val names = listOf(tr(ui, "Yellow", "पीला", "হলুদ"), tr(ui, "Green", "हरा", "সবুজ"), tr(ui, "Blue", "नीला", "নীল"), tr(ui, "Pink", "गुलाबी", "গোলাপি"))
+                    val names = List(4) { state.markName(it) }
                     MarkColours.forEachIndexed { i, col ->
                         Box(
                             Modifier.size(48.dp).clickable(role = Role.Button, onClickLabel = tr(ui, "Highlight ", "हाइलाइट ", "হাইলাইট ") + names[i]) {

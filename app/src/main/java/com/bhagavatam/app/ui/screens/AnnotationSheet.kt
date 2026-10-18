@@ -107,7 +107,7 @@ fun SelectionBar(state: AppState, modifier: Modifier = Modifier, framed: Boolean
         state.lookup = null
     }
     val shape = RoundedCornerShape(20.dp)
-    val colourNames = listOf(tr(ui, "Yellow", "पीला", "হলুদ"), tr(ui, "Green", "हरा", "সবুজ"), tr(ui, "Blue", "नीला", "নীল"), tr(ui, "Pink", "गुलाबी", "গোলাপি"))
+    val colourNames = List(4) { state.markName(it) }
     Row(
         modifier
             .then(if (framed) Modifier.shadow(6.dp, shape, ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17)).clip(shape).background(c.surface).border(1.dp, c.separator, shape) else Modifier)

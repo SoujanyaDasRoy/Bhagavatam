@@ -234,6 +234,16 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateShowReadTime(on: Boolean) { showReadTime = on; save { putBoolean("showReadTime", on) } }
     fun updateKeepScreenOnReading(on: Boolean) { keepScreenOnReading = on; save { putBoolean("keepScreenOnReading", on) } }
     fun updateFollowAudio(on: Boolean) { followAudio = on; save { putBoolean("followAudio", on) } }
+    /** Names the reader gave the four highlight colours; a blank one falls back to the colour's own name in the app language. */
+    var markNames by mutableStateOf(prefs.getString("markNames", "")!!.split("\n").let { s -> List(4) { s.getOrElse(it) { "" } } })
+    fun markName(i: Int): String = markNames.getOrElse(i) { "" }.ifBlank {
+        listOf(com.bhagavatam.app.data.tr(uiLang, "Yellow", "पीला", "হলুদ"), com.bhagavatam.app.data.tr(uiLang, "Green", "हरा", "সবুজ"),
+            com.bhagavatam.app.data.tr(uiLang, "Blue", "नीला", "নীল"), com.bhagavatam.app.data.tr(uiLang, "Pink", "गुलाबी", "গোলাপি")).getOrElse(i) { "" }
+    }
+    fun updateMarkName(i: Int, name: String) {
+        markNames = markNames.toMutableList().also { it[i] = name.replace("\n", " ").take(24) }
+        save { putString("markNames", markNames.joinToString("\n")) }
+    }
     fun updateDefaultMark(i: Int) { defaultMark = i.coerceIn(0, 3); save { putInt("defaultMark", defaultMark) } }
     fun updateTextScale(v: Float) { textScale = v; saveScaleDebounced { putFloat("textScale", v) } }
     fun updateKeepPlaying(on: Boolean) { keepPlaying = on; save { putBoolean("keepPlaying", on) } }
