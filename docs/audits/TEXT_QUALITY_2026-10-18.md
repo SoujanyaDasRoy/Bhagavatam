@@ -88,3 +88,58 @@ Bengali: 66 titles are empty, only "Nth chapter", have the ordinal in front, or 
 | 12.5 | number in front | পঞ্চম অধ্যায় শ্রীশুকদেবের অন্তিম উপদেশ |
 | 12.12 | only the number | (চতুর্থ অধ্যায়) |
 | 12.13 | only the number | ত্রয়োদশ অধ্যায় |
+
+
+---
+
+# Odia verses that need a person, 2026-10-18 (second pass)
+
+Group-aware scan: a translation printed once for a group of verses is compared with the Hindi of the whole group (verses whose `or_from` points to it).
+This removed 39 of the 68 earlier "too long" cases: the following verses already point to the first, so the group was right all along.
+
+Rule of this project: nobody types scripture from page images. The list below is for an Odia reader or for the local OCR re-run
+(`content/_localocr/`), then `content/_build/add_odia.py` on both `content.db` copies.
+
+## Garbled, hidden in the app since db9a63e
+0.1.1, 0.6.3, 0.6.30, 3.6.34, 3.12.44, 6.1.1, 6.2.24, 7.1.1, 9.23.6, 10.50.1, 10.84.51
+
+Each shows "Odia translation not available" and the verse stays readable in the other languages. A re-read of the printed page is needed.
+
+## Extreme length cases (ratio of Odia to the Hindi of its group above 6 or below 0.2)
+| Verse | Odia / Hindi | Odia letters | Hindi letters | Paragraphs | `*` | Likely cause |
+|---|---|---|---|---|---|---|
+| 0.6.3 | 0.17 | 19 | 110 | 1 | 0 | only a fragment of the verse was read |
+| 1.1.1 | 0.03 | 15 | 558 | 1 | 0 | only a fragment of the verse was read |
+| 5.19.3 | 0.18 | 43 | 233 | 2 | 0 | only a fragment of the verse was read |
+| 6.2.5 | 8.05 | 958 | 119 | 2 | 0 | text of the next verses glued in |
+| 6.2.25 | 26.78 | 3080 | 115 | 18 | 2 | notes or commentary glued in |
+| 7.9.1 | 0.1 | 12 | 124 | 1 | 0 | only a fragment of the verse was read |
+| 9.10.37 | 0.19 | 521 | 2676 | 1 | 0 | only a fragment of the verse was read |
+| 10.3.2 | 9.79 | 1292 | 132 | 2 | 0 | text of the next verses glued in |
+| 10.3.5 | 7.56 | 1141 | 151 | 6 | 0 | text of the next verses glued in |
+| 10.3.6 | 8.77 | 1017 | 116 | 4 | 0 | text of the next verses glued in |
+| 10.8.5 | 12.01 | 1874 | 156 | 16 | 1 | notes or commentary glued in |
+| 10.8.27 | 7.8 | 1428 | 183 | 6 | 0 | text of the next verses glued in |
+| 10.8.32 | 97.59 | 9564 | 98 | 65 | 2 | notes or commentary glued in |
+| 10.8.33 | 7.39 | 739 | 100 | 4 | 1 | text of the next verses glued in |
+| 10.9.7 | 15.51 | 2667 | 172 | 8 | 1 | text of the next verses glued in |
+| 10.9.17 | 7.87 | 1189 | 151 | 3 | 3 | notes or commentary glued in |
+| 10.22.28 | 96.87 | 16661 | 172 | 26 | 1 | notes or commentary glued in |
+| 10.34.1 | 171.76 | 26279 | 153 | 48 | 0 | notes or commentary glued in |
+| 10.38.1 | 0.11 | 13 | 122 | 1 | 0 | only a fragment of the verse was read |
+| 11.10.14 | 0.2 | 724 | 3648 | 2 | 0 | only a fragment of the verse was read |
+
+How to read the "likely cause" column: many paragraphs or several `*` signs mean the printed notes (Gita Press footnotes) were read into the verse; few paragraphs mean the next verses' text ran in; a very short text means only a line of the verse was read.
+
+
+## Update, same day: 4 of the 11 garbled verses recovered
+In 0.1.1, 6.1.1, 7.1.1 and 10.50.1 the garbled part was the decorated chapter-opening block of the page, read as letters, in front of
+the real translation. Dropping the paragraphs that are not Odia text (and a short heading piece left before the verse) leaves a
+translation whose length matches the Hindi (0.9 to 1.2 times). Nothing was typed; the remaining paragraphs are the machine reading
+as it was. Both `content.db` copies changed together, content_version 41, search index rebuilt.
+
+Still hidden as garbled: 0.6.3, 0.6.30, 3.6.34, 3.12.44, 6.2.24, 9.23.6, 10.84.51. Their whole text is unreadable, or what is left is a
+fragment (0.6.30 keeps one line, 6.2.24 three words). They need the printed page read again.
+
+Re-run of `py tools/qa/scan_text_quality.py` after this change: 141 Odia verses listed for a person to look at (group-aware length,
+ratio outside 0.4 to 3.5, vowel signs at the start of a word, odd signs), 0 Hindi titles, 28 Bengali titles, 0 Odia titles.

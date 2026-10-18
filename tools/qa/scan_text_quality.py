@@ -6,7 +6,7 @@
 Checks
   Odia verses     letters from other scripts or Latin letters, symbols that never occur in Odia, stray combining marks at the start of a
                   word, a vowel sign after a space, very few Odia letters, a text far shorter or longer than the
-                  Hindi of the same verse.
+                  Hindi of the same verse (or of the group of verses it covers).
   Chapter titles  empty, only a number or an ordinal word ("पञ्चम अध्याय", "পঞ্চম অধ্যায়"), text in brackets, the wrong script, a copy
                   of another language's title.
 Nothing is changed. Verses and titles listed here are for the Odia or Bengali reader to look at against the printed book.
@@ -112,11 +112,25 @@ def main():
 
     lines.append("== Odia verses ==")
     n = 0
-    for sk, ch, num, hi, orv in c.execute("SELECT skandha, chapter, num, hi, \"or\" FROM verse WHERE \"or\" IS NOT NULL AND TRIM(\"or\")<>'' ORDER BY skandha, chapter, num"):
-        p = odia_problems(orv, hi or "")
+    rows = c.execute("SELECT skandha, chapter, num, hi, \"or\", or_from FROM verse ORDER BY skandha, chapter, num").fetchall()
+    # a translation printed once for a group of verses sits under the first and the others point to it (or_from), so its length is
+    # compared with the Hindi of the whole group
+    group_hindi = {}
+    for sk, ch, num, hi, orv, of in rows:
+        key = (sk, ch, of if of else num)
+        group_hindi[key] = group_hindi.get(key, 0) + len(re.sub(r"\s+", "", hi or ""))
+    for sk, ch, num, hi, orv, of in rows:
+        if not (orv or "").strip():
+            continue
+        p = odia_problems(orv, "")
+        gh = group_hindi.get((sk, ch, num), 0)
+        if gh > 40:
+            ol = len(re.sub(r"\s+", "", orv.replace("[?]", "")))
+            if ol < gh * 0.4 or ol > gh * 3.5:
+                p.append(f"length {ol} against Hindi {gh} (group)")
         if p:
             n += 1
-            lines.append(f"{sk}.{ch}.{num}  " + "; ".join(p) + "  | " + orv.replace("\n", " ")[:80])
+            lines.append(f"{sk}.{ch}.{num}  " + "; ".join(p) + "  | " + orv.replace(chr(10), " ")[:80])
     lines.append(f"-- {n} Odia verses to look at")
 
     for lang, col in (("hi", "title_hi"), ("bn", "title_bn"), ("or", "title_or")):
