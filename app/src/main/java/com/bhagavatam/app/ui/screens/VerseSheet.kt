@@ -129,7 +129,7 @@ fun VerseSheet(state: AppState) {
             @Composable
             fun Tile(icon: Int, text: String, on: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
                 Column(
-                    Modifier.weight(1f).heightIn(min = 72.dp).clip(RoundedCornerShape(14.dp)).background(if (on) c.accent.copy(alpha = 0.14f) else c.surface)
+                    Modifier.weight(1f).heightIn(min = 72.dp).clip(com.bhagavatam.app.ui.theme.Radius.group).background(if (on) c.accent.copy(alpha = 0.14f) else c.surface)
                         .clickable(enabled = enabled, role = Role.Button, onClick = onClick).padding(horizontal = 4.dp, vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
                 ) {

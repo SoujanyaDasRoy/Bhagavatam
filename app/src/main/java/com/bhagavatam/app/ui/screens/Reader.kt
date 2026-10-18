@@ -491,13 +491,13 @@ fun ReaderScreen(
                 }
                 if (verses.isNotEmpty() && !state.showSanskrit && bookRows.isEmpty()) {
                     item {
-                        Text(translationMissing(ui, bookLang), Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(c.surface).padding(18.dp),
+                        Text(translationMissing(ui, bookLang), Modifier.fillMaxWidth().clip(com.bhagavatam.app.ui.theme.Radius.group).background(c.surface).padding(18.dp),
                             fontSize = 15.sp, lineHeight = 22.sp, color = c.secondary)
                     }
                 }
                 if (verses.isEmpty()) {
                     item {
-                        Text(s.sampleOnly, Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(c.surface).padding(18.dp),
+                        Text(s.sampleOnly, Modifier.fillMaxWidth().clip(com.bhagavatam.app.ui.theme.Radius.group).background(c.surface).padding(18.dp),
                             fontSize = 15.sp, lineHeight = 22.sp, color = c.secondary)
                     }
                 }
@@ -826,7 +826,7 @@ fun ReaderSettings(state: AppState) {
             val lineValues = listOf(0.9f, 1.0f, 1.2f)
             Segmented(com.bhagavatam.app.data.settingsTextFor(state.uiLang).spacings, lineValues.indexOfFirst { it == state.lineScale }.coerceAtLeast(1), { state.updateLineScale(lineValues[it]) })
         }
-        Column(Modifier.padding(horizontal = 16.dp).clip(RoundedCornerShape(14.dp)).background(Brand.Card)) {
+        Column(Modifier.padding(horizontal = 16.dp).clip(com.bhagavatam.app.ui.theme.Radius.group).background(Brand.Card)) {
             SwitchRow(s.showSanskrit, state.showSanskrit, state::updateShowSanskrit)
             HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
             SwitchRow(tr(state.uiLang, "Justify text", "पाठ बराबर करें", "লেখা সমান করুন", "ଟେକ୍ସଟ୍ ଜଷ୍ଟିଫାଏ କରନ୍ତୁ"), state.justifyText, state::updateJustifyText)
@@ -848,7 +848,7 @@ fun ReaderSettings(state: AppState) {
         }
         Column {
             SectionLabel(s.showAlongside)
-            Column(Modifier.padding(horizontal = 16.dp).clip(RoundedCornerShape(14.dp)).background(Brand.Card)) {
+            Column(Modifier.padding(horizontal = 16.dp).clip(com.bhagavatam.app.ui.theme.Radius.group).background(Brand.Card)) {
                 SwitchRow(s.transliteration, state.showIast, state::updateShowIast)
                 HorizontalDivider(color = Brand.Separator.copy(alpha = 0.5f), thickness = 0.5.dp)
                 SwitchRow(s.hindiTr, state.showHi, state::updateShowHi)

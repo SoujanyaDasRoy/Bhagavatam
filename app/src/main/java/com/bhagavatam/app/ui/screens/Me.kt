@@ -89,11 +89,11 @@ fun DownloadsScreen(state: AppState) {
         item { LargeTitle(s.tabDownloads) }
         item {
             Row(
-                Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Brand.Card).padding(16.dp),
+                Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(com.bhagavatam.app.ui.theme.Radius.group).background(Brand.Card).padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                Box(Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(Brand.TealTint), contentAlignment = Alignment.Center) {
-                    Icon(painterResource(Ic.Headphones), null, tint = Brand.Teal)
+                Box(Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(Brand.KesariTint), contentAlignment = Alignment.Center) {
+                    Icon(painterResource(Ic.Headphones), null, tint = Brand.Kesari)
                 }
                 Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                     Text(localDigits(s.sanskritAudioPacks.format(done), ui), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
@@ -125,7 +125,7 @@ fun DownloadsScreen(state: AppState) {
                                 IconButton(onClick = { state.removePack(sk.num) }) { Icon(painterResource(Ic.DeleteOutline), tr(ui, "Remove pack", "पैक हटाएं", "প্যাক মুছুন", "ପ୍ୟାକ୍ ହଟାନ୍ତୁ"), tint = Brand.Tertiary) }
                             }
                             PackState.DOWNLOADING -> Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator(Modifier.size(24.dp), color = Brand.Teal, strokeWidth = 3.dp)
+                                CircularProgressIndicator(Modifier.size(24.dp), color = Brand.Kesari, strokeWidth = 3.dp)
                             }
                             PackState.NONE -> IconButton(onClick = { state.download(sk.num) }) { Icon(painterResource(Ic.CloudDownload), tr(ui, "Download", "डाउनलोड करें", "ডাউনলোড করুন", "ଡାଉନଲୋଡ୍"), tint = Brand.Kesari) }
                         }

@@ -244,7 +244,7 @@ fun MeaningCard(
 
     var more by remember(w) { mutableStateOf(false) }
     val isSaved = state.isWordSaved(w.word, w.lang.code)
-    val shape = RoundedCornerShape(18.dp)
+    val shape = com.bhagavatam.app.ui.theme.Radius.card
 
     Column(
         modifier
@@ -487,7 +487,7 @@ fun SelectionPanel(
 ) {
     if (state.lookup == null && state.selBar == null) return
     val c = LocalReaderColors.current
-    val shape = RoundedCornerShape(18.dp)
+    val shape = com.bhagavatam.app.ui.theme.Radius.card
     Column(
         modifier.fillMaxWidth()
             .shadow(8.dp, shape, ambientColor = Color(0x331C1A17), spotColor = Color(0x331C1A17))

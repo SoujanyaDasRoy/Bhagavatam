@@ -14,7 +14,7 @@ data class Episode(
     val descriptionBn: String = "",
 ) {
     fun title(l: Lang) = when (l) { Lang.HI -> hi; Lang.BN -> bn; Lang.OR -> EPISODE_TITLES_OR["$s.$a"] ?: en; else -> en }
-    fun description(l: Lang) = when (l) { Lang.HI -> descriptionHi; Lang.BN -> descriptionBn; else -> descriptionEn }
+    fun description(l: Lang) = when (l) { Lang.HI -> descriptionHi; Lang.BN -> descriptionBn; Lang.OR -> EPISODE_DESCRIPTIONS_OR["$s.$a"] ?: descriptionEn; else -> descriptionEn }
 
     fun matchesQuery(query: String): Boolean {
         val q = query.trim().lowercase()
@@ -22,6 +22,7 @@ data class Episode(
         if (en.lowercase().contains(q) || hi.lowercase().contains(q) || bn.lowercase().contains(q)) return true
         if (keywords.any { it.lowercase().contains(q) }) return true
         if (descriptionEn.lowercase().contains(q) || descriptionHi.lowercase().contains(q) || descriptionBn.lowercase().contains(q)) return true
+        if (EPISODE_TITLES_OR["$s.$a"]?.contains(q) == true || EPISODE_DESCRIPTIONS_OR["$s.$a"]?.contains(q) == true) return true
         return false
     }
 }
@@ -45,6 +46,26 @@ private val EPISODE_TITLES_OR = mapOf(
     "10.3" to "ଶ୍ରୀକୃଷ୍ଣଙ୍କ ଆବିର୍ଭାବ ଓ ଜନ୍ମ", "10.25" to "ଗୋବର୍ଦ୍ଧନ ଧାରଣ ଲୀଳା", "10.16" to "କାଳୀୟ ଦମନ", "10.80" to "ସୁଦାମା ଚରିତ୍ର ଓ ସଖ୍ୟ",
     "8.6" to "ସମୁଦ୍ର ମନ୍ଥନ ଓ ମୋହିନୀ", "8.18" to "ବାମନ ଅବତାର ଓ ବଳି", "6.1" to "ଅଜାମିଳ ଉଦ୍ଧାର", "1.8" to "କୁନ୍ତୀ ସ୍ତୁତି",
     "3.25" to "କପିଳ ଗୀତା ଓ ସାଂଖ୍ୟ", "11.7" to "ଉଦ୍ଧବ ଗୀତା ଓ ୨୪ ଗୁରୁ", "9.4" to "ଅମ୍ବରୀଷ ଚରିତ୍ର ଓ ଦୁର୍ବାସା", "3.13" to "ବରାହ ଅବତାର ଓ ଭୂ-ଉଦ୍ଧାର",
+)
+
+/** Odia story lines, written for this app and not yet read by an Odia reader (docs/agent/ODIA_UI_REVIEW.csv). */
+private val EPISODE_DESCRIPTIONS_OR = mapOf(
+    "10.29" to "ଶରତ ପୂର୍ଣ୍ଣିମା ରାତିରେ ବୃନ୍ଦାବନରେ ଗୋପୀମାନଙ୍କ ସହିତ ଶ୍ରୀକୃଷ୍ଣଙ୍କ ମହାରାସ ଲୀଳା।",
+    "8.2" to "କୁମ୍ଭୀର ଧରିବାରୁ ଗଜେନ୍ଦ୍ରଙ୍କ ଅନନ୍ୟ ପ୍ରାର୍ଥନା ଓ ଭଗବାନଙ୍କ ଦ୍ୱାରା ମୁକ୍ତି।",
+    "7.8" to "ସ୍ତମ୍ଭ ଫାଟି ଭଗବାନ ନୃସିଂହଙ୍କ ଆବିର୍ଭାବ ଓ ଭକ୍ତ ପ୍ରହ୍ଲାଦଙ୍କ ରକ୍ଷା।",
+    "4.8" to "ପାଞ୍ଚ ବର୍ଷର ବାଳକ ଧ୍ରୁବଙ୍କ ମଧୁବନରେ କଠୋର ତପସ୍ୟା ଓ ଅଚଳ ଧ୍ରୁବପଦ ପ୍ରାପ୍ତି।",
+    "10.3" to "ମଥୁରାର କାରାଗାରରେ ଚତୁର୍ଭୁଜ ରୂପରେ ଶ୍ରୀକୃଷ୍ଣଙ୍କ ଆବିର୍ଭାବ ଓ ଗୋକୁଳକୁ ଯାତ୍ରା।",
+    "10.25" to "ଇନ୍ଦ୍ରଙ୍କ କୋପରୁ ବ୍ରଜବାସୀଙ୍କୁ ରକ୍ଷା କରିବାକୁ ସାତ ଦିନ ଗୋବର୍ଦ୍ଧନ ପର୍ବତ ଧାରଣ।",
+    "10.16" to "ଯମୁନାର ବିଷାକ୍ତ ଜଳ ନିର୍ମଳ କରିବାକୁ କାଳୀୟ ନାଗର ଫଣା ଉପରେ ନୃତ୍ୟ।",
+    "10.80" to "ଦରିଦ୍ର ସୁଦାମାଙ୍କ ଦ୍ୱାରକା ଯାତ୍ରା ଓ ଶ୍ରୀକୃଷ୍ଣଙ୍କ ପ୍ରେମପୂର୍ଣ୍ଣ ସ୍ୱାଗତ।",
+    "8.6" to "ଦେବତା ଓ ଅସୁରଙ୍କ କ୍ଷୀରସମୁଦ୍ର ମନ୍ଥନ; ଭଗବାନ ଶିବଙ୍କ ବିଷପାନ।",
+    "8.18" to "ବାମନ ଭଗବାନଙ୍କ ତିନି ପାଦ ଭୂମି ଯାଚନା ଓ ସମଗ୍ର ବିଶ୍ୱ ମାପିନେବା।",
+    "6.1" to "ମୃତ୍ୟୁ ସମୟରେ 'ନାରାୟଣ' ନାମ ଉଚ୍ଚାରଣ କରି ଯମଦୂତଙ୍କ ଠାରୁ ଅଜାମିଳଙ୍କ ଉଦ୍ଧାର।",
+    "1.8" to "ସର୍ବଦା ଶ୍ରୀକୃଷ୍ଣଙ୍କୁ ମନେ ରଖିବା ପାଇଁ କୁନ୍ତୀଙ୍କ ବିପଦ ମାଗିବା।",
+    "3.25" to "ଭଗବାନ କପିଳଙ୍କ ମାତା ଦେବହୂତିଙ୍କୁ ସାଂଖ୍ୟ ଓ ଭକ୍ତିଯୋଗ ଉପଦେଶ।",
+    "11.7" to "ଉଦ୍ଧବଙ୍କୁ ଶ୍ରୀକୃଷ୍ଣଙ୍କ ଶେଷ ଉପଦେଶ, ଅବଧୂତଙ୍କ ଚବିଶ ଗୁରୁଙ୍କ କଥା ସହିତ।",
+    "9.4" to "ଶୁଦ୍ଧ ଭକ୍ତିର ଶକ୍ତି: ସୁଦର୍ଶନ ଚକ୍ର ରାଜା ଅମ୍ବରୀଷଙ୍କୁ ଦୁର୍ବାସାଙ୍କ କ୍ରୋଧରୁ ରକ୍ଷା କରେ।",
+    "3.13" to "ବ୍ରହ୍ମାଙ୍କ ନାସିକାରୁ ବରାହ ଭଗବାନଙ୍କ ଆବିର୍ଭାବ ଓ ପ୍ରଳୟ ସମୁଦ୍ରରୁ ପୃଥିବୀଙ୍କ ଉଦ୍ଧାର।",
 )
 
 object Episodes {

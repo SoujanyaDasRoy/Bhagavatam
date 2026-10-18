@@ -151,10 +151,10 @@ fun MiniPlayer(state: AppState, onOpen: () -> Unit, modifier: Modifier = Modifie
             .padding(horizontal = 10.dp)
             .fillMaxWidth()
             .graphicsLayer { translationX = animatedOffsetX }
-            .shadow(20.dp, RoundedCornerShape(18.dp), ambientColor = Color(0x40000000), spotColor = Color(0x40000000))
-            .clip(RoundedCornerShape(18.dp))
+            .shadow(20.dp, com.bhagavatam.app.ui.theme.Radius.card, ambientColor = Color(0x40000000), spotColor = Color(0x40000000))
+            .clip(com.bhagavatam.app.ui.theme.Radius.card)
             .background(c.surface.copy(alpha = 0.96f))
-            .border(1.dp, c.accent.copy(alpha = 0.35f), RoundedCornerShape(18.dp))
+            .border(1.dp, c.accent.copy(alpha = 0.35f), com.bhagavatam.app.ui.theme.Radius.card)
             .pointerInput(Unit) {
                 detectHorizontalDragGestures(
                     onDragStart = { offsetX = 0f },
