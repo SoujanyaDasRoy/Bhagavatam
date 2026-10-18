@@ -206,6 +206,7 @@ fun ReaderScreen(
         }
         out
     }
+    val speakers = remember(verses) { com.bhagavatam.app.data.speakerLabels(verses) }
     val rowVerses = remember(verses, bookRows, state.showSanskrit) { if (state.showSanskrit) verses else bookRows.map { it.verse } }
 
     // In-chapter find matches supporting Roman and Indic spellings across scripts
@@ -472,7 +473,8 @@ fun ReaderScreen(
                     items(bookRows, key = { it.verse.ref }) { r ->
                         val isFindMatch = showFindBar && matchingVerseIndices.isNotEmpty() && matchingVerseIndices.getOrNull(currentMatchIndex)?.let { rowVerses.getOrNull(it)?.ref == r.verse.ref } == true
                         Box(modifier = if (isFindMatch) Modifier.clip(Radius.group).background(c.playing) else Modifier) {
-                            BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked) {
+                            BookParagraph(state, r.verse, r.label, bookLang, scale, r.verse.ref in peeked,
+                                speaker = if (state.showSpeakers && bookRows.indexOfFirst { it.verse.ref == r.verse.ref }.let { i -> com.bhagavatam.app.data.startsSpeakerRun(speakers, bookRows.map { it.verse }, r.verse) && i >= 0 }) speakers[r.verse.ref] else null) {
                                 if (r.verse.ref in peeked) peeked.remove(r.verse.ref) else peeked.add(r.verse.ref)
                             }
                         }
@@ -649,7 +651,7 @@ private fun ChapterStep(icon: Int, label: String, enabled: Boolean, onClick: () 
 }
 
 @Composable
-private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, scale: Float, peek: Boolean, onToggle: () -> Unit) {
+private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, scale: Float, peek: Boolean, speaker: String? = null, onToggle: () -> Unit) {
     val c = LocalReaderColors.current
     val ui = state.uiLang
     val big = lang == Lang.HI || lang == Lang.BN
@@ -659,6 +661,7 @@ private fun BookParagraph(state: AppState, v: Verse, label: String, lang: Lang, 
         Modifier.fillMaxWidth().animateContentSize(tween(Motion.sheet)).padding(horizontal = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        if (speaker != null) Text(com.bhagavatam.app.data.speakerName(speaker, state.uiLang), fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = c.gold, modifier = Modifier.padding(top = 6.dp))
         // Tap anywhere on the text to show or hide its shloka; press and hold a word for its meaning.
         MarkedText(
             state, v.ref, lang, digitsTo(v.translation(lang), lang),

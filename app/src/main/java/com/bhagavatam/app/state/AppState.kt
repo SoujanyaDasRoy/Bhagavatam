@@ -234,6 +234,8 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun updateJustifyText(on: Boolean) { justifyText = on; save { putBoolean("justifyText", on) } }
     fun updateShowVerseNumbers(on: Boolean) { showVerseNumbers = on; save { putBoolean("showVerseNumbers", on) } }
     fun updateShowChapterArt(on: Boolean) { showChapterArt = on; save { putBoolean("showChapterArt", on) } }
+    var showSpeakers by mutableStateOf(prefs.getBoolean("showSpeakers", true))
+    fun updateShowSpeakers(on: Boolean) { showSpeakers = on; save { putBoolean("showSpeakers", on) } }
     fun updateShowReadTime(on: Boolean) { showReadTime = on; save { putBoolean("showReadTime", on) } }
     fun updateKeepScreenOnReading(on: Boolean) { keepScreenOnReading = on; save { putBoolean("keepScreenOnReading", on) } }
     fun updateFollowAudio(on: Boolean) { followAudio = on; save { putBoolean("followAudio", on) } }
@@ -451,14 +453,14 @@ class AppState(app: Application) : AndroidViewModel(app) {
     fun resetSettings() {
         followSystem = true; lightTheme = ReaderTheme.Prabhat; darkTheme = ReaderTheme.Sandhya; readerTheme = ReaderTheme.Prabhat
         textScale = 1f; lineScale = 1f; showDaily = true
-        justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true
+        justifyText = false; showVerseNumbers = true; showChapterArt = true; showReadTime = true; showSpeakers = true
         keepScreenOnReading = false; followAudio = true; defaultMark = 0; onlineMeanings = true
         meaningLangMode = MeaningLangMode.WORD_LANG
         keepPlaying = true; playThrough = PlayThrough.SKANDHA; keepScreenOn = true; speed = 1f; pauseScale = 1f
         save {
             putBoolean("followSystem", true); putString("lightTheme", "Prabhat"); putString("darkTheme", "Sandhya"); putString("theme", "Prabhat")
             putFloat("textScale", 1f); putFloat("lineScale", 1f); putBoolean("showDaily", true)
-            putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true)
+            putBoolean("justifyText", false); putBoolean("showVerseNumbers", true); putBoolean("showChapterArt", true); putBoolean("showReadTime", true); putBoolean("showSpeakers", true)
             putBoolean("keepScreenOnReading", false); putBoolean("followAudio", true); putInt("defaultMark", 0); putBoolean("onlineMeanings", true)
             putString("meaningLangMode", MeaningLangMode.WORD_LANG.name)
             putBoolean("keepPlaying", true); putString("playThrough", PlayThrough.SKANDHA.name); putBoolean("keepScreenOn", true); putFloat("speed", 1f); putFloat("pauseScale", 1f)

@@ -118,6 +118,8 @@ fun ReadingSettings(state: AppState, onBack: () -> Unit) {
             SwitchRow(tr(ui, "Verse numbers", "श्लोक संख्या", "শ্লোক সংখ্যা"), state.showVerseNumbers, state::updateShowVerseNumbers); RowDivider()
             SwitchRow(tr(ui, "Chapter picture", "अध्याय का चित्र", "অধ্যায়ের ছবি"), state.showChapterArt, state::updateShowChapterArt); RowDivider()
             SwitchRow(tr(ui, "Reading time", "पाठ-समय", "পড়ার সময়"), state.showReadTime, state::updateShowReadTime)
+            RowDivider()
+            SwitchRow(tr(ui, "Show who is speaking", "वक्ता का नाम दिखाएँ", "বক্তার নাম দেখান"), state.showSpeakers, state::updateShowSpeakers)
         }
         SettingsGroup(s.reading, s.showSanskritNote) {
             SwitchRow(s.showSanskrit, state.showSanskrit, state::updateShowSanskrit)
