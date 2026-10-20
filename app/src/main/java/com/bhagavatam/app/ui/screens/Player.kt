@@ -339,8 +339,8 @@ private fun SpotifyHeroArt(state: AppState, v: Verse, modifier: Modifier = Modif
     val artId = artRes(chArt(v.skandha, v.adhyaya)).takeIf { it != 0 } ?: artRes(skArt(v.skandha))
     Box(
         modifier
-            .shadow(16.dp, RoundedCornerShape(22.dp), ambientColor = Color(0x22000000), spotColor = Color(0x33000000))
-            .clip(RoundedCornerShape(22.dp))
+            .shadow(16.dp, com.bhagavatam.app.ui.theme.Radius.card, ambientColor = Color(0x22000000), spotColor = Color(0x33000000))
+            .clip(com.bhagavatam.app.ui.theme.Radius.card)
             .background(Brand.Card),
         contentAlignment = Alignment.Center,
     ) {
@@ -1319,7 +1319,7 @@ private fun YouTubeStreamCard(state: AppState, v: Verse) {
             Modifier
                 .fillMaxWidth()
                 .height(130.dp)
-                .clip(RoundedCornerShape(14.dp))
+                .clip(com.bhagavatam.app.ui.theme.Radius.group)
                 .background(
                     Brush.verticalGradient(
                         listOf(
@@ -1328,7 +1328,7 @@ private fun YouTubeStreamCard(state: AppState, v: Verse) {
                         )
                     )
                 )
-                .border(1.dp, c.separator, RoundedCornerShape(14.dp)),
+                .border(1.dp, c.separator, com.bhagavatam.app.ui.theme.Radius.group),
             contentAlignment = Alignment.Center,
         ) {
             Column(

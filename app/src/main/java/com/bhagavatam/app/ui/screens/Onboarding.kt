@@ -192,8 +192,16 @@ fun OnboardingPaathScreen(state: AppState, onBack: () -> Unit, onStart: () -> Un
                 val v = SampleData.adhyaya1.first()
                 Text(s.preview, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Brand.Gold, letterSpacing = 0.6.sp)
                 if (state.readLang == Lang.SA) ShlokaText(v, state.script, Brand.Sindoor, 16f, lines = 2)
-                val tr = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
-                Text(v.translation(tr), fontFamily = readingFont(tr), fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                val shown = if (state.readLang == Lang.SA) state.alongsideLayers().first() else state.readLang
+                Text(v.translation(shown), fontFamily = readingFont(shown), fontSize = 15.sp, lineHeight = 21.sp, color = Brand.Ink, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                // F3: say plainly that this is the starting choice and where to change it later
+                Text(
+                    tr(state.uiLang, "Your first chapter opens like this. Change it any time from the language button at the top of the reader.",
+                        "आपका पहला अध्याय ऐसे खुलेगा। इसे कभी भी पाठ के ऊपर भाषा बटन से बदलें।",
+                        "আপনার প্রথম অধ্যায় এভাবে খুলবে। পাঠের ওপরে ভাষার বোতাম থেকে যেকোনো সময় বদলান।",
+                        "ଆପଣଙ୍କ ପ୍ରଥମ ଅଧ୍ୟାୟ ଏହିପରି ଖୋଲିବ। ପାଠର ଉପରେ ଥିବା ଭାଷା ବଟନରୁ ଯେକୌଣସି ସମୟରେ ବଦଳାନ୍ତୁ।"),
+                    fontSize = 15.sp, lineHeight = 24.sp, color = Brand.Secondary, fontFamily = readingFont(state.uiLang).takeIf { state.uiLang != Lang.EN }
+                )
               }
             }
             Spacer(Modifier.heightIn(min = 24.dp))

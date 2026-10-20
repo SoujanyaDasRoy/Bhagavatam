@@ -57,6 +57,7 @@ data class DictEntry(
  *  4. Stem match via suffix stripping (Lemmatizer).
  *  5. Chandrabindu/anusvara and nukta variant match.
  *  6. Cross-script tatsama lookup by script-neutral skey.
+ *  7. The book's own translations for words no dictionary has (BookGloss).
  */
 object Dictionary {
 
@@ -74,8 +75,58 @@ object Dictionary {
         preferredGlossLang: String? = null
     ): List<DictEntry> =
         // a Sanskrit word is looked up among the Sanskrit entries first, then among the Hindi ones (many words are the same)
-        if (lang == "sa") lookupAs(word, lang, "sa", preferredGlossLang).ifEmpty { lookupAs(word, lang, "hi", preferredGlossLang) }
-        else lookupAs(word, lang, lang.lowercase(), preferredGlossLang)
+        (if (lang == "sa") lookupAs(word, lang, "sa", preferredGlossLang).ifEmpty { lookupAs(word, lang, "hi", preferredGlossLang) }
+        else lookupAs(word, lang, lang.lowercase(), preferredGlossLang))
+            .ifEmpty { listOfNotNull(fromBook(word, lang, preferredGlossLang)) }
+
+    /** The language a typed word is written in, from its first letter: Odia, Bengali, Devanagari (Hindi) or else English. */
+    fun langOfScript(word: String): String {
+        val ch = word.trim().firstOrNull { it.isLetter() } ?: return "en"
+        return when (ch.code) {
+            in 0x0B00..0x0B7F -> "or"
+            in 0x0980..0x09FF -> "bn"
+            in 0x0900..0x097F -> "hi"
+            else -> "en"
+        }
+    }
+
+    /** The translation of verse [ref] (S.C.N) in the preferred language, else English, else Hindi, never in the word's own language. */
+    private fun verseMeaning(ref: String, wordLang: String, preferred: String?): String? {
+        val v = SampleData.verse(ref) ?: return null
+        for (code in listOfNotNull(preferred, "en", "hi").distinct()) {
+            val l = Lang.entries.firstOrNull { it.code == code } ?: continue
+            if (l == Lang.SA || l.code == wordLang || !v.hasText(l)) continue
+            val t = stripDoubt(v.translation(l)).replace(Regex("\\s+"), " ").trim()
+            if (t.isNotBlank()) return if (t.length > 320) t.take(320).trimEnd() + "..." else t
+        }
+        return null
+    }
+
+    /** 7. Last step: the book's own translations (BookGloss): one entry made from the matched words and the parts, or null. */
+    private fun fromBook(word: String, lang: String, preferredGlossLang: String?): DictEntry? {
+        val clean = Normalise.word(word, lang)
+        if (clean.isBlank()) return null
+        val row = BookGloss.row(lang.lowercase(), clean) ?: return null
+        // a word's meaning for the lines: the dictionary first, then what the book matched it with
+        fun shortMeaning(w: String, l: String): String? {
+            if (!Normalise.isIndic(w)) return null
+            val fromDict = (if (l == "sa") lookupAs(w, l, "sa", preferredGlossLang).ifEmpty { lookupAs(w, l, "hi", preferredGlossLang) }
+                else lookupAs(w, l, l, preferredGlossLang)).firstOrNull()?.senses?.firstOrNull()?.gloss?.take(60)
+            if (fromDict != null) return fromDict
+            val r = BookGloss.row(l, w) ?: return null
+            return (r.en.split('|') + r.hi.split('|')).firstOrNull { it.isNotBlank() }?.take(60)
+        }
+        val own = setOf(row.stem, row.fix) + row.parts.split('+')
+        val lines = BookGloss.senses(row, verse = { ref -> verseMeaning(ref, lang, preferredGlossLang) }) { w ->
+            shortMeaning(w, if (w in own) lang else "hi")  // stems, corrections and parts are in the word's language, matches in Hindi
+        }
+        if (lines.isEmpty()) return null
+        return DictEntry(
+            id = -1, lang = lang, headword = clean, norm = clean, skey = Normalise.skey(clean), pos = "", ipa = null, etymology = null,
+            freq = 0, sourceId = BookGloss.source.id, source = BookGloss.source,
+            senses = lines.mapIndexed { i, g -> DictSense(-1 - i, -1, i, "en", g, null) }
+        )
+    }
 
     private fun lookupAs(
         word: String,

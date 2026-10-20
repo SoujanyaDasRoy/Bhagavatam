@@ -43,6 +43,12 @@ fun cleanChapterTitle(title: String): String {
 fun cleanEnglishTitle(title: String): String =
     plainRoman(title.replace("*", "")).replace(Regex(" {2,}"), " ").replace(" ,", ",").trim().replaceFirstChar { it.uppercase() }
 
+private val COLOPHON = Regex("""\s*\*?इति श्रीमद्\s*भागवते[^*]*\*?\s*$""")
+
+/** A Hindi verse without the chapter's closing line ("*इति श्रीमद्भागवते ... ॥ २ ॥*") that the source glued to the last verse;
+ *  the reader shows that line once, under the chapter. */
+fun stripColophon(text: String): String = if ("इति श्रीमद्" !in text) text else text.replace(COLOPHON, "").trimEnd()
+
 /** The text without the `[?]` marks that flag words the page reading was unsure of: for what leaves the app (copy, share, review answers). */
 fun stripDoubt(text: String): String =
     if ("[?]" !in text) text else text.replace("[?]", "").replace(Regex("[ \t]{2,}"), " ").replace(Regex(" +([,.;:!?])"), "$1")

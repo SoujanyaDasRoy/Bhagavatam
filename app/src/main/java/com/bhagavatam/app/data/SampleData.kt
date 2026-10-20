@@ -192,6 +192,9 @@ object SampleData {
 
     val isLoaded get() = db != null
 
+    /** The open text database, for the few readers of its other tables (BookGloss). */
+    internal val rawDb: SQLiteDatabase? get() = db
+
     /** Called once from ContentDb.open(). */
     @Synchronized
     fun attach(d: SQLiteDatabase) {
@@ -302,7 +305,7 @@ object SampleData {
                     val firstOfChapter = key != prevChapter
                     prevChapter = key
                     var sa = c.getString(5).orEmpty()
-                    var hi = c.getString(7).orEmpty()
+                    var hi = stripColophon(c.getString(7).orEmpty())
                     var speaker = c.getString(4)?.takeIf { it.isNotBlank() }
                     if (firstOfChapter) {
                         // In the source PDFs the chapter heading ran into the first shloka. The reader shows the title once, above the text.

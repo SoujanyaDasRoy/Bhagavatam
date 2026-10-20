@@ -143,3 +143,17 @@ fragment (0.6.30 keeps one line, 6.2.24 three words). They need the printed page
 
 Re-run of `py tools/qa/scan_text_quality.py` after this change: 141 Odia verses listed for a person to look at (group-aware length,
 ratio outside 0.4 to 3.5, vowel signs at the start of a word, odd signs), 0 Hindi titles, 28 Bengali titles, 0 Odia titles.
+
+## Update, evening of 2026-10-18 (version 1.2.9)
+| Item | Before | Now | How |
+|---|---|---|---|
+| Odia chapter titles on the wrong chapter | 51 (one chapter off) | 0 found | `content/_build/align_odia_titles.py` aligns the printed contents to the chapters by their words |
+| Chapters with an Odia title | 210 (51 of them wrong) | 262 | the same script, keeping only titles both reading models agree on |
+| Bengali titles that are only "Nth chapter", empty or in brackets | 28 | 11 | real titles taken from the page transcriptions (`content/_bengali/bn_extract/work/vision`) |
+| Bengali verses carrying the text of a neighbouring verse | 55 flagged | 12 flagged | `tools/qa/verse_fit.py` finds them; the reviewed list `content/_build/verse_moves.json` (19 chapters, checked by hand against the English and Hindi) moves 101 back; applied on every rebuild |
+| Odia verses carrying the text of a neighbouring verse | 13 (11.31.14 to 27) | 1 | the same, 14 verses |
+| Hindi 5.17.17 | held the chapter colophon | marked as printed with verse 18 | the same list (`"hi"`) |
+| Verses with no translation and not joined to another | bn 29, or 65 | bn 33, or 64 | Bengali rose by 4: verses whose wrong text was moved away are now honestly empty |
+| Odia verses hidden as garbled | 7 | 7 | needs the page read again (local OCR, then the 600-word audit) |
+
+Still open: the 7 hidden Odia verses; Odia verses with a page footnote run into them (10.3.5, 10.3.6 and others in the length list); 11 Bengali and 79 Odia chapters without a title of their own (the app shows the Hindi one); 33 Bengali and 64 Odia verses with no translation.

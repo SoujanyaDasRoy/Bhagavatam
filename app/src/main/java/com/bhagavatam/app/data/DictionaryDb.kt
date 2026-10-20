@@ -10,7 +10,7 @@ import java.io.File
  */
 object DictionaryDb {
     /** The dictionary_version of the database in assets; raise it together with the database. */
-    const val ASSET_VERSION = 3
+    const val ASSET_VERSION = 4
 
     private const val ASSET = "dictionary.db"
 

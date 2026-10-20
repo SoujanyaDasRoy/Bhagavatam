@@ -23,9 +23,21 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 SUFFIX = {
     "bn": ["গুলোর", "গুলো", "দের", "েরা", "ের", "কে", "তে", "েই", "টি", "রা", "র", "ে", "ই", "ও"],
-    "hi": ["ाओं", "ओं", "ें", "ों", "ने", "को", "का", "की", "के", "से", "में", "पर", "ा", "ी", "े"],
+    "hi": ["लोगोंको", "लोगोंके", "लोगोंने", "लोगों", "लोग", "ियों", "यों", "ाओं", "ओं", "ें", "ों", "ने", "को", "का", "की", "के", "से", "में", "पर", "तक", "ा", "ी", "े"],
     "or": ["ମାନଙ୍କର", "ମାନଙ୍କୁ", "ମାନେ", "ଙ୍କର", "ଙ୍କୁ", "ଙ୍କ", "ରେ", "କୁ", "ର", "ଟି"],
     "en": ["ing", "ed", "es", "ly", "s"],
+    "sa": ["ाणाम्", "ानाम्", "ेभ्यः", "ाभ्याम्", "ायाः", "ीनाम्", "ेषु", "ैः", "स्य", "ाय", "ेन", "ात्", "ानि", "ाः", "ान्", "ाम्", "ायै", "ीम्", "ीः", "ौ", "ो", "े", "ः", "म्", "ं"],
+}
+# verb forms back to the dictionary form: (ending, what replaces it); the dictionary form is the Hindi infinitive (-ना),
+# the Odia verbal noun (-ିବା) and the Bengali verbal noun (-া). Kept in step with Lemmatizer.kt.
+VERB = {
+    "hi": [(e, "ना") for e in ("ायेंगे", "ायेगा", "ायेगी", "ाएँगे", "ाएगा", "ाएगी", "ायँगे", "ायगा", "ायगी", "यँगे", "यगा", "यगी",
+                              "येगा", "येगी", "ूँगा", "ूँगी", "ेंगे", "ेंगी", "ेगा", "ेगी", "ोगे", "ोगी", "कर", "ते", "ता", "ती",
+                              "ने", "नी", "ें", "ो", "े", "ा", "ी", "य", "ये", "या", "यी", "ँ")],
+    "or": [(e, "ିବା") for e in ("ୁଥାନ୍ତି", "ୁଥିଲେ", "ୁଥିଲା", "ୁଥିବା", "ୁଥାଏ", "ୁଛନ୍ତି", "ୁଛି", "ୁଛ", "ିଥିବାରୁ", "ିଥିଲେ", "ିଥିଲା",
+                               "ିଥିବା", "ିଛନ୍ତି", "ିଛି", "ିବାରୁ", "ିବେ", "ିବ", "ିଲେ", "ିଲା", "ିଲି", "ିଲ", "ନ୍ତି", "ନ୍ତୁ", "ି", "ୁ")],
+    "bn": [(e, "া") for e in ("েছিলেন", "েছিল", "েছেন", "েছে", "েননি", "েনি", "লেন", "ছিলেন", "ছিল", "ছেন", "বেন", "তেন",
+                             "বে", "তে", "েন", "ুন", "ে", "ো", "ি", "ল", "ত")],
 }
 WORD = {
     "hi": re.compile(r"[ऀ-ॿ]+"),
@@ -55,6 +67,18 @@ def clean_word(w, lang):
 
 
 def stems(w, lang):
+    """Known endings stripped, up to two deep (जीवोंको -> जीवों -> जीव), and verb forms put back to the dictionary form."""
+    out = []
+    for st in _strip(w, lang):
+        out.append(st)
+        out.extend(_strip(st, lang))
+    for end, rep in VERB.get(lang, []):
+        if len(w) > len(end) + 1 and w.endswith(end):
+            out.append(w[:-len(end)] + rep)
+    return list(dict.fromkeys(out))
+
+
+def _strip(w, lang):
     out = []
     for suf in sorted(SUFFIX.get(lang, []), key=len, reverse=True):
         if len(w) > len(suf) + 1 and w.endswith(suf):
@@ -62,7 +86,7 @@ def stems(w, lang):
             out.append(st)
             if lang == "bn" and st.endswith("ত"):
                 out.append(st[:-1] + "ৎ")
-    return list(dict.fromkeys(out))
+    return out
 
 
 def fold_cb(w):
