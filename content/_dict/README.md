@@ -24,4 +24,4 @@ Never crawl the Wikimedia web API page by page (it returns 429 within minutes). 
 `curated/glossed/*.tsv` holds meanings written by hand (CC0, source `curated`, pos `glossed`) for every word of the chapter markdown that no other source covered: 52,677 groups, 2,637 marked `?` as misreads or clipped fragments (`curated/glossed/misread.txt`). The queue is empty (`py -I content/_dict/glossing.py status`). Rebuild order: `add_curated.py`, `glossing.py load`, `add_book_words.py`, `book_gloss.py`, copy `dictionary.db` to `app/src/main/assets/`, `tools/agent/dict_check.py --max-mb 60`, `tools/agent/word_coverage.py`.
 
 Limits: the meanings are machine and hand made and have not been read by native speakers; words that are OCR garbage or cut-off fragments carry a guessed gloss or none. dictionary.db is about 50 MB, so the size budget is 60 MB.
-Token coverage (word_coverage, 2026-10-20): Hindi and Sanskrit shloka 99.80%, English 99.89%, Bengali 99.58%, Odia 99.72%.
+Token coverage (word_coverage, 2026-10-20): Hindi 99.90%, Sanskrit 99.68%, English 99.89%, Bengali 99.58%, Odia 99.72%.
