@@ -38,6 +38,26 @@ class BookGlossTest {
     }
 
     @Test
+    fun aStemWithAMeaningIsNamedAsTheBaseForm() {
+        val senses = BookGloss.senses(BookGloss.Row(hi = "", en = "", parts = "", stem = "ଦିଶ")) { if (it == "ଦିଶ") "appear" else null }
+        assertEquals(listOf("form of ଦିଶ (appear)"), senses)
+    }
+
+    @Test
+    fun aMisprintIsExplainedByTheWordItMisses() {
+        val senses = BookGloss.senses(BookGloss.Row(hi = "", en = "", parts = "", fix = "ଭାଗବତେ")) { if (it == "ଭାଗବତେ") "in the Bhagavata" else null }
+        assertEquals(listOf("probably a misprint of ଭାଗବତେ (in the Bhagavata)"), senses)
+    }
+
+    @Test
+    fun theVerseIsTheLastResortAndOnlyWhenNothingElseIsKnown() {
+        val none = BookGloss.Row(hi = "", en = "", parts = "", ref = "10.29.1")
+        assertEquals(listOf("In verse 10.29.1: Krishna looked."), BookGloss.senses(none, verse = { "Krishna looked." }) { null })
+        val known = BookGloss.Row(hi = "", en = "descended", parts = "", ref = "10.29.1")
+        assertEquals(listOf("≈ descended"), BookGloss.senses(known, verse = { "Krishna looked." }) { null })
+    }
+
+    @Test
     fun englishMatchesAreListed() {
         assertEquals(listOf("≈ descended, manifestations"), BookGloss.senses(BookGloss.Row(hi = "", en = "descended|manifestations", parts = "")) { null })
     }

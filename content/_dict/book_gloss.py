@@ -179,6 +179,60 @@ def align(src_lang, tgt_lang, rows):
     return out, sure
 
 
+class Near:
+    """Words within one edit (a letter changed, dropped, added or two swapped) of a word that has a meaning (SymSpell style).
+    Used for the misprints of the page readings: ୍ଭାଗବତେ for ଭାଗବତେ, erreign for sovereign."""
+
+    def __init__(self, good):
+        self.idx = collections.defaultdict(list)
+        for g in good:
+            for k in self.keys(g):
+                self.idx[k].append(g)
+
+    @staticmethod
+    def keys(w):
+        return {w} | {w[:i] + w[i + 1:] for i in range(len(w))}
+
+    @staticmethod
+    def close(a, b):
+        """True when a and b differ by one edit."""
+        if a == b:
+            return False
+        la, lb = len(a), len(b)
+        if abs(la - lb) > 1:
+            return False
+        if la == lb:
+            d = [i for i in range(la) if a[i] != b[i]]
+            return len(d) == 1 or (len(d) == 2 and d[1] == d[0] + 1 and a[d[0]] == b[d[1]] and a[d[1]] == b[d[0]])
+        if la > lb:
+            a, b = b, a
+        i = 0
+        while i < len(a) and a[i] == b[i]:
+            i += 1
+        return a[i:] == b[i + 1:]
+
+    def nearest(self, w, freq):
+        """The most frequent good word one edit from w, or ''."""
+        if len(w) < 4:
+            return ""
+        best = ""
+        for k in self.keys(w):
+            for g in self.idx.get(k, ()):
+                if self.close(w, g) and freq.get(g, 0) > freq.get(best, -1):
+                    best = g
+        return best
+
+
+def md_words(lang):
+    """Every word of the body of every chapter markdown file of one language folder (hi holds the Sanskrit shloka too)."""
+    sys.path.insert(0, str(ROOT / "tools" / "agent"))
+    import word_coverage as wc
+    cnt = collections.Counter()
+    for f in sorted((ROOT / "content" / lang).rglob("*.md")):
+        cnt.update(wc.words_of(f, lang))
+    return cnt
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     dpath = Path(args[0]) if args else HERE / "dictionary.db"
@@ -207,23 +261,67 @@ def main():
 
     c = sqlite3.connect(str(ROOT / "content/content.db"))
     text = {L: [] for L in COLS}
-    for row in c.execute("select sa, hi, en, bn, \"or\" from verse"):
+    refs = []
+    for sk, ch, num, *row in c.execute('select skandha, chapter, num, sa, hi, en, bn, "or" from verse order by skandha, chapter, num'):
+        refs.append(f"{sk}.{ch}.{num}")
         for L, x in zip(("sa", "hi", "en", "bn", "or"), row):
             text[L].append(x or "")
     freq = {L: collections.Counter(w for x in text[L] for w in tokens(x, L)) for L in COLS}
+    # where each word first occurs (a verse reference): the last meaning the dictionary can always give
+    first_ref = {L: {} for L in COLS}
+    for L in COLS:
+        for r, x in zip(refs, text[L]):
+            for w in tokens(x, L):
+                first_ref[L].setdefault(w, r)
+
+    # the vocabulary: every word of the md files; Devanagari words that are in the shloka are Sanskrit, the others Hindi
+    vocab = {L: collections.Counter() for L in COLS}
+    for lang in ("hi", "en", "bn", "or"):
+        for w, n in md_words(lang).items():
+            if lang == "hi":
+                if w in freq["sa"]:
+                    vocab["sa"][w] += n
+                if w in freq["hi"] or w not in freq["sa"]:
+                    vocab["hi"][w] += n
+            else:
+                vocab[lang][w] += n
+    for L in COLS:
+        for w, n in freq[L].items():  # words the database has and a file might spell differently
+            vocab[L].setdefault(w, n)
 
     aligned = {}
-    for s, t in PAIRS:
-        rows = [(a, b) for a, b in zip(text[s], text[t]) if a and b]
-        cache = HERE / "work" / f"align_{s}_{t}.pickle"
+    for s_, t_ in PAIRS:
+        rows = [(a, b) for a, b in zip(text[s_], text[t_]) if a and b]
+        cache = HERE / "work" / f"align_{s_}_{t_}.pickle"
         if cache.exists() and "--fresh" not in sys.argv:
-            aligned[(s, t)] = pickle.loads(cache.read_bytes())
+            aligned[(s_, t_)] = pickle.loads(cache.read_bytes())
         else:
-            aligned[(s, t)] = align(s, t, rows)
-            cache.write_bytes(pickle.dumps(aligned[(s, t)]))
-        print(f"aligned {s} -> {t}: {len(aligned[(s, t)][0]):,} words")
+            aligned[(s_, t_)] = align(s_, t_, rows)
+            cache.write_bytes(pickle.dumps(aligned[(s_, t_)]))
+        print(f"aligned {s_} -> {t_}: {len(aligned[(s_, t_)][0]):,} words")
 
     from functools import lru_cache
+
+    @lru_cache(maxsize=None)
+    def matched(w, L):
+        """(hi, en) the aligned words worth showing for w."""
+        hi = en = ""
+        if L in ("or", "bn", "sa"):
+            hi = "|".join(pick(w, *aligned[(L, "hi")], 2))
+        if L == "hi":
+            en = "|".join(pick(w, *aligned[("hi", "en")], 3))
+        if L == "en":
+            hi = "|".join(pick(w, *aligned[("en", "hi")], 2))
+        return hi, en
+
+    def has_meaning(w, L):
+        return known(w, L) or any(matched(w, L)) or (L == "sa" and (known(w, "hi") or any(matched(w, "hi"))))
+
+    def stem_with_meaning(w, L):
+        for st in cr.stems(w, "hi" if L == "sa" else L):
+            if st != w and len(st) >= 2 and (any(matched(st, L)) or (L == "sa" and any(matched(st, "hi")))):
+                return st
+        return ""
 
     def parts(w, lang):
         """Split into 2 to 4 pieces the dictionary knows (longest head first). Pieces have 3+ letters, except the Sanskrit
@@ -239,7 +337,7 @@ def main():
                     if p.endswith(end):
                         cands.append(p[:-len(end)] + rep)
             for c in cands:
-                if (len(c) >= 3 or (sa and c in SHORT_SA) or c in SHORT_TAIL) and (known(c, lang) or (sa and known(c, "hi"))):
+                if (len(c) >= 3 or (sa and c in SHORT_SA) or c in SHORT_TAIL) and has_meaning(c, lang):
                     return c
             return None
 
@@ -288,37 +386,48 @@ def main():
             out[-2:] = [out[-2] + out[-1]]
         return out if len(out) > 1 else None
 
+    # the words that have a meaning by now: a misprint of one of them is explained by it
+    good = {L: {w for w in vocab[L] if has_meaning(w, L)} for L in COLS}
+    near = {L: Near(good[L]) for L in COLS}
     all_rows = []
-    print(f"{'language':<9}{'words':>9}{'in dict':>9}{'by book':>9}{'none':>7}   tokens covered")
+    print(f"{'language':<9}{'words':>9}{'in dict':>9}{'matched':>9}{'stem':>7}{'parts':>7}{'misprint':>9}{'verse only':>11}   tokens with a meaning")
     for L in ("en", "hi", "bn", "or", "sa"):
-        rows_out, n_dict, n_book, none = [], 0, 0, []
-        tok_tot = tok_cov = 0
-        for w, n in freq[L].items():
+        rows_out = []
+        n_dict = n_match = n_stem = n_parts = n_fix = n_ctx = 0
+        tok_tot = tok_real = 0
+        ctx_only = []
+        for w, n in vocab[L].items():
             tok_tot += n
             if known(w, L):
-                n_dict += 1; tok_cov += n
+                n_dict += 1; tok_real += n
                 continue
-            hi = en = ""
-            if L in ("or", "bn", "sa"):
-                hi = "|".join(pick(w, *aligned[(L, "hi")], 2))
-            if L == "hi":
-                en = "|".join(pick(w, *aligned[("hi", "en")], 3))
-            if L == "en":
-                hi = "|".join(pick(w, *aligned[("en", "hi")], 2))
-            pr = "+".join(parts(w, L) or [])
-            if hi or en or pr:
-                rows_out.append((L, w, hi, en, pr)); n_book += 1; tok_cov += n
+            hi, en = matched(w, L)
+            stem = "" if (hi or en) else stem_with_meaning(w, L)
+            pr = "+".join(parts(w, L) or []) if not (hi or en) else "+".join(parts(w, L) or [])
+            ref = first_ref[L].get(w, "")
+            fix = ""
+            if hi or en:
+                n_match += 1; tok_real += n
+            elif stem:
+                n_stem += 1; tok_real += n
+            elif pr:
+                n_parts += 1; tok_real += n
             else:
-                none.append((n, w))
+                fix = near[L].nearest(w, vocab[L])
+                if fix:
+                    n_fix += 1; tok_real += n
+                else:
+                    n_ctx += 1; ctx_only.append((n, w))
+            rows_out.append((L, w, hi, en, pr, stem, ref, fix))
         all_rows += rows_out
-        print(f"{L:<9}{len(freq[L]):>9,}{n_dict:>9,}{n_book:>9,}{len(none):>7,}   {100 * tok_cov / max(1, tok_tot):.2f}%")
-        (HERE / "work" / f"no_gloss_{L}.tsv").write_text("\n".join(f"{w}\t{n}" for n, w in sorted(none, reverse=True)), encoding="utf-8")
+        print(f"{L:<9}{len(vocab[L]):>9,}{n_dict:>9,}{n_match:>9,}{n_stem:>7,}{n_parts:>7,}{n_fix:>9,}{n_ctx:>11,}   {100 * tok_real / max(1, tok_tot):.2f}%")
+        (HERE / "work" / f"no_gloss_{L}.tsv").write_text("\n".join(f"{w}\t{n}" for n, w in sorted(ctx_only, reverse=True)), encoding="utf-8")
     for t in targets:
         o = sqlite3.connect(t)
         o.executescript("DROP TABLE IF EXISTS book_gloss;"
-                        "CREATE TABLE book_gloss(lang TEXT, word TEXT, hi TEXT, en TEXT, parts TEXT, PRIMARY KEY(lang, word)) WITHOUT ROWID;")
-        o.executemany("insert into book_gloss values (?,?,?,?,?)", all_rows)
-        o.execute("insert or replace into meta values ('book_gloss', 'IBM Model 1 over the verses: or/bn/sa->hi, hi->en, en->hi; parts from dictionary.db')")
+                        "CREATE TABLE book_gloss(lang TEXT, word TEXT, hi TEXT, en TEXT, parts TEXT, stem TEXT, ref TEXT, fix TEXT, PRIMARY KEY(lang, word)) WITHOUT ROWID;")
+        o.executemany("insert into book_gloss values (?,?,?,?,?,?,?,?)", all_rows)
+        o.execute("insert or replace into meta values ('book_gloss', 'IBM Model 1 over the verses: or/bn/sa->hi, hi->en, en->hi; stems and parts from dictionary.db; ref = first verse')")
         o.commit()
         o.execute("vacuum")
         o.close()

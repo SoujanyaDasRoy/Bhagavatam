@@ -90,18 +90,35 @@ object Dictionary {
         }
     }
 
+    /** The translation of verse [ref] (S.C.N) in the preferred language, else English, else Hindi, never in the word's own language. */
+    private fun verseMeaning(ref: String, wordLang: String, preferred: String?): String? {
+        val v = SampleData.verse(ref) ?: return null
+        for (code in listOfNotNull(preferred, "en", "hi").distinct()) {
+            val l = Lang.entries.firstOrNull { it.code == code } ?: continue
+            if (l == Lang.SA || l.code == wordLang || !v.hasText(l)) continue
+            val t = stripDoubt(v.translation(l)).replace(Regex("\\s+"), " ").trim()
+            if (t.isNotBlank()) return if (t.length > 320) t.take(320).trimEnd() + "..." else t
+        }
+        return null
+    }
+
     /** 7. Last step: the book's own translations (BookGloss): one entry made from the matched words and the parts, or null. */
     private fun fromBook(word: String, lang: String, preferredGlossLang: String?): DictEntry? {
         val clean = Normalise.word(word, lang)
         if (clean.isBlank()) return null
         val row = BookGloss.row(lang.lowercase(), clean) ?: return null
-        val lines = BookGloss.senses(row) { w ->
-            if (!Normalise.isIndic(w)) null
-            else {
-                val l = if (row.parts.split('+').contains(w)) lang else "hi"  // parts are in the word's language, matches in Hindi
-                (if (l == "sa") lookupAs(w, l, "sa", preferredGlossLang).ifEmpty { lookupAs(w, l, "hi", preferredGlossLang) } else lookupAs(w, l, l, preferredGlossLang))
-                    .firstOrNull()?.senses?.firstOrNull()?.gloss?.take(60)
-            }
+        // a word's meaning for the lines: the dictionary first, then what the book matched it with
+        fun shortMeaning(w: String, l: String): String? {
+            if (!Normalise.isIndic(w)) return null
+            val fromDict = (if (l == "sa") lookupAs(w, l, "sa", preferredGlossLang).ifEmpty { lookupAs(w, l, "hi", preferredGlossLang) }
+                else lookupAs(w, l, l, preferredGlossLang)).firstOrNull()?.senses?.firstOrNull()?.gloss?.take(60)
+            if (fromDict != null) return fromDict
+            val r = BookGloss.row(l, w) ?: return null
+            return (r.en.split('|') + r.hi.split('|')).firstOrNull { it.isNotBlank() }?.take(60)
+        }
+        val own = setOf(row.stem, row.fix) + row.parts.split('+')
+        val lines = BookGloss.senses(row, verse = { ref -> verseMeaning(ref, lang, preferredGlossLang) }) { w ->
+            shortMeaning(w, if (w in own) lang else "hi")  // stems, corrections and parts are in the word's language, matches in Hindi
         }
         if (lines.isEmpty()) return null
         return DictEntry(
