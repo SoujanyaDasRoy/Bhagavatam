@@ -184,10 +184,9 @@ object Dictionary {
             val sk = Normalise.skey(clean)
             val crossEntries = findEntriesBySkey(d, lCode, sk)
             if (crossEntries.isNotEmpty()) {
-                // An entry of another language (Bengali Wiktionary, say) keeps only meanings in English or the reader's gloss language,
-                // so an Odia word never shows its meaning in Bengali script.
+                // An entry of another language (Bengali Wiktionary, say) keeps only meanings in English or the word's own language
                 val shown = hydrateAndRank(d, crossEntries, preferredGlossLang)
-                    .map { e -> e.copy(senses = e.senses.filter { it.glossLang == "en" || it.glossLang == preferredGlossLang }) }
+                    .map { e -> e.copy(senses = e.senses.filter { it.glossLang == "en" || it.glossLang == lCode }) }
                     .filter { it.senses.isNotEmpty() }
                 if (shown.isNotEmpty()) return shown
             }
@@ -341,7 +340,9 @@ object Dictionary {
         }
 
         return entries.map { e ->
-            val rawSenses = sensesByEntry[e.id] ?: emptyList()
+            // a meaning is shown in English or in the entry's own language (Sanskrit also in Hindi), never in another script
+            val own = setOf("en", e.lang, if (e.lang == "sa") "hi" else e.lang)
+            val rawSenses = (sensesByEntry[e.id] ?: emptyList()).filter { it.glossLang in own || it.glossLang.isBlank() }
             val sortedSenses = if (preferredGlossLang != null) {
                 rawSenses.sortedWith(compareByDescending<DictSense> { it.glossLang == preferredGlossLang }
                     .thenByDescending { it.glossLang == "en" }
@@ -353,6 +354,6 @@ object Dictionary {
                 source = DictionaryDb.source(e.sourceId),
                 senses = sortedSenses
             )
-        }
+        }.filter { it.senses.isNotEmpty() }
     }
 }
