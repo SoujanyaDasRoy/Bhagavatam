@@ -184,7 +184,12 @@ object Dictionary {
             val sk = Normalise.skey(clean)
             val crossEntries = findEntriesBySkey(d, lCode, sk)
             if (crossEntries.isNotEmpty()) {
-                return hydrateAndRank(d, crossEntries, preferredGlossLang)
+                // An entry of another language (Bengali Wiktionary, say) keeps only meanings in English or the reader's gloss language,
+                // so an Odia word never shows its meaning in Bengali script.
+                val shown = hydrateAndRank(d, crossEntries, preferredGlossLang)
+                    .map { e -> e.copy(senses = e.senses.filter { it.glossLang == "en" || it.glossLang == preferredGlossLang }) }
+                    .filter { it.senses.isNotEmpty() }
+                if (shown.isNotEmpty()) return shown
             }
         }
 
